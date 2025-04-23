@@ -1,0 +1,1 @@
+{{ $item->state_name ?: 'N/A'}}

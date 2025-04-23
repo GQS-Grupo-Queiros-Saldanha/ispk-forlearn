@@ -1,0 +1,7 @@
+/vendor/
+node_modules/
+public_html/storage
+public_html/hot
+/storage/
+.env
+env

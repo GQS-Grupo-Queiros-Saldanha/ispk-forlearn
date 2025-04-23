@@ -1,0 +1,42 @@
+<?php
+return [
+    'create_parameter' => 'Criar parâmetro',
+    'edit_parameter' => 'Editar parâmetro',
+    'has_options' => 'Tem opções',
+    'has_related_parameters' => 'Parâmetros a mostrar, se selecionada',
+    'option' => 'Opção',
+    'options' => 'Opções',
+    'parameter' => 'Parâmetro',
+    'parameters' => 'Parâmetros',
+    'required' => 'Obrigatório',
+    'roles_that_can_edit' => 'Cargos que podem editar este parâmetro',
+    'type' => 'Tipo',
+
+    // Types
+    'checkbox' => 'Caixa de verificação (checkbox)',
+    'color' => 'Côr',
+    'date' => 'Data',
+    'datetime-local' => 'Data e hora',
+    'dropdown' => 'Caixa de selecção (dropdown)',
+    'email' => 'E-mail',
+    'file_doc' => 'Ficheiro > Documento',
+    'file_image' => 'Ficheiro > Imagem',
+    'file_pdf' => 'Ficheiro > PDF',
+    'float' => 'Número decimal',
+    'integer' => 'Número inteiro',
+    'month' => 'Mês',
+    'password' => 'Palavra-passe',
+    'tel' => 'Telefone',
+    'text' => 'Texto',
+    'textarea' => 'Área de texto',
+    'time' => 'Tempo',
+    'url' => 'Link',
+    'week' => 'Semana',
+
+    // Messages
+    'being_used_message' => 'Não foi possível eliminar ou atualizar porque este parâmetro está a ser utilizado noutro sítio',
+    'destroy_success_message' => 'Parâmetro eliminado com sucesso',
+    'not_found_message' => 'Esse parâmetro já não existe',
+    'update_success_message' => 'Parâmetro atualizado com sucesso',
+    'store_success_message' => 'Parâmetro criado com sucesso',
+];

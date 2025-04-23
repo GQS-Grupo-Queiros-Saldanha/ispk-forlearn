@@ -1,0 +1,24 @@
+table,
+th,
+td,
+thead {
+  border: none;
+}
+
+thead {
+  background: rgb(2, 48, 71);
+  color: white;
+  font-weight: bold;
+}
+
+thead th, thead td{
+ color: white !important;
+}
+
+td {
+ padding: 5px;
+}
+
+tr:hover {
+  cursor: pointer;
+}

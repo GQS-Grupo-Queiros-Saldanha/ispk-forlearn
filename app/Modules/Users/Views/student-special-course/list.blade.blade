@@ -1,0 +1,112 @@
+<title>Avaliações | forLEARN® by GQS</title>
+@extends('layouts.generic_index_new')
+@section('page-title', 'LISTAR ESTUDANTES - CURSOS PROFISSIONAS')
+@section('breadcrumb')
+    <li class="breadcrumb-item">
+        <a href="/">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ route('student-special-course.index') }}">Cursos profissionais</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Listar estudantes</li>
+@endsection
+@section('styles-new')
+    @parent
+    <link rel="stylesheet" href="{{ asset('css/new_table_panel.css') }}" />
+@endsection
+@section('selects')
+    <div class="mb-2">
+        <label for="lective_years">Selecione o ano lectivo</label>
+        <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm">
+            <option selected value="" data-terminado="1">Seleciona o ano lectivo</option>
+            @foreach ($lectiveYears as $lectiveYear)
+                <option value="{{ $lectiveYear->id }}" @if ($lectiveYearSelected == $lectiveYear->id) selected @endif>
+                    {{ $lectiveYear->currentTranslation->display_name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+@endsection
+@section('body')
+    <div class="col">
+   
+        <div class="card">
+            <div class="row">
+            <div class="col-6">
+                    <div class="form-group col">
+                        <label>@lang('GA::courses.course')</label>
+                        {{ Form::bsLiveSelect('course', $courses, null, ['required', 'placeholder' => 'Selecione o curso']) }}
+                    </div>     
+            </div>
+
+            <div class="col-6" id="editions-container">
+                        <div class="form-group col">
+                            <label>Edição</label>
+                            {{ Form::bsLiveSelectEmpty('edition', [], null, ['required', 'placeholder' => 'Selecione a edição']) }}
+                        </div>
+            </div>
+
+        
+        </div>
+       
+    </div>
+@endsection
+@section('scripts-new')
+    @parent
+    <script>
+        let lective_year = $('#lective_year').val();
+        let selectCourse = $('#course');
+        let selectEdition = $('#edition');
+
+        selectCourse.change(function() {
+            if(selectCourse.val() == ''){
+                selectEdition.val() = '';
+            }
+            else{
+                getEditions()
+            }
+           
+
+        });
+
+        selectEdition.change(function() {
+            if(selectEdition.val() == ''){
+              
+            }
+            else{
+               getPdfList();
+            }
+           
+
+        });
+
+        function getEditions() {
+            
+            $.ajax({
+                    url: '/pt/grades/get_editions/' + selectCourse.val() + '/' + lective_year,
+                    type: "GET",
+                    data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(response) {
+                  //  selectEdition.append('<option value="" selected>Selecione a edição<option>')
+                    if(response.editions.length > 0){
+                        response.editions.forEach(function(item){
+                            selectEdition.append('<option value="' + item.id + '">' + item.number +
+                                '</option>');
+                        });
+                    }
+                    selectEdition.selectpicker('refresh');
+                  
+                });
+
+        }
+
+        function getPdfList() {
+       
+    }
+    </script>
+
+@endsection

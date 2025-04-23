@@ -1,0 +1,22 @@
+<?php
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used during authentication for various
+    | messages that we need to display to the user. You are free to modify
+    | these language lines according to your application's requirements.
+    |
+    */
+    'failed'   => 'As credenciais indicadas não coincidem com as registadas no sistema.',
+    'throttle' => 'O número limite de tentativas de login foi atingido. Por favor tente novamente dentro de :seconds segundos.',
+
+    'login' => 'Login',
+    'logout' => 'Logout',
+    'email' => 'E-mail',
+    'password' => 'Palavra-passe',
+    'remember_me' => 'Lembrar-me',
+    'forgot_password' => 'Esqueceu-se da palavra-passe ?',
+];

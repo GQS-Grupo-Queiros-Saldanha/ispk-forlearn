@@ -1,0 +1,242 @@
+       
+       .copyright{
+           float:right;
+       }
+       
+        #Topbar {
+             height: 1rem;
+             width: 100%;
+        }
+       body {
+               margin: 0;
+               padding: 0;
+               background-color: rgb(235, 234, 234);
+               display: flex !important;
+               align-items: center !important;
+               justify-content: flex-start !important;
+           }
+           h2{
+               font-size: 16pt;
+               color: #3ec4f7;
+           }
+           .bt_primary{
+               color:white;
+               background-color:#192f4e;
+               padding: 10px;
+               font-size: 15pt;
+               width: 24%;
+               transition: .7s;
+            }
+            .bt_primary:hover{
+               color:#192f4e;
+               border:1px solid #192f4e;
+               padding: 10px;
+
+            }
+            .texto_direita{
+               float: right;
+               color: #3ec4f7;     
+           
+            }
+        
+           input[type=text]:focus {
+                border: 2px solid #3ec4f7;
+           }
+           input[type=password]:focus {
+               border: 2px solid #3ec4f7;
+          }
+           .form-group  {
+               position: relative;
+          }
+          .form-group  i {
+          position: absolute;
+          top: 23px;
+          left: 12px;
+          color: #ccc;
+          
+   }
+
+          .owl-dots {
+          display: flex;
+          justify-content: center;
+          margin-top: 10px;
+          color:#444;
+          }
+
+          .owl-dot {
+          background-color: #ddd;
+          border-radius: 50%;
+          width: 10px;
+          height: 10px;
+          margin: 0 10px;
+          display: inline-block;
+          transition: background-color 0.2s ease;
+          }
+
+          .owl-dot.active {
+          background-color: #555;
+          }
+
+          .grade_login_main{
+               border-radius:8px;
+               height:520px;
+               padding-top: 5px!Important;
+          }
+          label{
+           font-size: 6.6pt;
+           color: #666; 
+          }
+   
+
+          .mw-auto{
+               height: 500px!important;
+          }
+          .texto_direita {
+               margin-right: 60px;
+               text-decoration: none;
+               font-weight: bold;
+          }
+
+          .form-group i {
+              margin-left: 10px;
+          }
+
+          input::placeholder {
+               color: #ccc !important;
+          }
+
+          .grade_login_main {
+               box-shadow: 0px 1px 3px 1px #b9b9b9;
+               width: 600px;
+               height: 544px;
+          }
+
+          form .bt_primary {
+               margin: 0 auto;
+               font-size: 16px;
+               text-transform: uppercase;
+               border-radius: 10px;
+          }
+
+    
+
+          h2,
+          h6 {
+               font-weight: bold;
+          }
+
+          h2 {
+               margin-top: 50px;
+               color: #249fbd;
+               margin-bottom: 3px;
+          }
+
+          h6 {
+               margin-bottom: 30px;
+          }
+
+   
+
+          .login-main {
+               width: 1200px !important;
+          }
+
+          form .bt_primary {
+               margin-top: 30px;
+               width: 100%;
+          }
+
+          @media screen and (min-width: 700px) {
+               form input {
+                    width: 100%;
+               }
+          }
+
+          @media screen and (max-width: 700px) {
+               .mw-auto{
+                    height: 250px!important; 
+               }
+               .login-main {
+                    width: 100%!important;
+               }
+
+               body {
+                    margin: 0;
+                    padding: 0;
+                    top: 0;
+               }
+
+               .owl-carousel {
+                    max-width: 500px !important;
+               }
+
+               .owl-carousel .owl-item p {
+                    width: 70%;
+                    margin-left: 5%;
+               }
+
+               .owl-carousel .owl-item img {
+                    width: 250px !important;
+                    height: 250px;
+                    margin-left: 13%;
+               }
+
+               .area-img,
+               .large-width {
+                    width: 100%;
+               }
+
+               .sec-image {
+                    width: 100% !important;
+                    padding: 0px !important;
+                    margin: 0px !important;
+               }
+
+               .grade_login_main {
+                    width: 100% !important;
+               }
+
+               .container-fluid {
+                    padding: 0px;
+               }
+
+               .owl-stage-outer {
+                    height: 300px;
+               }
+
+         
+
+               .form-group i {
+                    transform: translateX(0px);
+                    transform: translatey(-5px);
+               }
+
+               .logo {
+                    height: 20px !important;
+                    width: 170px !important;
+               }
+
+
+               h6 {
+                    text-transform: uppercase;
+               }
+
+               h2 {
+                    font-size: 17px;
+                    margin-bottom: 5px;
+               }
+
+               h6 {
+                    font-size: 15px;
+                    margin-bottom: 10px;
+               }
+
+               .bt_primary {
+                    width: 100%;
+                    font-size: 15px !important;
+               }
+
+               .bt_primary i {
+                    margin-right: 10px;
+               }
+          }

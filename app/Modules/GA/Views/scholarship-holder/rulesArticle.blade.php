@@ -1,0 +1,170 @@
+@extends('layouts.generic_index_new')
+@section('title', __('Payments::articles.articles'))
+@section('page-title', 'Implementar Regra')
+@section('breadcrumb')
+    <li class="breadcrumb-item">
+        <a href="/">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ route('requests.index') }}" class="">
+            Tesouraria
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ route('list.scholarship') }}" class="">
+            Gerir entidades
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Implementar regra</li>
+@endsection
+@section('selects')
+    <div class="mb-2">
+        <label for="lective_years">Selecione o ano lectivo</label>
+        <select name="lective_years" id="lective_years" class="selectpicker form-control form-control-sm">
+            <option selected value="" data-terminado="1">Seleciona o ano lectivo</option>
+            @foreach ($lectiveYears as $lectiveYear)
+                <option value="{{ $lectiveYear->id }}" @if ($currentLectiveYear->id == $lectiveYear->id) selected @endif data-terminado="{{ $lectiveYear->is_termina }}">
+                    {{ $lectiveYear->currentTranslation->display_name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+@endsection
+@section('body')
+    <table class="table table-striped" id="table-rules">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">EMOLUMENTO/PROPINA</th>
+                <th scope="col">ENTIDADE</th>
+                <th scope="col">VALOR</th>
+                <th scope="col">CRIADO AO</th>
+                <th scope="col">ACÇÃO</th>
+            </tr>
+        </thead>
+    </table>
+@endsection
+@section('models')
+
+    @include('layouts.backoffice.modal_confirm')
+
+    <div class="modal fade" id="modalRuleArticle" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <form action="#" class="modal-content" method="POST">
+                <div class="modal-header">
+                    @csrf
+                    <h3 class="modal-title" id="staticBackdropLabel" id="">Formulário de regra</h3>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-12 p-1">
+                        <label>@lang('Payments::articles.article') <span class="text-danger">*</span> </label>
+                        <select name="emolument[]" id="emolument" multiple class="selectpicker form-control form-control-sm"
+                            data-actions-box="true" data-selected-text-format="count > 3" data-live-search="true">
+                            @foreach ($model as $arti)
+                                <option value="{{ $arti->id }}"> {{ $arti->display_name }} </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-12 p-1">
+                        <label>@lang('Escolha a entidade') <span class="text-danger">*</span> </label>
+                        <select name="scholarship[]" id="scholarship" multiple class="selectpicker form-control form-control-sm"
+                            data-actions-box="true" data-selected-text-format="count > 3" data-live-search="true">
+                            @foreach ($scholarshipEntities as $scholarship)
+                                <option value="{{ $scholarship->id }}"> {{ $scholarship->company }} </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-12 p-1">
+                        <label for="inputState">Valor <span class="text-danger">*</span></label>
+                        <input type="number" required class="form-control" id="valorPercentual" name="valorPercentual" placeholder="0">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" id="btn-submit" name="user_id">Guardar</button>
+                    <button type="button" class="btn btn-primary" id="close_modal_create" data-dismiss="modal">Fechar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
+@section('scripts-new')
+    @parent
+    <script>
+        const table = $('table#table-rules');
+        const selectArticle = $('select#emolument');
+        const lectiveYear = $('select#lective_years');
+        const modalRuleArticle = $('.modal#modalRuleArticle');
+        const formRuleArticle = document.querySelector('.modal#modalRuleArticle form');
+
+        loadArticleRules();
+
+        function loadArticleRules() {
+
+            let lective_year = lectiveYear.val();
+            if (lective_year == "") return;
+
+            getAlunoAnoLectivo(lective_year);
+
+            let tam = table.children('tbody').length;
+            if (tam > 0) table.DataTable().clear().destroy();
+
+            table.DataTable({
+                ajax: "/gestao-academica/getImplemtRulesAjax/"+lective_year,
+                buttons: ['colvis', 'excel', {
+                    text: '<i class="fas fa-plus"></i> Criar regra',
+                    className: 'btn-primary main ml-1 rounded btn-main btn-text',
+                    action: function(e, dt, node, config) {
+                        modalRuleArticle.modal('show');
+                        formRuleArticle.action = "{{ route('createRegraScholarship') }}?lective="+lective_year;
+                        formRuleArticle.method = "POST";
+                    }
+                }],
+                columns: [{
+                    data: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                }, {
+                    data: 'display_name',
+                    name: 'display_name',
+                }, {
+                    data: 'company',
+                    name: 'company',
+                }, {
+                    data: 'valor',
+                    name: 'valor',
+                    searchable: false,
+                }, {
+                    data: 'created_at',
+                    name: 'art_rule.created_at',
+                    visible: false
+                }, {
+                    data: 'actions',
+                    name: 'actions',
+                }],
+            });
+
+        }
+
+        function getAlunoAnoLectivo(ano) {
+            $.ajax({
+                url: "/payments/getEmoluAnoletivo/" + ano,
+            }).done(function(data) {
+                selectArticle.empty();
+                if (data.length > 0) {
+                    $.each(data, function(index, item) {
+                        selectArticle.append(`<option value="${item.id}">${item.current_translation.display_name}</option>`);
+                    })
+                }
+                selectArticle.selectpicker('refresh');
+            })
+        }
+
+        lectiveYear.on('change', (e) => loadArticleRules());
+
+        Modal.confirm('{!! Request::fullUrl() !!}/', '{!! csrf_token() !!}');
+    </script>
+@endsection

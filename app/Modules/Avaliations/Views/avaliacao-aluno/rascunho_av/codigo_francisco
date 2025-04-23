@@ -1,0 +1,683 @@
+@section('title',__('Criar Plano de Estudos Avaliação'))
+
+
+@extends('layouts.backoffice')
+    <style>
+      table,
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      .modal-backdrop { background-color: red; !important}
+    </style>
+@section('content')
+    <div class="content-panel">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">
+                         Atribuir Notas
+                        </h1>
+                    </div>
+                    <div class="col-sm-6">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Main content --}}
+        <div class="content" style="margin-bottom: 10px">
+            <div class="container-fluid">
+
+                {!! Form::open(['route' => ['avaliacao_aluno.store']]) !!}
+
+                <div class="row">
+                    <div class="col">
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h5>@choice('common.error', $errors->count())</h5>
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <div hidden>
+                            <button type="submit" class="btn btn-success mb-3" id="btn-submit">
+                                <i class="fas fa-plus-circle"></i>
+                                Salvar
+                            </button>
+                        </div>
+
+                        <button type="button" class="btn btn-success mb-3" data-toggle="modal" data-target="#exampleModal">
+                            <i class="fas fa-plus-circle"></i>
+                              Salvar
+                        </button>
+
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group col">
+                                            <label>Edição de Plano de Estudo</label>
+                                                {{ Form::bsLiveSelectEmpty('course_id', [], null, ['id' => 'course_id', 'class' => 'form-control','disabled'])}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group col">
+                                            <label>Disciplina</label>
+                                            {{ Form::bsLiveSelectEmpty('discipline_id',[],null,['id' => 'discipline_id', 'class' => 'form-control', 'disabled'])}}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                 <div class="row" id="discipline-group">
+                                    <div class="col-6">
+                                        <div class="form-group col">
+                                            <label>Avaliação</label>
+                                            {{ Form::bsLiveSelectEmpty('avaliacao_id',[],null,['id' => 'avaliacao_id', 'class' => 'form-control', 'disabled'])}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group col">
+                                            <label>Turma</label>
+                                            {{ Form::bsLiveSelectEmpty('class_id',[],null,['id' => 'class_id', 'class' => 'form-control', 'disabled'])}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <div class="row" id="discipline-group">
+                                    <div class="col-6">
+                                        <div class="form-group col">
+                                            <label>Métrica</label>
+                                            {{--<select name="metrica_id" id="metrica_id" class="form-control" disabled required>
+                                                <option value=""></option>
+
+                                            </select>--}}
+                                            {{ Form::bsLiveSelectEmpty('metrica_id',[],null,['id' => 'metrica_id', 'class' => 'form-control', 'disabled'])}}
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            <hr>
+
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <th>#</th>
+                                                <th class="text-center">Estado</th>
+                                                <th>Nº Estudante</th>
+                                                <th>Nome</th>
+                                                <th>Nota</th>
+                                            </thead>
+                                            <tbody id="students">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                {!! Form::close() !!}
+
+            </div>
+        </div>
+    </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header bg-danger text-light">
+                    <h5 class="modal-title" id="exampleModalLabel">ALERTA | Confirmação de dados</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="float-right">
+                        <p class="text-danger" style="font-weight:bold; !important"> Caro DOCENTE ({{auth()->user()->name}}), as informações inseridas
+                        neste<br> formulário ATRIBUIR NOTAS, são da sua inteira responsabilidade.
+                        <br> Por favor seja rigoroso na informação prestada.</p>
+                    </div>
+
+                        <br>
+                        <br>
+
+                    <div style="margin-top:50px; !important">
+                        <p style="padding:5px; !important">Verifique se os dados estão correctos, nomeadamente: </p>
+
+                        <ul>
+                            <li style="padding:5px; !important">
+                                Todos os alunos pertencem a esta TURMA?
+                            </li>
+                            <li style="padding:5px; !important">
+                                Falta algum aluno nesta TURMA?
+                            </li>
+                        </ul>
+                    </div>
+
+                   <div style="margin-top:10px; !important">
+                        <p>
+                            No caso de <span class="text-danger"><b>HAVER</b></span> alguma das situações acima assinaladas, por favor seleccione: Contactar os gestores forLEARN pessoalmente.
+                        </p>
+                            <br>
+                        <p>
+                            No caso de <span class="text-success"><b>NÃO HAVER</b></span> nenhuma situação acima, por favor seleccione: Tenho a certeza.
+                        </p>
+                   </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Contactar gestores forLEARN</button>
+                    <button type="button" class="btn btn-danger" id="btn-callSubmit">Tenho a certeza</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+@endsection
+
+@section('scripts')
+    @parent
+    <script>
+        $(document).ready(function (){
+
+            $("#btn-callSubmit").click(function()
+            {
+                $("#btn-submit").click();
+            });
+
+            var selectStudyPlan = $("#course_id");
+            var selectDiscipline = $("#discipline_id");
+            var selectAvaliation = $("#avaliacao_id");
+            var selectClass = $("#class_id");
+            var selectMetrica = $("#metrica_id");
+
+            getAllStudyPlanEdition();
+
+            function getAllStudyPlanEdition(){
+                $.ajax({
+                    url: "/avaliations/plano_estudo_ajax/",
+                    type: "GET",
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    //$('#container').html(data.html);
+
+                }).done(function (data){
+                    //if (dataResult.length) {
+                        selectStudyPlan.prop('disabled', true);
+                        selectStudyPlan.empty();
+
+
+                        selectStudyPlan.append('<option selected="" value=""></option>');
+                        $.each(data, function (index, row) {
+                            selectStudyPlan.append('<option value="' + row.spea_id + '">' + row.spea_nome + '</option>');
+                        });
+
+                        selectStudyPlan.prop('disabled', false);
+                        selectStudyPlan.selectpicker('refresh');
+
+                        //switchRegimes(selectDiscipline[0]);
+                    //}
+                });
+            }
+            //$('#discipline_id').prop('disabled', true);
+            $("#class_id").prop('disabled', true);
+
+            //Buscar Disciplinas apartir do curso associados ao Plano estudo Avaliacao
+           $('#course_id').change(function(){
+               var course_id = $(this).children("option:selected").val();
+               console.log(course_id);
+               $("#class_id").empty();
+               $("#avaliacao_id").empty();
+               $("#metrica_id").empty();
+               $("#students tr").empty();
+
+               $('#avaliacao_id').prop('disabled', true);
+               $('#class_id').prop('disabled', true);
+               $('#metrica_id').prop('disabled', true);
+
+            if(course_id == ""){
+                console.log("Empty");
+                $('#discipline_id').prop('disabled', true);
+                $("#discipline_id").empty();
+                $('#avaliacao_id').prop('disabled', true);
+                $("#class_id").prop('disabled', true);
+                $("#avaliacao_id").empty();
+                $('#metrica_id').prop('disabled', true);
+                $('#class_id').empty("");
+                $("#metrica_id").empty();
+                $("#students tr").empty();
+
+            }else{
+
+            $.ajax({
+
+            url: "/avaliations/disciplines_ajax/" + course_id,
+            type: "GET",
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            cache: false,
+            dataType: 'json',
+
+            success: function (dataResult) {
+                //Limpar a tabela sempre que for inicializada (Aberto o Modal)
+                $("#discipline_id").empty();
+                console.log(dataResult);
+                var resultData = dataResult.data;
+                var resultClasses = dataResult.classes;
+                var bodyData = '';
+                var bodyClassData = '';
+                var i = 1;
+                console.log(dataResult.data);
+                 selectDiscipline.prop('disabled', true);
+                    selectDiscipline.empty();
+                    selectClass.empty();
+
+                    selectDiscipline.append('<option selected="" value=""></option>');
+                    selectClass.append('<option selected="" value=""></option>');
+
+
+                    $.each(resultData, function (index, row) {
+                        selectDiscipline.append('<option value="' + row.discipline_id + '">' + row.dt_display_name + '</option>');
+                    });
+
+                    $.each(resultClasses, function (index, row) {
+                        selectClass.append('<option value="' + row.id + '">' + row.display_name + '</option>');
+                    });
+
+                    selectDiscipline.prop('disabled', false);
+                    selectDiscipline.selectpicker('refresh');
+
+                    selectClass.prop('disabled', false);
+                    selectClass.selectpicker('refresh');
+
+
+            },
+            error: function (dataResult) {
+               // alert('error' + result);
+            }
+        });
+   }
+        });
+
+
+        //Buscar Avaliações apartir do curso e disciplina associados ao Plano estudo Avaliacao
+           $('#discipline_id').change(function(){
+               var discipline_id = $(this).children("option:selected").val();
+               console.log(discipline_id);
+
+                $("#students tr").empty();
+                $('#metrica_id').prop('disabled', true);
+                $("#metrica_id").empty();
+                 $("#avaliacao_id").empty();
+                 $('#class_id').val("");
+                 $('#class_id').prop('disabled', true);
+
+            if(discipline_id == ""){
+                console.log("Empty");
+                $('#avaliacao_id').prop('disabled', true);
+                $("#class_id").prop('disabled', true);
+                $("#avaliacao_id").empty();
+                $('#metrica_id').prop('disabled', true);
+                $('#class_id').val("");
+                $("#metrica_id").empty();
+                $("#students tr").empty();
+
+            }else{
+
+            $.ajax({
+
+            url: "/avaliations/avaliacao_ajax/" + discipline_id,
+            type: "GET",
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            cache: false,
+            dataType: 'json',
+
+            success: function (dataResult) {
+                //Limpar a tabela sempre que for inicializada (Aberto o Modal)
+                 $("#avaliacao_id").empty();
+                console.log(dataResult);
+                var resultData = dataResult.data;
+                var bodyData = '';
+                var i = 1;
+                console.log(dataResult.data);
+                selectAvaliation.prop('disabled', true);
+                selectAvaliation.empty();
+
+
+                selectAvaliation.append('<option selected="" value=""></option>');
+                $.each(resultData, function (index, row) {
+                    selectAvaliation.append('<option value="' + row.avl_id + '">' + row.avl_nome + '</option>');
+                });
+
+                selectAvaliation.prop('disabled', false);
+                selectAvaliation.selectpicker('refresh');
+
+
+            },
+            error: function (dataResult) {
+               // alert('error' + result);
+            }
+        });
+    }
+        });
+
+        //Buscar Metricas apartir do curso da disciplina e da avaliacao associados ao Plano estudo Avaliacao
+           $('#avaliacao_id').change(function(){
+               var avaliacao_id = $(this).children("option:selected").val();
+               var discipline_id = $('#discipline_id').val();
+               var course_id = $('#course_id').val();
+
+                $("#students tr").empty();
+                $("#metrica_id").empty();
+                $('#class_id').val("");
+
+            if(avaliacao_id == ""){
+                console.log("Empty");
+                $('#metrica_id').prop('disabled', true);
+                $("#class_id").prop('disabled', true);
+                $("#class_id").val("");
+                $("#metrica_id").empty();
+                $("#students tr").empty();
+
+            }else{
+
+            $.ajax({
+
+            url: "/avaliations/metrica_ajax/" + avaliacao_id + "/" + discipline_id + "/" + course_id,
+            type: "GET",
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            cache: false,
+            dataType: 'json',
+
+            success: function (dataResult) {
+                //Limpar a tabela sempre que for inicializada (Aberto o Modal)
+                $("#metrica_id").empty();
+                console.log(dataResult);
+                var resultData = dataResult.data;
+                var bodyData = '';
+                var i = 1;
+                console.log(dataResult.data);
+                selectMetrica.prop('disabled', true);
+                selectMetrica.empty();
+
+
+                selectMetrica.append('<option selected="" value=""></option>');
+                $.each(resultData, function (index, row) {
+                    selectMetrica.append('<option value="' + row.mtrc_id + '">' + row.mtrc_nome + '</option>');
+                });
+
+                selectMetrica.prop('disabled', false);
+                selectMetrica.selectpicker('refresh');
+
+                //$("#class_id").prop('disabled', false);
+                selectClass.prop('disabled', false);
+            },
+            error: function (dataResult) {
+               // alert('error' + result);
+            }
+        });
+    }
+});
+
+
+    $("#class_id").change(function(){
+        if($("#class_id").val() == "")
+        {
+            $("#metrica_id").val("");
+            $("#students tr").empty();
+            $('#metrica_id').prop('disabled', true);
+        }else{
+             var avaliacao_id = $("#avaliacao_id").val();
+             var discipline_id = $('#discipline_id').val();
+             var course_id = $('#course_id').val();
+
+                $.ajax({
+
+                url: "/avaliations/metrica_ajax/" + + avaliacao_id + "/" + discipline_id + "/" + course_id,
+                type: "GET",
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                cache: false,
+                dataType: 'json',
+
+                success: function (dataResult) {
+                    console.log(dataResult);
+                    //Limpar a tabela sempre que for inicializada (Aberto o Modal)
+                    var resultData = dataResult.data;
+                    var bodyData = '';
+                    var i = 1;
+
+                    selectMetrica.prop('disabled', true);
+                    selectMetrica.empty();
+
+                    selectMetrica.append('<option selected="" value=""></option>');
+                    $.each(resultData, function (index, row) {
+                        selectMetrica.append('<option value="' + row.mtrc_id + '">' + row.mtrc_nome + '</option>');
+                    });
+
+                    selectMetrica.prop('disabled', false);
+                    selectMetrica.selectpicker('refresh');
+
+                    //$("#class_id").prop('disabled', false);
+                    selectClass.prop('disabled', false);
+                },
+                error: function (dataResult) {
+                // alert('error' + result);
+                }
+            });
+
+            $("#students tr").empty();
+        }
+    });
+
+    //Listar estudante que tem a determinada disciplina e determinada turma.
+        $("#metrica_id").change(function(){
+
+            if($("#metrica_id").val() == "")
+            {
+                $("#students tr").empty();
+
+            } else {
+            var discipline_id = $('#discipline_id').val();
+            var metrica_id = $('#metrica_id').val();
+            var course_id = $('#course_id').val();
+            var avaliacao_id = $('#avaliacao_id').val();
+            var class_id = $('#class_id').val();
+
+            $.ajax({
+
+            url: "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" + course_id + "/" + avaliacao_id + "/" + class_id,
+            type: "GET",
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            cache: false,
+            dataType: 'json',
+
+            success: function (dataResult) {
+                //Limpar a tabela sempre que for inicializada (Aberto o Modal)
+                $("#students tr").empty();
+                console.log(dataResult);
+
+                var resultGrades = dataResult.data;
+                var resultStudents = dataResult.students;
+                var metricArePlublished = dataResult.metricArePlublished;
+                var bodyData = '';
+                var i = 1;
+                var flag = true;
+
+                var a; for (a = 0; a < resultStudents.length; a++)
+                 {
+                     var dd = a;
+                     flag = true;
+
+                    //Verifica se o Array das notas está vazio
+                    if (resultGrades == '') {
+                        checkInputEmpty(dd);
+                        bodyData += '<tr>'
+                        bodyData += "<td>"+ i++ +"</td><td width='120'><input type='checkbox' id='check"+dd+"' onclick='disbleInput("+ dd +");' checked> <input id='input"+dd+"' value='true' name='inputCheckBox[]' hidden> <span id='span"+ dd +"' style='background: #38C172; padding: 2px; color: #fff;'>PRESENTE</span></td><td width='120'>"+resultStudents[a].n_student+"</td><td>"+ resultStudents[a].user_name + "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value="+resultStudents[a].user_id+">";
+
+                        if(metrica_id == 53 || metricArePlublished) //se a metrica for igual a OA ou a metrica ja for publicada bloquear o campo (disabled)
+                        {
+                          bodyData += "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' step='0.01' id="+ dd +" readOnly></td>"
+                        }else{
+                           bodyData += "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' step='0.01' id="+ dd +"></td>"
+                        }
+
+                        bodyData += '</tr>'
+                    }else{
+                        checkInputEmpty(dd);
+                        bodyData += '<tr>'
+                        bodyData += "<td>"+ i++ +"</td><td width='120'>"
+
+
+                        // if (resultGrades[a].presence == "false" || resultGrades[a].presence  == null) { //avaliar se o campo presenca vem true ou vazio (exibir como presente)
+
+                        //     bodyData += "<input type='checkbox' id='check"+dd+"' onclick='disbleInput("+ dd +");'> <input id='input"+dd+"' value='true' name='inputCheckBox[]' hidden> <span id='span"+ dd +"' style='background: red; padding: 2px; color: #fff;'>AUSENTE</span></td>"
+                        //     bodyData += "<td width='120'>"+resultStudents[a].n_student+"<td>"+ resultStudents[a].user_name + "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value="+resultStudents[a].user_id+">";
+
+                        //     if(metrica_id == 53 || metricArePlublished) //se a metrica for igual a OA bloquear o campo (disabled)
+                        //     {
+                        //         bodyData += "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value="+resultGrades[a].aanota +" step='0.01' id="+ dd +" readOnly></td>"
+                        //     }else{
+                        //         bodyData += "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value="+resultGrades[a].aanota +" step='0.01' id="+ dd +" readOnly></td>"
+                        //     }
+
+                        // }else{
+
+                            bodyData += "<input type='checkbox' id='check"+dd+"' onclick='disbleInput("+ dd +");' checked> <input id='input"+dd+"' value='true' name='inputCheckBox[]' hidden> <span id='span"+ dd +"' style='background: #38C172; padding: 2px; color: #fff;'>PRESENTE</span></td>"
+                            bodyData += "<td width='120'>"+resultStudents[a].n_student+"<td>"+ resultStudents[a].user_name + "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value="+resultStudents[a].user_id+">";
+
+                            if(metrica_id == 53 || metricArePlublished) //se a metrica for igual a OA bloquear o campo (disabled)
+                            {
+
+                                for (var b = 0; b < resultGrades.length; b++) {
+                                    if (resultGrades[b].user_id == resultStudents[a].user_id) {
+                                        flag = false;
+                                        bodyData += "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value="+resultGrades[b].aanota +" step='0.01' id="+ dd +" readOnly></td>"
+                                    }
+                                }
+                                if (flag) {
+                                    bodyData += "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value='' step='0.01' id="+ dd +" readOnly></td>"
+                                }
+                             }else{
+
+                                for (var b = 0; b < resultGrades.length; b++) {
+                                    if (resultGrades[b].user_id == resultStudents[a].user_id) {
+                                        flag = false;
+                                        if(avaliacao_id == 22) //caso for recurso input (max = 12)
+                                        {
+                                            bodyData += "<input type='number' name='notas[]' min='0' max='12' class='form-control notas' value="+resultGrades[b].aanota +" step='0.01' id="+ dd +"></td>"
+                                        }else{
+                                            bodyData += "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value="+resultGrades[b].aanota +" step='0.01' id="+ dd +"></td>"
+                                        }
+                                    }
+                                }
+                                if (flag) {
+                                    if (avaliacao_id == 22) //caso for recurso input (max = 12)
+                                    {
+                                        bodyData += "<input type='number' name='notas[]' min='0' max='12' class='form-control notas' value='' step='0.01' id="+ dd +"></td>"
+                                    }else{
+                                        bodyData += "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value='' step='0.01' id="+ dd +"></td>"
+                                    }
+                                }
+
+
+
+                            }
+
+                        // }
+
+
+                        bodyData += '</tr>'
+                     }
+                }
+                    /*$.each(resultGrades , function (index, row) {
+                        bodyData += '<tr>'
+                        bodyData += "<td>"+ i++ +"</td><td>"+ row.user_name + "</td><input type='hidden' name='estudantes[]' class='form-control' value="+row.user_id+"></td>";
+                        bodyData += '</tr>'
+                    })*/
+                $("#students").append(bodyData);
+
+               // $('#metrica_id').prop('disabled', false);
+            },
+            error: function (dataResult) {
+               // alert('error' + result);
+            }
+
+        });
+        }
+        });
+        });
+
+        function disbleInput(dd)
+        {
+            var checkStatus = document.getElementById("check"+dd+"").checked;
+            var inputGrade = document.getElementById(dd);
+            var span = document.getElementById("span"+dd+"");
+
+            if (checkStatus == true) {
+                inputGrade.readOnly = false;
+                document.getElementById("input"+dd+"").value = "";
+                document.getElementById("input"+dd+"").value = true;
+                // inputGrade.value = "true";
+                //document.getElementById("check"+dd+"").disabled = true;
+                span.style.backgroundColor = "#38C172";
+                span.innerHTML = "PRESENTE";
+            }else{
+                 inputGrade.readOnly = true
+                 document.getElementById("input"+dd+"").value = "";
+                 document.getElementById("input"+dd+"").value = false;
+                // checkStatus.prop( "checked" );
+                //  inputGrade.value = "false";
+                //document.getElementById("check"+dd+"").disabled = true;
+                span.style.backgroundColor = "red";
+                span.innerHTML = "AUSENTE";
+            }
+
+        }
+
+        function checkInputEmpty(dd) {
+            var inputGrade = document.getElementById(dd);
+
+                //var dpe = document.getElementById(dd).value;
+                //console.log(inputGrade);
+
+
+        }
+    </script>
+@endsection

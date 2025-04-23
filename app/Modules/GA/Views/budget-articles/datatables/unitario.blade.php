@@ -1,0 +1,1 @@
+{{ number_format($item->money, 2, ',', '.') . ' kz' }}

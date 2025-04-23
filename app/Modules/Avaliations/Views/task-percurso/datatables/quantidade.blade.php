@@ -1,0 +1,1 @@
+{{$percurso[$item->codigo]["qtd"]}}

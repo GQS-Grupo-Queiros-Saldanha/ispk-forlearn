@@ -1,0 +1,1 @@
+{{ number_format($money->base_value, 2, ',', '.') . ' kz' }}

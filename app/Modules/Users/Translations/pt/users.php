@@ -1,0 +1,31 @@
+<?php
+return [
+    'create_user' => 'Criar utilizador',
+    'edit_user' => 'Editar utilizador',
+    'email' => 'E-mail',
+    'generate_pdf' => 'Gerar PDF',
+    'name' => 'Nome',
+    'parameters' => 'Parâmetros',
+    'password' => 'Palavra-passe',
+    'permissions' => 'Permissões',
+    'roles' => 'Roles',
+    'user' => 'Utilizador',
+    'user_details' => 'Detalhes utilizador',
+    'users' => 'Utilizadores',
+    'course' => 'Curso',
+    'courses' => 'Cursos',
+    'discipline' => 'Disciplina',
+    'disciplines' => 'Disciplinas',
+    'candidates' => 'Candidatos',
+    'candidate_number' => 'Número de Candidato',
+    'full_name' => 'Nome completo',
+    'id_number' => 'Número de Bilhete de identidade (usado para gerar password)',
+
+    // Messages
+    'destroy_success_message' => 'Utilizador eliminado com sucesso',
+    'not_found_message' => 'Esse utilizador já não existe',
+    'permissions_success_message' => 'Permissões associadas com sucesso',
+    'store_success_message' => 'Utilizador adicionado com sucesso',
+    'update_success_message' => 'Utilizador atualizado com sucesso',
+    'roles_success_message' => 'Cargos associados com sucesso',
+];

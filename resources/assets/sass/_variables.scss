@@ -1,0 +1,35 @@
+//================================================================================
+// Bootstrap
+//================================================================================
+
+// Options
+$enable-rounded: false; // Enables predefined border-radius styles on various components.
+$enable-shadows: false; // Enables predefined box-shadow styles on various components.
+$enable-gradients: false; // Enables predefined gradients via background-image styles on various components.
+$enable-print-styles: false; // Enables styles for optimizing printing.
+
+// Typography
+$font-family-sans-serif: Roboto, sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+// Body
+$body-bg: #f8fafc;
+
+// Colors
+$blue: #1E1E1E;
+$indigo: #6574cd;
+$purple: #9561e2;
+$pink: #f66D9b;
+$red: #e3342f;
+$orange: #f6993f;
+$yellow: #ffed4a;
+$green: #38c172;
+$teal: #4dc0b5;
+$cyan: #6cb2eb;
+
+//================================================================================
+// Font Awesome
+//================================================================================
+
+$fa-font-path: "../fonts" !default;

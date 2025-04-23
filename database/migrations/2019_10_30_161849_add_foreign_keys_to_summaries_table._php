@@ -1,0 +1,49 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class AddForeignKeysToSummariesTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::table('summaries', function(Blueprint $table)
+		{
+			$table->foreign('created_by', 'summaries_ibfk_1')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('updated_by', 'summaries_ibfk_2')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('deleted_by', 'summaries_ibfk_3')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('discipline_regime_id', 'summaries_ibfk_4')->references('id')->on('discipline_regimes')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('event_id', 'summaries_ibfk_5')->references('id')->on('events')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('module_id', 'summaries_ibfk_6')->references('id')->on('spe_has_disciplines_has_modules')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('spe_discipline_id', 'summaries_ibfk_7')->references('id')->on('spe_has_disciplines')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('user_id', 'summaries_ibfk_8')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+		});
+	}
+
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::table('summaries', function(Blueprint $table)
+		{
+			$table->dropForeign('summaries_ibfk_1');
+			$table->dropForeign('summaries_ibfk_2');
+			$table->dropForeign('summaries_ibfk_3');
+			$table->dropForeign('summaries_ibfk_4');
+			$table->dropForeign('summaries_ibfk_5');
+			$table->dropForeign('summaries_ibfk_6');
+			$table->dropForeign('summaries_ibfk_7');
+			$table->dropForeign('summaries_ibfk_8');
+		});
+	}
+
+}

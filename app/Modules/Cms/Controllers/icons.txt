@@ -1,0 +1,27 @@
+1. Aceder a https://fontawesome.com/cheatsheet?from=io
+2. Abrir consola
+3. Colar código abaixo
+4. Copiar resultado
+
+var groups = {};
+var list = [];
+var sections = document.getElementsByClassName('cheatsheet-set');
+for (const section of sections) {
+    const names = [];
+    groups[section.id] = names;
+    var icons = section.getElementsByClassName('icon');
+    for (const icon of icons) {
+        const name = icon.getElementsByTagName('dd')[0].innerText;
+
+        let prefix = '';
+        switch(section.id) {
+            case "brands": prefix = 'fab'; break;
+            case "regular": prefix = 'far'; break;
+            case "solid": prefix = 'fas'; break;
+        }
+        prefix += ' fa-';
+
+        list.push(prefix + name);
+    }
+}
+console.log(JSON.stringify(list));

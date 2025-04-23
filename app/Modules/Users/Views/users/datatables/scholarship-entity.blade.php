@@ -1,0 +1,1 @@
+{{ $item->company ?: "N/A"}}
