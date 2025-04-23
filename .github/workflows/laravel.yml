@@ -1,0 +1,104 @@
+name: Deploy Laravel via FTP com Slack Notificação
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    name: FTP Deploy com Slack
+
+    steps:
+      - name: Notificar início no Slack
+        run: |
+          echo "Iniciando o processo de deploy..."
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"🚀 *Deploy iniciado!* Workflow iniciado por `${{ github.actor }}` no branch `${{ github.ref_name }}`. O tempo estimado é de 5 minutos."}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+          
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Limpeza máxima antes do deploy
+        run: |
+          echo "🧹 Limpando arquivos desnecessários para o deploy..."
+          rm -rf .git .github .gitignore
+          rm -rf node_modules vendor tests
+          rm -rf .vscode .idea
+          rm -f .env .env.* composer.lock package-lock.json yarn.lock
+          find . -name "*.log" -delete
+          find . -name "*.sql" -delete
+          find . -name "*.bak" -delete
+          find . -name "*.tmp" -delete
+          mkdir -p storage/framework/{cache,sessions,views}
+          touch storage/framework/{cache,sessions,views}/.gitkeep
+      - name: Listar arquivos locais antes do deploy
+        run: |
+          echo "📂 Estrutura local antes do deploy:"
+          ls -la
+          echo ""
+          echo "📦 Tamanho do diretório:"
+          du -sh .
+      - name: Testar conexão FTP
+        run: |
+          echo "🔌 Testando conexão com servidor FTP..."
+          if ! curl -s --ftp-ssl -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" "ftp://${{ secrets.FTP_SERVER }}" ; then
+            echo "::error::Erro na conexão FTP"
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"❌ *Erro de conexão FTP!* Verifique as credenciais ou o servidor."}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
+            exit 1
+          fi
+          echo "✅ Conexão FTP OK!"
+      - name: Notificar início do upload
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"📤 *Iniciando upload dos arquivos para o servidor...*"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Deploy via FTP (turbo)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          server-dir: /EmenegildoMarques/
+          exclude: |
+            **/node_modules/**
+            **/vendor/**
+            **/.git/**
+            **/.github/**
+            **/.idea/**
+            **/.vscode/**
+            **/storage/**
+            .env
+            .env.*
+            *.log
+            *.sql
+            *.bak
+            *.tmp
+            composer.lock
+            package-lock.json
+            yarn.lock
+            tests/**
+          dry-run: false
+          log-level: verbose
+
+      - name: Verificar arquivos no servidor FTP
+        run: |
+          echo "📡 Verificando arquivos no servidor FTP..."
+          curl -s --ftp-ssl -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+          "ftp://${{ secrets.FTP_SERVER }}/home/iscatforlearn/" -X "LIST"
+      - name: Notificar erro no Slack
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"❌ *Erro no Deploy!* Algo deu errado no processo de deploy. Verifique o log do GitHub Actions para mais detalhes.\n🔗 <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Ver Detalhes>"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Notificar finalização no Slack
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"✅ *Deploy concluído com sucesso!* Todos os arquivos foram enviados para o servidor.\n🔗 <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Ver Detalhes>"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
