@@ -51,7 +51,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
-          server-dir: /
+          server-dir: /EmenegildoMarques
           exclude: |
             **/node_modules/**
             **/vendor/**
