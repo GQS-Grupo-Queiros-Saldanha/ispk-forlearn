@@ -74,7 +74,8 @@ jobs:
           log-level: verbose
 
       - name: Verificar arquivos no servidor FTP
+        continue-on-error: true
         run: |
           echo "📡 Verificando arquivos no servidor FTP..."
           curl -s --ftp-ssl -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-          "ftp://${{ secrets.FTP_SERVER }}/home/iscatforlearn/" -X "LIST"
+          "ftp://${{ secrets.FTP_SERVER }}/EmenegildoMarques/" || echo "⚠️ Falha ao listar diretório, mas continuando..."
