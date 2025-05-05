@@ -2,7 +2,6 @@
 @section('content')
 
 @php
-$logotipo = $logotipo;
 $documentoCode_documento = 50;
 $doc_name = "Pauta de ".$disciplina;
 @endphp

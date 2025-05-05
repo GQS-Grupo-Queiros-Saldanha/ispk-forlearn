@@ -15,7 +15,7 @@
     "devDependencies": {
         "axios": "^0.18.1",
         "bootstrap": "^4.4.1",
-        "cross-env": "^5.1",
+        "cross-env": "^5.2.1",
         "css-loader": "^2.1.1",
         "datatables.mark.js": "github:julmot/datatables.mark.js",
         "jquery": "^3.4.1",
