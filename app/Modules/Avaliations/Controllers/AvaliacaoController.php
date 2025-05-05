@@ -1346,12 +1346,12 @@ class AvaliacaoController extends Controller
                 ->select(['u_p9.value as fullname'])
                 ->first();
 
-            $coordenador = DB::table('coordinator_course')
+                $coordenador = DB::table('coordinator_course')
                 ->where('coordinator_course.courses_id', $pauta->id_curso)
+                ->whereNotIn('coordinator_course.user_id', [23, 24,734])
                 ->leftJoin('user_parameters as u_p9', function ($q) {
                     $q->on('coordinator_course.user_id', '=', 'u_p9.users_id')
-                        ->where('u_p9.parameters_id', 1)
-                        ->whereNotIn('coordinator_course.user_id', [23, 24,734]);
+                        ->where('u_p9.parameters_id', 1);
                 })
                 ->select(['u_p9.value as fullname'])
                 ->first();
