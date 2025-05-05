@@ -1330,7 +1330,7 @@ class AvaliacaoController extends Controller
 
             //pegar os utilizadores que lançaram as notas 
             $teacher = DB::table('teacher_classes as tc')
-                ->whereNotIn('tc.user_id', [23, 24])
+                ->whereNotIn('tc.user_id', [23, 24,734])
                 ->join('classes', function ($join) use ($pauta) {
                     $join->on('classes.id', 'tc.class_id');
                     $join->where('classes.id', $pauta->id_turma);
