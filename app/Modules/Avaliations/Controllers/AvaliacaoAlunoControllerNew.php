@@ -2432,7 +2432,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                     ->where('user_id', $teacher_id)
                     ->get();
                 //Pegar as disciplinas do professor/coordenador Logado
-                $disciplines_coordenador = collect($this->disciplinas_coordenador_todas($course_id[0]->courses_id));
+                $disciplines_coordenador = collect($this->disciplinas_coordenador_todas($course_id->pluck('courses_id')->toArray()));
                 $disciplines_professor = collect($this->disciplina_teacher_apenas($teacher_id));
 
                 $all_disciplines = $disciplines_coordenador->merge($disciplines_professor);
@@ -2442,11 +2442,11 @@ class AvaliacaoAlunoControllerNew extends Controller
 
             //se o coordenador for o logado na plataforma 
             //Entra neste bloco e trás toda as disciplinas do curso
-            else if ($user->hasAnyRole(['coordenador-curso'])) {
+            if ($user->hasAnyRole(['coordenador-curso'])) {
                 $course_id = DB::table('coordinator_course')
                     ->where('user_id', $teacher_id)
                     ->get();
-                $disciplinas_coordenador = $this->disciplinas_coordenador_todas($course_id[0]->courses_id);
+                $disciplinas_coordenador = $this->disciplinas_coordenador_todas($course_id->pluck('courses_id')->toArray());
                 return response()->json(['disciplina' => $disciplinas_coordenador, 'whoIs' => "coordenador"]);
             }
             //Quando for Professor pegar as disciplina
@@ -2538,7 +2538,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 $join->on('dt.active', '=', DB::raw(true));
             })
-            ->leftJoin('user_disciplines', 'user_disciplines.disciplines_id', '=', 'dp.id')
+            // ->leftJoin('user_disciplines', 'user_disciplines.disciplines_id', '=', 'dp.id')
             ->select([
                 'crs.id as course_id',
                 'ct.display_name as course_name',
@@ -2550,7 +2550,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             // ->where('stpeid.id', $id)
             // ->where('lective_years_id',$anolectivo)
             // ->where('user_disciplines.users_id', $teacher_id)
-            ->where('dp.courses_id', $id_curso)
+            ->whereIn('dp.courses_id', $id_curso)
             ->whereNotNull('dt.display_name')
             ->distinct()
             ->get();

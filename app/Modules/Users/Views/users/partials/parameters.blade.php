@@ -12,7 +12,7 @@
     @foreach ($parameter_groups as $parameter_group)
         @if ($parameter_group->code == 'situacao_contratual' || $parameter_group->code == 'salarios_honorarios')
         @else
-            @if ($user->hasAnyRole($parameter_group->roles->pluck('id')->toArray()))
+            @if (($user->hasAnyRole($parameter_group->roles->pluck('id')->toArray()) && auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) || auth()->user()->hasAnyPermission(['criar_docente'])))
                 <li class="nav-item">
                     <a href="#" class="nav-link @if ($loop->index == 0)  @endif"
                         id="nav-tab-{{ $loop->index }}" data-toggle="tab"
@@ -54,6 +54,7 @@
                 <i class="fas fa-plus-square"></i>
                 Editar formulário
             </a>
+            @if (auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']))
             <a href="#" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal-pdf"
             onclick="$('#modal-pdf').modal()">
                 <i class="fas fa-plus-square"></i>
@@ -70,6 +71,7 @@
                     Ficha do RH
                 @endif               
             </a>
+            @endif
             @if (auth()->user()->hasAnyRole(['superadmin']))
                 @if ($user->hasAnyRole(['student']))
                     <a href="{{ route('cards.student', $user->id.","."1") }}" class="btn btn-success mr-3" style="margin-top: -12px;" target="_blank">

@@ -582,7 +582,7 @@ use App\Modules\Cms\Controllers\mainController;
                                         <td style='text-align: center'>-</td>
                                     @else
                                         @php
-                                            $classificacao = round($especial_nota);
+                                            $classificacao = round($extra_nota);
 
                                             if ($classificacao >= 0 && $classificacao < 10) {
                                                 $estado_final = 'Reprovado(a)';
@@ -596,7 +596,7 @@ use App\Modules\Cms\Controllers\mainController;
                                             $nota_final = $classificacao;
                                         @endphp
 
-                                        <td style='text-align: center'>{{ $especial_nota }}</td>
+                                        <td style='text-align: center'>{{ $extra_nota }}</td>
                                         <td class="{{'text-bold text-center ' . $color_final}}">{{ $estado_final }}</td>
                                     @endif
 

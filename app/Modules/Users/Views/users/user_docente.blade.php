@@ -1,9 +1,31 @@
-@section('title',__('RH-recurso humanos'))
-@extends('layouts.backoffice')
+@section('title',__('Docentes | forLEARN® by GQS'))
+@extends('layouts.generic_index_new')
+@section('page-title', 'GESTÃO DE DOCENTES')
 @section('styles')
 @parent
 @endsection
-@section('content')
+@section('breadcrumb')
+    <li class="breadcrumb-item">
+        <a href="/">Home</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Docentes</li>
+@endsection
+@section('selects')
+<div class="float-right mr-0 mb-0 pr-0" style="width:470px; !important">                            
+                                                    <label>Selecione o curso</label> 
+                                                    <br>
+                                                    <select name="curso" id="curso" class="selectpicker form-control form-control-sm" data-live-search="true" style="width: 100%; !important">
+                                                        
+                                                        {{-- @foreach ($curso_model as $item_curso)
+                                                            
+                                                                <option value="{{ $item_curso->id }}" selected>
+                                                                    {{ $item_curso->nome_curso }}
+                                                                </option> 
+                                                        @endforeach  --}}
+                                                    </select>
+                                                </div>
+@endsection
+@section('body')
 <script src="https://kit.fontawesome.com/e1fa782e3f.js" crossorigin="anonymous"></script>
 <style>
     .list-group li button {
@@ -35,44 +57,20 @@
 </style>
 
 
-    <!-- Modal  que apresenta a loande do  site -->
-    {{-- <div style="z-index: 1900" class="modal fade modal_loader" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered"> 
-            <i style="margin-left: 12pc; font-size: 8pc; color:#cae6f3;" class="fa fa-circle-notch fa-spin"></i>
-        </div>
-    </div> --}}
-
-<div class="content-panel" >
-    
-    @include('RH::index_menu')
-
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        {{-- <h1>@lang('Users::users.users')</h1> --}}
-                        <h1>GESTÃO DO STAFF</h1>
-                    </div>
-                    {{-- <div class="col-sm-6">
-                        {{ Breadcrumbs::render('users') }}
-                    </div> --}}
-                </div>
-            </div>
-        </div>
-
-
-    <p class="btn-menu col-md-2 ml-3"><i style="font-size: 1.3pc;" class="fa-solid fa-bars"></i></p>
+    @if(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) || auth()->user()->hasAnyPermission(['criar_docente']))
+     <p class="btn-menu col-md-2 ml-3"><i style="font-size: 1.3pc;" class="fa-solid fa-bars"></i></p>
+    @endif 
     <div class="content-fluid ml-4 mr-4 mb-5">
         <div class="d-flex align-items-start">
-            
+        @if(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) || auth()->user()->hasAnyPermission(['criar_docente']))
             @include('RH::index_menuStaff')
-            
+         @endif   
             <div style="background-color: #f5fcff" class="tab-content ml-1 mr-0 pl-0 pr-0 col" id="v-pills-tabContent">
                 <div class="associarCodigo">
                     <div class="ml-0 mr-0 pl-0 pr-0  pb-4 row col-12 ">
-                        <div style="background: #20c7f9; height: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px " class="col-12 m-0 mb-3"></div>
                         
-                            <h5 class="col-md-12 mb-3 text-right text-muted text-uppercase">DOCENTES</h5>
+                        
+                           
                             {{-- formularios --}}
                             <div class="col-12 mb-4 border-bottom">
 
@@ -82,46 +80,9 @@
                                     <div class="container-fluid">
                                         <div class="row">
                                             <div class="col p-0">
-
-                                                @if(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) || auth()->user()->hasAnyPermission(['criar_docente']))
-                                                    <a href="{{ route('users.create_user_docente') }}" class="btn btn-success ml-0  mt-3" style="width:200px">
-                                                        @icon('fas fa-plus-square')
-                                                        Criar novo docente
-                                                    </a>
-                                                @endif
-                                                
-                                                 <a href="{{ route('users.generate.docente.pdf') }}" class="btn btn-info ml-1 mt-3" target="_blank"
-                        style="width:150px;">
-                        @icon('fas fa-file-pdf-o')
-                        Gerar PDF
-                      </a>
-                                                    {{-- <div class="float-right mr-4" style="width:200px; !important">
-                                                            <select name="curso" id="curso" class="selectpicker form-control form-control-sm" style="width: 100%; !important">
-                                                            
-                                                            </select>
-                                                        </div>  --}}
-                                                
-                                                <div class="float-right mr-0 mb-0 pr-0" style="width:470px; !important">                            
-                                                    <label>Selecione o curso</label> 
-                                                    <br>
-                                                    <select name="curso" id="curso" class="selectpicker form-control form-control-sm" data-live-search="true" style="width: 100%; !important">
-                                                        
-                                                        {{-- @foreach ($curso_model as $item_curso)
-                                                            
-                                                                <option value="{{ $item_curso->id }}" selected>
-                                                                    {{ $item_curso->nome_curso }}
-                                                                </option> 
-                                                        @endforeach  --}}
-                                                    </select>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    
-                                                </div>  
-                                            </div>
                                             
                                             <div class="card col-12 mt-5">
-                                                <br><br><br>
+                                           
                                                 <div class="card-body">
 
                                                     <table id="users-table" class="table table-striped table-hover">
@@ -157,7 +118,7 @@
             </div>
         </div>
     </div>
-</div>
+
 
                         
     </div>
@@ -206,7 +167,27 @@
         $(function () {
             $('#users-table').DataTable({
                 ajax: '{!! route('users.getDocente') !!}',
-                buttons:['colvis','excel'],
+                buttons:['colvis','excel'
+                @if(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) || auth()->user()->hasAnyPermission(['criar_docente']))
+                , {
+                            text: '<i class="fas fa-plus-square" ></i> Criar novo docente',
+                            className: 'btn btn-success ml-1 rounded',
+                            action: function(e, dt, node, config) {
+                                let url = {{ route('users.create_user_docente') }};
+                                window.open(url, "_blank");
+                            }
+                        }
+                @endif 
+                , {
+                            text: '<i class="fas fa-file-pdf " ></i> Gerar PDF',
+                            className: 'btn btn-info ml-1 rounded',
+                            action: function(e, dt, node, config) {
+                                let url = {{ route('users.generate.docente.pdf') }};
+                                window.open(url, "_blank");
+                            }
+                        } 
+                    
+                ],
                 columns: [
                     {
                     data: 'DT_RowIndex',
