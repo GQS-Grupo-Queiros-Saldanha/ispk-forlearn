@@ -173,7 +173,7 @@
                             text: '<i class="fas fa-plus-square" ></i> Criar novo docente',
                             className: 'btn btn-success ml-1 rounded',
                             action: function(e, dt, node, config) {
-                                let url = {{ route('users.create_user_docente') }};
+                                let url = "{{ route('users.create_user_docente') }}";
                                 window.open(url, "_blank");
                             }
                         }
@@ -182,7 +182,7 @@
                             text: '<i class="fas fa-file-pdf " ></i> Gerar PDF',
                             className: 'btn btn-info ml-1 rounded',
                             action: function(e, dt, node, config) {
-                                let url = {{ route('users.generate.docente.pdf') }};
+                                let url = "{{ route('users.generate.docente.pdf') }}";
                                 window.open(url, "_blank");
                             }
                         } 

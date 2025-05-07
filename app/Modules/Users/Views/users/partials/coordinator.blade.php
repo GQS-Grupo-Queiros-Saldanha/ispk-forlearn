@@ -1,5 +1,5 @@
 @php
-    $currentUserIsAuthorized = auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas']);
+    $currentUserIsAuthorized = auth()->user()->hasAnyRole(['coordenador-curso','superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas']);
 @endphp
 
 @if ($user->hasAnyRole(['coordenador-curso']))

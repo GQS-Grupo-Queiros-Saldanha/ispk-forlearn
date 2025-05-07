@@ -1,5 +1,5 @@
 @php
-    $currentUserIsAuthorized = auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas','rh_chefe','rh_assistente']);
+    $currentUserIsAuthorized = auth()->user()->hasAnyRole(['coordenador-curso','superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas','rh_chefe','rh_assistente']);
     $ids = [];
     foreach($userDepartment as $item)
      array_push($ids, $item->departments_id);    

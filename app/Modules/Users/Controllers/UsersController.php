@@ -997,7 +997,7 @@ public function getcursoIndex()
             // Delete all relations
             $user->parameters()->sync([]);
             //Updat ve Or Create (Join) Teacher with departments
-            if ($user->hasAnyRole(['staff_forlearn','teacher','coodinator-course'])) {
+            if ($user->hasAnyRole(['staff_forlearn','teacher','coordenador-curso'])) {
                 if(!empty($request->get('departments')))
                     $user->departments()->sync($request->get('departments'));
             }
