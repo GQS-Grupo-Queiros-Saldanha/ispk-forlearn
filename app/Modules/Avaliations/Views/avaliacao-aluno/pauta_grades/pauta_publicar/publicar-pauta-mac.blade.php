@@ -88,6 +88,8 @@
             <i class="fas fa-lock" id="icone_publish"></i>
             Publicar pauta
         </button>
+        <p id="warning" style="color:red">Esta pauta já está publicada, Por favor contacte o coordenador!</p>
+
     </div>
     {!! Form::close() !!}
 @endsection
@@ -146,7 +148,8 @@
             var disciplina_regime;
             var selector_pauta = null;
             
-            document.getElementById('togglee').style.visibility = 'hidden';                                              
+            document.getElementById('togglee').style.visibility = 'hidden';     
+            document.getElementById('warning').style.visibility = 'hidden';                                         
             $("#id_anoLectivo").val(id_anoLectivo.val());
             getCurso(id_anoLectivo);
             ano_nome = $("#lective_year")[0].selectedOptions[0].text;
@@ -168,6 +171,7 @@
                 getCurso(id_anoLectivo);  
                    
                 document.getElementById('togglee').style.visibility = 'hidden';
+                document.getElementById('warning').style.visibility = 'hidden';
             });
 
             function getCurso(id_anoLectivo) {
@@ -213,7 +217,8 @@
                         
                     curso_nome = $("#curso_id_Select")[0].selectedOptions[0].text; 
                     document.getElementById('togglee').style.visibility = 'hidden';
-                    
+                    document.getElementById('warning').style.visibility = 'hidden';
+
                     if(data==500){
                         $("#lista_tr").empty();
                         $("#listaMenu").empty();
@@ -242,7 +247,8 @@
             Turma_id_Select.bind('change keypress', function() {
                 turma_nome = $("#Turma_id_Select")[0].selectedOptions[0].text;
                 
-                document.getElementById('togglee').style.visibility = 'hidden';                
+                document.getElementById('togglee').style.visibility = 'hidden'; 
+                document.getElementById('warning').style.visibility = 'hidden';               
                 getDiscipline()
             })
 
@@ -297,7 +303,7 @@
                 $("#id_disciplina").val(id_disciplinaVetor[0]);
                 $("#id_turma").val(Turma_id_Select.val());
                 document.getElementById('togglee').style.visibility = 'hidden';
-
+                document.getElementById('warning').style.visibility = 'hidden';
                 if(vetorDisciplina!=0){                    
                     getStudentNotasPautaFinal()  
                 }else{
@@ -340,7 +346,7 @@
                     var pdf2_val = 0;
                     var ao_val = 0;
                     var resultados_student=data['data']['dados']   
-                    // console.log(data['data']['exame'].has_mandatory_exam);
+                    var hide_button = false;
                         
                     if (resultados_student.length != 0 ) {
                         //GERADOR NO MENU PAUTA
@@ -362,9 +368,9 @@
                         $("#lista_tr").empty();
                         $("#listaMenu").append("<center>Selecione uma disciplina que tenha notas lançadas.</center>");
                     }
-                    
+           
                     // Mostra os botões
-                    if(data['data']['estado_pauta']==1 && data['data']['estado_tipo'] == 40){
+                    if(data['data']['estado_pauta']==1 && data['data']['estado_tipo'] == 40 && data['data']['whoIs'] != 'teacher'){
                         $("#togglee").text("Desbloquear pauta");
                         
                         //no modal de alerta de publicação de notas
@@ -382,7 +388,13 @@
                         $("#icone_publish").removeClass("fas fa-lock");
                         $("#icone_publish").addClass("fas fa-unlock");
                     }
-                    else if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 40){
+                    if(data['data']['estado_pauta']==1 && data['data']['estado_tipo'] == 40 && data['data']['whoIs'] == 'teacher'){
+                        hide_button = true;
+                    }
+                    if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 40 && data['data']['whoIs'] == 'teacher'){
+                        hide_button = true;
+                    }
+                    else if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 40 && data['data']['whoIs'] != 'teacher'){
                         $("#togglee").text("");
                         $("#togglee").text("Publicar pauta");
 
@@ -467,7 +479,9 @@
                                 tabelatr+="<td style='text-align: center'>"+item_exam.code_matricula+"</td>"
                                 tabelatr+="<td style='text-align: left'>"+index+"</td>"
                                 // HABILITA O BOTÃO DE SALVAR                                                    
-                                // document.getElementById('generate-pdf').style.visibility = 'visible';
+                               if(hide_button)
+                                document.getElementById('warning').style.visibility = 'visible';
+                               else
                                 document.getElementById('togglee').style.visibility = 'visible';
 
                                 $.each(item, function (index_avaliacao, item_avaliacao) {

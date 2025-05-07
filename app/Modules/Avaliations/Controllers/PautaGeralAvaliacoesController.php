@@ -289,6 +289,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
+            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
             'curso' => $id_curso,
             'turma' => $Turma_id_Select,
             'disciplina' => $id_disciplina,
@@ -1949,6 +1950,7 @@ class PautaGeralAvaliacoesController extends Controller
                 'dados' => $dados,
                 'estado_pauta' => $estado_p,
                 'estado_tipo' => $estado_tipo,
+                'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
                 'Trabalho' => count($Trabalho),
                 'Defesa' => count($Defesa),
                 'disciplina' => $disciplinaTFC,
@@ -2446,6 +2448,7 @@ class PautaGeralAvaliacoesController extends Controller
                 'ano' => $id_anoLectivo,
                 'estado_pauta' => $estado_p,
                 'estado_tipo' => $estado_tipo,
+                'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
                 'curso' => $id_curso,
                 'turma' => $Turma_id_Select,
                 'disciplina' => $id_disciplina,
@@ -2643,6 +2646,7 @@ class PautaGeralAvaliacoesController extends Controller
              'ano' => $id_anoLectivo,
              'estado_pauta' => $estado_p,
              'estado_tipo' => $estado_tipo,
+             'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
              'curso' => $id_curso,
              'turma' => $Turma_id_Select,
              'disciplina' => $id_disciplina,
@@ -4134,12 +4138,23 @@ class PautaGeralAvaliacoesController extends Controller
 
     public function getCurso($id_anolectivo)
     {
-        
-        $courses_id = DB::table('user_courses')
-            ->where('users_id',auth()->user()->id)
+        if(auth()->user()->hasAnyRole(['teacher']))
+        {
+            $courses_id = DB::table('user_courses')
+            ->where('user_id', auth()->user()->id)
             ->get()
             ->pluck('courses_id')
             ->toArray();
+        }
+        else{
+            $courses_id = DB::table('coordinator_course')
+            ->where('user_id', auth()->user()->id)
+            ->get()
+            ->pluck('courses_id')
+            ->toArray();
+        }
+
+       
       
 
         $curso_model = Course::whereIn('courses.id',$courses_id)
@@ -4784,6 +4799,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
+            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
             'curso' => $id_curso,
             'turma' => $Turma_id_Select,
             'disciplina' => $id_disciplina,
@@ -5108,6 +5124,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
+            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
             'curso' => $id_curso,
             'turma' => $Turma_id_Select,
             'disciplina' => $id_disciplina,
@@ -5483,6 +5500,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
+            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
             'curso' => $id_curso,
             'turma' => $turmaObj[0],
             'disciplina' => $id_disciplina,
@@ -5653,6 +5671,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
+            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
             'curso' => $id_curso,
             'turma' => $Turma_id_Select,
             'disciplina' => $id_disciplina,
