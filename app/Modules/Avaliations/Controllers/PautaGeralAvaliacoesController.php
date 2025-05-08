@@ -1108,7 +1108,7 @@ class PautaGeralAvaliacoesController extends Controller
         ->whereNotIn('coordinator_course.user_id', [23, 24,734])
         ->first();
 
-        $coordenador_id = $coordenador_id->id;
+        $coordenador_id = $coordenador_id->user_id;
 
         //Dados do chefe do gabinente
         $gabinete_chefe = User::whereHas('roles', function ($q) {
@@ -3551,7 +3551,7 @@ class PautaGeralAvaliacoesController extends Controller
                 ->whereNotIn('coordinator_course.user_id', [23, 24,734])
                 ->first();
         
-                $coordenador_id = $coordenador_id->id;
+                $coordenador_id = $coordenador_id->user_id;
 
             $coordenador = DB::table('users')->leftJoin('user_parameters as u_p9', function ($q) {
                 $q->on('users.id', '=', 'u_p9.users_id')
@@ -3888,7 +3888,7 @@ class PautaGeralAvaliacoesController extends Controller
                 ->whereNotIn('coordinator_course.user_id', [23, 24,734])
                 ->first();
         
-        $coordenador_id = $coordenador_id->id;
+        $coordenador_id = $coordenador_id->user_id;
 
         //Dados do chefe do gabinente
         $gabinete_chefe = User::whereHas('roles', function ($q) {
