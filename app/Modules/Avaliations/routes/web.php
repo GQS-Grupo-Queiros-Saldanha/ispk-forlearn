@@ -72,7 +72,7 @@ Route::group(
                 Route::get('discipline_grades_st', 'PautaGeralAvaliacoesController@discipline_grades_st')->name('discipline_grades_st');
                 Route::get('discipline_grades_mac/{code}', 'PautaGeralAvaliacoesController@discipline_grades_mac')->name('discipline_grades_mac');
                 Route::get('discipline_grades_coordenador', 'PautaGeralAvaliacoesController@discipline_grades_coordenador')->name('discipline_grades_coordenador');
-                Route::get('getCursoCoordenador/{id_anoLectivo}', 'PautaGeralAvaliacoesController@getCursoCoordenador');
+                Route::get('getCursoCoordenador/{id_anoLectivo}/{whoIs}', 'PautaGeralAvaliacoesController@getCursoCoordenador');
                 // PAUTA EXAME - RECURSO
                 Route::get('discipline_exame_grades/{code}', 'PautaGeralAvaliacoesController@discipline_exame_grades')->name('discipline_exame_grades');
                 Route::get('getStudentMatriculation/{id_anoLectivo}/{id_curso}/{Turma_id_Select}/{id_disciplina}/{pub_print}/{code_exame}', 'PautaGeralAvaliacoesController@getStudentMatriculation');
@@ -291,9 +291,9 @@ Route::group(
                 // Routa da pauta final Geral das avaliacoes
                 Route::get('Show_pautaGeralFinal', 'PautaGeralAvaliacoesController@index');
                 Route::get('gerentePDF_pautaFinal', 'PautaFinalController@gerentePDF_pautaFinal');
-                Route::get('getCurso/{id_anoLectivo}', 'PautaGeralAvaliacoesController@getCurso');
-                Route::get('getDiscipline/{id_anoLectivo}/{anoCurso_id_Select}/{arrayCurso}', 'PautaGeralAvaliacoesController@getDiscipline');
-                Route::get('getTurma/{id_anoLectivo}/{id_curso}', 'PautaGeralAvaliacoesController@getTurma');
+                Route::get('getCurso/{id_anoLectivo}/{whoIs}', 'PautaGeralAvaliacoesController@getCurso');
+                Route::get('getDiscipline/{id_anoLectivo}/{anoCurso_id_Select}/{arrayCurso}/{whoIs}', 'PautaGeralAvaliacoesController@getDiscipline');
+                Route::get('getTurma/{id_anoLectivo}/{id_curso}/{whoIs}', 'PautaGeralAvaliacoesController@getTurma');
                 //Routa para publicar a Pauta pelo coordenador e quem tiver a permissão.
                 Route::post('publisher_final_grade', 'PautaGeralAvaliacoesController@publisher_final_grade')->name('publisher_final_grade');
                 Route::post('publisher_final_grade_tfc', 'PautaGeralAvaliacoesController@publisher_final_grade_tfc')->name('publisher_final_grade_tfc');

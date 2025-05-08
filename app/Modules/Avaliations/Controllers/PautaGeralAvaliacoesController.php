@@ -77,7 +77,8 @@ class PautaGeralAvaliacoesController extends Controller
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
-                'code' => $code
+                'code' => $code,
+                'whoIs'=> auth()->user()->hasAnyRole(['coordenador-curso']) ? "coordenador" : "teacher",
             ];
 
 
@@ -289,7 +290,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
-            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
+            
             'curso' => $id_curso,
             'turma' => $Turma_id_Select,
             'disciplina' => $id_disciplina,
@@ -669,7 +670,8 @@ class PautaGeralAvaliacoesController extends Controller
 
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
-                'lectiveYears' => $lectiveYears
+                'lectiveYears' => $lectiveYears,
+                'whoIs'=> auth()->user()->hasAnyRole(['coordenador-curso']) ? "coordenador" : "teacher",
             ];
 
             if ($code == 1) {
@@ -1101,7 +1103,12 @@ class PautaGeralAvaliacoesController extends Controller
         // $documentoGerado_documento = "Documento gerado a";
         $documentoCode_documento = 101;
 
-        $coordenador_id = Auth::user()->id;
+        $coordenador_id = DB::table('coordinator_course')
+        ->where('coordinator_course.courses_id', $request->curso_id)
+        ->whereNotIn('coordinator_course.user_id', [23, 24,734])
+        ->first();
+
+        $coordenador_id = $coordenador_id->id;
 
         //Dados do chefe do gabinente
         $gabinete_chefe = User::whereHas('roles', function ($q) {
@@ -1950,7 +1957,7 @@ class PautaGeralAvaliacoesController extends Controller
                 'dados' => $dados,
                 'estado_pauta' => $estado_p,
                 'estado_tipo' => $estado_tipo,
-                'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
+                
                 'Trabalho' => count($Trabalho),
                 'Defesa' => count($Defesa),
                 'disciplina' => $disciplinaTFC,
@@ -2082,7 +2089,8 @@ class PautaGeralAvaliacoesController extends Controller
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
-                'code' => $code
+                'code' => $code,
+                'whoIs'=> auth()->user()->hasAnyRole(['coordenador-curso']) ? "coordenador" : "teacher",
             ];
 
 
@@ -2120,7 +2128,8 @@ class PautaGeralAvaliacoesController extends Controller
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
-                'code' => $code
+                'code' => $code,
+                'whoIs'=> auth()->user()->hasAnyRole(['coordenador-curso']) ? "coordenador" : "teacher",
             ];
 
 
@@ -2151,7 +2160,8 @@ class PautaGeralAvaliacoesController extends Controller
 
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
-                'lectiveYears' => $lectiveYears
+                'lectiveYears' => $lectiveYears,
+                'whoIs'=> auth()->user()->hasAnyRole(['coordenador-curso']) ? "coordenador" : "teacher",
             ];
 
                 return view("Avaliations::avaliacao-aluno.pauta_grades.pauta_publicar.publicar-pauta-extraordinario")->with($data);
@@ -2448,7 +2458,7 @@ class PautaGeralAvaliacoesController extends Controller
                 'ano' => $id_anoLectivo,
                 'estado_pauta' => $estado_p,
                 'estado_tipo' => $estado_tipo,
-                'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
+                
                 'curso' => $id_curso,
                 'turma' => $Turma_id_Select,
                 'disciplina' => $id_disciplina,
@@ -2646,7 +2656,7 @@ class PautaGeralAvaliacoesController extends Controller
              'ano' => $id_anoLectivo,
              'estado_pauta' => $estado_p,
              'estado_tipo' => $estado_tipo,
-             'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
+             
              'curso' => $id_curso,
              'turma' => $Turma_id_Select,
              'disciplina' => $id_disciplina,
@@ -2706,7 +2716,8 @@ class PautaGeralAvaliacoesController extends Controller
 
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
-                'lectiveYears' => $lectiveYears
+                'lectiveYears' => $lectiveYears,
+                'whoIs'=> auth()->user()->hasAnyRole(['coordenador-curso']) ? "coordenador" : "teacher",
             ];
 
             return view("Avaliations::avaliacao-aluno.pauta_grades.pauta_publicar.publicar-pauta-final")->with($data);
@@ -2758,7 +2769,8 @@ class PautaGeralAvaliacoesController extends Controller
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
-                'code' => $code
+                'code' => $code,
+                'whoIs'=> auth()->user()->hasAnyRole(['coordenador-curso']) ? "coordenador" : "teacher",
             ];
 
 
@@ -2808,7 +2820,8 @@ class PautaGeralAvaliacoesController extends Controller
 
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
-                'lectiveYears' => $lectiveYears
+                'lectiveYears' => $lectiveYears,
+                'whoIs'=> auth()->user()->hasAnyRole(['coordenador-curso']) ? "coordenador" : "teacher",
             ];
 
             if ($code == 1) {
@@ -3533,7 +3546,13 @@ class PautaGeralAvaliacoesController extends Controller
                 ->where(['turma.id' => $request->id_turma])
                 ->get();
 
-            $coordenador_id = Auth::user()->id;
+                $coordenador_id = DB::table('coordinator_course')
+                ->where('coordinator_course.courses_id', $request->curso_id)
+                ->whereNotIn('coordinator_course.user_id', [23, 24,734])
+                ->first();
+        
+                $coordenador_id = $coordenador_id->id;
+
             $coordenador = DB::table('users')->leftJoin('user_parameters as u_p9', function ($q) {
                 $q->on('users.id', '=', 'u_p9.users_id')
                     ->where('u_p9.parameters_id', 1);
@@ -3863,7 +3882,13 @@ class PautaGeralAvaliacoesController extends Controller
         // $documentoGerado_documento = "Documento gerado a";
         $documentoCode_documento = 10;
 
-        $coordenador_id = Auth::user()->id;
+       
+        $coordenador_id = DB::table('coordinator_course')
+                ->where('coordinator_course.courses_id', $request->curso_id)
+                ->whereNotIn('coordinator_course.user_id', [23, 24,734])
+                ->first();
+        
+        $coordenador_id = $coordenador_id->id;
 
         //Dados do chefe do gabinente
         $gabinete_chefe = User::whereHas('roles', function ($q) {
@@ -4136,12 +4161,12 @@ class PautaGeralAvaliacoesController extends Controller
 
 
 
-    public function getCurso($id_anolectivo)
+    public function getCurso($id_anolectivo,$whoIs = null)
     {
-        if(auth()->user()->hasAnyRole(['teacher']))
+        if($whoIs == 'teacher')
         {
             $courses_id = DB::table('user_courses')
-            ->where('user_id', auth()->user()->id)
+            ->where('users_id', auth()->user()->id)
             ->get()
             ->pluck('courses_id')
             ->toArray();
@@ -4187,16 +4212,25 @@ class PautaGeralAvaliacoesController extends Controller
 
 
 
-    public function getCursoCoordenador($id_anolectivo)
+    public function getCursoCoordenador($id_anolectivo,$whoIs = null)
     {
         
         try {
         $teacher_id = Auth::user()->id;
         $user = User::whereId($teacher_id)->firstOrFail();
 
-        $course_id = DB::table('coordinator_course')
-            ->where('user_id', $teacher_id)
+        if($whoIs == 'teacher')
+        {
+            $course_id = DB::table('user_courses')
+            ->where('users_id', auth()->user()->id)
             ->get();
+        }
+        else{
+            $course_id = DB::table('coordinator_course')
+            ->where('user_id', auth()->user()->id)
+            ->get();
+         
+        }
         // $disciplinas_coordenador=$this->disciplinas_coordenador_todas($course_id[0]->courses_id);
     
       $idCursos = $course_id->pluck('courses_id');
@@ -4227,8 +4261,9 @@ class PautaGeralAvaliacoesController extends Controller
              ->whereIn('stp.courses_id',$idCursos)
             // ->where('stpeid.id', $id)
             // ->where('lective_years_id',$anolectivo)
-            // ->where('user_disciplines.users_id', $teacher_id)
-           
+            ->when($whoIs == 'teacher',function($q)use($teacher_id){
+                $q->where('user_disciplines.users_id', $teacher_id);
+            })
             // ->where('dp.courses_id',$course_id[0]->courses_id)
             ->distinct()
             ->get();
@@ -4244,7 +4279,7 @@ class PautaGeralAvaliacoesController extends Controller
 
     }
 
-    public function getDiscipline($id_anoLectivo, $anoCurso_id_Select, $arrayCurso)
+    public function getDiscipline($id_anoLectivo, $anoCurso_id_Select, $arrayCurso,$whoIs = null)
     {
         try {
             $getDisciplinesAno = DB::table('courses as crs')
@@ -4261,8 +4296,11 @@ class PautaGeralAvaliacoesController extends Controller
 
                 ->leftJoin('study_plans_has_disciplines as stpeid_discipl', 'stpeid_discipl.study_plans_id', '=', 'stp.id')
 
-
-                ->leftJoin('disciplines as dp', 'dp.id', '=', 'stpeid_discipl.disciplines_id')
+                ->when($whoIs == 'teacher', function($q){
+                    $q->join('user_disciplines as tc','tc.disciplines_id','stpeid_discipl.disciplines_id');
+                    $q->where('tc.users_id',auth()->user()->id);
+                })
+                ->leftJoin('disciplines as dp', 'dp.id', '=', 'tc.disciplines_id')
                 ->leftJoin('disciplines_translations as dt', function ($join) {
                     $join->on('dt.discipline_id', '=', 'dp.id');
                     $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
@@ -4295,7 +4333,7 @@ class PautaGeralAvaliacoesController extends Controller
 
 
 
-    public function getTurma($ano_lectivo, $id_curso)
+    public function getTurma($ano_lectivo, $id_curso,$whoIs = null)
     {
         try {
             $turma =  DB::table('classes')
@@ -4303,8 +4341,11 @@ class PautaGeralAvaliacoesController extends Controller
                 ->where('classes.deleted_by', null)
                 ->where('classes.courses_id', $id_curso)
                 ->where('classes.lective_year_id', $ano_lectivo)
+                ->when($whoIs == 'teacher', function($q){
+                    $q->join('teacher_classes as tc','tc.class_id','classes.id');
+                    $q->where('tc.user_id',auth()->user()->id);
+                })
                 ->select('classes.*')
-                //->select('classes.id as id', 'classes.display_name as display_name')
                 ->distinct()
                 ->get();
 
@@ -4799,7 +4840,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
-            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
+            
             'curso' => $id_curso,
             'turma' => $Turma_id_Select,
             'disciplina' => $id_disciplina,
@@ -5124,7 +5165,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
-            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
+            
             'curso' => $id_curso,
             'turma' => $Turma_id_Select,
             'disciplina' => $id_disciplina,
@@ -5500,7 +5541,6 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
-            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
             'curso' => $id_curso,
             'turma' => $turmaObj[0],
             'disciplina' => $id_disciplina,
@@ -5671,7 +5711,7 @@ class PautaGeralAvaliacoesController extends Controller
             'ano' => $id_anoLectivo,
             'estado_pauta' => $estado_p,
             'estado_tipo' => $estado_tipo,
-            'whoIs'=> auth()->user()->hasAnyRole(['teacher']) ? "teacher" : "coordenador",
+            
             'curso' => $id_curso,
             'turma' => $Turma_id_Select,
             'disciplina' => $id_disciplina,

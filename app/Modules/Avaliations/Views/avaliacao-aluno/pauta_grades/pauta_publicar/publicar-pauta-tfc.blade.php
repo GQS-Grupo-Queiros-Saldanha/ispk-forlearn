@@ -71,6 +71,7 @@
             <i class="fas fa-lock" id="icone_publish"></i>
             Publicar pauta
         </button>
+        <p id="warning" style="color:red">Esta pauta já está publicada, Por favor contacte o coordenador!</p>
     </div>
     {!! Form::close() !!}
 @endsection
@@ -136,9 +137,9 @@
             var curso_nome;
             var ano_nome;
             var selector_pauta = null;
-
+            var whoIs = "{{$whoIs}}"
             document.getElementById('togglee').style.visibility = 'hidden';
-
+            document.getElementById('warning').style.visibility = 'hidden';
             getCurso(id_anoLectivo);
             ano_nome = $("#lective_year")[0].selectedOptions[0].text;
 
@@ -163,11 +164,12 @@
                 getCurso(id_anoLectivo);
 
                 document.getElementById('togglee').style.visibility = 'hidden';
+                document.getElementById('warning').style.visibility = 'hidden';
             });
 
             function getCurso(id_anoLectivo) {
                 $.ajax({
-                    url: "/avaliations/getCurso/" + id_anoLectivo,
+                    url: "/avaliations/getCurso/" + id_anoLectivo + "/" + whoIs,
                     type: "GET",
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -198,7 +200,7 @@
                 var id_curso = vetorCurso.split(re);
                 $('#curso_slc').val(curso.val());
                 $.ajax({
-                    url: "/avaliations/getTurma/" + id_anoLectivo.val() + "/" + id_curso[0],
+                    url: "/avaliations/getTurma/" + id_anoLectivo.val() + "/" + id_curso[0] + "/" + whoIs,
                     type: "GET",
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -209,6 +211,7 @@
 
                     curso_nome = $("#curso_id_Select")[0].selectedOptions[0].text;
                     document.getElementById('togglee').style.visibility = 'hidden';
+                    document.getElementById('warning').style.visibility = 'hidden';
 
                     if (data == 500) {
                         $("#lista_tr").empty();
@@ -230,7 +233,7 @@
                 var vetorCurso = curso.val();
                 var re = /\s*,\s*/;
                 var id_curso = vetorCurso.split(re);
-
+                var hide_button = false
                 $.ajax({
                     url: "/avaliations/getStudentGradesTFC/" + id_anoLectivo.val() + "/" + id_curso[0] +
                         "/" + 1,
@@ -263,7 +266,7 @@
                         tabelatr += "<th>Defesa</th>"
                         tabelatr += "<th  colspan='2'>CLASSIFICAÇÃO TFC</th>"
                         $("#listaMenu").append(tabelatr);
-                        document.getElementById('togglee').style.visibility = 'visible';
+                       
                     } else {
                         $("#listaMenu").empty();
                         $("#lista_tr").empty();
@@ -272,7 +275,7 @@
 
 
                     // Mostra os botões
-                    if (data['data']['estado_pauta'] == 1 && data['data']['estado_tipo'] == 50) {
+                    if (data['data']['estado_pauta'] == 1 && data['data']['estado_tipo'] == 50 && whoIs != 'teacher') {
                         $("#togglee").text("Desbloquear Pauta");
 
                         //no modal de alerta de publicação de notas 
@@ -289,7 +292,7 @@
 
                         $("#icone_publish").removeClass("fas fa-lock");
                         $("#icone_publish").addClass("fas fa-unlock");
-                    } else if (data['data']['estado_pauta'] == 0 && data['data']['estado_tipo'] == 50) {
+                    } else if (data['data']['estado_pauta'] == 0 && data['data']['estado_tipo'] == 50 && whoIs != 'teacher') {
                         $("#togglee").text("");
                         $("#togglee").text("Publicar pauta");
                         $("#acaoID").text("Publicar");
@@ -305,7 +308,14 @@
                         $("#icone_publish").addClass("fas fa-lock");
                         $("#togglee").addClass("btn-success");
                         $("#togglee").removeClass(" btn-warning");
-                    } else {
+                    } 
+                    else if(data['data']['estado_pauta']==1 && data['data']['estado_tipo'] == 50 && whoIs == 'teacher'){
+                        hide_button = true;
+                    }
+                    else if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 50 && whoIs == 'teacher'){
+                        hide_button = true;
+                    }
+                    else {
                         $("#acaoID").text("Publicar");
                         $("#idTExto").text(
                             "Verifique se os dados da pauta estão correctos, nomeadamente: ");
@@ -348,6 +358,11 @@
                         nota_ja_existe === 0;
                         defesa_nome = "";
                         trabalho_nome = "";
+                        // HABILITA O BOTÃO DE SALVAR
+                        if(hide_button)
+                                document.getElementById('warning').style.visibility = 'visible';
+                               else
+                                document.getElementById('togglee').style.visibility = 'visible';
                         $.each(item, function(index_avaliacao, item_avaliacao) {
                             if (aluno_nome != item_avaliacao.fullName_value) {
                                 aluno_nome = item_avaliacao.fullName_value;

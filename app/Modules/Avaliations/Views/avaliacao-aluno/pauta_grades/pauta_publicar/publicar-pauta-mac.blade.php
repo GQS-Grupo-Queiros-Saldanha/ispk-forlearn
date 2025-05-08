@@ -147,6 +147,7 @@
             var ano_nome;
             var disciplina_regime;
             var selector_pauta = null;
+            var whoIs = "{{$whoIs}}"
             
             document.getElementById('togglee').style.visibility = 'hidden';     
             document.getElementById('warning').style.visibility = 'hidden';                                         
@@ -176,7 +177,7 @@
 
             function getCurso(id_anoLectivo) {
                 $.ajax({
-                    url: "/avaliations/getCurso/"+id_anoLectivo,
+                    url: "/avaliations/getCurso/"+id_anoLectivo + "/" + whoIs,
                     type: "GET",
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -206,7 +207,7 @@
                 var id_curso  = vetorCurso.split(re);
 
                 $.ajax({
-                    url: "/avaliations/getTurma/"+id_anoLectivo.val()+"/"+id_curso[0],
+                    url: "/avaliations/getTurma/"+id_anoLectivo.val()+"/"+id_curso[0] + "/" + whoIs,
                     type: "GET",
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -262,7 +263,7 @@
                 var anoCursoturma  = vetorTurma.split(reTurma); 
 
                 $.ajax({
-                    url: "/avaliations/getDiscipline/"+id_anoLectivo.val()+"/"+anoCursoturma[1]+"/"+arrayCurso[0],
+                    url: "/avaliations/getDiscipline/"+id_anoLectivo.val()+"/"+anoCursoturma[1]+"/"+arrayCurso[0] + "/" + whoIs,
                     type: "GET",
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -370,7 +371,7 @@
                     }
            
                     // Mostra os botões
-                    if(data['data']['estado_pauta']==1 && data['data']['estado_tipo'] == 40 && data['data']['whoIs'] != 'teacher'){
+                    if(data['data']['estado_pauta']==1 && data['data']['estado_tipo'] == 40 && whoIs != 'teacher'){
                         $("#togglee").text("Desbloquear pauta");
                         
                         //no modal de alerta de publicação de notas
@@ -388,13 +389,8 @@
                         $("#icone_publish").removeClass("fas fa-lock");
                         $("#icone_publish").addClass("fas fa-unlock");
                     }
-                    if(data['data']['estado_pauta']==1 && data['data']['estado_tipo'] == 40 && data['data']['whoIs'] == 'teacher'){
-                        hide_button = true;
-                    }
-                    if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 40 && data['data']['whoIs'] == 'teacher'){
-                        hide_button = true;
-                    }
-                    else if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 40 && data['data']['whoIs'] != 'teacher'){
+                   
+                    else if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 40 && whoIs != 'teacher'){
                         $("#togglee").text("");
                         $("#togglee").text("Publicar pauta");
 
@@ -413,7 +409,14 @@
 
                         $("#togglee").addClass("btn-success");
                         $("#togglee").removeClass(" btn-warning");                                 
-                    }else{
+                    }
+                    else if(data['data']['estado_pauta']==1 && data['data']['estado_tipo'] == 40 && whoIs == 'teacher'){
+                        hide_button = true;
+                    }
+                    else if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 40 && whoIs == 'teacher'){
+                        hide_button = true;
+                    }
+                    else{
                         $("#acaoID").text("Publicar");
                         $("#idTExto").text("Verifique se os dados da pauta estão correctos, nomeadamente: ");
                         $("#text1").text("Todos os alunos pertencem a esta TURMA?");
