@@ -167,13 +167,27 @@ class UsersController extends Controller
     public function ajaxGetDocente()
     {
         try {
+
+            $user = auth()->user();
+            $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
+            || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
+    
+           
             $model = User::query()
             ->whereHas('roles', function($q) {
                 // $q->where('id', '!=', 15);
                 $q->where('id', '=', 1);
             })
                 ->leftJoin('users as u1', 'u1.id', '=', 'users.created_by')
-                ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'users.id')
+                ->when($isCoordenador, function($q)use($user){
+                    $courses = $this->getcoordenadorCourses($user->id);
+                    
+                    $q->join('user_courses as uc', 'uc.users_id', '=', 'users.id');
+                    $q->whereIn('uc.courses_id',$courses);
+                })
+                ->when(!$isCoordenador, function($q)use($user){
+                    $q->leftjoin('user_courses as uc', 'uc.users_id', '=', 'users.id');
+                })
                 ->leftJoin('courses_translations as ct', function ($join) {
                         $join->on('ct.courses_id', '=', 'uc.courses_id');
                         $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
@@ -509,7 +523,17 @@ class UsersController extends Controller
 public function getcursoIndex()
 {
     try {
-        $data = Course::join('users as u1', 'u1.id', '=', 'courses.created_by')
+        $user = auth()->user();
+        $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
+        || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
+
+        
+        $data = Course::when($isCoordenador, function($q)use($user){
+            $coordenador_id = $user->id;
+            return $q->join('coordinator_course','coordinator_course.courses_id','courses.id')
+                    ->where('coordinator_course.user_id', $coordenador_id);
+        })
+        ->join('users as u1', 'u1.id', '=', 'courses.created_by')
         ->leftJoin('users as u2', 'u2.id', '=', 'courses.updated_by')
         ->leftJoin('users as u3', 'u3.id', '=', 'courses.deleted_by')
         ->leftJoin('duration_type_translations as dtt', function ($join) {
@@ -1489,7 +1513,14 @@ public function getcursoIndex()
             $graus_academicos = DB::table('grau_academico')->get();
             $categorias_profissionais = DB::table('categoria_profissional')->get();
 
-            $courses = Course::with([
+            $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
+            || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
+
+            $courses = Course::when($isCoordenador, function($q){
+                $c_courses = $this->getcoordenadorCourses(auth()->user()->id);
+                $q->whereIn('id',$c_courses);
+            })
+            ->with([
                 'currentTranslation'
             ])->get();
 
@@ -1585,6 +1616,13 @@ public function getcursoIndex()
             Log::error($e);
             return abort(500);
         }
+    }
+
+    private function getcoordenadorCourses($user_id){
+        return DB::table('coordinator_course')
+                    ->where('user_id',$user_id)
+                    ->pluck('courses_id')
+                    ->toArray();
     }
 
     public function roles($id)
