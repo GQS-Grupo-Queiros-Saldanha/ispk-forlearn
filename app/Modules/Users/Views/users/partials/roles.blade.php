@@ -1,10 +1,3 @@
-@php
-$isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
-            || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
-            $otherProfile = $user->id != auth()->user()->id;
-            $show = !($isCoordenador && $otherProfile);
-@endphp
-@if($show)
 <div class="@if(!isset($large)) card @endif">
     <div class="@if(!isset($large)) card-body row @endif">
         <div class="@if(!isset($large)) col @else large-form form-group col @endif">
@@ -21,4 +14,3 @@ $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn'])
         </div>
     </div>
 </div>
-@endif
