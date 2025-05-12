@@ -16,12 +16,7 @@
                                                     <br>
                                                     <select name="curso" id="curso" class="selectpicker form-control form-control-sm" data-live-search="true" style="width: 100%; !important">
                                                         
-                                                        {{-- @foreach ($curso_model as $item_curso)
-                                                            
-                                                                <option value="{{ $item_curso->id }}" selected>
-                                                                    {{ $item_curso->nome_curso }}
-                                                                </option> 
-                                                        @endforeach  --}}
+                                                      
                                                     </select>
                                                 </div>
 @endsection

@@ -12,7 +12,7 @@
     @foreach ($parameter_groups as $parameter_group)
         @if ($parameter_group->code == 'situacao_contratual' || $parameter_group->code == 'salarios_honorarios')
         @else
-            @if (($user->hasAnyRole($parameter_group->roles->pluck('id')->toArray()) && auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) || auth()->user()->hasAnyPermission(['criar_docente'])))
+            @if(($user->hasAnyRole($parameter_group->roles->pluck('id')->toArray()))
                 <li class="nav-item">
                     <a href="#" class="nav-link @if ($loop->index == 0)  @endif"
                         id="nav-tab-{{ $loop->index }}" data-toggle="tab"
