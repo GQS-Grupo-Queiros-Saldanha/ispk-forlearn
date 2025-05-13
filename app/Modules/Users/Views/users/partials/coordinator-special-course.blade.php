@@ -1,8 +1,12 @@
 @php
     $currentUserIsAuthorized = auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas']);
-@endphp
+    $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
+            || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
+            $otherProfile = $user->id != auth()->user()->id;
+            $show = !($isCoordenador && $otherProfile);
+    @endphp
 
-@if ($user->hasAnyRole(['coordenador-curso-profissional']))
+@if ($user->hasAnyRole(['coordenador-curso-profissional']) &&  $show)
     <div class="@if (!isset($large)) col col-6 @else large-form form-group col @endif">
         @if (isset($large))
             <label class="">Encarregado do curso profissional de</label>

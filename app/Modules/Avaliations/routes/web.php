@@ -469,6 +469,7 @@ Route::group(
                 Route::post('schedule_exam_store', 'ScheduleExamController@store')->name('schedule_exam.store');
             });
             Route::get('fix', 'ScheduleExamController@fix');
+            Route::get('get-metricas-segunda-chamada/{lective_year}','ScheduleExamController@getMetricasSegundaChamada');
 
             //Rota que return o percurso academico / criado pelo Marcos
             Route::get('percursoAcademico/{id}', 'AvaliacaoAlunoHistoricoController@show')->name('percursoAcademico');

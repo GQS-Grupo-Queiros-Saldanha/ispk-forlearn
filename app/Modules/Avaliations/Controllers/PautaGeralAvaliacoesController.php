@@ -4300,7 +4300,7 @@ class PautaGeralAvaliacoesController extends Controller
                     $q->join('user_disciplines as tc','tc.disciplines_id','stpeid_discipl.disciplines_id');
                     $q->where('tc.users_id',auth()->user()->id);
                 })
-                ->leftJoin('disciplines as dp', 'dp.id', '=', 'tc.disciplines_id')
+                ->leftJoin('disciplines as dp', 'dp.id', '=', 'stpeid_discipl.disciplines_id')
                 ->leftJoin('disciplines_translations as dt', function ($join) {
                     $join->on('dt.discipline_id', '=', 'dp.id');
                     $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));

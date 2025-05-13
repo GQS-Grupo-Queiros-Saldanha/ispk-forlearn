@@ -1,10 +1,15 @@
 @php
-    $currentUserIsAuthorized = auth()->user()->hasAnyRole(['coordenador-curso','superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas','rh_chefe','rh_assistente']);
+    $currentUserIsAuthorized = auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas','rh_chefe','rh_assistente']);
     $ids = [];
     foreach($userDepartment as $item)
      array_push($ids, $item->departments_id);    
+
+     $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
+            || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
+            $otherProfile = $user->id != auth()->user()->id;
+            $show = !($isCoordenador && $otherProfile);
 @endphp
-@if ($user->hasAnyRole(['teacher']))
+@if ($user->hasAnyRole(['teacher']) && $show)
     <div class="@if (!isset($large)) col col-6 @else large-form form-group col @endif">
         @if (isset($large))
             <label class="">Departamento</label>

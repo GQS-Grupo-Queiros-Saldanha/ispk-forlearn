@@ -139,6 +139,13 @@
 
                                         </div>
                                     </div>
+
+                                    <div class="col-6" id='metrics_container' hidden>
+                                        <div class="form-group col">
+                                            <label>Métrica</label>
+                                            {{ Form::bsLiveSelectEmpty('metric', [], null, ['id' => 'metrics', 'class' => 'form-control'])}}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <input type="hidden" id="lectiveY"  value="" name="anoLectivo">
@@ -220,6 +227,16 @@
                 var lective_year_matriculation = $("#lective_year").val();
                 $("#group").empty();
 
+                if(exam == 3)
+            {
+                getMetricas();
+            }
+            else{
+                $("#metrics_container").prop('hidden',true)
+                $("#metrics").prop('required',false)
+            }
+
+
                 $.ajax({
                     url: "/avaliations/get_students_where_has/" + exam + "/" + course_id +"/"+lective_year_matriculation,
                     type: "GET",
@@ -248,6 +265,42 @@
 
                 });
             })
+
+           function getMetricas(){
+                var lective_year_matriculation = $("#lective_year").val();
+                $('#metrics_container').prop('hidden',false)
+                $('#metrics').prop('required',true)
+
+                $.ajax({
+                    url: "/avaliations/get-metricas-segunda-chamada/" +lective_year_matriculation,
+                    type: "GET",
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    cache: false,
+                    dataType: 'json',
+
+                    success: function (result) {
+                        
+                        $("#metrics").prop('disabled', true);
+                        $("#metrics").empty();
+
+                        $("#metrics").append('<option selected="" value=""></option>');
+                        $.each(result, function (index, row) {
+                            $("#metrics").append('<option value="' + row.id + '">' + row.nome + '</option>');
+                        });
+
+                        $("#metrics").prop('disabled', false);
+                        $("#metrics").selectpicker('refresh');
+                    },
+                    error: function (dataResult) {
+                        //alert('error' + result);
+                    }
+
+                });
+            }
+
+
 
             
             $("#courses").change(function(){

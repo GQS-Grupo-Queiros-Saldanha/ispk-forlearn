@@ -31,6 +31,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Modules\GA\Models\Classes;
 use App\Modules\GA\Models\LectiveYear;
 use App\Modules\Users\Controllers\MatriculationDisciplineListController;
+use App\Modules\Avaliations\Models\Metrica;
 
 class ScheduleExamController extends Controller
 {
@@ -846,32 +847,20 @@ class ScheduleExamController extends Controller
                     //Comparar as disciplnas na sua turma 
                     if($dados_disciplina[0]== $dados[0]){
 
-                        
-                        $object = new MatriculationDisciplineListController();
-                        $avaliacoes = $object->avaliacoes($id_disciplina,$id_LectiveYear)->pluck('id')->toArray();
-
                         $metric = DB::table('metricas')
-                        ->whereIn('avaliacaos_id', $avaliacoes)
-                        ->leftjoin('calendarie_metrica as cm', 'metricas.id', '=', 'cm.id_metrica')
-                        ->leftJoin('calendarie_metrica_segunda_chamada as sc','sc.id_calendarie_metrica','cm.id')
-                        ->where('cm.data_inicio', '<=', $currentData)  // Verifique se 'data_inicio' existe
-                        ->where('cm.data_fim', '>=', $currentData)    // Verifique se 'data_fim' existe
-                        ->where('sc.data_inicio', '<=', $currentData)  // Verifique se 'data_inicio' existe
-                        ->where('sc.data_fim', '>=', $currentData)    // Verifique se 'data_fim' existe
+                        ->where('id', $request->metric)
                          ->select('metricas.*')
                          ->first();
 
-            
-
                         if ($metric != null) {
-                             $metric_id = $metric->id;
+                             $metric_id = $request->metric;
                         }
                         else{
-                           
+                         
                             Toastr::error(__(' Não foi possivel criar o emolumento de  SEGUNDA CHAMADA DE PROVA PARCELAR, por favor tente novamente'), __('toastr.error'));
                             return redirect()->back();
                         }
-
+                        
                           //Márcia
                           $pauta=DB::table('lancar_pauta')
                           ->where(['id_turma'=>$id_turma,
@@ -882,7 +871,8 @@ class ScheduleExamController extends Controller
                           ->orderBy('version', 'DESC')
                           ->first();
 
-                          if(!(($pauta->estado == 1 ) || ($pauta->estado == 0 && $pauta->active == 1))){
+
+                          if(isset($pauta) && !(($pauta->estado == 1 ) || ($pauta->estado == 0 && $pauta->active == 1))){
                                 continue;
                           }
 
@@ -1001,6 +991,21 @@ class ScheduleExamController extends Controller
 
 
 
+     }
+
+     public function getMetricasSegundaChamada($lective_year){
+
+        $data = Metrica::whereIn('metricas.code_dev', ['PF1', 'PF2','Neen']) 
+        ->join('avaliacaos', function($join) use ($lective_year) {
+            $join->on('avaliacaos.id', '=', 'metricas.avaliacaos_id')
+                 ->where('avaliacaos.anoLectivo', '=', $lective_year)
+                 ->whereNull('avaliacaos.deleted_at')
+                 ->whereNull('avaliacaos.deleted_by');
+        })
+        ->select('metricas.*')
+        ->get();
+    
+            return json_encode($data);
      }
     
 

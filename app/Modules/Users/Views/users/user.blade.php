@@ -430,6 +430,7 @@
             
             if (params3_14 && params3_14.match(/^[0-9]{9}[A-Z]{2}[0-9]{3}$/)) {
                 let file = $('input[name="attachment_parameters[1][25]"]').val();
+                console.log(file)
                 let extension = file.substr((file.lastIndexOf('.') + 1));
 
                 if (!$('input[name="attachment_parameters[1][25]"]').val() == "") {
@@ -511,6 +512,7 @@
                                 data
                             })
                             .then(function(resp) {
+                                console.log(resp.disciplines.length)
 
                                 if (resp.disciplines.length) {
                                     selectDisciplines.empty();
