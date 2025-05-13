@@ -183,7 +183,7 @@
         
         <div class="container-footer">
             <div class="d1">
-              <p><img class="img-footer" src="//dev.forlearn.ao/img/login/ForLEARN 03.png" title="Logo forLEARN" alt="Logo forLEARN"> <sub>by GQS</sub> <sub class="sub2"> Versão: 1.3.43</sub> <br> © @php echo date("Y");@endphp Todos os direitos reservados</p>
+              <p><img class="img-footer" src="//ispk.forlearn.ao/img/login/ForLEARN 03.png" title="Logo forLEARN" alt="Logo forLEARN"> <sub>by GQS</sub> <sub class="sub2"> Versão: 1.3.43</sub> <br> © @php echo date("Y");@endphp Todos os direitos reservados</p>
             </div>
            <div class="d3">
                
