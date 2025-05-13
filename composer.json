@@ -46,7 +46,6 @@
         "laravel/telescope": "^2.1",
         "mockery/mockery": "~1.0",
         "phpunit/phpunit": "~6.0",
-        "roave/security-advisories": "dev-master",
         "xethron/migrations-generator": "^2.0"
     },
     "autoload": {
@@ -55,7 +54,8 @@
             "database/factories"
         ],
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Modules\\GA\\": "app/Modules/GA/"
         }
     },
     "autoload-dev": {

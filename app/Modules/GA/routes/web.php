@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\GA\Controllers\ScholarshipHolderController;
+use App\Modules\GA\Controllers\DocumentsTypesController;
 
 Route::group(
     [
@@ -20,6 +21,20 @@ Route::group(
             // Admin
             // Note: if changing prefix please change it as well in the database (menu_items)
             Route::group(['prefix' => 'gestao-academica'], function () {
+            
+            // Tipos de Documentos
+            Route::prefix('documents-types')->name('documents-types.')->group(function () {
+            Route::get('/debug', [DocumentsTypesController::class, 'debug']/*function () {return 'rota local viva';}*/)->name('debug');
+            Route::get('/', [DocumentsTypesController::class, 'index'])->name('index');
+            Route::get('/ajax', [DocumentsTypesController::class, 'ajax'])->name('ajax');
+            Route::get('/create', [DocumentsTypesController::class, 'create'])->name('create');
+            Route::post('/', [DocumentsTypesController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [DocumentsTypesController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [DocumentsTypesController::class, 'update'])->name('update');
+            Route::get('/{id}', [DocumentsTypesController::class, 'show'])->name('show');
+            Route::delete('/{id}', [DocumentsTypesController::class, 'destroy'])->name('destroy');
+            });
+
         
             //sedrac
             Route::post('mudanca-curso','settingCourseCurricularController@students_course_curricular_block_change')->name('mudanca.curso');

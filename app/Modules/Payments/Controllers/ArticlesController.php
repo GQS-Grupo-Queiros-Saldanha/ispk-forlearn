@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Modules\Payments\Controllers;
-
+use App\Modules\Payments\Models\ArticleDocument;
+use App\Modules\GA\Models\DocumentsTypes; //model para os tipos de documentos
 use App\Helpers\LanguageHelper;
 use App\Helpers\TimeHelper;
 use App\Http\Controllers\Controller;
@@ -121,12 +122,14 @@ class ArticlesController extends Controller{
             $courses = Course::with([
                 'currentTranslation'
             ])->get();
+                $tiposdocumentos = DB::table('documentation_type')->get();
                 $categorias = DB::table('article_category')->get();
                $data = [
                 'action' => 'create',
                 'categorias' => $categorias,
                 'courses' => $courses,
                 'idAno_lectivo' => $idAno_lectivo,
+                'tiposdocumentos' => $tiposdocumentos,
                 'languages' => Language::whereActive(true)->get()
             ];
 
@@ -226,6 +229,15 @@ class ArticlesController extends Controller{
             }
 
             DB::commit();
+            
+            if ($request->has('documentation_type_id') && !empty($article)) {
+                $doc = new ArticleDocument();
+                $doc->article_id = $article->id;
+                $doc->documentation_type_id = $request->input('documentation_type_id');
+                $doc->created_by = auth()->id() ?? 1;
+                $doc->created_at = now();
+                $doc->save();
+            }
 
             // Success message
             Toastr::success(__('Payments::articles.store_success_message'), __('toastr.success'));
@@ -255,11 +267,13 @@ class ArticlesController extends Controller{
                 ->with('extra_fees')
                 ->firstOrFail();
             $categorias = DB::table('article_category')->get();
+            $tiposdocumentos = DB::table('documentation_type')->get();
             $data = [
                 'action' => $action,
                 'article' => $article,
                 'categorias' => $categorias,
                 'idAno_lectivo' => $id[0],
+                'tiposdocumentos' => $tiposdocumentos,
                 'translations' => $article->translations->keyBy('language_id')->toArray(),
                 'languages' => Language::whereActive(true)->get()
             ];
@@ -367,14 +381,23 @@ class ArticlesController extends Controller{
                     'active' => true,
                 ];
             }
-
             if (!empty($article_translations)) {
+
                 ArticleTranslation::insert($article_translations);
             }
 
             DB::commit();
 
             $article->save();
+
+            if (!empty($article)) {
+                $doc = new ArticleDocument();
+                $doc->article_id = $article->id;
+                $doc->documentation_type_id = $request->input('documentation_type_id');
+                $doc->created_by = auth()->id() ?? 1;
+                $doc->created_at = now();
+                $doc->save();
+            }
 
             // Success message
             Toastr::success(__('Payments::articles.update_success_message'), __('toastr.success'));
