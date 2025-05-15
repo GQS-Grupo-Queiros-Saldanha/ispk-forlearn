@@ -1,7 +1,6 @@
 @php
     $currentUserIsAuthorized = auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas']);
-    $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
-    || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
+    $isCoordenador = is_coordenador(auth()->user());
             $otherProfile = $user->id != auth()->user()->id;
             $show = !($isCoordenador && $otherProfile);
     @endphp

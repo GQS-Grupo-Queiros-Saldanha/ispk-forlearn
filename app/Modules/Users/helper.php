@@ -431,9 +431,16 @@ function Mudar_estado($user_id,$date_current_historic,$estado_id,$curso){
             });
         }
     }
+
+
     
 }
 
+function is_coordenador($user)
+{
+    $currentUserIsAuthorized = $user->hasAnyRole(['superadmin', 'staff_forlearn', 'staff_inscrições', 'staff_matriculas','rh_chefe','rh_assistente']);
+    return !$currentUserIsAuthorized;
+}
 
 
 

@@ -169,8 +169,7 @@ class UsersController extends Controller
         try {
 
             $user = auth()->user();
-            $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
-            || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
+            $isCoordenador = is_coordenador(auth()->user());
     
            
             $model = User::query()
@@ -524,8 +523,7 @@ public function getcursoIndex()
 {
     try {
         $user = auth()->user();
-        $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
-        || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
+        $isCoordenador = is_coordenador($user); 
 
         
         $data = Course::when($isCoordenador, function($q)use($user){
@@ -739,17 +737,7 @@ public function getcursoIndex()
 
     public function store(UserRequest $request)
     {
-        // if ((int)$request->roles === 1) {                
-        //     //return redirect()->route('users.index');
-        //     return  $request;
-        // }   
-        // else {
-        //     return $request->roles;
-        // } 
-        
-        //$user = User::withTrashed()->where('email', $request->get('email'))->first();
-        //return $user->syncRoles(15)->roles[0]->id;
-        
+  
         try {
             
             DB::beginTransaction();
@@ -1018,8 +1006,6 @@ public function getcursoIndex()
             $data['updated_by'] = auth()->user()->id;
             $user->update($data);
 
-            // Delete all relations
-            $user->parameters()->sync([]);
             //Updat ve Or Create (Join) Teacher with departments
             if ($user->hasAnyRole(['staff_forlearn','teacher','coordenador-curso'])) {
                 if(!empty($request->get('departments')))
@@ -1027,7 +1013,7 @@ public function getcursoIndex()
             }
             
             //Associate Coordinator to a Course
-            if($user->hasAnyRole(['coordenador-curso'])) {
+            if($user->hasAnyRole(['coordenador-curso']) && $request->has('coodinator-course')) {
                 $coodinatorCourse = $request->get('coodinator-course');
                 if(is_array($coodinatorCourse)){
                     DB::table('coordinator_course')->where('user_id',$user->id)->delete();
@@ -1046,7 +1032,7 @@ public function getcursoIndex()
                 }
             }
 
-            if($user->hasAnyRole(['coordenador-curso-profissional'])) {
+            if($user->hasAnyRole(['coordenador-curso-profissional']) && $request->has('coodinator-special-course')) {
                 $coodinatorSpecialCourse = $request->get('coodinator-special-course');
                 if(is_array($coodinatorSpecialCourse)){
                   
@@ -1081,7 +1067,7 @@ public function getcursoIndex()
 
                             $file->storeAs('attachment', $filename);
 
-                            $user_parameters[] = [
+                            $user_parameters[$index_parameter] = [
                                 'parameters_id' => $index_parameter,
                                 'created_by' => $current_user->id ?? 0,
                                 'parameter_group_id' => $index_parameter_group,
@@ -1100,21 +1086,7 @@ public function getcursoIndex()
                             
                         }
                     }
-                } /*else {
-                    $files_names = $request->get('attachment_parameters');
-                    foreach ($files_names as $index_parameter_group => $parameter) {
-                        foreach ($parameter as $index_parameter => $value) {
-                            if ($value !== null) {
-                                $user_parameters[] = [
-                                    'parameters_id' => $index_parameter,
-                                    'created_by' => $current_user->id ?? 0,
-                                    'parameter_group_id' => $index_parameter_group,
-                                    'value' => $value
-                                ];
-                            }
-                        }
-                    }
-                }*/
+             
             }
 
             if ($request->has('parameters')) {
@@ -1131,7 +1103,7 @@ public function getcursoIndex()
                             }
                         }
 
-                        $user_parameters[] = [
+                        $user_parameters[$index_parameter]= [
                             'parameters_id' => $index_parameter,
                             'created_by' => $current_user->id ?? 0,
                             'parameter_group_id' => $index_parameter_group,
@@ -1156,7 +1128,7 @@ public function getcursoIndex()
             
             // Save parameters
             if (!empty($user_parameters)) {
-                $user->parameters()->sync($user_parameters);
+                $user->parameters()->syncWithoutDetaching($user_parameters);
             }
               
             $courses = [];
@@ -1258,32 +1230,40 @@ public function getcursoIndex()
                 
             }
             $user_id = auth()->user()->id;
+            if($request->has('email')){  
              DB::table('user_parameters')
                    ->updateOrInsert(
                         ['parameter_group_id' => 1, 'parameters_id' => 312, 'users_id' => $user->id],
                         ['value' => $request->get('email'),'created_by' => $user_id, 'updated_by' => $user_id]
                     );
-                    
-            // Grau academico      
+                } 
+            // Grau academico    
+            if($request->has('id_grau_academico')){  
              DB::table('user_parameters')
                     ->updateOrInsert(
                          ['parameters_id' => ParameterEnum::GRAU_ACADEMICO, 'users_id' => $user->id],
                          ['value' => $request->get('id_grau_academico'),'created_by' => $user_id, 'updated_by' => $user_id]
                      );
+            }
 
-            DB::table('user_parameters')
-                     ->updateOrInsert(
-                          ['parameters_id' => ParameterEnum::CARGO_PRINCIPAL, 'users_id' => $user->id],
-                          ['value' => $request->get('main-role'),'created_by' => auth()->user()->id, 'updated_by' => auth()->user()->id]
-                      );
+                     if($request->has('main-role')){
+                        DB::table('user_parameters')
+                        ->updateOrInsert(
+                             ['parameters_id' => ParameterEnum::CARGO_PRINCIPAL, 'users_id' => $user->id],
+                             ['value' => $request->get('main-role'),'created_by' => auth()->user()->id, 'updated_by' => auth()->user()->id]
+                         );
+                     }
+           
 
             // Categoria Profissional    
-             DB::table('user_parameters')
-             ->updateOrInsert(
-                  ['parameters_id' => ParameterEnum::CATEGORIA_PROFISSIONAL, 'users_id' => $user->id],
-                  ['value' => $request->get('id_categoria_profissional'),'created_by' => $user_id, 'updated_by' => $user_id]
-              );
-
+            if($request->has('id_categoria_profissional')){
+                DB::table('user_parameters')
+                ->updateOrInsert(
+                     ['parameters_id' => ParameterEnum::CATEGORIA_PROFISSIONAL, 'users_id' => $user->id],
+                     ['value' => $request->get('id_categoria_profissional'),'created_by' => $user_id, 'updated_by' => $user_id]
+                 );
+            }
+             
 
 
             DB::commit();
@@ -1513,9 +1493,7 @@ public function getcursoIndex()
             $graus_academicos = DB::table('grau_academico')->get();
             $categorias_profissionais = DB::table('categoria_profissional')->get();
 
-            $isCoordenador = !(auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn']) 
-            || auth()->user()->hasAnyPermission(['criar_docente'])) ? 1 : 0;
-
+            $isCoordenador = is_coordenador(auth()->user()); 
             $courses = Course::when($isCoordenador, function($q){
                 $c_courses = $this->getcoordenadorCourses(auth()->user()->id);
                 $q->whereIn('id',$c_courses);

@@ -235,8 +235,6 @@
                 $("#metrics_container").prop('hidden',true)
                 $("#metrics").prop('required',false)
             }
-
-
                 $.ajax({
                     url: "/avaliations/get_students_where_has/" + exam + "/" + course_id +"/"+lective_year_matriculation,
                     type: "GET",
