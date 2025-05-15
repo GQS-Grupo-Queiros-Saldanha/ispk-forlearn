@@ -1086,7 +1086,7 @@ public function getcursoIndex()
                             
                         }
                     }
-             
+                }
             }
 
             if ($request->has('parameters')) {
@@ -1282,6 +1282,8 @@ public function getcursoIndex()
         }
         
     }
+
+    
 
     /**
      * Remove the specified resource from storage.
