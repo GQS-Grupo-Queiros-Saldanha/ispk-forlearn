@@ -1382,19 +1382,19 @@ class mainController extends Controller
                   $notas_percurso
               );
 
-             
-
-              $temNotaFinal = $dadosDisciplina['notas']['final'] !== null;
+                   
+    
+              $temNotaFinal = $dadosDisciplina['nota_final'] !== null;
+              
 $temNotaPercurso = $dadosDisciplina['nota_percurso'] !== null;
-$notasSaoDiferentes = $dadosDisciplina['notas']['final'] != $dadosDisciplina['nota_percurso'];
-$temMelhoriaNota = $dadosDisciplina['notas']['melhoria_nota'] !== null; 
+
+$notasSaoDiferentes = $dadosDisciplina['nota_final'] != $dadosDisciplina['nota_percurso'];
 
 if (
     (
         ($temNotaFinal && !$temNotaPercurso) || 
         ($temNotaPercurso && $notasSaoDiferentes)
-    ) &&
-    !$temMelhoriaNota
+    ) 
 ){    
                   $dadosSemestre[] = $dadosDisciplina;
               }
@@ -1402,6 +1402,7 @@ if (
           }
 
       }
+      
       return $dadosSemestre
       ;
   }
@@ -1423,6 +1424,7 @@ if (
         $notas['melhoria_nota'] = !is_null($m->new_grade) ? $m->new_grade : null;
     }
 
+    if($notas['melhoria_nota'] === null){
       $percentuais = ['pf1' => 0, 'pf2' => 0, 'oa' => 0];
       $mac_percent = $config->percentagem_mac / 100;
       $oral_percent = $config->percentagem_oral / 100;
@@ -1560,19 +1562,26 @@ if (
             $notas['final_estado'] = 'Reprovado(a)';
             $notas['final_cor'] = 'for-red';
         }
+
+       
      
-    }
+        }
+
+   }
+   else{
+    $notas['final'] = $notas['melhoria_nota'];
+   }
    
       $nota_percurso = $notas_percurso->filter(function($item) use($disciplina){
           return $item->discipline_id == $disciplina->id_disciplina;
-      })->first();
+    })->first();
 
       
       return [
         'discipline_id' => $disciplina->id_disciplina,
           'codigo' => $index,
           'disciplina' => $disciplina->nome_disciplina,
-          'notas' => $notas,
+          'nota_final' => $notas['final'],
           'nota_percurso' => $nota_percurso->grade ?? null,
       ];
   }
