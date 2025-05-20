@@ -234,11 +234,13 @@ class RequerimentoController extends Controller
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
             $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $article_dados = DB::table('articles_documents')->get();
 
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
                 'diploma' => $diploma->diploma,
+                'code' => $article_dados,
             ];
 
             return view('Avaliations::requerimento.requerimento_doc')->with($data);
@@ -764,7 +766,7 @@ class RequerimentoController extends Controller
 
                     // Certificados 
 
-                    $articles1 = DB::table('articles')
+                    $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                         ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
                         ->whereNull('articles.deleted_by')
@@ -775,145 +777,38 @@ class RequerimentoController extends Controller
                         ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
                         ->get();
 
-                    $articles1 = collect($articles1);
+                    $articles = collect($articles);
 
-                    $articles_cf = $articles1->unique("nome");
+                    $articles = $articles->unique("nome");
 
-                    $articles_cf->values()->all();
-
-                    //  certificado de mérito
-
-                    $articles2 = DB::table('articles')
-                        ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
-                        ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                        ->whereNull('articles.deleted_by')
-                        ->whereNull('traducao.deleted_at')
-                        ->where('traducao.active', 1)
-                        ->where('traducao.display_name', 'like', "certificado de mérito")
-                        ->orderBy('traducao.display_name')
-                        ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
-                        ->get();
-
-                    $articles2 = collect($articles2);
-
-                    $articles_cfm = $articles2->unique("nome");
-
-                    $articles_cfm->values()->all();
-
-
+                    $articles->values()->all();
 
                     return $data = [
-                        'articles_cf' => $articles_cf,
-                        'articles_cfm' => $articles_cfm,
+                        'articles' => $articles,
                         'type' => 2
-
                     ];
                     break;
                 case '1':
 
-                    // Declarações sem notas / urgente
-
-                    $articles1 = DB::table('articles')
+                    $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                         ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
                         ->whereNull('articles.deleted_by')
                         ->whereNull('traducao.deleted_at')
                         ->where('traducao.active', 1)
-                        ->where('traducao.display_name', 'like', "%eclaração sem notas%")
+                        ->where('traducao.display_name', 'like', "%Declaração%")
                         ->orderBy('traducao.display_name')
                         ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
                         ->get();
 
-                    $articles1 = collect($articles1);
+                    $articles = collect($articles);
 
-                    $articles_dsn = $articles1->unique("nome");
+                    $articles = $articles->unique("nome");
 
-                    $articles_dsn->values()->all();
-
-                    // Declarações com notas / urgente 
-
-                    $articles2 = DB::table('articles')
-                        ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
-                        ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                        ->whereNull('articles.deleted_by')
-                        ->whereNull('traducao.deleted_at')
-                        ->where('traducao.active', 1)
-                        ->where('traducao.display_name', 'like', "%eclaração com notas%")
-                        ->orderBy('traducao.display_name')
-                        ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
-                        ->get();
-
-                    $articles2 = collect($articles2);
-
-                    $articles_dcn = $articles2->unique("nome");
-
-                    $articles_dcn->values()->all();
-
-                    // Declarações frequência  / urgente 
-
-                    $articles3 = DB::table('articles')
-                        ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
-                        ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                        ->whereNull('articles.deleted_by')
-                        ->whereNull('traducao.deleted_at')
-                        ->where('traducao.active', 1)
-                        ->where('traducao.display_name', 'like', "%eclaração de frequência%")
-                        ->orderBy('traducao.display_name')
-                        ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
-                        ->get();
-
-                    $articles3 = collect($articles3);
-
-                    $articles_df = $articles3->unique("nome");
-
-                    $articles_df->values()->all();
-
-                    // Declarações de fim de curso
-
-                    $articles4 = DB::table('articles')
-                        ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
-                        ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                        ->whereNull('articles.deleted_by')
-                        ->whereNull('traducao.deleted_at')
-                        ->where('traducao.active', 1)
-                        ->where('traducao.display_name', 'like', "%eclaração de fim de curso%")
-                        ->orderBy('traducao.display_name')
-                        ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
-                        ->get();
-
-                    $articles4 = collect($articles4);
-
-                    $articles_dfdc = $articles4->unique("nome");
-
-                    $articles_dfdc->values()->all();
-
-                    // Declaração com Notas de Exame de Acesso
-
-                    $articles5 = DB::table('articles')
-                        ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
-                        ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                        ->whereNull('articles.deleted_by')
-                        ->whereNull('traducao.deleted_at')
-                        ->where('traducao.active', 1)
-                        ->where('traducao.display_name', 'like', "%declaração com notas de exame de acesso%")
-                        ->orderBy('traducao.display_name')
-                        ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
-                        ->get();
-
-                    $articles5 = collect($articles5);
-
-                    $articles_dnexa = $articles5->unique("nome");
-
-                    $articles_dnexa->values()->all();
-
-
+                    $articles->values()->all();
 
                     return $data = [
-                        'articles_dsn' => $articles_dsn,
-                        'articles_dcn' => $articles_dcn,
-                        'articles_df' => $articles_df,
-                        'articles_dfdc' => $articles_dfdc,
-                        'articles_dnexa' => $articles_dnexa,
+                        'articles'=>$articles,
                         'type' => 1
 
                     ];
@@ -921,9 +816,9 @@ class RequerimentoController extends Controller
                     break;
                 case '3':
 
-                    // Declarações sem notas / urgente
+                    // Diploma
 
-                    $articles1 = DB::table('articles')
+                    $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                         ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
                         ->whereNull('articles.deleted_by')
@@ -934,9 +829,9 @@ class RequerimentoController extends Controller
                         ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
                         ->get();
 
-                    $articles1 = collect($articles1);
+                    $articles = collect($articles);
 
-                    $diplomas = $articles1->unique("nome");
+                    $diplomas = $articles->unique("nome");
 
                     $diplomas->values()->all();
 
@@ -951,7 +846,7 @@ class RequerimentoController extends Controller
 
                 case '4':
 
-                    // Declarações sem notas / urgente
+                    // Anulação de matrícula
 
                     $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
@@ -959,7 +854,7 @@ class RequerimentoController extends Controller
                         ->whereNull('articles.deleted_by')
                         ->whereNull('traducao.deleted_at')
                         ->where('traducao.active', 1)
-                        ->where('traducao.display_name', 'like', "%nulação de Matr%")
+                        ->where('traducao.display_name', 'like', "%Anulação de Matr%")
                         ->orderBy('traducao.display_name')
                         ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
                         ->get();
@@ -995,14 +890,14 @@ class RequerimentoController extends Controller
 
                     $articles = collect($articles);
 
-                    $percurso = $articles->unique("nome");
+                    $articles = $articles->unique("nome");
 
-                    $percurso->values()->all();
+                    $articles->values()->all();
 
 
 
                     return $data = [
-                        'percurso' => $percurso,
+                        'percurso' => $articles,
                         'type' => 5
                     ];
 

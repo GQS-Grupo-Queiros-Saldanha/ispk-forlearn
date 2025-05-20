@@ -23,9 +23,6 @@
                 
                 $user = Auth::user();
                 
- 
-                
-                
             @endphp
      
              @if(count($menus) > 0)

@@ -28,17 +28,26 @@
                    <h3>Apoio ao estudante</h3>
                   <input class="form-control"   placeholder="Destinatário: Instituição de ensino" name="studant" readonly title="Este campo representa a entidade em que será enviada a mensagem do estudante." value="studant" type="hidden">
                 </div>
-
-                
                 @else 
+                  <div class="form-group col pl-0">
+                    <small>Canal</small>
+                    <select name="canal" id="meio" class="selectpicker form-control autor"
+                      data-actions-box="false" data-selected-text-format="count > 10"
+                      data-live-search="false" required placeholder="Para:"
+                      onchange="controlSubjectField()">
+                      {{-- <option value="">Nenhum seleccionado</option> --}}
+                      <option value="0">forLEARN®</option>
+                      <option value="1">Whatsapp</option>
+                      <option value="2">SMS</option>
+                  </select>
                    <div class="form-group">
                       <small>Destinatário(s)</small>
                       <select name="to[]" id="destinarios" multiple  class="selectpicker form-control autor" data-actions-box="true" data-selected-text-format="count > 10" data-live-search="true" required placeholder="Para:" >
-                          
-                          @foreach ($user as $item)
-                            <option value="{{ $item->id }}"
-                             @if($is_apoio && ( $item->email == ($email_apoio ?? '') ) ) selected @endif> 
-                                {{ $item->value!="" ? $item->value ."( ".$item->email." )":$item->name."( ".$item->email." )" }}
+                          @foreach ($users as $user)
+                            <option value="{{ $user->user_whatsapp }}">
+                              @if(isset($user->user_whatsapp) && $user->user_whatsapp !== '')
+                                {{ $user->name }} ({{ $user->user_whatsapp }})
+                              @endif
                             </option>
                           @endforeach
                       </select>

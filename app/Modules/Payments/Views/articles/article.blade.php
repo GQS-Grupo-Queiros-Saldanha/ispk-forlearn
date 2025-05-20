@@ -121,6 +121,30 @@
                     <div class="col-4">
                         {{ Form::bsText('base_value', null, ['placeholder' => 'AKZ', 'disabled' => $action === 'show', 'required', 'min' => 0, 'max' => 500000], ['label' => __('Payments::articles.base_value')]) }}
                     </div>
+                    <!-- Formulário escondido inicialmente -->
+                    <div id="Myform" class="col-4" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#f2f4f7; padding:30px; border-radius:10px; z-index:1000; box-shadow:0 0 15px rgba(0,0,0,0.3); width:400px; align-items: center;">
+                    <label for="tiposD">Tipos de Documentos</label>
+                        <select class="selectpicker form-control form-control-sm" name="documentation_type_id" id="documentation_type_id" data-actions-box="true" data-live-search="true" @if($action == 'show') disabled @endif>
+                            <option value="" disabled  @if($action == 'create') selected @endif>
+                                    Tipos de Documentos
+                            </option>
+                            @if(isset($tiposdocumentos))
+                                @foreach ($tiposdocumentos  as $tiposdocumento)
+                                    <option value="{{ $tiposdocumento->id }}"
+                                        @if(($action == 'edit' || $action == 'show') && $article->id_category == $tiposdocumento->id) selected @endif>
+                                            {{ $tiposdocumento->observation }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select> 
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button type="button" class="btn btn-success" id="prosseguir">Prosseguir</button>
+                                </div>
+                            </div>                 
+                    <!-- Formulário escondido inicialmente -->
+                    <div class="col-4">
+                        {{ Form::bsCheckbox('active', 1, null, ['disabled' => $action === 'show'], ['label' => __('Tipos de Documentos')]) }}
+                    </div>
                     <div class="col-4">
                         <div class="form-group">
                             <label for="fase_type">Categoria</label>
@@ -344,5 +368,23 @@
             name: 'monthly_charge_charge_day[]'
         }], initialDataMonthlyCharge, '{!! trans('common.delete') !!}', 'modal_type_8', '{!! $action !!}');
         dt8.initialize();
+
+
+    document.getElementById("active").addEventListener("change", function() {
+    const formContainer = document.getElementById("Myform");
+    const botaoProsseguir = document.getElementById("prosseguir").addEventListener("click", function() {
+        formContainer.style.display = "none";
+    });
+
+    if (this.checked) {
+ 
+        formContainer.style.display = "block";
+
+    } else {
+ 
+        formContainer.style.display = "none";
+    }
+});
+
     </script>
 @endsection

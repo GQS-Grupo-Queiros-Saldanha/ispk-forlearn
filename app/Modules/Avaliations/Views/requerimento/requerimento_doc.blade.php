@@ -205,6 +205,9 @@
     @parent
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <script>
+          window.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('req_type').selectedIndex = 0;
+        });
         Modal.confirm('{!! Request::fullUrl() !!}/', '{!! csrf_token() !!}');
 
         var tipo_requerimento = $("#req_type");
@@ -360,126 +363,23 @@
 
                 if (data["type"] == 1) {
 
-                    // Declarações com notas
-
-                    data["articles_dcn"].forEach(function(article) {
-
-                        var doc = article.nome.toLowerCase();
-
-                        switch (doc) {
-                            case "declaração com notas":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article.money + ',2">' + article.nome + '</option>');
-                                break;
-
-                            case "declaração com notas urgente":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',2">' + article.nome + '</option>');
-                                break;
-
-                            default:
-                                break;
-                        }
-                    });
-
-                    // Declarações sem notas
-
-                    data["articles_dsn"].forEach(function(article) {
+                    // Declarações
+                    data["articles"].forEach(function(article) {
 
                         var doc = article.nome.toLowerCase();
-
-                        switch (doc) {
-                            case "declaração sem notas":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',1">' + article.nome + '</option>');
-                                break;
-
-                            case "declaração sem notas urgente":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',1">' + article.nome + '</option>');
-                                break;
-
-                            default:
-                                break;
-                        }
-
-
-
-                    });
-
-                    // Declarações de frequência
-
-                    data["articles_df"].forEach(function(article) {
-
-                        var doc = article.nome.toLowerCase();
-
-                        switch (doc) {
-                            case "declaração de frequência":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',6">' + article.nome + '</option>');
-                                break;
+                        //filtragem do id fornecido com o id da tabela article_documents!
+                        const code = @json($code);
+                        let filtro = article.id_article;
+                        let filtrados = code.filter(item => item.article_id === filtro);
+                        
+                        if(filtrados.length == 0) return;
                             
-                            case "declaração de frequência urgente":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',6">' + article.nome + '</option>');
-                                break;
+                        let doctype = filtrados[0].documentation_type_id;
+                        //console.log(doc)
+                        emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + doctype +'">' + article.nome + '</option>');
 
-                            default:
-                                break;
                         }
-
-
-
-                    });
-
-                    // Declarações de fim de curso
-
-                    data["articles_dfdc"].forEach(function(article) {
- 
-                        var doc = article.nome.toLowerCase();
-
-                        switch (doc) {
-                            case "declaração de fim de curso":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',8">' + article.nome + '</option>');
-                                break;
-
-                            default:
-                                break;
-                        }
-
-
-
-                    });
-                    
-                    // Declarações com notas de exame de acesso
-
-                    data["articles_dnexa"].forEach(function(article) {
-
-                        var doc = article.nome.toLowerCase();
-
-                        switch (doc) {
-                            case "declaração com notas de exame de acesso":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article.money + ',9">' + article.nome + '</option>');
-                                break;
-                                
-                            case "declaração com notas de exame de acesso urgente":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',9">' + article.nome + '</option>');
-                                break;
-
-                            default:
-                                break;
-                        }
-                    });
+                    );
 
                 } else if (data["type"] == 4) {
 
@@ -488,58 +388,61 @@
                     data["anulacao"].forEach(function(article) {
 
                         var doc = article.nome.toLowerCase();
-
-                        switch (doc) {
-                            case "anulação de matrícula":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article.money + ',7">' + article.nome + '</option>');
-                                break;
-                            default:
-                                break;
-                        }
+                        //filtragem do id fornecido com o id da tabela article_documents!
+                        const code = @json($code);
+                        let filtro = article.id_article;
+                        let filtrados = code.filter(item => item.article_id === filtro);
+                        
+                        if(filtrados.length == 0) return;
+                        
+                        let doctype = filtrados[0].documentation_type_id;
+                       emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + doctype +'">' + article.nome + '</option>');
+                                
                     });
 
 
 
                 } else if (data["type"] == 3) {
 
-                    // Declarações com notas
+                    // Diploma
 
                     data["diploma"].forEach(function(article) {
 
                         var doc = article.nome.toLowerCase();
-
-                        switch (doc) {
-                            case "diploma":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article.money + ',5">' + article.nome + '</option>');
-                                break;
-                            default:
-                                break;
-                        }
+                        //filtragem do id fornecido com o id da tabela article_documents!
+                        const code = @json($code);
+                        let filtro = article.id_article;
+                        let filtrados = code.filter(item => item.article_id === filtro);
+                        
+                        if(filtrados.length == 0) return;
+                        
+                        let doctype = filtrados[0].documentation_type_id;
+                        emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + doctype +'">' + article.nome + '</option>');
+                         
                     });
 
 
 
-                }
-                 else if (data["type"] == 5) {
-                    console.log('here')
+                }else if (data["type"] == 5) {
+                   
                     // Percurso académico
 
                     data["percurso"].forEach(function(article) {
 
-                        var code = article.id_code_dev;
-                        console.log(code)
+                        var ref_id = article.id_code_dev;
+                        const code = @json($code);
+                        let filtro = article.id_article;
+                        let filtrados = code.filter(item => item.article_id === filtro);
+                        
+                        if(filtrados.length == 0) return;
+                            
+                        let doctype = filtrados[0].documentation_type_id;
 
-                        switch (code) {
-                            case 25:
-                                console.log('sim')
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article.money + ',12">' + article.nome + '</option>');
-                                break;
-                            default:
-                                break;
+                        if(ref_id == 25){
+                            emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + doctype +'">' + article.nome + '</option>');
+                                
                         }
+                                
                     });
 
 
@@ -548,44 +451,23 @@
                 else {
                     // Certificado
 
-                    data["articles_cf"].forEach(function(article) {
+                    data["articles"].forEach(function(article) {
 
                         var doc = article.nome.toLowerCase();
 
-                        switch (doc) {
-
-                            case "certificado":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',4">' + article.nome + '</option>');
-                                break;
-
-                            default:
-                                break;
-                        }
-
-
-
+                        //filtragem do id fornecido com o id da tabela article_documents!
+                        const code = @json($code);
+                        let filtro = article.id_article;
+                        let filtrados = code.filter(item => item.article_id === filtro);
+                        
+                        if(filtrados.length == 0) return;
+                        
+                        let doctype = filtrados[0].documentation_type_id;
+                        //console.log(doc)
+                        emolumentos_doc.append('<option value="' + article.id_article + ',' +article.money + doctype +'">' + article.nome + '</option>');
+                    
                     });
 
-                    // certificado de mérito
-                   
-                    data["articles_cfm"].forEach(function(article) {
-
-                        var doc = article.nome.toLowerCase();
-
-                        switch (doc) {
-                            case "certificado de mérito":
-                                emolumentos_doc.append('<option value="' + article.id_article + ',' +
-                                    article
-                                    .money + ',3">' + article.nome + '</option>');
-                                break;
-
-                            default:
-                                break;
-                        }
-
-                    });
                 }
 
 
