@@ -1111,17 +1111,17 @@ public function getcursoIndex()
                         ];
 
 
-                        if (!$isCandidate->hasAnyRole(['candidado-a-estudante'])) {
-                            if ($index_parameter === 19) {
-                                $findDuplicateMechanographic = UserParameter::where('parameters_id', 19)
-                                ->where('value', $value)
-                                ->count();
+                        // if (!$isCandidate->hasAnyRole(['candidado-a-estudante'])) {
+                        //     if ($index_parameter === 19) {
+                        //         $findDuplicateMechanographic = UserParameter::where('parameters_id', 19)
+                        //         ->where('value', $value)
+                        //         ->count();
 
-                                if ($findDuplicateMechanographic) {
-                                    return redirect()->back()->withErrors(['Nº de: Matrícula | Mecanográfico já existe'])->withInput();
-                                }
-                            }
-                        }
+                        //         if ($findDuplicateMechanographic) {
+                        //             return redirect()->back()->withErrors(['Nº de: Matrícula | Mecanográfico já existe'])->withInput();
+                        //         }
+                        //     }
+                        // }
                     }
                 }
             }
