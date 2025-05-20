@@ -1381,7 +1381,7 @@ class mainController extends Controller
 
               $temNotaFinal = $dadosDisciplina['notas']['final'] !== null;
 $temNotaPercurso = $dadosDisciplina['nota_percurso'] !== null;
-$notasSaoDiferentes = $dadosDisciplina['notas']['final'] !== $dadosDisciplina['nota_percurso'];
+$notasSaoDiferentes = $dadosDisciplina['notas']['final'] != $dadosDisciplina['nota_percurso'];
 $temMelhoriaNota = $dadosDisciplina['notas']['melhoria_nota'] !== null; 
 
 if (
@@ -1390,7 +1390,7 @@ if (
         ($temNotaPercurso && $notasSaoDiferentes)
     ) &&
     !$temMelhoriaNota
-){
+){    
                   $dadosSemestre[] = $dadosDisciplina;
               }
              
