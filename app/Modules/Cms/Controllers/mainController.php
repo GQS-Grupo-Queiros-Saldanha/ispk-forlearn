@@ -1259,6 +1259,8 @@ class mainController extends Controller
             $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id);
             foreach($matriculations as $key=>$item){
               $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
+            
+              if(!empty($result))
               $data[$key] = [
                 "USER"=> $item,
                 "GRADES" => $result
@@ -1397,7 +1399,7 @@ if (
           }
 
       }
-      return ['dados'=> $dadosSemestre];
+      return $dadosSemestre;
       ;
   }
 
