@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Modules\Users\Controllers;
+use App\Modules\Users\Models\WhatsappForlearn;
 
 use App\Helpers\LanguageHelper;
 use Illuminate\Http\Request;
@@ -102,7 +103,7 @@ class centralNotification extends Controller
         if(auth()->user()->hasRole("student")){
            $user->where('usuario_cargo.role_id',"!=",6);
         }        
-        
+        $users = DB::table('users')->select('id', 'name', 'email', 'user_whatsapp')->get();
         $user = $user->get();
          
         $lectiveYearSelected = $lectiveYearSelected->id ?? 9;
@@ -114,6 +115,7 @@ class centralNotification extends Controller
             'Avaliacao',
             'notificacao',
             'user',
+            'users',
             'institution',
             'apoio',
             'email_apoio'));
@@ -135,11 +137,7 @@ class centralNotification extends Controller
 
     public function getCreate($id_anolectivo)
     {
-        
-        
-
-       
-        
+           
     }
 
     public function create()
@@ -184,12 +182,6 @@ class centralNotification extends Controller
         }
         
     }
-
- 
-   
-
-
-
      
     public function ajaxCalendarie()
     {
@@ -379,66 +371,89 @@ class centralNotification extends Controller
 
     public function store(Request $request)
     {
-      try{  
-        $id_user = auth()->user()->id ?? 0;
-        // if(!in_array($id_user,[10166])){
-        //     Toastr::success(__('Em manutenção'), __('toastr.warning'));
-        //     return redirect()->back();
-        // }
-        $email_apoio = EnumVariable::$EMAIL_APOIO;          
-        //Método de fazer o envio de mensagem 
-        //return $request;
-        $icon="fas fa-envelope";
-        //Teoria  
-        $to=$request->to ?$request->to:$request->studant;
-        //Request->Ruanda
-        $type="";
-        if($to=="studant"){
-        //Pegar id dos usuário com cargo Apoio ao estudante
-        //e enviar notificações para todos eles.
-       
-         $to = User::whereHas('roles', function ($q) {
-                $q->whereIn('id', [49]);
-               }) ->leftJoin('user_parameters as u_p9', function ($q) {
-                $q->on('users.id', '=', 'u_p9.users_id')
-                ->where('u_p9.parameters_id', 1);
-            })
-            ->get()
-            ->map(function($item,$key){
-                return $item->users_id;
-            }); 
-           $type="[Apoio ao estudante] ";
+        if(!isset($request->page_type))
+            switch ($request->canal) {
 
-        }
+                case '0':
+                    $this->SendforLEARN($request);
+                    return redirect()->back();
+                    break;
 
-        //
-        $subject=$type.$request->subject;
-        $body=$request->body;
-        
-        //Este método está no helper user 
-        $apoio = User::where(['email' => $email_apoio])->first();
-        $is_msg = isset($apoio->id) && in_array($apoio->id, $to);
-        
-        if($is_msg){
-            $array = [];
-            
-            $currentData = Carbon::now();
-            $lectiveYear = DB::table('lective_years')->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')->first();
-            
-            if(!isset($lectiveYear->id)){
-                $lectiveYear = DB::table('lective_years')->orderBy('id','DESC')->first();
+                case '1':
+                    $this->SendWhatsapp($request);
+                    return redirect()->back();
+                    break;
+
+                case '2':
+                    if ($this->SendSMS($request)) {
+                        $this->SendforLEARN($request);
+                    }
+                    return redirect()->back();
+                    break;
             }
+        
+    }
+    public function SendSMS(Request $request){
+        try{  
+            $id_user = auth()->user()->id ?? 0;
+            // if(!in_array($id_user,[10166])){
+            //     Toastr::success(__('Em manutenção'), __('toastr.warning'));
+            //     return redirect()->back();
+            // }
+            $email_apoio = EnumVariable::$EMAIL_APOIO;          
+            //Método de fazer o envio de mensagem 
+            //return $request;
+            $icon="fas fa-envelope";
+            //Teoria  
+            $to=$request->to ?$request->to:$request->studant;
+            //Request->Ruanda
+            $type="";
+            if($to=="studant"){
+            //Pegar id dos usuário com cargo Apoio ao estudante
+            //e enviar notificações para todos eles.
+        
+            $to = User::whereHas('roles', function ($q) {
+                    $q->whereIn('id', [49]);
+                }) ->leftJoin('user_parameters as u_p9', function ($q) {
+                    $q->on('users.id', '=', 'u_p9.users_id')
+                    ->where('u_p9.parameters_id', 1);
+                })
+                ->get()
+                ->map(function($item,$key){
+                    return $item->users_id;
+                }); 
+            $type="[Apoio ao estudante] ";
+
+            }
+
+            //
+            $subject=$type.$request->subject;
+            $body=$request->body;
             
+            //Este método está no helper user 
+            $apoio = User::where(['email' => $email_apoio])->first();
+            $is_msg = isset($apoio->id) && in_array($apoio->id, $to);
             
-            DB::table('generator_ticket')->insert([
-                "code" => $request->ticket,
-                "year_id" => $lectiveYear->id,
-                "user_id" => Auth::user()->id,
-                "created_by" => Auth::user()->id,
-                "created_at" => Carbon::now()
-            ]);
-            
-        }
+            if($is_msg){
+                $array = [];
+                
+                $currentData = Carbon::now();
+                $lectiveYear = DB::table('lective_years')->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')->first();
+                
+                if(!isset($lectiveYear->id)){
+                    $lectiveYear = DB::table('lective_years')->orderBy('id','DESC')->first();
+                }
+                
+                
+                DB::table('generator_ticket')->insert([
+                    "code" => $request->ticket,
+                    "year_id" => $lectiveYear->id,
+                    "user_id" => Auth::user()->id,
+                    "created_by" => Auth::user()->id,
+                    "created_at" => Carbon::now()
+                ]);
+                
+            }
             if(!$is_msg)
                 $notify = notification($icon,$subject,$body,$to,null,null);
             Toastr::success(__('Mensagem enviada com sucesso'), __('toastr.success'));
@@ -447,9 +462,7 @@ class centralNotification extends Controller
             Log::error($e);
             return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
-        
     }
-
 
    public function destroy(Request $request)
     {
@@ -470,7 +483,7 @@ class centralNotification extends Controller
     }
 
 
-   public function apagar_notificacao(Request $request)
+    public function apagar_notificacao(Request $request)
     {
         try{
         if(isset($request->deletar)){
@@ -496,7 +509,7 @@ class centralNotification extends Controller
 
 
 
-   public function pesquisar_notificacao(Request $request)
+    public function pesquisar_notificacao(Request $request)
     {
      try{
         
@@ -528,8 +541,7 @@ class centralNotification extends Controller
 
 
 
-   public function singleSms($id)
-    {
+    public function singleSms($id){
      try{
             
             // $busca="$request->pesquisa";
@@ -553,13 +565,67 @@ class centralNotification extends Controller
             dd($e->getMessage());
         return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
-
-        }
-
-
-
-
     }
+    private function SendWhatsapp($request) {
+        // Validação dos dados
+        $validated = $request->validate([
+            'canal' => 'required|in:0,1,2',
+            'to' => 'required|array',
+            'subject' => 'required_if:canal,0',
+            'body' => 'required|string',
+        ]);
+
+        // Processamento dos dados para o bd
+        foreach ($validated['to'] as $userId) {
+            WhatsappForlearn::create([
+                'whatsapp_to' => $userId,
+                'whatsapp_body' => $validated['body'],
+                'whatsapp_of_number' => '@forlearn',
+                'created_by' => auth()->id(),
+            ]);
+        }
+        //processamento dos dados para api
+         $this->submeterMensagemWhatsapp($userId, $validated['body']);
+
+        Toastr::success('Mensagem Enviada com sucesso!');
+        return redirect()->back();        
+    }
+    
+    public function submeterMensagemWhatsapp($userId, $body){
+        $url = "https://waapi.app/api/v1/instances/68035/client/action/send-message";
+
+        $client = new \GuzzleHttp\Client();
+
+        try {
+            $response = $client->request('POST', $url, [
+                'headers' => [
+                    'Authorization' => 'Bearer cfBUVLVthm81GUOFcIxLH3vdK3lzHVaSi2RbVaBv50fe7c76',
+                    'Content-Type'  => 'application/json',
+                    'Accept'        => 'application/json',
+                ],
+                'json' => [
+                    'chatId'  => '244' . $userId . '@c.us',
+                    'message' => $body,
+                ],
+            ]);
+
+            // Verifica se o status da resposta é 2xx
+            if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                // A chamada foi bem sucedida
+                return json_decode($response->getBody(), true); // ou apenas true se não precisares da resposta
+            } else {
+                return "Erro no envio: " . $response->getStatusCode() . ' - ' . $response->getBody();
+            }
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Em caso de erro na requisição
+            if ($e->hasResponse()) {
+                return "Erro na requisição: " . $e->getResponse()->getStatusCode() . ' - ' . $e->getResponse()->getBody();
+            }
+            return "Erro na requisição: " . $e->getMessage();
+        }
+    }
+}
+
     
 
 
