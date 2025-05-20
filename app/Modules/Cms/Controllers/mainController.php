@@ -1253,26 +1253,29 @@ class mainController extends Controller
 
     public function get_classes_grades($class_id,$lectiveYearSelected){
 
+        set_time_limit(240);
+       
         
         try{
-          
+       
             $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id);
+            $data = [];
             foreach($matriculations as $key=>$item){
               $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
             
               if(!empty($result))
               $data[$key] = [
-                "USER"=> $item,
-                "GRADES" => $result
+                "MATRICULATION"=> $item->code,
+                "boletim" => $result,
               ];
             }
+
+           dd($data);
      
         }
        catch(Exception $e){
             DB::rollBack();
        }
-        
-      return response()->json($data);
   }
 
   private function get_all_matriculation_student($lective_year=null, $class_id){
@@ -1399,7 +1402,7 @@ if (
           }
 
       }
-      return $dadosSemestre;
+      return $dadosSemestre
       ;
   }
 
@@ -1566,6 +1569,7 @@ if (
 
       
       return [
+        'discipline_id' => $disciplina->id_disciplina,
           'codigo' => $index,
           'disciplina' => $disciplina->nome_disciplina,
           'notas' => $notas,
