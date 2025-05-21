@@ -13,8 +13,8 @@ Route::group(
 ],
 
     function () {
-        Route::post('update-percurso-grades','mainController@update_percurso_grades')->middleware([]);;
-        Route::get('get-classes-grades/{class_id}/{lectivo}','mainController@get_classes_grades')->middleware([]);
+        Route::post('update-percurso-grades','mainController@update_percurso_grades');
+        Route::get('get-classes-grades/{class_id}/{lectivo}','mainController@get_classes_grades');
  });
 Route::group(['module' => 'Cms', 'middleware' => ['api'], 'namespace' => 'App\Modules\Cms\Controllers'], function() {
 
