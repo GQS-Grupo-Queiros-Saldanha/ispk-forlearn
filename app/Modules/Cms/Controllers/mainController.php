@@ -1252,8 +1252,6 @@ class mainController extends Controller
     //ATENÇAÕ REGIÃO CRÍTICA
 
     public function get_classes_grades($class_id,$lectiveYearSelected){
-
-        set_time_limit(240);
        
         
         try{
@@ -1265,18 +1263,69 @@ class mainController extends Controller
             
               if(!empty($result))
               $data[$key] = [
-                "MATRICULATION"=> $item->code,
+                "user_id"=> $item->user_id,
                 "boletim" => $result,
               ];
             }
 
-           dd($data);
+
+
+         return response()->json($data);
      
         }
        catch(Exception $e){
-            DB::rollBack();
+          dd($e);
        }
   }
+
+  public function update_percurso_grades(Request $request){
+
+     
+   
+    try{
+        DB::beginTransaction();
+        $data = $request->json()->all();
+
+        foreach ($data as $key => $aluno) {
+            $userId = $aluno['user_id'];
+    
+            foreach ($aluno['boletim'] as $disciplina) {
+                $disciplinaId = $disciplina['discipline_id'];
+                $codigo = $disciplina['codigo'];
+                $nomeDisciplina = $disciplina['disciplina'];
+                $notaFinal = $disciplina['nota_final'];
+                $notaPercurso = $disciplina['nota_percurso'];
+    
+              
+                $Percurso = DB::table('new_old_grades')->updateOrInsert(
+                    [
+                        'user_id' => $userId,
+                        'discipline_id' => $disciplinaId,
+                    ],
+                    [
+                        'grade' => $notaFinal,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                        "created_by" => 23
+                    ]
+                );
+            }
+        }
+        DB::commit();
+        // Retorno de sucesso
+        return response()->json([
+            'success' => true,
+            'message' => 'Dados processados com sucesso.'
+        ], 200);
+ 
+    }
+   catch(Exception $e){
+    DB::rollBack();
+    Log::error($e);
+    return response()->json($e->getMessage(), 500);
+   }
+}
+
 
   private function get_all_matriculation_student($lective_year=null, $class_id){
        
@@ -1563,7 +1612,6 @@ if (
             $notas['final_cor'] = 'for-red';
         }
 
-       
      
         }
 
