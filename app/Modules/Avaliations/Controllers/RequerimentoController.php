@@ -1049,8 +1049,6 @@ class RequerimentoController extends Controller
     public function store_doc($dados)
     {
 
-
-
         $dados = explode(',', $dados);
         $vazio = 0;
 
@@ -1060,14 +1058,11 @@ class RequerimentoController extends Controller
                 $vazio = "1";
             } else {
             }
-        }
-        ;
+        };
 
         if ($vazio == 1) {
             return $data = ['dados' => "Por favor preencha todos os campos!!!", 'code' => "empty"];
         } else {
-
-
 
             $lective_year = $dados[0];
             $article_id = $dados[1];
