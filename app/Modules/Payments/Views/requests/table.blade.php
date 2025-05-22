@@ -116,7 +116,7 @@
                                             auth()->user()->hasRole('presidente'))
                                         @php $i =$count-1; @endphp
                                         <td class="checkbox-tesoraria c-2">
-                                            @if ($articles->art_idDisciplina == '')
+                                            @if ($articles->art_idDisciplina == '' || $articles->article_req_id)
                                                 <input data-one="1"
                                                     data-idTransacion="{{ $articles->transaction_id }}"
                                                     data-status="{{ $articles->status }}"

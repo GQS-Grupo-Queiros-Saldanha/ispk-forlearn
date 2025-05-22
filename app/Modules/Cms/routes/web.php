@@ -12,8 +12,6 @@ Route::group([
         'auth'
     ]],
     function () {
-
-        Route::get('get-classes-grades/{class_id}/{lective}','mainController@get_classes_grades');
         // Linguas
         Route::middleware(['role_or_permission:superadmin|manage-languages'])->group(function () {
             Route::resource('languages', 'LanguagesController');

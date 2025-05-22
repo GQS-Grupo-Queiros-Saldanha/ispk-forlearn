@@ -350,7 +350,7 @@
                         // Monta o select com as turmas
                         $.each(item, function(indexz, gaz) {
                             $.each(gaz, function(indexx, value) {
-                                bodyData += "<option value=" + index + ',' + value.id + ">" + value.display_name + "</option>";
+                                bodyData += "<option value=" + index + ',' + value.class_id + ">" + value.display_name + "</option>";
                             });
                         });
 
