@@ -1,5 +1,14 @@
 <?php
+
 // ENTIRE MODULE ROUTE GROUP
+use App\Modules\Users\Controllers\UserAvatarController;
+use App\Modules\Users\Controllers\centralNotification;
+use App\Modules\Users\Controllers\UsersController;
+
+
+Route::post('/actualizar‑whatsapp', [UsersController::class, 'actualizarWhatsapp'])->name('actualizar-whatsapp');
+
+
 
 Route::group(
     [

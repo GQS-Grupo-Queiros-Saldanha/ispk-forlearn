@@ -40,6 +40,7 @@
                       <option value="1">Whatsapp</option>
                       <option value="2">SMS</option>
                   </select>
+
                    <div class="form-group">
                       <small>Destinatário(s)</small>
                       <select name="to[]" id="destinarios" multiple  class="selectpicker form-control autor" data-actions-box="true" data-selected-text-format="count > 10" data-live-search="true" required placeholder="Para:" >
@@ -57,6 +58,7 @@
                 
                 <div class="form-group">
                   <input class="form-control" placeholder="Assunto:" name="subject" required>
+                  <input type="file" class="form-control" placeholder="@arquivo:" name="file" id="file">
                 </div>
                 <div class="form-group">
                     {{-- <textarea id="compose-textarea" class="form-control" style="height: 300px ; font-size:14pt;"  name="body">
@@ -90,79 +92,87 @@
 @parent
 <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 <script>
-(()=>{
-CKEDITOR.replace( 'mensagem-ckeditor');
 
- const destinarios = document.querySelector('#destinarios');
- const btnSms = document.querySelector("#btn-sms");
- const ticket = document.querySelector("#ticket");
- 
- verifered();
- 
- @if($is_apoio)
-    ajaxGenerotorTick();
- @endif
- 
- btnSms.addEventListener("click",(e)=>{
-     let all = destinarios.querySelectorAll('option:checked')
-     all.forEach(item => {
-         let email = item.innerHTML.trim()
-         if(email.includes("{{ $email_apoio }}")){
-             ajaxMessage();
-         }
-     })
- })
- 
- destinarios.addEventListener("change",(e) => {
-     let all = destinarios.querySelectorAll('option:checked')
-     all.forEach(item => {
-         let email = item.innerHTML.trim()
-         if(email.includes("{{ $email_apoio }}")){
-             ajaxGenerotorTick();
-         }
-     })
- })
- 
- function ajaxGenerotorTick(){
-    axios.get("{{ route('generator_ticker') }}")
-    .then((response) => {
-        ticket.value = response.data.code;
-    })
- }
- 
- function ajaxMessage(){
-        const name = $('#name-info').html();
-        const email = $('#email-info').html();
-        const abrev = $('#abrev-info').html();
-        const assunto = $("[name='subject']").val();
-        const destinarios = $('#destinarios');
-        const mensagem = CKEDITOR.instances['mensagem-ckeditor'].getData();
-        
-        axios.post("https://forlearn.ao/send_for_message.php", {
-            nome: name,
-            email: email,
-            assunto: assunto,
-            mensagem: mensagem,
-            instituicao: abrev,
-            ticket: ticket.value,
-        }, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }).then((response) =>{
-            //localStorage.setItem("enviado",response.data.enviado);
-        })
- }
- 
- function verifered(){
-        const enviado = localStorage.getItem("enviado");
-        if(enviado === "yes"){
-            Swal.fire('Successo!','A mensagem foi enviada com','success');
-        }else if(enviado === "no" || enviado === "no-en"){
-            Swal.fire('Erro!','Não possível enviar a mensagem!','error');
-        }     
-        localStorage.removeItem("enviado");
- }
-})();
+  const fileButton = document.getElementById('file');
+    fileButton.addEventListener('click', function (event) {
+    event.preventDefault();
+    alert('Função de upload de ficheiro ainda não implementada');
+  });
+
+
+  (()=>{
+  CKEDITOR.replace( 'mensagem-ckeditor');
+
+  const destinarios = document.querySelector('#destinarios');
+  const btnSms = document.querySelector("#btn-sms");
+  const ticket = document.querySelector("#ticket");
+  
+  verifered();
+  
+  @if($is_apoio)
+      ajaxGenerotorTick();
+  @endif
+  
+  btnSms.addEventListener("click",(e)=>{
+      let all = destinarios.querySelectorAll('option:checked')
+      all.forEach(item => {
+          let email = item.innerHTML.trim()
+          if(email.includes("{{ $email_apoio }}")){
+              ajaxMessage();
+          }
+      })
+  })
+  
+  destinarios.addEventListener("change",(e) => {
+      let all = destinarios.querySelectorAll('option:checked')
+      all.forEach(item => {
+          let email = item.innerHTML.trim()
+          if(email.includes("{{ $email_apoio }}")){
+              ajaxGenerotorTick();
+          }
+      })
+  })
+  
+  function ajaxGenerotorTick(){
+      axios.get("{{ route('generator_ticker') }}")
+      .then((response) => {
+          ticket.value = response.data.code;
+      })
+  }
+  
+  function ajaxMessage(){
+          const name = $('#name-info').html();
+          const email = $('#email-info').html();
+          const abrev = $('#abrev-info').html();
+          const assunto = $("[name='subject']").val();
+          const destinarios = $('#destinarios');
+          const mensagem = CKEDITOR.instances['mensagem-ckeditor'].getData();
+          
+          axios.post("https://forlearn.ao/send_for_message.php", {
+              nome: name,
+              email: email,
+              assunto: assunto,
+              mensagem: mensagem,
+              instituicao: abrev,
+              ticket: ticket.value,
+          }, {
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+              }
+          }).then((response) =>{
+              //localStorage.setItem("enviado",response.data.enviado);
+          })
+  }
+  
+  function verifered(){
+          const enviado = localStorage.getItem("enviado");
+          if(enviado === "yes"){
+              Swal.fire('Successo!','A mensagem foi enviada com','success');
+          }else if(enviado === "no" || enviado === "no-en"){
+              Swal.fire('Erro!','Não possível enviar a mensagem!','error');
+          }     
+          localStorage.removeItem("enviado");
+  }
+  })();
 </script>
 @endsection

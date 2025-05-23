@@ -42,6 +42,9 @@ use App\Modules\Users\Enum\ParameterEnum;
 use PDF;
 use App\Modules\Users\Exports\RecursosHumanosExport;
 use Maatwebsite\Excel\Facades\Excel;
+
+use App\Model\checked;
+
 class UsersController extends Controller
 {
     public $user_fase = null;
@@ -429,19 +432,22 @@ class UsersController extends Controller
 
 
 
+    public function actualizarWhatsapp(Request $request)
+    {
+        // 1. Validação simples
+        $dados = $request->validate([
+            'id'        => 'required|integer|exists:users,id',
+            'criterio'  => 'required|digits_between:8,12', // 945347861, etc.
+        ]);
 
+        // 2. Actualiza o campo na base de dados
+        DB::table('users')
+            ->where('id', $dados['id'])
+            ->update(['user_whatsapp' => $dados['criterio']]);
 
-
-
-
-
-
-
-
-
-
-
-
+        // 3. Redirecciona ou devolve view/JSON
+        return redirect()->route('main.index')->with('sucesso', 'Whatsapp actualizado com êxito.');
+    }
 
 
 
