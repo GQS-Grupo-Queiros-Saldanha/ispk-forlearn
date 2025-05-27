@@ -391,12 +391,14 @@
                         <label>Nome da Avaliação</label>
                         <input type="text" name="nome_avaliacao" id="nome_avaliacao" class="form-control">
                     </div>
-                    <div class="form-group col">
-                        <label>Tipo de Avaliação</label>
-                        <select name="tipo_avaliacao" id="tipo_avaliacao" class="form-control" required>
-                            <option value=""></option>
+                    //emarq
+                    <div class="form-group">
+                        <label>Tipo de métrica</label>
+                        <select name="tipos_metricas" id="tipos_metricas" class="form-control">
+                            <!-- opções carregadas via JS -->
                         </select>
                     </div>
+                    //emarq
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success">Atualizar
                             Avaliação</button>
@@ -1035,30 +1037,39 @@
 
         });
 
-        //Funcao para listar todos os tipos de metrica no select
-        function message($param, anoLectivo) {
-            var url = "{{ URL('tipo_metrica.fetch') }}";
-            $.ajax({
-                url: "/avaliations/tipo_metrica_fetch/" + anoLectivo,
-                type: "GET",
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                cache: false,
-                dataType: 'json',
-                success: function(dataResult) {
-                    var resultData = dataResult.data;
-                    var bodyData = '';
-                    var i = 1;
-                    $.each(resultData, function(index, row) {
-                        var editUrl = url + '/' + row.id + "/edit";
-                        bodyData += "<option value=" + row.id + ">" + row.nome + "</option>";
-                    })
-                    $("#tipo_metrica").append(bodyData);
-                    $("#tipos_metricas").append(bodyData);
-                }
+       //Emarq
+       function message($param, anoLectivo) {
+    var url = "{{ URL('tipo_metrica.fetch') }}";
+    $.ajax({
+        url: "/avaliations/tipo_metrica_fetch/" + anoLectivo,
+        type: "GET",
+        data: {
+            _token: '{{ csrf_token() }}'
+        },
+        cache: false,
+        dataType: 'json',
+        success: function(dataResult) {
+            var resultData = dataResult.data;
+            var bodyData = '';
+
+            if (resultData.length === 0) {
+                // Nenhum item encontrado
+                bodyData = '<option disabled selected>Nenhuma métrica encontrada</option>';
+                $("#tipo_metrica").html(bodyData);
+                $("#tipos_metricas").html(bodyData);
+                return;
+            }
+
+            // Preenche com as opções e seleciona a primeira automaticamente
+            $.each(resultData, function(index, row) {
+                let selected = index === 0 ? 'selected' : '';
+                bodyData += `<option value="${row.id}" ${selected}>${row.nome}</option>`;
             });
+
+            $("#tipo_metrica").html(bodyData);
+            $("#tipos_metricas").html(bodyData);
         }
+    });
 
         // FUNCAO QUE MOSTRAS AS MESTRICA DE ACORDO A SEMESTRE, NO VER METRICA DE UMA AVALIACAO
         $("#semestre").change(function() {
