@@ -1096,83 +1096,105 @@ class mainController extends Controller
 
     public function boletim_pdf($matriculation)
     {
+        $isApiRequest = request()->header('X-From-API') === 'flask';
+        $tokenRecebido = request()->bearerToken(); 
 
-
-        $matriculations = DB::table("matriculations")
-            ->where("id", $matriculation)
-            ->where("user_id", auth()->user()->id)
-            ->whereNull("deleted_at")
-            ->select(["lective_year", "id", "user_id"])
-            ->orderBy("lective_year", "asc")
-            ->first();
-
-        $courses = DB::table("user_courses")
-            ->where("users_id", $matriculations->user_id)
-            ->select(["courses_id"])
-            ->first();
-
-
-        if (!isset($matriculations->lective_year)) {
-            return "Nenhuma matrícula encontrada neste ano lectivo";
+        if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
+            return response('Não autorizado', 401);
         }
 
+        if ($isApiRequest) {
+            // Opcional: validar token
+            $token = request()->header('Authorization');
+            if ($token !== 'Bearer teu_token_api_seguro') {
+                return response('Não autorizado', 401);
+            }
 
-        $student_info = $this->get_matriculation_student($matriculations->lective_year);
-        $disciplines = $this->get_disciplines($matriculations->lective_year);
-        $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
+            // Se é uma chamada da API, não usa auth()->user()
+            $matriculations = DB::table("matriculations")
+                ->where("id", $matriculation)
+                ->whereNull("deleted_at")
+                ->select(["lective_year", "id", "user_id"])
+                ->orderBy("lective_year", "asc")
+                ->first();
 
-        $percurso =  $percurso->map(function ($grupo) {
+        } else {
+            
+            $matriculations = DB::table("matriculations")
+                ->where("id", $matriculation)
+                ->where("user_id", auth()->user()->id)
+                ->whereNull("deleted_at")
+                ->select(["lective_year", "id", "user_id"])
+                ->orderBy("lective_year", "asc")
+                ->first();
 
-            return $grupo->reject(function ($avl) use ($grupo) {
-                $faltou =  isset($avl->presence);
-                $nota_normal = !isset($avl->segunda_chamada);
-
-                $fez_segunda_chamada = $grupo->where('user_id', $avl->user_id)
-                    ->where('Disciplia_id', $avl->Disciplia_id)
-                    ->where('Avaliacao_aluno_Metrica', $avl->Avaliacao_aluno_Metrica)
-                    ->where('Avaliacao_aluno_turma', $avl->Avaliacao_aluno_turma)
-                    ->where('segunda_chamada', 1)
-                    ->isNotEmpty();
-
-
-
-
-                $sai =  $faltou && $nota_normal && $fez_segunda_chamada;
+            $courses = DB::table("user_courses")
+                ->where("users_id", $matriculations->user_id)
+                ->select(["courses_id"])
+                ->first();
 
 
-                return $sai;
+            if (!isset($matriculations->lective_year)) {
+                return "Nenhuma matrícula encontrada neste ano lectivo";
+            }
+
+
+            $student_info = $this->get_matriculation_student($matriculations->lective_year);
+            $disciplines = $this->get_disciplines($matriculations->lective_year);
+            $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
+
+            $percurso =  $percurso->map(function ($grupo) {
+
+                return $grupo->reject(function ($avl) use ($grupo) {
+                    $faltou =  isset($avl->presence);
+                    $nota_normal = !isset($avl->segunda_chamada);
+
+                    $fez_segunda_chamada = $grupo->where('user_id', $avl->user_id)
+                        ->where('Disciplia_id', $avl->Disciplia_id)
+                        ->where('Avaliacao_aluno_Metrica', $avl->Avaliacao_aluno_Metrica)
+                        ->where('Avaliacao_aluno_turma', $avl->Avaliacao_aluno_turma)
+                        ->where('segunda_chamada', 1)
+                        ->isNotEmpty();
+
+
+
+
+                    $sai =  $faltou && $nota_normal && $fez_segunda_chamada;
+
+
+                    return $sai;
+                });
             });
-        });
 
 
 
-        $articles = $this->get_payments($matriculations->lective_year);
-        $plano = $this->study_plain($matriculations->lective_year);
-        $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
-        $matriculations = $this->get_matriculation_student($matriculations->lective_year);
+            $articles = $this->get_payments($matriculations->lective_year);
+            $plano = $this->study_plain($matriculations->lective_year);
+            $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
+            $matriculations = $this->get_matriculation_student($matriculations->lective_year);
+
+            $config = DB::table('avalicao_config')->where('lective_year',$matriculations->lective_year)->first();
+            $classes = $this->matriculation_classes($matriculations->id);
 
 
-        $config = DB::table('avalicao_config')->where('lective_year',$matriculations->lective_year)->first();
-        $classes = $this->matriculation_classes($matriculations->id);
+            $institution = Institution::latest()->first();
+
+            $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+
+            $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student_info", "institution", "config", "classes", "melhoria_notas"))
+
+                ->setOption('margin-top', '2mm')
+                ->setOption('margin-left', '2mm')
+                ->setOption('margin-bottom', '13mm')
+                ->setOption('margin-right', '2mm')
+                ->setOption('footer-html', $footer_html)
+                ->setPaper('a4', 'landscape');
 
 
-        $institution = Institution::latest()->first();
-
-        $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-
-        $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student_info", "institution", "config", "classes", "melhoria_notas"))
-
-            ->setOption('margin-top', '2mm')
-            ->setOption('margin-left', '2mm')
-            ->setOption('margin-bottom', '13mm')
-            ->setOption('margin-right', '2mm')
-            ->setOption('footer-html', $footer_html)
-            ->setPaper('a4', 'landscape');
-
-
-        return $pdf->stream('Boletim_de_notas_' . $student_info->matricula
-            . '_' .
-            $student_info->lective_year . '.pdf');
+            return $pdf->stream('Boletim_de_notas_' . $student_info->matricula
+                . '_' .
+                $student_info->lective_year . '.pdf');
+        }
     }
 
 
