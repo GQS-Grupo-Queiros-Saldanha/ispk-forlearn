@@ -1171,10 +1171,15 @@ class mainController extends Controller
 
         // Se for uma chamada da API, retorna o conteúdo do PDF
         if ($isApiRequest) {
-            
-            return response($pdf->output(), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="boletim.pdf"');
+
+            $pdfContent = $pdf->output();
+            $base64Pdf = base64_encode($pdfContent);
+      
+                return response()->json([
+                    'filename' => 'boletim.pdf',
+                    'mime' => 'application/pdf',
+                    'base64' => $base64Pdf
+                ]);
 
         }
 
