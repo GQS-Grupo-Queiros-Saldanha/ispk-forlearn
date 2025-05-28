@@ -1171,7 +1171,14 @@ class mainController extends Controller
 
         // Se for uma chamada da API, retorna o conteúdo do PDF
         if ($isApiRequest) {
-            return response($pdf->output(), 200)->header('Content-Type', 'application/pdf');
+            $filename = storage_path('app/public/boletim_temp.pdf');
+            $pdf->save($filename);
+
+            return response()->file($filename, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="boletim.pdf"'
+            ]);
+
         }
 
         // Senão, devolve via stream (para navegador)
