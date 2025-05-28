@@ -1099,14 +1099,10 @@ class mainController extends Controller
         $isApiRequest = request()->header('X-From-API') === 'flask';
         $tokenRecebido = request()->bearerToken(); 
 
-        if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
-            return response('Não autorizado', 401);
-        }
-
         if ($isApiRequest) {
-            // Opcional: validar token
+            // validar token
             $token = request()->header('Authorization');
-            if ($token !== 'Bearer teu_token_api_seguro') {
+            if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
                 return response('Não autorizado', 401);
             }
 
@@ -1168,11 +1164,13 @@ class mainController extends Controller
 
 
 
+            
             $articles = $this->get_payments($matriculations->lective_year);
             $plano = $this->study_plain($matriculations->lective_year);
-            $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
+            
             $matriculations = $this->get_matriculation_student($matriculations->lective_year);
-
+            $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
+            
             $config = DB::table('avalicao_config')->where('lective_year',$matriculations->lective_year)->first();
             $classes = $this->matriculation_classes($matriculations->id);
 
