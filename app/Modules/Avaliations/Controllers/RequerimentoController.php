@@ -2322,6 +2322,33 @@ class RequerimentoController extends Controller
                 return redirect()->back();
             }
 
+            if($codev == "defesa_acta"){
+
+                $codev2 = "pre_defesa_acta";
+
+                $emolumento_defesa = EmolumentCodevLective($codev2, $request->anoLectivo);
+
+            if ($emolumento_defesa->isEmpty()) {
+                Toastr::warning(__('A forLEARN não encontrou um emolumento de pré-defesa configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
+                return redirect()->back();
+            }
+            $article_id = $emolumento_defesa[0]->id_emolumento;
+
+            //Emolumento
+            $consulta = DB::table('article_requests')
+                ->where('user_id', $request->students)
+                ->where('article_id', $article_id)
+                ->whereNull('deleted_by')
+                ->whereNull('deleted_at')
+                ->get();
+
+            if (!$consulta->isEmpty()) {
+                // Toastr::warning(__('A forLEARN não detectou que já existe uma marcação de pedido de transferência para este estudante, por favor verifique a existência do emolumento na tesouraria para validar a mesma , caso contrário contacte o apoio a forLEARN'), __('toastr.warning'));
+                Toastr::warning(__('A forLEARN detectou que já existe um emolumento de pré-defesa para este estudante, por favor verifique a tabela para validar a mesma , caso contrário contacte o apoio a forLEARN'), __('toastr.warning'));
+                return redirect()->back();
+            }
+            }
+
 
             // GUARDAR REQUERIMENTO
 
