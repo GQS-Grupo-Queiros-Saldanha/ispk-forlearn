@@ -2347,6 +2347,13 @@ class RequerimentoController extends Controller
                 Toastr::warning(__('A forLEARN detectou que já existe um emolumento de pré-defesa para este estudante, por favor verifique a tabela para validar a mesma , caso contrário contacte o apoio a forLEARN'), __('toastr.warning'));
                 return redirect()->back();
             }
+
+            $article_request_id = createAutomaticArticleRequest($request->students, $article_id, null, null);
+
+            if (!$article_request_id) {
+                Toastr::error(__(' Não foi possivel criar o emolumento de pré-defesa, por favor tente novamente'), __('toastr.error'));
+                return redirect()->back();
+            }
             }
 
 
