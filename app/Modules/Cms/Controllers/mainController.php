@@ -1104,22 +1104,15 @@ class mainController extends Controller
             if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
                 return response('Não autorizado', 401);
             }
-
-            $matriculations = DB::table("matriculations")
-                ->where("id", $matriculation)
-                ->whereNull("deleted_at")
-                ->select(["lective_year", "id", "user_id"])
-                ->orderBy("lective_year", "asc")
-                ->first();
-        } else {
-            $matriculations = DB::table("matriculations")
-                ->where("id", $matriculation)
-                ->where("user_id", auth()->user()->id)
-                ->whereNull("deleted_at")
-                ->select(["lective_year", "id", "user_id"])
-                ->orderBy("lective_year", "asc")
-                ->first();
-        }
+           
+        }  
+        
+        $matriculations = DB::table("matriculations")
+        ->where("id", $matriculation)
+        ->whereNull("deleted_at")
+        ->select(["lective_year", "id", "user_id"])
+        ->orderBy("lective_year", "asc")
+        ->first();
 
         if (!isset($matriculations->lective_year)) {
             return response("Nenhuma matrícula encontrada neste ano lectivo", 404);
@@ -1154,6 +1147,7 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
         $classes = $this->matriculation_classes($matriculations->id);
+        $matriculations = $this->get_matriculation_student($matriculations->lective_year);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
 
@@ -1169,19 +1163,7 @@ class mainController extends Controller
             ->setOption('footer-html', $footer_html)
             ->setPaper('a4', 'landscape');
 
-        // Se for uma chamada da API, retorna o conteúdo do PDF
-        if ($isApiRequest) {
-
-            $pdfContent = $pdf->output();
-            $base64Pdf = base64_encode($pdfContent);
-      
-                return response()->json([
-                    'filename' => 'boletim.pdf',
-                    'mime' => 'application/pdf',
-                    'base64' => $base64Pdf
-                ]);
-
-        }
+    
 
         // Senão, devolve via stream (para navegador)
         return $pdf->stream('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
