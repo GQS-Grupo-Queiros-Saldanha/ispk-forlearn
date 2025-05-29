@@ -1,5 +1,9 @@
 <?php
 
+//rota fora do auth
+Route::get('api/boletim_pdf/{matriculation}', 'App\Modules\Cms\Controllers\mainController@boletim_pdf');
+
+
 // ENTIRE MODULE ROUTE GROUP
 Route::group([
     'module' => 'Cms',
