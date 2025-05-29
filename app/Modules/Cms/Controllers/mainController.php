@@ -498,9 +498,6 @@ class mainController extends Controller
         });
 
 
-
-
-
         $dividas = collect($payments)->groupBy("status")->map(function ($item, $key) use ($config_divida) {
 
             $i = null;
@@ -1124,8 +1121,8 @@ class mainController extends Controller
             ->select(["courses_id"])
             ->first();
 
-        $student_info = $this->get_matriculation_student($matriculations->lective_year);
-        $disciplines = $this->get_disciplines($matriculations->lective_year);
+        $student_info = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
+        $disciplines = $this->get_disciplines($matriculations->lective_year, $matriculations->user_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
         $percurso =  $percurso->map(function ($grupo) {
@@ -1142,12 +1139,12 @@ class mainController extends Controller
             });
         });
 
-        $articles = $this->get_payments($matriculations->lective_year);
-        $plano = $this->study_plain($matriculations->lective_year);
+        $articles = $this->get_payments($matriculations->lective_year, $matriculations->user_id);
+        $plano = $this->study_plain($matriculations->lective_year, $matriculations->user_id);
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
         $classes = $this->matriculation_classes($matriculations->id);
-        $matriculations = $this->get_matriculation_student($matriculations->lective_year);
+        $matriculations = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
 
@@ -1163,7 +1160,12 @@ class mainController extends Controller
             ->setOption('footer-html', $footer_html)
             ->setPaper('a4', 'landscape');
 
-    
+    // aqui Ezequiel
+    if ($isApiRequest){
+        return $pdf->download('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
+    }
+
+    // termina aqui
 
         // Senão, devolve via stream (para navegador)
         return $pdf->stream('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
@@ -1251,7 +1253,7 @@ class mainController extends Controller
         
         try{
        
-            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id);
+            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id, $matriculations->user_id);
             $data = [];
             foreach($matriculations as $key=>$item){
               $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
