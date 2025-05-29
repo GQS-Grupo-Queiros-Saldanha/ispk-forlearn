@@ -1096,6 +1096,7 @@ class mainController extends Controller
 
     public function boletim_pdf($matriculation)
     {
+        // alterações pela API Flask
         $isApiRequest = request()->header('X-From-API') === 'flask';
         $tokenRecebido = request()->bearerToken(); 
 
@@ -1104,13 +1105,11 @@ class mainController extends Controller
         }
 
         if ($isApiRequest) {
-            // Opcional: validar token
             $token = request()->header('Authorization');
-            if ($token !== 'Bearer teu_token_api_seguro') {
+            if ($token !== $tokenRecebido) {
                 return response('Não autorizado', 401);
             }
 
-            // Se é uma chamada da API, não usa auth()->user()
             $matriculations = DB::table("matriculations")
                 ->where("id", $matriculation)
                 ->whereNull("deleted_at")
@@ -1118,7 +1117,8 @@ class mainController extends Controller
                 ->orderBy("lective_year", "asc")
                 ->first();
 
-        } else {
+        } 
+        else {
             
             $matriculations = DB::table("matriculations")
                 ->where("id", $matriculation)
