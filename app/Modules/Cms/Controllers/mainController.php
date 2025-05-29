@@ -1162,7 +1162,10 @@ class mainController extends Controller
 
     // aqui Ezequiel
     if ($isApiRequest){
-        return $pdf->download('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
+        //return $pdf->download('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
+
+        return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="Boletim.pdf"');
+
     }
 
     // termina aqui
