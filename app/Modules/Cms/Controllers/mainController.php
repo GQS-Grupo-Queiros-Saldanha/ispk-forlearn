@@ -1096,43 +1096,33 @@ class mainController extends Controller
 
     public function boletim_pdf($matriculation)
     {
-        // alterações pela API Flask
         $isApiRequest = request()->header('X-From-API') === 'flask';
         $tokenRecebido = request()->bearerToken(); 
 
-        if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
-            return response('Não autorizado', 401);
-        }
-
         if ($isApiRequest) {
-            // Opcional: validar token
-            $token = request()->header('Authorization');
-            if ($token !== 'Bearer teu_token_api_seguro') {
+            // validar token
+            if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
                 return response('Não autorizado', 401);
             }
+           
+        }  
+        
+        $matriculations = DB::table("matriculations")
+        ->where("id", $matriculation)
+        ->whereNull("deleted_at")
+        ->select(["lective_year", "id", "user_id"])
+        ->orderBy("lective_year", "asc")
+        ->first();
 
-            // Se é uma chamada da API, não usa auth()->user()
-            $matriculations = DB::table("matriculations")
-                ->where("id", $matriculation)
-                ->whereNull("deleted_at")
-                ->select(["lective_year", "id", "user_id"])
-                ->orderBy("lective_year", "asc")
-                ->first();
+        if (!isset($matriculations->lective_year)) {
+            return response("Nenhuma matrícula encontrada neste ano lectivo", 404);
+        }
 
-        } else {
-            
-            $matriculations = DB::table("matriculations")
-                ->where("id", $matriculation)
-                ->where("user_id", auth()->user()->id)
-                ->whereNull("deleted_at")
-                ->select(["lective_year", "id", "user_id"])
-                ->orderBy("lective_year", "asc")
-                ->first();
-
-            $courses = DB::table("user_courses")
-                ->where("users_id", $matriculations->user_id)
-                ->select(["courses_id"])
-                ->first();
+        // A partir daqui é igual para ambos os casos
+        $courses = DB::table("user_courses")
+            ->where("users_id", $matriculations->user_id)
+            ->select(["courses_id"])
+            ->first();
 
         $student_info = $this->get_matriculation_student($matriculations->lective_year);
         $disciplines = $this->get_disciplines($matriculations->lective_year);
