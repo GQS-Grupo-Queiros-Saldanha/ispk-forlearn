@@ -639,7 +639,7 @@ class mainController extends Controller
             $student = auth()->user()->id;
         }
 
-        $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected, $matriculations->user_id);
+        $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
 
         return $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
@@ -1140,7 +1140,7 @@ class mainController extends Controller
         });
 
         $articles = $this->get_payments($matriculations->lective_year, $matriculations->user_id);
-        $plano = $this->study_plain($matriculations->lective_year);
+        $plano = $this->study_plain($matriculations->lective_year, $matriculations->user_id);
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
         $classes = $this->matriculation_classes($matriculations->id);
