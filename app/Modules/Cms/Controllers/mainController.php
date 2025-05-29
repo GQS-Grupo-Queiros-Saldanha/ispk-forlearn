@@ -1125,7 +1125,7 @@ class mainController extends Controller
             ->first();
 
         $student_info = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
-        $disciplines = $this->get_disciplines($matriculations->lective_year);
+        $disciplines = $this->get_disciplines($matriculations->lective_year, $matriculations->user_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
         $percurso =  $percurso->map(function ($grupo) {
@@ -1142,7 +1142,7 @@ class mainController extends Controller
             });
         });
 
-        $articles = $this->get_payments($matriculations->lective_year);
+        $articles = $this->get_payments($matriculations->lective_year, $matriculations->user_id);
         $plano = $this->study_plain($matriculations->lective_year);
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
