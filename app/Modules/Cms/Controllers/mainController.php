@@ -1163,7 +1163,12 @@ class mainController extends Controller
             ->setOption('footer-html', $footer_html)
             ->setPaper('a4', 'landscape');
 
-    
+    // aqui Ezequiel
+    if ($isApiRequest){
+        return $pdf->download('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
+    }
+
+    // termina aqui
 
         // Senão, devolve via stream (para navegador)
         return $pdf->stream('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
