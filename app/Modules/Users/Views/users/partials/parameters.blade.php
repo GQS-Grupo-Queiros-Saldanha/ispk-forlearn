@@ -111,7 +111,7 @@
     @foreach ($parameter_groups as $parameter_group)
         @if ($parameter_group->code == 'situacao_contratual' || $parameter_group->code == 'salarios_honorarios')
         @else
-            @if ($user->hasAnyRole($parameter_group->roles->pluck('id')->toArray()))
+        @if ($user->hasAnyRole($parameter_group->roles->pluck('id')->toArray()) && !is_coordenador(auth()->user()))
                 <div class="tab-pane fade @if ($loop->index == 0)  @endif position-relative"
                     id="nav-tab-item-{{ $loop->index }}" role="tabpanel" aria-labelledby="nav-tab-{{ $loop->index }}"
                     tabindex="0">
