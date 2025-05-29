@@ -1147,7 +1147,7 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
         $classes = $this->matriculation_classes($matriculations->id);
-        $matriculations = $this->get_matriculation_student($matriculations->lective_year);
+        $matriculations = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
 
