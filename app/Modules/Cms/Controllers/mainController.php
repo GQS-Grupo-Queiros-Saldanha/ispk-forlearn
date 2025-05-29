@@ -1118,7 +1118,7 @@ class mainController extends Controller
             return response("Nenhuma matrícula encontrada neste ano lectivo", 404);
         }
 
-        // A partir daqui é igual para ambos os casos
+        // A partir daqui é igual para ambos os casoss
         $courses = DB::table("user_courses")
             ->where("users_id", $matriculations->user_id)
             ->select(["courses_id"])
