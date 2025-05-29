@@ -1124,7 +1124,7 @@ class mainController extends Controller
             ->select(["courses_id"])
             ->first();
 
-        $student_info = $this->get_matriculation_student($matriculations->lective_year);
+        $student_info = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
         $disciplines = $this->get_disciplines($matriculations->lective_year);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
