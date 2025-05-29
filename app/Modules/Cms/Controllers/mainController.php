@@ -498,9 +498,6 @@ class mainController extends Controller
         });
 
 
-
-
-
         $dividas = collect($payments)->groupBy("status")->map(function ($item, $key) use ($config_divida) {
 
             $i = null;
@@ -642,7 +639,7 @@ class mainController extends Controller
             $student = auth()->user()->id;
         }
 
-        $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
+        $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected, $matriculations->user_id);
 
         return $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
@@ -1256,7 +1253,7 @@ class mainController extends Controller
         
         try{
        
-            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id);
+            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id, $matriculations->user_id);
             $data = [];
             foreach($matriculations as $key=>$item){
               $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
