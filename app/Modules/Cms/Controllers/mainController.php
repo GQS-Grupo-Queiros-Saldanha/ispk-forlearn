@@ -1162,7 +1162,7 @@ class mainController extends Controller
         });
 
         $articles = $this->get_payments($matriculations->lective_year, $matriculations->user_id);
-        $plano = $this->study_plain($matriculations->lective_year);
+        $plano = $this->study_plain($matriculations->lective_year, $matriculations->user_id);
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
         $classes = $this->matriculation_classes($matriculations->id);
