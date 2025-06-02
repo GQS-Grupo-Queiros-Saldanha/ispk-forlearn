@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
+use App\Model\checked;
+
 class LoginController extends Controller
 {
     /*
@@ -65,8 +67,12 @@ class LoginController extends Controller
         try {
            
             if (Auth::attempt($request->only('email', 'password'))) {
+                
                 DB::table('tb_acess_control_log')->insert(['id_user' => auth()->user()->id]);  
-                return redirect()->route('main.index');
+                // devolve imediatamente a view/redirect que WhatsappChecked gerar
+                
+                return $this->WhatsappChecked($request);
+
             }
             return redirect()->route('main.index');
             //return redirect("https://forlearn.ao?login_invalid=0");
@@ -76,6 +82,24 @@ class LoginController extends Controller
             return redirect()->route('main.index');
            // return redirect("https://forlearn.ao?login_invalid=1");
         }
+    }
+    public function WhatsappChecked(Request $request)
+    {
+        
+        $userId = auth()->id();
+        $utilizador = DB::table('users')
+            ->where('id', $userId)
+            ->where('user_whatsapp', '945347861')
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (! $utilizador) {
+            return redirect()->route('main.index');
+        }
+
+        $ordem = 'exibir';   // porque o utilizador foi encontrado
+
+        return \Illuminate\Support\Facades\View::file(base_path('app/Modules/Users/Views/forlearn/criterio.blade.php'), ['id' => $userId, 'ordem' => $ordem]); // Passando o utilizador para a view
     }    
     
 }
