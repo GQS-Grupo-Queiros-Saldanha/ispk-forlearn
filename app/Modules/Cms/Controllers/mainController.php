@@ -1125,7 +1125,7 @@ class mainController extends Controller
             }
         }
         //if (!isset($isApiRequest) && $matriculation === null) {
-            return response('Não autorizado', 401);
+            //return response('Não autorizado', 401);
         //}
         // Verifica se o usuário está autenticado
         $matriculations = DB::table("matriculations")
