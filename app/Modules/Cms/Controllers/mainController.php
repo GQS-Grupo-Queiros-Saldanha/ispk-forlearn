@@ -981,9 +981,16 @@ class mainController extends Controller
         return count($pautas);
     }
 
-    public function get_boletim_student(Request $request, $lective_year = null)
+    public function get_boletim_student(Request $request)
     {
+        $matriculation = $request->query('matriculation');
+        $whatsapp = $request->query('whatsapp');
+        
+        if(!isset($matriculation) && !isset($whatsapp)){
+            return response()->json(['error' => 'Matrícula ou WhatsApp não fornecido'], 400);
+        }
 
+        //parametros em variaves pós fiquei confuso!
         $currentData = Carbon::now();
         $lectiveYearSelected = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
@@ -1092,12 +1099,26 @@ class mainController extends Controller
             ->get();
     }
 
-
-
-    public function boletim_pdf($matriculation)
+    public function get_matriculation_id($whatsapp)
     {
+        $whatsapp = '945347861';
+        $matriculationId = DB::table('matriculations as m')
+            ->join('users as u', 'm.user_id', '=', 'u.id')
+            ->where('u.user_whatsapp', $whatsapp)
+            ->value('m.id'); 
+        
+        return $matriculationId;
+    }
+
+    public function boletim_pdf($matriculation =  null , $whatsapp = null)
+    {
+        
         $isApiRequest = request()->header('X-From-API') === 'flask';
         $tokenRecebido = request()->bearerToken(); 
+
+        if (isset($whatsapp)) {
+            $matriculation = $this->get_matriculation_id($whatsapp);
+        }
 
         if ($isApiRequest) {
             // validar token
