@@ -394,7 +394,6 @@
                     <div class="form-group col">
                         <label>Tipo de Avaliação</label>
                         <select name="tipo_avaliacao" id="tipo_avaliacao" class="form-control" required>
-                            <option value=""></option>
                         </select>
                     </div>
                     <div class="modal-footer">
@@ -1037,28 +1036,36 @@
 
         //Funcao para listar todos os tipos de metrica no select
         function message($param, anoLectivo) {
-            var url = "{{ URL('tipo_metrica.fetch') }}";
-            $.ajax({
-                url: "/avaliations/tipo_metrica_fetch/" + anoLectivo,
-                type: "GET",
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                cache: false,
-                dataType: 'json',
-                success: function(dataResult) {
-                    var resultData = dataResult.data;
-                    var bodyData = '';
-                    var i = 1;
-                    $.each(resultData, function(index, row) {
-                        var editUrl = url + '/' + row.id + "/edit";
-                        bodyData += "<option value=" + row.id + ">" + row.nome + "</option>";
-                    })
-                    $("#tipo_metrica").append(bodyData);
-                    $("#tipos_metricas").append(bodyData);
-                }
+    var url = "{{ URL('tipo_metrica.fetch') }}";
+    $.ajax({
+        url: "/avaliations/tipo_metrica_fetch/" + anoLectivo,
+        type: "GET",
+        data: {
+            _token: '{{ csrf_token() }}'
+        },
+        cache: false,
+        dataType: 'json',
+        success: function(dataResult) {
+            var resultData = dataResult.data;
+            var bodyData = '';
+
+            $("#tipo_metrica").empty();
+            $("#tipos_metricas").empty();
+
+            $.each(resultData, function(index, row) {
+                bodyData += "<option value=" + row.id + ">" + row.nome + "</option>";
             });
+
+            $("#tipo_metrica").append(bodyData);
+            $("#tipos_metricas").append(bodyData);
+
+            if (resultData.length > 0) {
+                $("#tipo_metrica").val(resultData[0].id);
+                $("#tipos_metricas").val(resultData[0].id);
+            }
         }
+    });
+}
 
         // FUNCAO QUE MOSTRAS AS MESTRICA DE ACORDO A SEMESTRE, NO VER METRICA DE UMA AVALIACAO
         $("#semestre").change(function() {

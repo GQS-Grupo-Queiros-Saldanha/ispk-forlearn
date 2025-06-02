@@ -1049,8 +1049,6 @@ class RequerimentoController extends Controller
     public function store_doc($dados)
     {
 
-
-
         $dados = explode(',', $dados);
         $vazio = 0;
 
@@ -1060,14 +1058,11 @@ class RequerimentoController extends Controller
                 $vazio = "1";
             } else {
             }
-        }
-        ;
+        };
 
         if ($vazio == 1) {
             return $data = ['dados' => "Por favor preencha todos os campos!!!", 'code' => "empty"];
         } else {
-
-
 
             $lective_year = $dados[0];
             $article_id = $dados[1];
@@ -2325,6 +2320,40 @@ class RequerimentoController extends Controller
             if (!$article_request_id) {
                 Toastr::error(__(' Não foi possivel criar o emolumento de defesa, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
+            }
+
+            if($codev == "defesa_acta"){
+
+                $codev2 = "pre_defesa_acta";
+
+                $emolumento_defesa = EmolumentCodevLective($codev2, $request->anoLectivo);
+
+            if ($emolumento_defesa->isEmpty()) {
+                Toastr::warning(__('A forLEARN não encontrou um emolumento de pré-defesa configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
+                return redirect()->back();
+            }
+            $article_id = $emolumento_defesa[0]->id_emolumento;
+
+            //Emolumento
+            $consulta = DB::table('article_requests')
+                ->where('user_id', $request->students)
+                ->where('article_id', $article_id)
+                ->whereNull('deleted_by')
+                ->whereNull('deleted_at')
+                ->get();
+
+            if (!$consulta->isEmpty()) {
+                // Toastr::warning(__('A forLEARN não detectou que já existe uma marcação de pedido de transferência para este estudante, por favor verifique a existência do emolumento na tesouraria para validar a mesma , caso contrário contacte o apoio a forLEARN'), __('toastr.warning'));
+                Toastr::warning(__('A forLEARN detectou que já existe um emolumento de pré-defesa para este estudante, por favor verifique a tabela para validar a mesma , caso contrário contacte o apoio a forLEARN'), __('toastr.warning'));
+                return redirect()->back();
+            }
+
+            $article_request_id = createAutomaticArticleRequest($request->students, $article_id, null, null);
+
+            if (!$article_request_id) {
+                Toastr::error(__(' Não foi possivel criar o emolumento de pré-defesa, por favor tente novamente'), __('toastr.error'));
+                return redirect()->back();
+            }
             }
 
 

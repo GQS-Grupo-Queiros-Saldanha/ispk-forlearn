@@ -235,8 +235,6 @@
                 $("#metrics_container").prop('hidden',true)
                 $("#metrics").prop('required',false)
             }
-
-
                 $.ajax({
                     url: "/avaliations/get_students_where_has/" + exam + "/" + course_id +"/"+lective_year_matriculation,
                     type: "GET",
@@ -352,7 +350,7 @@
                         // Monta o select com as turmas
                         $.each(item, function(indexz, gaz) {
                             $.each(gaz, function(indexx, value) {
-                                bodyData += "<option value=" + index + ',' + value.id + ">" + value.display_name + "</option>";
+                                bodyData += "<option value=" + index + ',' + value.class_id + ">" + value.display_name + "</option>";
                             });
                         });
 

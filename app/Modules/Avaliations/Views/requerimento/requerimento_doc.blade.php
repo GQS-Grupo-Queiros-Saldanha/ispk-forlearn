@@ -261,7 +261,7 @@
             var tipo = $('#emolumentos_doc').val();
             tipo = tipo.split(",");
 
-            console.log(tipo);
+            console.log('tipo: ',tipo);
             if (tipo[2] == "2" || tipo[2] == "3") {
                 $(".anos_estudantes").show();
             } else {
@@ -376,7 +376,7 @@
                             
                         let doctype = filtrados[0].documentation_type_id;
                         //console.log(doc)
-                        emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + doctype +'">' + article.nome + '</option>');
+                        emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + ',' + doctype +'">' + article.nome + '</option>');
 
                         }
                     );
@@ -396,7 +396,7 @@
                         if(filtrados.length == 0) return;
                         
                         let doctype = filtrados[0].documentation_type_id;
-                       emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + doctype +'">' + article.nome + '</option>');
+                       emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + ',' + doctype +'">' + article.nome + '</option>');
                                 
                     });
 
@@ -417,7 +417,7 @@
                         if(filtrados.length == 0) return;
                         
                         let doctype = filtrados[0].documentation_type_id;
-                        emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + doctype +'">' + article.nome + '</option>');
+                        emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + ',' + doctype +'">' + article.nome + '</option>');
                          
                     });
 
@@ -439,7 +439,7 @@
                         let doctype = filtrados[0].documentation_type_id;
 
                         if(ref_id == 25){
-                            emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + doctype +'">' + article.nome + '</option>');
+                            emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + ',' + doctype +'">' + article.nome + '</option>');
                                 
                         }
                                 
@@ -464,7 +464,7 @@
                         
                         let doctype = filtrados[0].documentation_type_id;
                         //console.log(doc)
-                        emolumentos_doc.append('<option value="' + article.id_article + ',' +article.money + doctype +'">' + article.nome + '</option>');
+                        emolumentos_doc.append('<option value="' + article.id_article + ',' + article.money + ',' + doctype +'">' + article.nome + '</option>');
                     
                     });
 
@@ -486,10 +486,12 @@
           var doc_type = 0;
           if(tipo != null){
          
-            tipo = tipo.split(",");
-            doc_type =  tipo[2];
-            console.log(doc_type)
-           
+           tipo = tipo.split(",");
+            console.log("DEBUG tipo array:", tipo);
+            doc_type = tipo[2];
+            console.log("DEBUG tipo[2]:", doc_type);
+
+
           }
             $.ajax({
                 url: "/avaliations/matriculation_requerimento/" + ano_lectivo.val()+ "," + doc_type,
@@ -605,11 +607,10 @@
             
             store_doc();
         });
-
-
+        // Validar se o estudante e o emolumento foram seleccionados
+        // e mostrar o botão de requerer
+        
         function validar() {
-
-
 
             if (emolumentos_doc.val() == null || student.val() == null) {
                 btn_requerer.hide();

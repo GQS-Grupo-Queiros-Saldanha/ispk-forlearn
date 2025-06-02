@@ -1096,70 +1096,74 @@ class mainController extends Controller
 
     public function boletim_pdf($matriculation)
     {
+        $isApiRequest = request()->header('X-From-API') === 'flask';
+        $tokenRecebido = request()->bearerToken(); 
 
+        if ($isApiRequest) {
+            // validar token
+            if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
+                return response('Não autorizado', 401);
+            }
 
-        $matriculations = DB::table("matriculations")
-            ->where("id", $matriculation)
-            ->where("user_id", auth()->user()->id)
-            ->whereNull("deleted_at")
-            ->select(["lective_year", "id", "user_id"])
-            ->orderBy("lective_year", "asc")
-            ->first();
+            $matriculations = DB::table("matriculations")
+                ->where("id", $matriculation)
+                ->whereNull("deleted_at")
+                ->select(["lective_year", "id", "user_id"])
+                ->orderBy("lective_year", "asc")
+                ->first();
+        } else {
+            $matriculations = DB::table("matriculations")
+                ->where("id", $matriculation)
+                ->where("user_id", auth()->user()->id)
+                ->whereNull("deleted_at")
+                ->select(["lective_year", "id", "user_id"])
+                ->orderBy("lective_year", "asc")
+                ->first();
+        }
 
+        if (!isset($matriculations->lective_year)) {
+            return response("Nenhuma matrícula encontrada neste ano lectivo", 404);
+        }
+
+        // A partir daqui é igual para ambos os casos
         $courses = DB::table("user_courses")
             ->where("users_id", $matriculations->user_id)
             ->select(["courses_id"])
             ->first();
-
-
-        if (!isset($matriculations->lective_year)) {
-            return "Nenhuma matrícula encontrada neste ano lectivo";
-        }
-
 
         $student_info = $this->get_matriculation_student($matriculations->lective_year);
         $disciplines = $this->get_disciplines($matriculations->lective_year);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
         $percurso =  $percurso->map(function ($grupo) {
-
             return $grupo->reject(function ($avl) use ($grupo) {
-                $faltou =  isset($avl->presence);
+                $faltou = isset($avl->presence);
                 $nota_normal = !isset($avl->segunda_chamada);
-
                 $fez_segunda_chamada = $grupo->where('user_id', $avl->user_id)
                     ->where('Disciplia_id', $avl->Disciplia_id)
                     ->where('Avaliacao_aluno_Metrica', $avl->Avaliacao_aluno_Metrica)
                     ->where('Avaliacao_aluno_turma', $avl->Avaliacao_aluno_turma)
                     ->where('segunda_chamada', 1)
                     ->isNotEmpty();
-
-
-
-
-                $sai =  $faltou && $nota_normal && $fez_segunda_chamada;
-
-
-                return $sai;
+                return $faltou && $nota_normal && $fez_segunda_chamada;
             });
         });
 
-
-
         $articles = $this->get_payments($matriculations->lective_year);
         $plano = $this->study_plain($matriculations->lective_year);
+        $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $matriculations = $this->get_matriculation_student($matriculations->lective_year);
         $classes = $this->matriculation_classes($matriculations->id);
-
-
         $institution = Institution::latest()->first();
-
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
 
-        $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student_info", "institution", "config", "classes", "melhoria_notas"))
-
+        $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
+            "percurso", "articles", "plano", "matriculations",
+            "disciplines", "student_info", "institution", "config",
+            "classes", "melhoria_notas"
+        ))
             ->setOption('margin-top', '2mm')
             ->setOption('margin-left', '2mm')
             ->setOption('margin-bottom', '13mm')
@@ -1167,11 +1171,16 @@ class mainController extends Controller
             ->setOption('footer-html', $footer_html)
             ->setPaper('a4', 'landscape');
 
+        // Se for uma chamada da API, retorna o conteúdo do PDF
+        if ($isApiRequest) {
 
-        return $pdf->stream('Boletim_de_notas_' . $student_info->matricula
-            . '_' .
-            $student_info->lective_year . '.pdf');
+            return $pdf->download('Boletim_de_notas.pdf');
+        }
+
+        // Senão, devolve via stream (para navegador)
+        return $pdf->stream('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
     }
+
 
 
     public static function study_plain($lective_year = null, $student = null)
@@ -1245,4 +1254,390 @@ class mainController extends Controller
             ->orderBy("ptt.display_name", "desc")
             ->get();
     }
+
+
+    //ATENÇAÕ REGIÃO CRÍTICA
+
+    public function get_classes_grades($class_id,$lectiveYearSelected){
+       
+        
+        try{
+       
+            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id);
+            $data = [];
+            foreach($matriculations as $key=>$item){
+              $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
+            
+              if(!empty($result))
+              $data[$key] = [
+                "user_id"=> $item->user_id,
+                "boletim" => $result,
+              ];
+            }
+
+
+
+         return response()->json($data);
+     
+        }
+       catch(Exception $e){
+          dd($e);
+       }
+  }
+
+  public function update_percurso_grades(Request $request){
+
+     
+   
+    try{
+        DB::beginTransaction();
+        $data = $request->json()->all();
+
+        foreach ($data as $key => $aluno) {
+            $userId = $aluno['user_id'];
+    
+            foreach ($aluno['boletim'] as $disciplina) {
+                $disciplinaId = $disciplina['discipline_id'];
+                $codigo = $disciplina['codigo'];
+                $nomeDisciplina = $disciplina['disciplina'];
+                $notaFinal = $disciplina['nota_final'];
+                $notaPercurso = $disciplina['nota_percurso'];
+    
+              
+                $Percurso = DB::table('new_old_grades')->updateOrInsert(
+                    [
+                        'user_id' => $userId,
+                        'discipline_id' => $disciplinaId,
+                    ],
+                    [
+                        'grade' => $notaFinal,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                        "created_by" => 23
+                    ]
+                );
+            }
+        }
+        DB::commit();
+        // Retorno de sucesso
+        return response()->json([
+            'success' => true,
+            'message' => 'Dados processados com sucesso.'
+        ], 200);
+ 
+    }
+   catch(Exception $e){
+    DB::rollBack();
+    Log::error($e);
+    return response()->json($e->getMessage(), 500);
+   }
+}
+
+
+  private function get_all_matriculation_student($lective_year=null, $class_id){
+       
+      
+      
+
+      $emolumento_confirma_prematricula= mainController::pre_matricula_confirma_emolumento($lective_year);
+          
+      return $model = Matriculation::leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+              ->join('classes as cl', function ($join)  {
+                  $join->on('cl.id', '=', 'mc.class_id');
+                  $join->on('mc.matriculation_id', '=', 'matriculations.id');
+                  $join->on('matriculations.course_year', '=', 'cl.year');
+              })                             
+                                  
+            ->leftJoin('article_requests as art_requests',function ($join) use($emolumento_confirma_prematricula)
+              {
+                  $join->on('art_requests.user_id','=','matriculations.user_id')
+                  ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula);
+              })
+              
+              ->join('matriculation_disciplines as mat_disc','mat_disc.matriculation_id','matriculations.id')
+
+              
+              ->select([
+                  'matriculations.*'
+              ])
+              ->where('art_requests.deleted_by', null) 
+              ->where('art_requests.deleted_at', null)
+              ->where('matriculations.lective_year', $lective_year)
+              ->where('mc.class_id',$class_id)
+              
+              
+              ->distinct('matriculations.user_id')
+              ->get();
+  }
+  
+  
+  public function get_boletim_student_new($lective_year=null, $student=null){
+   
+     $currentData = Carbon::now();
+       $lectiveYearSelected = DB::table('lective_years')
+      ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
+      ->first();
+      $lectiveYearSelected_id = $lectiveYearSelected->id ?? 6;
+      
+      if(isset($lective_year)){
+          $lectiveYearSelected_id = $lective_year;
+      }
+
+      $matriculations = DB::table("matriculations")
+      ->where("user_id",$student)
+      ->whereNull("deleted_at")
+      ->where("lective_year",$lectiveYearSelected_id)
+      ->select(["lective_year","id"])
+      ->orderBy("lective_year","asc")
+      ->first();
+     
+      if(!isset($matriculations->lective_year)){
+          return "Nenhuma matrícula encontrada neste ano lectivo";
+      }
+
+      $courses = DB::table("user_courses")
+      ->where("users_id",$student)
+      ->select(["courses_id"])
+      ->first(); 
+
+      if(!isset($courses->courses_id)){
+          return "Nenhum curso associado";
+      }
+      
+      $disciplines = $this->get_disciplines($lectiveYearSelected_id, $student);
+      $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id); 
+      $matriculations = $this->get_matriculation_student($lective_year, $student);
+      $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
+      $melhoria_notas = get_melhoria_notas($student, $lective_year, 0);
+   
+     $notas_percurso = DB::table('new_old_grades as nog')
+     ->where('nog.user_id',$student)
+     ->whereIn('discipline_id',$disciplines->pluck('id_disciplina')) 
+     ->get();
+
+
+      $semestres = ['1'];
+      $tabelaPorSemestre = [];
+
+      foreach ($semestres as $semestre) {
+          $dadosSemestre = [];
+           
+          foreach ($disciplines as $index => $disciplina) {
+              if ($index[3] != $semestre) continue;
+
+              // Lógica individual por disciplina
+              $avaliacoes = $percurso[$index] ?? [];
+
+              $dadosDisciplina = $this->processarDisciplina(
+                $student,
+                  $disciplina,
+                  $avaliacoes,
+                  $index,
+                  $melhoria_notas,
+                  $config,
+                  $notas_percurso
+              );
+
+                   
+    
+              $temNotaFinal = $dadosDisciplina['nota_final'] !== null;
+              
+$temNotaPercurso = $dadosDisciplina['nota_percurso'] !== null;
+
+$notasSaoDiferentes = $dadosDisciplina['nota_final'] != $dadosDisciplina['nota_percurso'];
+
+if (
+    (
+        ($temNotaFinal && !$temNotaPercurso) || 
+        ($temNotaPercurso && $notasSaoDiferentes)
+    ) 
+){    
+                  $dadosSemestre[] = $dadosDisciplina;
+              }
+             
+          }
+
+      }
+      
+      return $dadosSemestre
+      ;
+  }
+
+  protected function processarDisciplina($student,$disciplina, $avaliacoes, $index, $melhoria_notas, $config, $notas_percurso)
+  {
+      $notas = [
+          'pf1' => null, 'pf2' => null, 'oa' => null,
+          'neen' => null, 'oral' => null,
+          'recurso' => null, 'especial' => null,
+          'mac' => null, 'mac_estado' => '-', 'mac_cor' => '',
+          'final' => '-', 'final_estado' => '-', 'final_cor' => '',
+          'cf' => '-', "melhoria_nota" => null,'extra_nota' => null
+      ];
+
+      if($melhoria_notas->contains('discipline_id',$disciplina->id_disciplina)){
+        $m = $melhoria_notas->where('discipline_id',$disciplina->id_disciplina)->first();
+
+        $notas['melhoria_nota'] = !is_null($m->new_grade) ? $m->new_grade : null;
+    }
+
+    if($notas['melhoria_nota'] === null){
+      $percentuais = ['pf1' => 0, 'pf2' => 0, 'oa' => 0];
+      $mac_percent = $config->percentagem_mac / 100;
+      $oral_percent = $config->percentagem_oral / 100;
+
+      foreach ($avaliacoes as $aval) {
+          $code = strtolower($aval->MT_CodeDV);
+          $nota = $aval->nota_anluno !== null ? floatval($aval->nota_anluno) : null;
+          $percentual = $aval->percentagem_metrica / 100;
+
+          switch ($code) {
+              case 'pf1':
+                  $notas['pf1'] = $nota;
+                  $percentuais['pf1'] = $percentual;
+                  break;
+          
+              case 'pf2':
+                  $notas['pf2'] = $nota;
+                  $percentuais['pf2'] = $percentual;
+                  break;
+          
+              case 'oa':
+                  $notas['oa'] = $nota;
+                  $percentuais['oa'] = $percentual;
+                  break;
+          
+              case 'neen':
+                  $notas['neen'] = round($nota ?? 0);
+                  break;
+          
+              case 'oral':
+                  $notas['oral'] = round($nota ?? 0);
+                  break;
+          
+              case 'recurso':
+                  $notas['recurso'] = round($nota ?? 0);
+                  break;
+          
+              case 'exame_especial':
+                  $notas['especial'] = round($nota ?? 0);
+                  break;
+              case 'extraordinario':
+                    $notas['extra_nota'] = round($nota ?? 0);
+                    break;
+              default:
+                  // Nenhuma ação necessária
+                  break;
+          }
+          
+      }
+
+      // Calcular MAC
+      $mac_calculado = (
+          ($notas['pf1'] * $percentuais['pf1']) +
+          ($notas['pf2'] * $percentuais['pf2']) +
+          ($notas['oa'] * $percentuais['oa'])
+      );
+
+      $mac_calculado = round($mac_calculado);
+      $notas['mac'] = $mac_calculado;
+      $notas['final'] = $mac_calculado;
+
+      if ($mac_calculado >= $config->mac_nota_dispensa) {
+          $notas['mac_estado'] = 'Aprovado(a)';
+          $notas['mac_cor'] = 'for-green';
+          $notas['final_estado'] = 'Aprovado(a)';
+          $notas['final_cor'] = 'for-green';
+      } elseif ($mac_calculado >= $config->exame_nota_inicial) {
+          $notas['mac_estado'] = 'Exame';
+          $notas['mac_cor'] = 'for-yellow';
+          $notas['final_estado'] = 'Exame';
+          $notas['final_cor'] = 'for-yellow';
+      } else {
+          $notas['mac_estado'] = 'Recurso';
+          $notas['mac_cor'] = 'for-red';
+          $notas['final_estado'] = 'Recurso';
+          $notas['final_cor'] = 'for-red';
+          
+      }
+
+      // Calcular final se necessário
+      if ($notas['mac_estado'] === 'Exame' && $notas['neen'] !== null) {
+          $classificacao = round(
+              ($mac_calculado * $mac_percent) +
+              ($notas['neen'] * $oral_percent)
+          );
+
+          $notas['final'] = $classificacao;
+          $notas['cf'] = $classificacao;
+
+          if ($classificacao >= $config->exame_nota) {
+              $notas['final_estado'] = 'Aprovado(a)';
+              $notas['final_cor'] = 'for-green';
+          } else {
+              $notas['final_estado'] = 'Recurso';
+              $notas['final_cor'] = 'for-red';
+          }
+       
+      }
+
+      if ($notas['final_estado'] === 'Recurso' && $notas['recurso'] !== null) {
+          $classificacao = $notas['recurso'];
+
+          $notas['final'] = $classificacao;
+          if ($classificacao >= $config->exame_nota) {
+              $notas['final_estado'] = 'Aprovado(a)';
+              $notas['final_cor'] = 'for-green';
+          } else {
+              $notas['final_estado'] = 'Reprovado(a)';
+              $notas['final_cor'] = 'for-red';
+          }
+       
+      }
+
+      if ($notas['final_estado'] === 'Reprovado(a)' && $notas['especial'] !== null) {
+          $classificacao = $notas['especial'];
+          $notas['final'] = $classificacao;
+          if ($classificacao >= $config->exame_nota) {
+              $notas['final_estado'] = 'Aprovado(a)';
+              $notas['final_cor'] = 'for-green';
+          } else {
+              $notas['final_estado'] = 'Reprovado(a)';
+              $notas['final_cor'] = 'for-red';
+          }
+       
+      }
+
+      if ($notas['final_estado'] === 'Reprovado(a)' && $notas['extra_nota'] !== null) {
+        $classificacao = $notas['extra_nota'];
+
+        $notas['final'] = $classificacao;
+        if ($classificacao >= $config->exame_nota) {
+            $notas['final_estado'] = 'Aprovado(a)';
+            $notas['final_cor'] = 'for-green';
+        } else {
+            $notas['final_estado'] = 'Reprovado(a)';
+            $notas['final_cor'] = 'for-red';
+        }
+
+     
+        }
+
+   }
+   else{
+    $notas['final'] = $notas['melhoria_nota'];
+   }
+   
+      $nota_percurso = $notas_percurso->filter(function($item) use($disciplina){
+          return $item->discipline_id == $disciplina->id_disciplina;
+    })->first();
+
+      
+      return [
+        'discipline_id' => $disciplina->id_disciplina,
+          'codigo' => $index,
+          'disciplina' => $disciplina->nome_disciplina,
+          'nota_final' => $notas['final'],
+          'nota_percurso' => $nota_percurso->grade ?? null,
+      ];
+  }
 }
