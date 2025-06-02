@@ -2361,7 +2361,7 @@
         $value_base = 0;
         foreach ($emolumentos as $key => $item) {
     if ($key == 'total') {
-        // emarq
+        // Emarq
         if (is_array($item)) {
             $total_valor = $item['total_valor'] ?? 0;
             $total = $item['total'] ?? 0;
