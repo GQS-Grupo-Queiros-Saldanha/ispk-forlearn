@@ -1124,9 +1124,7 @@ class mainController extends Controller
                 $matriculation = $this->get_matriculation_id($whatsapp);
             }
         }
-        //if (!isset($isApiRequest) && $matriculation === null) {
-            return response('Não autorizado', 401);
-        //}
+        
         // Verifica se o usuário está autenticado
         $matriculations = DB::table("matriculations")
         ->where("id", $matriculation)
