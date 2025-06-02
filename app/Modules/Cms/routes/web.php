@@ -1,7 +1,7 @@
 <?php
 
 //rota fora do auth
-Route::get('api/boletim_pdf{whatsapp}', 'App\Modules\Cms\Controllers\mainController@boletim_pdf');
+Route::get('api/boletim_pdf/{whatsapp}', 'App\Modules\Cms\Controllers\mainController@boletim_pdf');
 Route::get('matriculation_id/', 'App\Modules\Cms\Controllers\mainController@get_matriculation_id');
 
 
