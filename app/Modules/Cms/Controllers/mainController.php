@@ -1103,10 +1103,10 @@ class mainController extends Controller
         return $matriculationId;
     }
 
-    public function boletim_pdf(Request $request)
+    public function boletim_pdf($whatsapp)
     {
-        $whatsapp = $request->input('whatsapp');
-        $matriculation = $request->input('matriculation');
+        //$whatsapp = $request->input('whatsapp');
+        //$matriculation = $request->input('matriculation');
 
         // Verifica se o usuário é um pedido de API
         // Se for, valida o token e obtém a matrícula pelo WhatsApp, se necessário
@@ -1124,9 +1124,9 @@ class mainController extends Controller
                 $matriculation = $this->get_matriculation_id($whatsapp);
             }
         }
-        if (!isset($isApiRequest) && $matriculation === null) {
+        //if (!isset($isApiRequest) && $matriculation === null) {
             return response('Não autorizado', 401);
-        }
+        //}
         // Verifica se o usuário está autenticado
         $matriculations = DB::table("matriculations")
         ->where("id", $matriculation)
