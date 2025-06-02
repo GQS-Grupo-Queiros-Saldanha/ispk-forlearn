@@ -2,6 +2,8 @@
 
 //rota fora do auth
 Route::get('api/boletim_pdf/{matriculation}', 'App\Modules\Cms\Controllers\mainController@boletim_pdf');
+Route::get('matriculation_id/', 'App\Modules\Cms\Controllers\mainController@get_matriculation_id');
+
 
 
 // ENTIRE MODULE ROUTE GROUP

@@ -1089,9 +1089,18 @@ class mainController extends Controller
             ->get();
     }
 
+    public function get_matriculation_id($whatsapp)
+    {
+        //$whatsapp = '945347861';
+        $matriculationId = DB::table('matriculations as m')
+            ->join('users as u', 'm.user_id', '=', 'u.id')
+            ->where('u.user_whatsapp', $whatsapp)
+            ->value('m.id'); //->pluck('m.id');  //Todos
+        
+        return $matriculationId;
+    }
 
-
-    public function boletim_pdf($matriculation)
+    public function boletim_pdf($matriculation = null, $whatsapp = null)
     {
         $isApiRequest = request()->header('X-From-API') === 'flask';
         $tokenRecebido = request()->bearerToken(); 
@@ -1101,9 +1110,11 @@ class mainController extends Controller
             if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
                 return response('Não autorizado', 401);
             }
-           
-        }  
-        
+            if($whatsapp !== null){
+                $matriculation = $this->get_matriculation_id($whatsapp);
+            }
+        }
+        // Verifica se o usuário está autenticado
         $matriculations = DB::table("matriculations")
         ->where("id", $matriculation)
         ->whereNull("deleted_at")
