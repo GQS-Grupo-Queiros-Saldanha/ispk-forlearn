@@ -1144,7 +1144,7 @@ class mainController extends Controller
             ->first();
 
         $student_info = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
-        $disciplines = $this->get_disciplines($matriculations->lective_year);
+        $disciplines = $this->get_disciplines($matriculations->lective_year, $matriculations->user_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
         $percurso =  $percurso->map(function ($grupo) {
