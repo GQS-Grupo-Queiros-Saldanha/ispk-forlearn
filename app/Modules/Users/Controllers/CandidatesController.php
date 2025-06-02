@@ -1625,54 +1625,39 @@ class CandidatesController extends Controller
         ->first();
 
 
-      $cordenador = isset($cordenador->value) ? ($cordenador->value) : "";
-      $titulo_documento = "Relatório: Candidaturas";
-      $anoLectivo_documento = "Ano ACADÊMICO: ";
-      $documentoGerado_documento = "Documento gerado a";
-      $documentoCode_documento = 5;
-      $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
-      $date_generated = date("Y/m/d");
-      $pdf = PDF::loadView(
-        "Users::candidate.pdf-relatorios-new",
-        compact(
-          'vagas',
-          'cordenador',
-          'lectiveFase',
-          'lectiveYears',
-          'institution',
-          'titulo_documento',
-          'anoLectivo_documento',
-          'documentoGerado_documento',
-          'documentoCode_documento',
-          'date_generated',
-          'twoCourse',
-          'twoCourseUsers',
-          'logotipo',
-          'candidatos',
-          'todos_candidatos',
-          'staff',
-          'datas_inscricao',
-          'emolumentos'
-        )
-      );
+        $cordenador = isset($cordenador->value) ? ($cordenador->value) : "";
 
-      $pdf->setOption('margin-top', '2mm');
-      $pdf->setOption('margin-left', '2mm');
-      $pdf->setOption('margin-bottom', '1mm');
-      $pdf->setOption('margin-right', '2mm');
-      $pdf->setOption('enable-javascript', true);
-      $pdf->setOption('debug-javascript', true);
-      $pdf->setOption('javascript-delay', 1000);
-      $pdf->setOption('enable-smart-shrinking', true);
-      $pdf->setOption('no-stop-slow-scripts', true);
-      $pdf->setPaper('a4', 'portrait');
-
-      $pdf_name = "Relatório_candidaturas_" . $lectiveYears[0]->currentTranslation->display_name . "(" . $lectiveFase->fase . "ª Fase)";
-
-      // $footer_html = view()->make('Users::users.partials.pdf_footer', compact('institution'))->render();
-      $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-      $pdf->setOption('footer-html', $footer_html);
-      return $pdf->stream($pdf_name . '.pdf');
+        $titulo_documento = "Relatório: Candidaturas";
+        $anoLectivo_documento = "Ano ACADÊMICO: ";
+        $documentoGerado_documento = "Documento gerado a";
+        $documentoCode_documento = 5;
+        $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
+        $date_generated = date("Y/m/d");
+        
+        // Retornando a view ao invés de gerar PDF
+        return view(
+            "Users::candidate.pdf-relatorios-new",
+            compact(
+                'vagas',
+                'cordenador',
+                'lectiveFase',
+                'lectiveYears',
+                'institution',
+                'titulo_documento',
+                'anoLectivo_documento',
+                'documentoGerado_documento',
+                'documentoCode_documento',
+                'date_generated',
+                'twoCourse',
+                'twoCourseUsers',
+                'logotipo',
+                'candidatos',
+                'todos_candidatos',
+                'staff',
+                'datas_inscricao',
+                'emolumentos'
+            )
+        );
 
     } catch (Exception $e) {
       dd($e);
