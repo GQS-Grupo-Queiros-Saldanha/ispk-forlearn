@@ -1143,7 +1143,7 @@ class mainController extends Controller
             ->select(["courses_id"])
             ->first();
 
-        $student_info = $this->get_matriculation_student($matriculations->lective_year);
+        $student_info = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
         $disciplines = $this->get_disciplines($matriculations->lective_year);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
@@ -1420,7 +1420,7 @@ class mainController extends Controller
       }
       
       $disciplines = $this->get_disciplines($lectiveYearSelected_id, $student, $matriculations->user_id);
-      $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id); 
+      $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->user_id); 
       $matriculations = $this->get_matriculation_student($lective_year, $student, $matriculations->user_id);
       $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
       $melhoria_notas = get_melhoria_notas($student, $lective_year, 0);
