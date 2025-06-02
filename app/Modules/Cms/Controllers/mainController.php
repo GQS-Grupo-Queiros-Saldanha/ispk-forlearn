@@ -642,7 +642,7 @@ class mainController extends Controller
             $student = auth()->user()->id;
         }
 
-        $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
+        $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected, $matriculations->user_id);
 
         return $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
@@ -1021,7 +1021,7 @@ class mainController extends Controller
 
 
 
-        $disciplines = $this->get_disciplines($lectiveYearSelected_id);
+        $disciplines = $this->get_disciplines($lectiveYearSelected_id, $matriculations->user_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
         $percurso =  $percurso->map(function ($grupo) {
 
@@ -1146,7 +1146,7 @@ class mainController extends Controller
             ->first();
 
         $student_info = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
-        $disciplines = $this->get_disciplines($matriculations->lective_year);
+        $disciplines = $this->get_disciplines($matriculations->lective_year,  $matriculations->user_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
         $percurso =  $percurso->map(function ($grupo) {
@@ -1421,9 +1421,9 @@ class mainController extends Controller
           return "Nenhum curso associado";
       }
       
-      $disciplines = $this->get_disciplines($lectiveYearSelected_id, $student);
+      $disciplines = $this->get_disciplines($lectiveYearSelected_id, $student, $matriculations->user_id);
       $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id); 
-      $matriculations = $this->get_matriculation_student($lective_year, $student);
+      $matriculations = $this->get_matriculation_student($lective_year, $student, $matriculations->user_id);
       $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
       $melhoria_notas = get_melhoria_notas($student, $lective_year, 0);
    
