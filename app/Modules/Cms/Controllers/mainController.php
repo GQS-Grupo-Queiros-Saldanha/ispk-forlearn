@@ -498,6 +498,9 @@ class mainController extends Controller
         });
 
 
+
+
+
         $dividas = collect($payments)->groupBy("status")->map(function ($item, $key) use ($config_divida) {
 
             $i = null;
@@ -1100,8 +1103,15 @@ class mainController extends Controller
         return $matriculationId;
     }
 
-    public function boletim_pdf($matriculation = null, $whatsapp = null)
+    public function boletim_pdf(Request $request)
     {
+        $whatsapp = $request->input('whatsapp');
+        $matriculation = $request->input('matriculation');
+
+        // Verifica se o usuário é um pedido de API
+        // Se for, valida o token e obtém a matrícula pelo WhatsApp, se necessário
+        // Se não for, continua com a matrícula fornecida ou a do usuário autenticado
+
         $isApiRequest = request()->header('X-From-API') === 'flask';
         $tokenRecebido = request()->bearerToken(); 
 
@@ -1110,9 +1120,12 @@ class mainController extends Controller
             if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
                 return response('Não autorizado', 401);
             }
-            if($whatsapp !== null){
+            if($whatsapp !== null ) {
                 $matriculation = $this->get_matriculation_id($whatsapp);
             }
+        }
+        if (!isset($isApiRequest) && $matriculation === null) {
+            return response('Não autorizado', 401);
         }
         // Verifica se o usuário está autenticado
         $matriculations = DB::table("matriculations")
@@ -1126,14 +1139,14 @@ class mainController extends Controller
             return response("Nenhuma matrícula encontrada neste ano lectivo", 404);
         }
 
-        // A partir daqui é igual para ambos os casoss
+        // A partir daqui é igual para ambos os casos
         $courses = DB::table("user_courses")
             ->where("users_id", $matriculations->user_id)
             ->select(["courses_id"])
             ->first();
 
-        $student_info = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
-        $disciplines = $this->get_disciplines($matriculations->lective_year, $matriculations->user_id);
+        $student_info = $this->get_matriculation_student($matriculations->lective_year);
+        $disciplines = $this->get_disciplines($matriculations->lective_year);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
         $percurso =  $percurso->map(function ($grupo) {
@@ -1150,12 +1163,11 @@ class mainController extends Controller
             });
         });
 
-        $articles = $this->get_payments($matriculations->lective_year, $matriculations->user_id);
-        $plano = $this->study_plain($matriculations->lective_year, $matriculations->user_id);
+        $articles = $this->get_payments($matriculations->lective_year);
+        $plano = $this->study_plain($matriculations->lective_year);
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
         $classes = $this->matriculation_classes($matriculations->id);
-        $matriculations = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
 
@@ -1268,7 +1280,7 @@ class mainController extends Controller
         
         try{
        
-            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id, $matriculations->user_id);
+            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id);
             $data = [];
             foreach($matriculations as $key=>$item){
               $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
