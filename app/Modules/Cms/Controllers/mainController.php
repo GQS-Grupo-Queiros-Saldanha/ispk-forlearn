@@ -1143,8 +1143,8 @@ class mainController extends Controller
             ->select(["courses_id"])
             ->first();
 
-        $student_info = $this->get_matriculation_student($matriculations->lective_year, $matriculations->user_id);
-        $disciplines = $this->get_disciplines($matriculations->lective_year,  $matriculations->user_id);
+        $student_info = $this->get_matriculation_student($matriculations->lective_year);
+        $disciplines = $this->get_disciplines($matriculations->lective_year);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
 
         $percurso =  $percurso->map(function ($grupo) {
@@ -1162,7 +1162,7 @@ class mainController extends Controller
         });
 
         $articles = $this->get_payments($matriculations->lective_year);
-        $plano = $this->study_plain($matriculations->lective_year, $matriculations->user_id);
+        $plano = $this->study_plain($matriculations->lective_year);
         $config = DB::table('avalicao_config')->where('lective_year', $matriculations->lective_year)->first();
         $melhoria_notas = get_melhoria_notas($matriculations->user_id, $matriculations->lective_year, 0);
         $classes = $this->matriculation_classes($matriculations->id);
@@ -1278,7 +1278,7 @@ class mainController extends Controller
         
         try{
        
-            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id, $matriculations->user_id);
+            $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id);
             $data = [];
             foreach($matriculations as $key=>$item){
               $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
