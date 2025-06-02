@@ -642,7 +642,7 @@ class mainController extends Controller
             $student = auth()->user()->id;
         }
 
-        $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected, $matriculations->user_id);
+        $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
 
         return $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')

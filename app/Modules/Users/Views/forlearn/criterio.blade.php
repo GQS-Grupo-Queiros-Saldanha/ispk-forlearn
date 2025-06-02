@@ -17,7 +17,7 @@
 </head>
 <body>
     <div class="conteudo">
-        <h1>forlearn</h1>
+        <h1>forLEARN</h1>
         <h4>Este é uma actualização da forlearn. </h4>
         <p>porfavor atulize o seu Whatsapp pará poder utilizar os novos serviços</p>
         <form action="{{ route('actualizar-whatsapp') }}" method="POST" class="form-control" id="formularioLogin">
