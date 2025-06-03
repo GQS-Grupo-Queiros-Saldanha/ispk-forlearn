@@ -4,11 +4,9 @@
     PLANO CURRICULAR DAS DISCIPLINAS | forLEARN
 </title>
 @section('content')
-<link href="http://fonts.cdnfonts.com/css/calibri-light" rel="stylesheet">
 
 
 <style>
-  @import url('http://fonts.cdnfonts.com/css/calibri-light');
 
   .td-parameter-column {
     padding-left: 1px !important;

@@ -1,7 +1,7 @@
 <title>Diploma | forLEARN</title>
 @extends('layouts.print')
 @section('content')
-    <link href="http://fonts.cdnfonts.com/css/calibri-light" rel="stylesheet">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Junge&display=swap" rel="stylesheet">
