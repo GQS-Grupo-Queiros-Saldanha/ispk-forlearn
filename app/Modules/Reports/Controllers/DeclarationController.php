@@ -429,55 +429,46 @@ class DeclarationController extends Controller
         $institution = Institution::latest()->first();
 
         $pdf_name = 'declaracao_anulacao'; // ou gere com base no estudante, etc.
-
-        $pdf = PDF::loadView("Reports::declaration.anulacao", compact(
-            'config',
-            'cargaHoraria',
-            'direitor',
-            'secretario',
-            'cargo',
-            'dataActual',
-            'userFoto',
-            'studentInfo',
-            'institution',
-            'anos',
-            'lectivo',
-            'media',
-            'nascimento',
-            "requerimento",
-            "recibo"
-        ));
+        $pdf = PDF::loadView(
+            "Users::candidate.pdf-relatorios-new",
+            compact(
+                'vagas', 'cordenador', 'lectiveFase', 'lectiveYears', 'institution',
+                'titulo_documento', 'anoLectivo_documento', 'documentoGerado_documento',
+                'documentoCode_documento', 'date_generated', 'twoCourse', 'twoCourseUsers',
+                'candidatos', 'todos_candidatos', 'staff', 'datas_inscricao', 'emolumentos',
+                'logotipo'
+            )
+        );
         
-        // Define opções do PDF
-        $pdf->setOption('margin-top', '1mm');
-        $pdf->setOption('margin-left', '1mm');
-        $pdf->setOption('margin-bottom', '12mm');
-        $pdf->setOption('margin-right', '1mm');
-        $pdf->setOption('enable-javascript', true);
-        $pdf->setOption('javascript-delay', 1000);
-        $pdf->setOption('enable-smart-shrinking', true);
-        $pdf->setOption('no-stop-slow-scripts', true);
+        // Opções de margem e papel
+        $pdf->setOption('margin-top', '2mm');
+        $pdf->setOption('margin-left', '2mm');
+        $pdf->setOption('margin-bottom', '1mm');
+        $pdf->setOption('margin-right', '2mm');
         $pdf->setPaper('a4', 'portrait');
         
-        // Prepare código e footer HTML
-        $code_doc = $this->get_code_doc($requerimento->code, $requerimento->year);
+        // Reativando opções essenciais de JavaScript e acesso a arquivos locais
+        $pdf->setOption('enable-javascript', true);
+        $pdf->setOption('javascript-delay', 1000);
+        $pdf->setOption('no-stop-slow-scripts', true);
+        $pdf->setOption('enable-smart-shrinking', true);
+        $pdf->setOption('enable-local-file-access', true); // Necessário para ler footers salvos em disco
         
-        $footer_html = view()->make('Reports::pdf_model.forLEARN_footer', compact('institution', 'requerimento', 'recibo', 'code_doc'))->render();
+        // Gerando o footer como arquivo temporário
+        $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+        $footer_path = tempnam(sys_get_temp_dir(), 'footer_') . '.html';
+        file_put_contents($footer_path, $footer_html);
+        $pdf->setOption('footer-html', $footer_path);
         
-        // Para evitar erro de carregamento, salve o footer html num arquivo temporário e passe o caminho absoluto para wkhtmltopdf
-        $tempFooterPath = storage_path('app/public/pdf_footer.html');
-        file_put_contents($tempFooterPath, $footer_html);
+        // Nome do arquivo PDF
+        $lectiveYear = $lectiveYears[0] ?? null;
+        $pdf_name = "Relatório_candidaturas_" .
+            ($lectiveYear->currentTranslation->display_name ?? 'AnoDesconhecido') .
+            " (" . 2 . "ª Fase)";
         
-        // Use file:// para caminho absoluto no footer-html
-        $pdf->setOption('footer-html', 'file://' . $tempFooterPath);
-        
-        if ($config->rodape == 1) {
-            $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-            file_put_contents($tempFooterPath, $footer_html);
-            $pdf->setOption('footer-html', 'file://' . $tempFooterPath);
-        }
-        
-        return $pdf->stream('declaracao.pdf');
+        // Retornar o PDF para visualização
+        return $pdf->stream($pdf_name . '.pdf');
+       
     }
 
 
