@@ -186,7 +186,7 @@
     
     .table_te td
         {
-          font-size:12pt!important;
+          font-size:10pt!important;
         }
         
     .body {
@@ -459,7 +459,7 @@
                     assinada e autenticada com o carimbo a óleo em uso no {{$institution->abrev}}.
                 </p>
                 
-                <!--<p style="font-size:12pt !important">Documento gerado automaticamente pela <b style="color:#243f60;margin-top:10px;font-size:inherit !important">forLEARN<sup style="font-size: 11px">®</sup></b></p>-->
+                <!--<p style="font-size:10pt !important">Documento gerado automaticamente pela <b style="color:#243f60;margin-top:10px;font-size:inherit !important">forLEARN<sup style="font-size: 11px">®</sup></b></p>-->
                
                  <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:40px !important;margin-top:-10px">
            
