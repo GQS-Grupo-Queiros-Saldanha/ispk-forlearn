@@ -452,15 +452,12 @@ class DeclarationController extends Controller
         $pdf->setOption('margin-left', '1mm');
         $pdf->setOption('margin-bottom', '12mm');
         $pdf->setOption('margin-right', '1mm');
-        
         $pdf->setOption('enable-javascript', true);
-        $pdf->setOption('debug-javascript', true); // coloque true apenas se necessário
         $pdf->setOption('javascript-delay', 1000);
         $pdf->setOption('enable-smart-shrinking', true);
         $pdf->setOption('no-stop-slow-scripts', true);
         $pdf->setPaper('a4', 'portrait');
         
-        // Rodapé
         $code_doc = $this->get_code_doc($requerimento->code, $requerimento->year);
         $footer_html = view()->make('Reports::pdf_model.forLEARN_footer', compact('institution', 'requerimento', 'recibo', 'code_doc'))->render();
         $pdf->setOption('footer-html', $footer_html);
@@ -470,7 +467,7 @@ class DeclarationController extends Controller
             $pdf->setOption('footer-html', $footer_html);
         }
         
-        return $pdf->stream($pdf_name . '.pdf');
+        return $pdf->stream('declaracao.pdf');
     }
 
 
