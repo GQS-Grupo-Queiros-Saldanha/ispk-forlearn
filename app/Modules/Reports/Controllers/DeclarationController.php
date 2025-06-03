@@ -446,43 +446,45 @@ class DeclarationController extends Controller
             "requerimento",
             "recibo"
         ));
-        // Configurações principais
+      
+        // ✅ Opções de formatação e papel
 $pdf->setOption('margin-top', '2mm');
 $pdf->setOption('margin-left', '2mm');
 $pdf->setOption('margin-bottom', '1mm');
 $pdf->setOption('margin-right', '2mm');
 $pdf->setPaper('a4', 'portrait');
 
-// Habilita recursos avançados do wkhtmltopdf
+// ✅ Opções para scripts e recursos locais
 $pdf->setOption('enable-javascript', true);
-$pdf->setOption('javascript-delay', 1000); // Espera o JS carregar
+$pdf->setOption('javascript-delay', 1000);
 $pdf->setOption('no-stop-slow-scripts', true);
 $pdf->setOption('enable-smart-shrinking', true);
-$pdf->setOption('enable-local-file-access', true); // IMPORTANTE para usar arquivos locais (como o footer)
+$pdf->setOption('enable-local-file-access', true); // essencial para imagens locais no footer
 
-// Renderiza o footer em HTML
-$footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+// ✅ Gerar footer HTML e salvar com caminho acessível
+$footer_html = view('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+$footer_path = storage_path('app/public/pdf_footer.html'); // local fixo e seguro
 
-// Cria arquivo temporário para o footer
-$footer_path = tempnam(sys_get_temp_dir(), 'footer_') . '.html';
 file_put_contents($footer_path, $footer_html);
-
-// Verifica se o arquivo foi realmente criado
-if (!file_exists($footer_path)) {
-    throw new \Exception("Erro: Footer HTML não foi criado em: {$footer_path}");
-}
+chmod($footer_path, 0644); // garantir leitura pelo wkhtmltopdf
 
 $pdf->setOption('footer-html', $footer_path);
 
-// Define nome do PDF com segurança
+// ✅ Nome amigável do arquivo PDF
 $lectiveYear = $lectiveYears[0] ?? null;
 $pdf_name = "Relatório_candidaturas_" .
     ($lectiveYear->currentTranslation->display_name ?? 'AnoDesconhecido') .
     " (" . 2 . "ª Fase)";
 
-// Exibe o PDF no navegador
+// ✅ Log extra de debug (opcional)
+if (!file_exists($footer_path)) {
+    \Log::error("Footer HTML file não encontrado em: {$footer_path}");
+} else {
+    \Log::info("PDF Footer salvo com sucesso: {$footer_path}");
+}
+
+// ✅ Retornar PDF para visualização no navegador
 return $pdf->stream($pdf_name . '.pdf');
-       
     }
 
 
