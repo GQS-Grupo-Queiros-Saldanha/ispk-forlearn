@@ -168,7 +168,7 @@
         p {
             /*margin-top:50px;*/
             /*font-size:1.5rem;*/
-            font-size: 15pt;
+            font-size: 12pt;
             margin-left: 80px;
             margin-right: 80px;
             color: black;
@@ -189,13 +189,13 @@
             
         }
         .conteudo p {
-            font-size:24px!important;
+            font-size:12px!important;
         }
         .visto{
             margin-left:120px;
             text-align: center;
             width:180px;
-            font-size:15px;
+            font-size:12px;
             margin-top:60px;
             font-weight: 600;
         }
