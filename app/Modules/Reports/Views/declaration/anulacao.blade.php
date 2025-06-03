@@ -6,22 +6,11 @@
         
     @endphp
     <style>
-   
-      @font-face {
-    font-family: 'Calibri Light';
-    font-weight: 300;
-    src: local('Times New Roman'), url('/fonts/times.woff') format('woff');
-}
+ 
 
-@font-face {
-    font-family: 'Times New Roman';
-    font-weight: 400;
-    src: local('Times New Roman'), url('/fonts/times.woff') format('woff');
-}
-
-        body {
-            font-family: 'Times New Roman';
-        }
+ body {
+        font-family: 'Calibri Light', sans-serif;
+    }
 
         html,
         body {
