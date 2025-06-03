@@ -1659,10 +1659,6 @@ class CandidatesController extends Controller
     $pdf->setOption('enable-local-file-access', true); // Necessário para ler footers salvos em disco
     
     // Gerando o footer como arquivo temporário
-    $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-    $footer_path = tempnam(sys_get_temp_dir(), 'footer_') . '.html';
-    file_put_contents($footer_path, $footer_html);
-    $pdf->setOption('footer-html', $footer_path);
     
     // Nome do arquivo PDF
     $lectiveYear = $lectiveYears[0] ?? null;
