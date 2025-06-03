@@ -5,13 +5,18 @@
 <head>
 
   <style>
-    @import url('https://fonts.cdnfonts.com/css/times-new-roman');
+    @font-face {
+    font-family: 'Times New Roman';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Times New Roman'), url('/fonts/times.woff') format('woff');
+}
 
-    .cabecalho {
-      font-family: 'Times New Roman';
-      text-transform: uppercase;
-      margin-top: 15px;
-    }
+.cabecalho {
+    font-family: 'Times New Roman', serif;
+    text-transform: uppercase;
+    margin-top: 15px;
+}
 
     .cabecalho>*,
     .titulo>* {
