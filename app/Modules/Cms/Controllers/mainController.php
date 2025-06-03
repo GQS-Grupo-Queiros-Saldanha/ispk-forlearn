@@ -1103,7 +1103,7 @@ class mainController extends Controller
         return $matriculationId;
     }
 
-    public function boletim_pdf($whatsapp)
+    public function boletim_pdf($matriculation) //$whatsapp
     {
         //$whatsapp = $request->input('whatsapp');
         //$matriculation = $request->input('matriculation');
