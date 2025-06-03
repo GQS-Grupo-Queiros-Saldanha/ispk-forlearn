@@ -429,17 +429,23 @@ class DeclarationController extends Controller
         $institution = Institution::latest()->first();
 
         $pdf_name = 'declaracao_anulacao'; // ou gere com base no estudante, etc.
-        $pdf = PDF::loadView(
-            "Users::candidate.pdf-relatorios-new",
-            compact(
-                'vagas', 'cordenador', 'lectiveFase', 'lectiveYears', 'institution',
-                'titulo_documento', 'anoLectivo_documento', 'documentoGerado_documento',
-                'documentoCode_documento', 'date_generated', 'twoCourse', 'twoCourseUsers',
-                'candidatos', 'todos_candidatos', 'staff', 'datas_inscricao', 'emolumentos',
-                'logotipo'
-            )
-        );
-        
+        $pdf = PDF::loadView("Reports::declaration.anulacao", compact(
+            'config',
+            'cargaHoraria',
+            'direitor',
+            'secretario',
+            'cargo',
+            'dataActual',
+            'userFoto',
+            'studentInfo',
+            'institution',
+            'anos',
+            'lectivo',
+            'media',
+            'nascimento',
+            "requerimento",
+            "recibo"
+        ));
         // Opções de margem e papel
         $pdf->setOption('margin-top', '2mm');
         $pdf->setOption('margin-left', '2mm');
