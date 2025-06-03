@@ -6,21 +6,21 @@
         
     @endphp
     <style>
-      
+   
       @font-face {
     font-family: 'Calibri Light';
     font-weight: 300;
-    src: url('{{ public_path('fonts/calibril.woff') }}') format('woff');
+    src: local('Times New Roman'), url('/fonts/times.woff') format('woff');
 }
 
 @font-face {
     font-family: 'Times New Roman';
     font-weight: 400;
-    src: url('{{ public_path('fonts/times.woff') }}') format('woff');
+    src: local('Times New Roman'), url('/fonts/times.woff') format('woff');
 }
 
         body {
-            font-family: 'Times New Roman', ;
+            font-family: 'Times New Roman';
         }
 
         html,
