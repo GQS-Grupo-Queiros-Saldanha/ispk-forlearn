@@ -1,13 +1,12 @@
 @extends('layouts.print')
 @section('title',__('Declaração de frequência'))
 @section('content')
-    <link href="http://fonts.cdnfonts.com/css/calibri-light" rel="stylesheet">
+   
     @php
 
     @endphp
     <style>
-        @import url('http://fonts.cdnfonts.com/css/calibri-light');
-        @import url('https://fonts.cdnfonts.com/css/times-new-roman');
+    
 
         body {
             font-family: 'Calibri Light', sans-serif;
