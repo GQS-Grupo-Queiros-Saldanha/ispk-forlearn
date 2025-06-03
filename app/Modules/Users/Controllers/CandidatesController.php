@@ -1643,25 +1643,33 @@ class CandidatesController extends Controller
         )
     );
     
+    // Opções de margem e papel
     $pdf->setOption('margin-top', '2mm');
     $pdf->setOption('margin-left', '2mm');
     $pdf->setOption('margin-bottom', '1mm');
     $pdf->setOption('margin-right', '2mm');
     $pdf->setPaper('a4', 'portrait');
     
-    // Footer renderizado como arquivo temporário
+    // Reativando opções essenciais de JavaScript e acesso a arquivos locais
+    $pdf->setOption('enable-javascript', true);
+    $pdf->setOption('javascript-delay', 1000);
+    $pdf->setOption('no-stop-slow-scripts', true);
+    $pdf->setOption('enable-smart-shrinking', true);
+    $pdf->setOption('enable-local-file-access', true); // Necessário para ler footers salvos em disco
+    
+    // Gerando o footer como arquivo temporário
     $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
     $footer_path = tempnam(sys_get_temp_dir(), 'footer_') . '.html';
     file_put_contents($footer_path, $footer_html);
     $pdf->setOption('footer-html', $footer_path);
     
-    // Geração do nome do PDF
+    // Nome do arquivo PDF
     $lectiveYear = $lectiveYears[0] ?? null;
     $pdf_name = "Relatório_candidaturas_" .
         ($lectiveYear->currentTranslation->display_name ?? 'AnoDesconhecido') .
         " (" . $lectiveFase->fase . "ª Fase)";
     
-    // Retorna o PDF para visualização no navegador
+    // Retornar o PDF para visualização
     return $pdf->stream($pdf_name . '.pdf');
 
     } catch (Exception $e) {
