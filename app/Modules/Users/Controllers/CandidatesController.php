@@ -1632,42 +1632,47 @@ class CandidatesController extends Controller
       $documentoCode_documento = 5;
       $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
       $date_generated = date("Y/m/d");
-      //Emarq
       $pdf = PDF::loadView(
         "Users::candidate.pdf-relatorios-new",
         compact(
-            'vagas', 'cordenador', 'lectiveFase', 'lectiveYears', 'institution',
-            'titulo_documento', 'anoLectivo_documento', 'documentoGerado_documento',
-            'documentoCode_documento', 'date_generated', 'twoCourse', 'twoCourseUsers',
-            'candidatos', 'todos_candidatos', 'staff', 'datas_inscricao', 'emolumentos',
-            'logotipo'
+          'vagas',
+          'cordenador',
+          'lectiveFase',
+          'lectiveYears',
+          'institution',
+          'titulo_documento',
+          'anoLectivo_documento',
+          'documentoGerado_documento',
+          'documentoCode_documento',
+          'date_generated',
+          'twoCourse',
+          'twoCourseUsers',
+          'logotipo',
+          'candidatos',
+          'todos_candidatos',
+          'staff',
+          'datas_inscricao',
+          'emolumentos'
         )
-    );
-    
-    // Opções de margem e papel
-    $pdf->setOption('margin-top', '2mm');
-    $pdf->setOption('margin-left', '2mm');
-    $pdf->setOption('margin-bottom', '1mm');
-    $pdf->setOption('margin-right', '2mm');
-    $pdf->setPaper('a4', 'portrait');
-    
-    // Reativando opções essenciais de JavaScript e acesso a arquivos locais
-    $pdf->setOption('enable-javascript', true);
-    $pdf->setOption('javascript-delay', 1000);
-    $pdf->setOption('no-stop-slow-scripts', true);
-    $pdf->setOption('enable-smart-shrinking', true);
-    $pdf->setOption('enable-local-file-access', true); // Necessário para ler footers salvos em disco
-    
-    // Gerando o footer como arquivo temporário
-    
-    // Nome do arquivo PDF
-    $lectiveYear = $lectiveYears[0] ?? null;
-    $pdf_name = "Relatório_candidaturas_" .
-        ($lectiveYear->currentTranslation->display_name ?? 'AnoDesconhecido') .
-        " (" . $lectiveFase->fase . "ª Fase)";
-    
-    // Retornar o PDF para visualização
-    return $pdf->stream($pdf_name . '.pdf');
+      );
+
+      $pdf->setOption('margin-top', '2mm');
+      $pdf->setOption('margin-left', '2mm');
+      $pdf->setOption('margin-bottom', '1mm');
+      $pdf->setOption('margin-right', '2mm');
+      $pdf->setOption('enable-javascript', true);
+      $pdf->setOption('debug-javascript', true);
+      $pdf->setOption('javascript-delay', 1000);
+      $pdf->setOption('enable-smart-shrinking', true);
+      $pdf->setOption('no-stop-slow-scripts', true);
+      $pdf->setPaper('a4', 'portrait');
+
+      $pdf_name = "Relatório_candidaturas_" . $lectiveYears[0]->currentTranslation->display_name . "(" . $lectiveFase->fase . "ª Fase)";
+
+      // $footer_html = view()->make('Users::users.partials.pdf_footer', compact('institution'))->render();
+      $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+      $pdf->setOption('footer-html', $footer_html);
+      return $pdf->stream($pdf_name . '.pdf');
 
     } catch (Exception $e) {
       dd($e);
