@@ -1,16 +1,14 @@
 @extends('layouts.print')
 @section('title',__('Declaração com notas de exame de acesso'))
 @section('content')
-    <link href="http://fonts.cdnfonts.com/css/calibri-light" rel="stylesheet">
     @php
 
     @endphp
     <style>
-        @import url('http://fonts.cdnfonts.com/css/calibri-light');
-        @import url('https://fonts.cdnfonts.com/css/times-new-roman');
+       
 
         body {
-            font-family: 'Times New Roman';
+            font-family: 'Calibri Light', sans-serif;
         }
 
         html,

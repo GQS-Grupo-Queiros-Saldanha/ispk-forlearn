@@ -10,7 +10,7 @@
         @import url('https://fonts.cdnfonts.com/css/times-new-roman');
 
         body {
-            font-family: 'Times New Roman';
+            font-family: 'Calibri Light', sans-serif;
         }
 
         html,

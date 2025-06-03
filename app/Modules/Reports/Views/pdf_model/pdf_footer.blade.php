@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <script src="https://kit.fontawesome.com/8c60ea13ff.js" crossorigin="anonymous"></script>
+       
         <script>
             function subst() {
                 var vars = {};
