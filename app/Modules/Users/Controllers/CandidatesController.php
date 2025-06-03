@@ -1665,6 +1665,7 @@ class CandidatesController extends Controller
       $pdf->setOption('javascript-delay', 1000);
       $pdf->setOption('enable-smart-shrinking', true);
       $pdf->setOption('no-stop-slow-scripts', true);
+      $pdf->setOption('enable-local-file-access', true); 
       $pdf->setPaper('a4', 'portrait');
 
       $pdf_name = "Relatório_candidaturas_" . $lectiveYears[0]->currentTranslation->display_name . "(" . $lectiveFase->fase . "ª Fase)";
