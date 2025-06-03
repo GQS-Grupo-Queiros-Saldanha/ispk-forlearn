@@ -8,16 +8,6 @@
     <style>
       
       
-      @font-face {
-    font-family: 'Calibri Light';
-    font-weight: 300;
-    src: url('{{ public_path('public_html/fonts/calibril.woff') }}') format('woff');
-}
-
-@font-face {
-    font-family: 'Times New Roman';
-    font-weight: 400;
-    src: url('{{ public_path('public_html/fonts/times.woff') }}') format('woff');
 }
 
         body {
