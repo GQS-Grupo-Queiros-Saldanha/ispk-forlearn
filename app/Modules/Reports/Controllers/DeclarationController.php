@@ -446,34 +446,42 @@ class DeclarationController extends Controller
             "requerimento",
             "recibo"
         ));
-        // Opções de margem e papel
-        $pdf->setOption('margin-top', '2mm');
-        $pdf->setOption('margin-left', '2mm');
-        $pdf->setOption('margin-bottom', '1mm');
-        $pdf->setOption('margin-right', '2mm');
-        $pdf->setPaper('a4', 'portrait');
-        
-        // Reativando opções essenciais de JavaScript e acesso a arquivos locais
-        $pdf->setOption('enable-javascript', true);
-        $pdf->setOption('javascript-delay', 1000);
-        $pdf->setOption('no-stop-slow-scripts', true);
-        $pdf->setOption('enable-smart-shrinking', true);
-        $pdf->setOption('enable-local-file-access', true); // Necessário para ler footers salvos em disco
-        
-        // Gerando o footer como arquivo temporário
-        $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-        $footer_path = tempnam(sys_get_temp_dir(), 'footer_') . '.html';
-        file_put_contents($footer_path, $footer_html);
-        $pdf->setOption('footer-html', $footer_path);
-        
-        // Nome do arquivo PDF
-        $lectiveYear = $lectiveYears[0] ?? null;
-        $pdf_name = "Relatório_candidaturas_" .
-            ($lectiveYear->currentTranslation->display_name ?? 'AnoDesconhecido') .
-            " (" . 2 . "ª Fase)";
-        
-        // Retornar o PDF para visualização
-        return $pdf->stream($pdf_name . '.pdf');
+        // Configurações principais
+$pdf->setOption('margin-top', '2mm');
+$pdf->setOption('margin-left', '2mm');
+$pdf->setOption('margin-bottom', '1mm');
+$pdf->setOption('margin-right', '2mm');
+$pdf->setPaper('a4', 'portrait');
+
+// Habilita recursos avançados do wkhtmltopdf
+$pdf->setOption('enable-javascript', true);
+$pdf->setOption('javascript-delay', 1000); // Espera o JS carregar
+$pdf->setOption('no-stop-slow-scripts', true);
+$pdf->setOption('enable-smart-shrinking', true);
+$pdf->setOption('enable-local-file-access', true); // IMPORTANTE para usar arquivos locais (como o footer)
+
+// Renderiza o footer em HTML
+$footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+
+// Cria arquivo temporário para o footer
+$footer_path = tempnam(sys_get_temp_dir(), 'footer_') . '.html';
+file_put_contents($footer_path, $footer_html);
+
+// Verifica se o arquivo foi realmente criado
+if (!file_exists($footer_path)) {
+    throw new \Exception("Erro: Footer HTML não foi criado em: {$footer_path}");
+}
+
+$pdf->setOption('footer-html', $footer_path);
+
+// Define nome do PDF com segurança
+$lectiveYear = $lectiveYears[0] ?? null;
+$pdf_name = "Relatório_candidaturas_" .
+    ($lectiveYear->currentTranslation->display_name ?? 'AnoDesconhecido') .
+    " (" . $lectiveFase->fase . "ª Fase)";
+
+// Exibe o PDF no navegador
+return $pdf->stream($pdf_name . '.pdf');
        
     }
 
