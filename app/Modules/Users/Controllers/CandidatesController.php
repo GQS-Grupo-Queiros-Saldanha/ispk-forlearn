@@ -1673,7 +1673,7 @@ class CandidatesController extends Controller
       // $footer_html = view()->make('Users::users.partials.pdf_footer', compact('institution'))->render();
       $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
       $pdf->setOption('footer-html', $footer_html);
-      return $pdf->stream($pdf_name . '.pdf');
+      return $pdf->download($pdf_name . '.pdf');
 
     } catch (Exception $e) {
       dd($e);
