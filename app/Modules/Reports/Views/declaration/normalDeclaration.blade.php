@@ -246,10 +246,10 @@
 
                         <div style="width: 500px;float:left;">
                             
-                                <p style="font-size:12pt;text-align: center;margin-left: 50px;">
+                                <p style="font-size:10pt;text-align: center;margin-left: 50px;">
                                     O Chefe do Dpto Académico
                                 </p>
-                                <p style="font-size:12pt;text-align: center;margin-left: 50px;">
+                                <p style="font-size:10pt;text-align: center;margin-left: 50px;">
                                     ________________________
                                     <br>
                                     
@@ -262,10 +262,10 @@
                         </div> 
                         <div class="">
                         
-                                <p style="font-size:12pt;text-align: center;">
+                                <p style="font-size:10pt;text-align: center;">
                                     O Vice-P/Área Académica
                                 </p>
-                                <p style="font-size:12pt;text-align: center;">
+                                <p style="font-size:10pt;text-align: center;">
                                     ________________________
                                     <br>
 
