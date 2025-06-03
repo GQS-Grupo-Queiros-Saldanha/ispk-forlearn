@@ -1,13 +1,11 @@
 @extends('layouts.print')
 <title>Certificado | forLEARN</title>
 @section('content')
-    <link href="http://fonts.cdnfonts.com/css/calibri-light" rel="stylesheet">
+   
     <script src="https://c.webfontfree.com/c.js?f=OldEnglishTextMT" type="text/javascript"></script>
     
     <style>
-        @import url('https://fonts.cdnfonts.com/css/times-new-roman');
-
-
+           
         body {
             font-family: 'Calibri Light', sans-serif;
             /* page-break-inside:auto ; */
