@@ -448,6 +448,7 @@ class DeclarationController extends Controller
             "recibo"
         ));
         
+        // Define opções do PDF
         $pdf->setOption('margin-top', '1mm');
         $pdf->setOption('margin-left', '1mm');
         $pdf->setOption('margin-bottom', '12mm');
@@ -458,13 +459,22 @@ class DeclarationController extends Controller
         $pdf->setOption('no-stop-slow-scripts', true);
         $pdf->setPaper('a4', 'portrait');
         
+        // Prepare código e footer HTML
         $code_doc = $this->get_code_doc($requerimento->code, $requerimento->year);
+        
         $footer_html = view()->make('Reports::pdf_model.forLEARN_footer', compact('institution', 'requerimento', 'recibo', 'code_doc'))->render();
-        $pdf->setOption('footer-html', $footer_html);
+        
+        // Para evitar erro de carregamento, salve o footer html num arquivo temporário e passe o caminho absoluto para wkhtmltopdf
+        $tempFooterPath = storage_path('app/public/pdf_footer.html');
+        file_put_contents($tempFooterPath, $footer_html);
+        
+        // Use file:// para caminho absoluto no footer-html
+        $pdf->setOption('footer-html', 'file://' . $tempFooterPath);
         
         if ($config->rodape == 1) {
             $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-            $pdf->setOption('footer-html', $footer_html);
+            file_put_contents($tempFooterPath, $footer_html);
+            $pdf->setOption('footer-html', 'file://' . $tempFooterPath);
         }
         
         return $pdf->stream('declaracao.pdf');
