@@ -428,6 +428,8 @@ class DeclarationController extends Controller
 
         $institution = Institution::latest()->first();
 
+        $pdf_name = 'declaracao_anulacao'; // ou gere com base no estudante, etc.
+
         $pdf = PDF::loadView("Reports::declaration.anulacao", compact(
             'config',
             'cargaHoraria',
@@ -444,29 +446,30 @@ class DeclarationController extends Controller
             'nascimento',
             "requerimento",
             "recibo"
-
         ));
-
+        
         $pdf->setOption('margin-top', '1mm');
         $pdf->setOption('margin-left', '1mm');
         $pdf->setOption('margin-bottom', '12mm');
         $pdf->setOption('margin-right', '1mm');
+        
         $pdf->setOption('enable-javascript', true);
-        $pdf->setOption('debug-javascript', true);
+        $pdf->setOption('debug-javascript', true); // coloque true apenas se necessário
         $pdf->setOption('javascript-delay', 1000);
         $pdf->setOption('enable-smart-shrinking', true);
         $pdf->setOption('no-stop-slow-scripts', true);
         $pdf->setPaper('a4', 'portrait');
-
+        
+        // Rodapé
         $code_doc = $this->get_code_doc($requerimento->code, $requerimento->year);
         $footer_html = view()->make('Reports::pdf_model.forLEARN_footer', compact('institution', 'requerimento', 'recibo', 'code_doc'))->render();
         $pdf->setOption('footer-html', $footer_html);
-
+        
         if ($config->rodape == 1) {
-            //  $footer_html = view()->make('Reports::partials.enrollment-income-footer', compact('institution'))->render();
             $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+            $pdf->setOption('footer-html', $footer_html);
         }
-
+        
         return $pdf->stream($pdf_name . '.pdf');
     }
 
