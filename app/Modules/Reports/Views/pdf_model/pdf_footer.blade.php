@@ -2,7 +2,9 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <script src="https://kit.fontawesome.com/8c60ea13ff.js" crossorigin="anonymous"></script>
+        <script src="file:///home/ispkforlearn/public_html/fontawesome-free-5.15.4-web/js/all.js"></script>
+        <link rel="stylesheet" href="file:///home/ispkforlearn/public_html/fontawesome-free-5.15.4-web/css/all.min.css">
+
         <script>
             function subst() {
                 var vars = {};
