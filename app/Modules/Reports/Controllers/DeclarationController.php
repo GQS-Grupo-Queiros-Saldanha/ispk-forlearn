@@ -478,7 +478,7 @@ $pdf->setOption('footer-html', $footer_path);
 $lectiveYear = $lectiveYears[0] ?? null;
 $pdf_name = "Relatório_candidaturas_" .
     ($lectiveYear->currentTranslation->display_name ?? 'AnoDesconhecido') .
-    " (" . $lectiveFase->fase . "ª Fase)";
+    " (" . 2 . "ª Fase)";
 
 // Exibe o PDF no navegador
 return $pdf->stream($pdf_name . '.pdf');
