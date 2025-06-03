@@ -1103,7 +1103,7 @@ class mainController extends Controller
         return $matriculationId;
     }
 
-    public function boletim_pdf($matriculation) //$whatsapp
+    public function boletim_pdf($matriculation_id) //$whatsapp
     {
         //$whatsapp = $request->input('whatsapp');
         //$matriculation = $request->input('matriculation');
@@ -1121,7 +1121,7 @@ class mainController extends Controller
                 return response('Não autorizado', 401);
             }
             if($whatsapp !== null ) {
-                $matriculation = $this->get_matriculation_id($whatsapp);
+                $matriculation = $this->get_matriculation_id($whatsapmatriculationp);
             }
         }
         
