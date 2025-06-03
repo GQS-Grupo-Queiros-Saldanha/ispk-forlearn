@@ -1632,6 +1632,7 @@ class CandidatesController extends Controller
       $documentoCode_documento = 5;
       $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
       $date_generated = date("Y/m/d");
+      //Emarq
       $pdf = PDF::loadView(
         "Users::candidate.pdf-relatorios-new",
         compact(
