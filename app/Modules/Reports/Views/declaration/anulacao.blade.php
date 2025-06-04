@@ -296,7 +296,7 @@
                     <b>{{$institution->nome}}</b>
                 </p>
                 <p style="text-align: left;margin-top: 10px;margin-left:120px;font-weight: 600;font-size: 14px;">
-                    Criado pelo {{$institution->decreto_instituicao}}
+                     {{$institution->decreto_instituicao}}
                 </p>
 
 

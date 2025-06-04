@@ -162,7 +162,7 @@
     </div>
     <div class="cabecalho">
         <p class="instituition">{{ $institution->nome }}</p>
-        <p class="decreto">{{$institution->decreto_instituicao}}</p>
+        <p class="decreto">Criado pelo {{$institution->decreto_instituicao}}</p>
     </div>  
     <div class="titulo">
         <p class="a">{{isset($title1) ? ''.$title1 : '' }}</p>
