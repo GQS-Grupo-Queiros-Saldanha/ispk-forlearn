@@ -106,6 +106,7 @@
             font-weight: bold;
             text-align: justify;
             margin-top: 20px !important;
+            color: red;
         }
 
         .td-institution-logo {
