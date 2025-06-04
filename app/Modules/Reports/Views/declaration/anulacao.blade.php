@@ -100,9 +100,6 @@
             /*text-align:center;*/
         }
 
-
-        .institution-name b{margin-top: 1rem;}
-
         .td-institution-name {
             vertical-align: middle !important;
             font-weight: bold;
