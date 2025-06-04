@@ -101,12 +101,13 @@
         }
 
 
+        .institution-name b{margin-top: 1rem;}
+
         .td-institution-name {
             vertical-align: middle !important;
             font-weight: bold;
             text-align: justify;
-            margin-top: 20px !important;
-            color: red;
+            
         }
 
         .td-institution-logo {
