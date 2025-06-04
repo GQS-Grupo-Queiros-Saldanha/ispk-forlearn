@@ -90,6 +90,7 @@
             text-transform: uppercase;
             position: relative;
             margin-bottom: 15px;
+            /* background-color: rgb(240, 240, 240); */
             background-color: rgb(240, 240, 240);
             background-image: url('https://forlearn.ao/instituicao-arquivo/attachment/{{ $institution->logotipo }}');
             /* background-image: url('{{ asset('$logotipo') }}'); */
@@ -104,6 +105,7 @@
             vertical-align: middle !important;
             font-weight: bold;
             text-align: justify;
+            margin-top: 20px !important;
         }
 
         .td-institution-logo {

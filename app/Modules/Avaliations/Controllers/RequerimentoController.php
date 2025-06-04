@@ -1632,8 +1632,6 @@ class RequerimentoController extends Controller
     {
 
 
-
-
         if (
             DB::table('tb_change_class_student')
                 ->where('id_confirmation_matriculation', "=", $request->student)
