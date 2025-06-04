@@ -295,7 +295,7 @@
                 <p style="text-align: center;margin-top: 10rem;font-size: 24.5px;text-transform: uppercase!important;">
                     <b>{{$institution->nome}}</b>
                 </p>
-                <p style="text-align: center;margin-top: 10px;margin-left:120px;font-weight: 600;font-size: 14px;">
+                <p style="text-align: left; margin-left:1rem; margin-top: 10px;margin-left:120px;font-weight: 600;font-size: 14px;">
                      {{$institution->decreto_instituicao}}
                 </p>
 
