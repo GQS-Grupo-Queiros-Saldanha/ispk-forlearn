@@ -60,7 +60,7 @@
             <td class="td-declaracao" rowspan="12" style="background-color: transparent; height:96px;">
                 <p style="text-align: center;margin-top: 205px;font-size: 31.5px;text-transform: uppercase!important;"
                     class="institution-name">
-                    <!--<b>{{$institution->nome}}</b>-->
+                    <b>{{$institution->nome}}</b>
                 </p>
                 <p id="decreto" style="margin-top: -15px;font-weight: 600;font-size: 15px;padding-left: 35px;">
                     {{$institution->decreto_instituicao}}
