@@ -829,39 +829,43 @@ class SchedulesController extends Controller
             return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
-
+    
     public function get_horario_lectiveyear($whatsapp){
-
-        
-        try{
-
+        try {
             $isApiRequest = request()->header('X-From-API') === 'flask';
             $tokenRecebido = request()->bearerToken();
-            
-            if($isApiRequest){
-                
-                if($tokenRecebido !== env('FLASK_API_TOKEN')) {
+
+            if ($isApiRequest) {
+                if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
                     abort(403, 'Unauthorized');
-                   }
+                }
 
                 $api = DB::table('users')->where('user_whatsapp', $whatsapp)->value('id');
-                $lective_year_api = DB::table('users')
-                ->join('user_classes', 'user_classes.user_id', '=', 'users.id')
-                ->where('users.user_whatsapp', $whatsapp)
-                ->join('classes', 'classes.id', '=', 'user_classes.class_id')
-                ->select('classes.lective_year_id')
-                ->first();
-                
-                $lective_year = $lective_year_api->lective_year_api_id;
-                return $this->fetchForStudent('pdf',$lective_year, $api);   
-            }
-            return "Acessso Negado!";
 
-        } catch (Exception | Throwable $e) {
-            Log::error($e);
-            return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+                $lective_year_api = DB::table('users')
+                    ->join('user_classes', 'user_classes.user_id', '=', 'users.id')
+                    ->where('users.user_whatsapp', $whatsapp)
+                    ->join('classes', 'classes.id', '=', 'user_classes.class_id')
+                    ->select('classes.lective_year_id')
+                    ->first();
+
+                if (!$lective_year_api || !isset($lective_year_api->lective_year_id)) {
+                    return response()->json([
+                        'error' => 'Ano lectivo não encontrado para este número de WhatsApp.'
+                    ], 404);
+                }
+
+                $lective_year = $lective_year_api->lective_year_id;
+
+                return $this->fetchForStudent('pdf', $lective_year, $api);
+            }
+
+            return "Acesso Negado!";
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro interno: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function generate_student_pdf($lective_year)
     {        
