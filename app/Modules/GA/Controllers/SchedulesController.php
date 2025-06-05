@@ -853,8 +853,10 @@ class SchedulesController extends Controller
                 ->first();
                 
                 $lective_year = $lective_year_api->lective_year_api_id;
-                return $this->fetchForStudent('pdf',$lective_year, $api);   
+                return $lective_year;
+                //return $this->fetchForStudent('pdf',$lective_year, $api);   
             }
+            return "Acessso Negado!";
 
         } catch (Exception | Throwable $e) {
             Log::error($e);
