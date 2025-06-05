@@ -177,7 +177,7 @@
     }
 
     .conteudo p {
-        font-size: 24px !important;
+        font-size: 19px !important;
     }
 
     .visto {
