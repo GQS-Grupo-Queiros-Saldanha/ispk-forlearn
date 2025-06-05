@@ -158,7 +158,7 @@
     }
 
     p {
-        font-size: 14.5pt;
+        font-size: 11.5pt;
         margin-left: 80px;
         margin-right: 80px;
         color: black;
