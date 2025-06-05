@@ -1229,6 +1229,7 @@ class SchedulesController extends Controller
             $lectiveYearSelected = LectiveYear::where('id', $lective_year)
                 ->with(['currentTranslation'])
             ->get();
+            dd($lective_year, $lectiveYearSelected);
 
             if (count($lectiveYearSelected) > 0) {
 
