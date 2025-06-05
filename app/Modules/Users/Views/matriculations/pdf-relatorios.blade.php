@@ -8,7 +8,7 @@
     @import url('https://fonts.cdnfonts.com/css/times-new-arial');
 
     .cabecalho {
-      font-family: 'Times New Roman';
+      font-family: 'Times New Arial';
       text-transform: uppercase;
       margin-top: 15px;
     }
