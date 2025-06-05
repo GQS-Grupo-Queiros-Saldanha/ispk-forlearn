@@ -1389,7 +1389,8 @@ class SchedulesController extends Controller
                             
                             if($api != null){
 
-                                return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="Horario_'.$user->matriculation->code.'.pdf"');
+                                $matriculationCode = optional($user->matriculation)->code ?? 'indefinido';
+                                return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="Horario_'.$matriculationCode.'.pdf"');
                             }
 
                             return $pdf->stream('Horario_'.$user->matriculation->code.'.pdf');              
