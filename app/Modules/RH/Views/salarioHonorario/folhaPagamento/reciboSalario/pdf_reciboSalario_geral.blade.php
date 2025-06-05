@@ -51,7 +51,7 @@
                 #cabecalho1 > th{
                     background: #c3d291;
                     border: #777e5e 1.4pt solid;
-                    font-family: 'Times New Roman';
+                    font-family: 'Tinos' , serif;
                     font-weight: normal;
                 }
                 #cabecalho2 > th{

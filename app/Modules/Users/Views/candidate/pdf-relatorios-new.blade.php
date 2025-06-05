@@ -6,14 +6,14 @@
 
   <style>
     @font-face {
-    font-family: 'Times New Roman';
+    font-family: 'Tinos' , serif;
     font-style: normal;
     font-weight: 400;
-    src: local('Times New Roman'), url('/fonts/times.woff') format('woff');
+    src: local('Tinos' , serif), url('/fonts/times.woff') format('woff');
 }
 
 .cabecalho {
-    font-family: 'Times New Roman', serif;
+    font-family: 'Tinos' , serif;
     text-transform: uppercase;
     margin-top: 15px;
 }

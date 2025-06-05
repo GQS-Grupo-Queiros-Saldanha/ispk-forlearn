@@ -7,7 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         @import url('http://fonts.cdnfonts.com/css/book-antiqua');
-        @import url('https://fonts.cdnfonts.com/css/times-new-roman');
+        @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         @import url(' http://fonts.cdnfonts.com/css/eb-garamond-2 ');         
         body {
 

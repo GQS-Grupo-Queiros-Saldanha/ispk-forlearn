@@ -5,10 +5,10 @@
 <head>
 
   <style>
-    @import url('https://fonts.cdnfonts.com/css/times-new-roman');
+    @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
     .cabecalho {
-      font-family: 'Times New Roman';
+      font-family: 'Tinos' , serif;
       text-transform: uppercase;
       margin-top: 15px;
     }
