@@ -852,7 +852,7 @@ class SchedulesController extends Controller
                 ->select('classes.lective_year_id')
                 ->first();
                 
-                $lective_year = $lective_year_api->lective_year_id;
+                $lective_year = $lective_year_api->lective_year_api_id;
                 return $this->fetchForStudent('pdf',$lective_year, $api);   
             }
 
