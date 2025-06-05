@@ -77,7 +77,7 @@
 
 <div style="text-align: right;margin-top:120px;margin-bottom: -30px" >
                         <div style="margin-right:130px;text-align: left; display: inline-block;width:500px">
-                            <p style="font-size:17pt!important;font-weight:bold">{{ $instituicao_nome }}</p>
+                            <p style="font-size:15pt!important;font-weight:bold">{{ $instituicao_nome }}</p>
                         </div>
                     </div>
 
