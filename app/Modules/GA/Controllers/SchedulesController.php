@@ -1415,6 +1415,11 @@ class SchedulesController extends Controller
             
             }
             else {
+                if($api != null){
+
+                    $matriculationCode = optional($user->matriculation)->code ?? 'indefinido';
+                    return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="Horario_'.$matriculationCode.'.pdf"');
+                }
                 Toastr::error(__('Verifica o ano lectivo.'), __('toastr.error'));
                 return redirect()->back();
             }
