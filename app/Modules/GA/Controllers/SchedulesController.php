@@ -1232,15 +1232,22 @@ class SchedulesController extends Controller
 
                 if ($api != null) {
                     $user = User::whereId($api)->with([
-                        'classes',
-                        'matriculation' => function ($q) use ($lectiveYearSelected) {
-                            $q->where('lective_year', $lectiveYearSelected[0]->id);
-                            $q->with([
-                                'disciplines',
-                                'classes'
-                            ]);
-                        }
-                    ])->firstOrFail();
+                    'classes',
+                    'matriculation' => function ($q) use ($lectiveYearSelected) {
+                        $q->where('lective_year', $lectiveYearSelected[0]->id);
+                        $q->with([
+                            'disciplines',
+                            'classes'
+                        ]);
+                    }
+                ])->firstOrFail();
+
+                    if (!$user->matriculation) {
+                            return response()->json([
+                                'error' => 'Este aluno não está matriculado no ano lectivo seleccionado.'
+                            ], 404);
+                    }
+
                 } else {
                     $user = User::whereId(Auth::user()->id)->with([
                         'classes',
