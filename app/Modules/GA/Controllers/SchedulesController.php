@@ -845,13 +845,14 @@ class SchedulesController extends Controller
                    }
 
                 $api = DB::table('users')->where('user_whatsapp', $whatsapp)->value('id');
-                $lective_year = DB::table('users')
+                $lective_year_api = DB::table('users')
                 ->join('user_classes', 'user_classes.user_id', '=', 'users.id')
                 ->where('users.user_whatsapp', $whatsapp)
                 ->join('classes', 'classes.id', '=', 'user_classes.class_id')
                 ->select('classes.lective_year_id')
                 ->first();
-
+                
+                $lective_year = $lective_year_api->lective_year_id;
                 return $this->fetchForStudent('pdf',$lective_year, $api);   
             }
 
