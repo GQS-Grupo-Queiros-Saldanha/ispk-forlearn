@@ -7,9 +7,10 @@
     @endphp
     <style>
  
+    @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
  body {
-        font-family: 'Calibri Light', sans-serif;
+        font-family: 'Tinos', serif;
     }
 
         html,

@@ -159,16 +159,14 @@ class SchedulesController extends Controller
                     ->leftJoin('classes as cl', function ($join){
                        $join->on('cl.id', '=', 'user_classes.class_id');
                    })
-                   ->where("user_classes.user_id", auth()->user()->id)
-                   ->where('cl.lective_year_id', '=', $lective_year)
+                   ->where("user_classes.user_id", auth()->user()->id) // a tabela user_classes tem o id do usuário logado
+                   ->where('cl.lective_year_id', '=', $lective_year) // a tabela classes tem o id do ano letivo
                    ->whereNull('cl.deleted_at')
                    ->get();
                   
                    $model->whereIn('schedules.discipline_class_id', $data->pluck("class_id"));
                 }
 
-
-                
 
             return (DataTables::of($model->get())
                 ->addColumn('actions', function ($item) {
@@ -832,8 +830,31 @@ class SchedulesController extends Controller
         }
     }
 
+    private function get_horario_lectiveyear($whatsapp){
+
+        try{
+
+            $isApiRequest = request()->header('X-From-API') === 'flask';
+            $tokenRecebido = request()->bearerToken();
+            
+            if($isApiRequest){
+                
+                if($tokenRecebido !== env('FLASK_API_TOKEN')) {
+                    abort(403, 'Unauthorized');
+                   }
+
+                return $this->fetchForStudent('pdf',$lective_year);   
+            }
+
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+        }
+    }
+
     public function generate_student_pdf($lective_year)
-    {
+    {        
+
         try {
             return $this->fetchForStudent('pdf',$lective_year);
         } catch (Exception | Throwable $e) {
