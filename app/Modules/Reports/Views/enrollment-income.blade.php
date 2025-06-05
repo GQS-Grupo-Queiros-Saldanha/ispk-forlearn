@@ -12,7 +12,7 @@
    <style>
 
     body {
-        font-family: 'Calibri Light', sans-serif;
+        font-family: 'Tinos', serif;
     }
 
     html,

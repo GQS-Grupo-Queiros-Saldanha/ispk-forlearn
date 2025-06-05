@@ -11,7 +11,7 @@
         @import url(' http://fonts.cdnfonts.com/css/eb-garamond-2 ');         
         body {
 
-            font-family: 'Calibri Light', sans-serif;
+            font-family: 'Tinos', serif;
 
 
         }

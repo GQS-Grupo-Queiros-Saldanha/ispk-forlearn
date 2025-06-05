@@ -61,10 +61,10 @@
     <body>
         <footer>
             <table class="tb_footer">
-                <style>#decima td{font-family:'Calibri Light', sans-serif; border-bottom:1px solid #444; }.iconeIMAg{ height:18px;position:relative;top:5px; }</style>
+                <style>#decima td{font-family:'Tinos', serif; border-bottom:1px solid #444; }.iconeIMAg{ height:18px;position:relative;top:5px; }</style>
                 <tr id="decima">
                     <td >{{$institution->nome}}<br>
-                    {{-- <td style="font-family:'Calibri Light', sans-serif;  "><b > Instituto Superior Politécnico Maravilha</b><br> --}}
+                    {{-- <td style="font-family:'Tinos', serif;  "><b > Instituto Superior Politécnico Maravilha</b><br> --}}
                     </td>
 
                     <td>

@@ -17,7 +17,7 @@
                      
         
                 body{
-                    font-family: 'Calibri Light', sans-serif;
+                    font-family: 'Tinos', serif;
                 }     
                 html, body {
                     padding:0;
@@ -376,7 +376,7 @@
 
         
         body{
-            font-family: 'Calibri Light', sans-serif;
+            font-family: 'Tinos', serif;
         }
         html, body {
             padding:0;
@@ -565,7 +565,7 @@
        
 
         body{
-            font-family: 'Calibri Light', sans-serif;
+            font-family: 'Tinos', serif;
         }
         html, body {
             padding:0;
@@ -859,7 +859,7 @@
         }
 
     body {
-        font-family: 'Calibri Light', sans-serif;
+        font-family: 'Tinos', serif;
     }
 
     .form-group {
@@ -1203,7 +1203,7 @@
     <style>
         
         body{
-            font-family: 'Calibri Light', sans-serif;                                         
+            font-family: 'Tinos', serif;                                         
         }
         .div-top {     
             font-family: 'Advent Pro', sans-serif;
@@ -1331,7 +1331,7 @@
             padding-left: 5px 5px !important;
             border-left: 1px solid #fff;
             border-right: 1px solid #fff;
-            6ufont-family: 'Calibri Light', sans-serif;    
+            6ufont-family: 'Tinos', serif;    
 
         }
         .tfoot {
@@ -1768,7 +1768,7 @@
     <style>
                     
         body{
-            font-family: 'Calibri Light', sans-serif;                                         
+            font-family: 'Tinos', serif;                                         
         }
         .form-group {
             /* margin-bottom: 1px; */
@@ -2004,7 +2004,7 @@
         <style>
 
             body {
-                font-family: 'Calibri Light', sans-serif;
+                font-family: 'Tinos', serif;
             }
 
             .form-group {
@@ -2301,7 +2301,7 @@
 <style>
 
     body {
-        font-family: 'Calibri Light', sans-serif;
+        font-family: 'Tinos', serif;
     }
 
     .form-group {
@@ -2485,7 +2485,7 @@
 <style>
 
     body {
-        font-family: 'Calibri Light', sans-serif;
+        font-family: 'Tinos', serif;
     }
 
     .form-group {
