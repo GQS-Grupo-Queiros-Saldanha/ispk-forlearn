@@ -70,8 +70,8 @@ class LoginController extends Controller
                 
                 DB::table('tb_acess_control_log')->insert(['id_user' => auth()->user()->id]);  
                 // devolve imediatamente a view/redirect que WhatsappChecked gerar
-                
-                return $this->WhatsappChecked($request);
+                //return $this->WhatsappChecked($request);
+                return redirect()->route('main.index');
 
             }
             return redirect()->route('main.index');
