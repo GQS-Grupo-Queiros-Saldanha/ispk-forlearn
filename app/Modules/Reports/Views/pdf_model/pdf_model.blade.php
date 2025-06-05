@@ -7,7 +7,7 @@
             <meta charset="UTF-8">
             <style>
 
-                @import url('http://fonts.cdnfonts.com/css/calibri-light');     
+                @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');     
         
                 body{
                     font-family: 'Tinos', serif;
@@ -348,7 +348,7 @@
 @if ($documentoCode_documento == 3)
     <style>
 
-        @import url('http://fonts.cdnfonts.com/css/calibri-light');
+        @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
         body{
             font-family: 'Tinos', serif;
@@ -525,7 +525,7 @@
 
     <style>
 
-        @import url('http://fonts.cdnfonts.com/css/calibri-light');
+        @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
         body{
             font-family: 'Tinos', serif;
@@ -989,7 +989,7 @@
 @if ($documentoCode_documento == 7)
 
     <style>
-        @import url('http://fonts.cdnfonts.com/css/calibri-light');
+        @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         
         body{
             font-family: 'Tinos', serif;                                         

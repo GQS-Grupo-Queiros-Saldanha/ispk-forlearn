@@ -1,6 +1,6 @@
 @extends('layouts.print')
 @section('content')
-    <link href="http://fonts.cdnfonts.com/css/calibri-light" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
     <main>
         @php

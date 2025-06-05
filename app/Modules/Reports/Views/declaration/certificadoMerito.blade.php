@@ -1,11 +1,11 @@
 @extends('layouts.print')
 @section('content')
-    <link href="http://fonts.cdnfonts.com/css/calibri-light" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
 
 
     <style>
-        @import url('http://fonts.cdnfonts.com/css/calibri-light');
+        @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         @import url('http://fonts.cdnfonts.com/css/book-antiqua');
         @import url('https://fonts.cdnfonts.com/css/times-new-roman');
         @import url(' http://fonts.cdnfonts.com/css/eb-garamond-2 ');         

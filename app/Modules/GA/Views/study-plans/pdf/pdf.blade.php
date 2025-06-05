@@ -5,11 +5,11 @@
 @extends('layouts.print')
 <title>Plano de Estudo | forLEARN</title>
 @section('content')
-    <link href="http://fonts.cdnfonts.com/css/calibri-light" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
 
     <style>
-        @import url('http://fonts.cdnfonts.com/css/calibri-light');
+        @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 
         .td-parameter-column {
