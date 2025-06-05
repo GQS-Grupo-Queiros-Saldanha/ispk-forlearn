@@ -157,7 +157,7 @@ class SchedulesController extends Controller
                 if(auth()->user()->hasRole('teacher') && !auth()->user()->hasRole('coordenador-curso')) {
                     $data = DB::table("user_classes")
                     ->leftJoin('classes as cl', function ($join){
-                       $join->on('cl.id', '=', 'user_classes.class_id');
+                       $join->on('cl.id', '=', 'user_classes.class_id'); // o id da tabela classes é o class_id da tabela user_classes
                    })
                    ->where("user_classes.user_id", auth()->user()->id) // a tabela user_classes tem o id do usuário logado
                    ->where('cl.lective_year_id', '=', $lective_year) // a tabela classes tem o id do ano letivo
@@ -843,7 +843,16 @@ class SchedulesController extends Controller
                     abort(403, 'Unauthorized');
                    }
 
-                return $this->fetchForStudent('pdf',$lective_year);   
+                $api = DB::table('users')->where('user_whatsapp', $whatsapp)->value('id');
+                $lective_year = DB::table('users')
+                ->join('user_classes', 'user_classes.user_id', '=', 'users.id')
+                ->where('users.user_whatsapp', $whatsapp)
+                ->join('classes', 'classes.id', '=', 'user_classes.class_id')
+                ->select('classes.lective_year_id')
+                ->first();
+
+
+                return $this->fetchForStudent('pdf',$lective_year, $api);   
             }
 
         } catch (Exception | Throwable $e) {
@@ -1205,7 +1214,7 @@ class SchedulesController extends Controller
     }
 
     //Student
-    public function fetchForStudent($action,$lective_year)
+    public function fetchForStudent($action, $lective_year, $api=null)
     {
         
         try {
@@ -1220,23 +1229,30 @@ class SchedulesController extends Controller
 
             if (count($lectiveYearSelected) > 0) {
 
-                $user = User::whereId(Auth::user()->id)->with([
-                    'classes',
-                    'matriculation' => function ($q) use($lectiveYearSelected) {
-                        $q->where('lective_year',$lectiveYearSelected[0]->id);
-                        $q->with([
-                            'disciplines',
-                            'classes'
-                        ]);
-                    }
-                ])->firstOrFail();
-                   
-                // Verifica se existe matrícula para o estudante
-                if ($user->matriculation == null) {
-                    // return $user->matriculation;
-                    Toastr::error(__('Não existe matrícula para o estudante.'), __('toastr.error'));
-                    return redirect()->back();
+                if ($api != null) {
+                    $user = User::whereId($api)->with([
+                        'classes',
+                        'matriculation' => function ($q) use ($lectiveYearSelected) {
+                            $q->where('lective_year', $lectiveYearSelected[0]->id);
+                            $q->with([
+                                'disciplines',
+                                'classes'
+                            ]);
+                        }
+                    ])->firstOrFail();
+                } else {
+                    $user = User::whereId(Auth::user()->id)->with([
+                        'classes',
+                        'matriculation' => function ($q) use ($lectiveYearSelected) {
+                            $q->where('lective_year', $lectiveYearSelected[0]->id);
+                            $q->with([
+                                'disciplines',
+                                'classes'
+                            ]);
+                        }
+                    ])->firstOrFail();
                 }
+
                 switch(date('m')){
                     case 10:
                     case 11:
@@ -1370,6 +1386,11 @@ class SchedulesController extends Controller
                                 ->setOption('footer-html', $footer_html)
                                 ->setPaper('a4', 'landscape');
                             
+                            if($api != null){
+
+                                return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="Horario_'.$user->matriculation->code.'.pdf"');
+                            }
+
                             return $pdf->stream('Horario_'.$user->matriculation->code.'.pdf');              
                     }
               
