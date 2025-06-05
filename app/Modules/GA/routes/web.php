@@ -4,7 +4,6 @@ use App\Modules\GA\Controllers\ScholarshipHolderController;
 use App\Modules\GA\Controllers\DocumentsTypesController;
 
 //Rota fora do auth
-Route::get('api/boletim_pdf/{whatsapp}', 'App\Modules\Cms\Controllers\mainController@boletim_pdf');
 Route::get('api/get_horario_lectiveyear/{whatsapp}', 'App\Modules\GA\Controllers\SchedulesController@get_horario_lectiveyear');
 
 

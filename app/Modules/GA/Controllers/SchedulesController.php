@@ -830,8 +830,9 @@ class SchedulesController extends Controller
         }
     }
 
-    private function get_horario_lectiveyear($whatsapp){
+    public function get_horario_lectiveyear($whatsapp){
 
+        
         try{
 
             $isApiRequest = request()->header('X-From-API') === 'flask';
@@ -850,7 +851,6 @@ class SchedulesController extends Controller
                 ->join('classes', 'classes.id', '=', 'user_classes.class_id')
                 ->select('classes.lective_year_id')
                 ->first();
-
 
                 return $this->fetchForStudent('pdf',$lective_year, $api);   
             }
