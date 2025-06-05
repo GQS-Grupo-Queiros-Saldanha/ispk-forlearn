@@ -5,7 +5,7 @@
 <head>
 
   <style>
-    @import url('https://fonts.cdnfonts.com/css/times-new-roman');
+    @import url('https://fonts.cdnfonts.com/css/times-new-arial');
 
     .cabecalho {
       font-family: 'Times New Roman';
