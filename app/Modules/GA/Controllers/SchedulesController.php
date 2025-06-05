@@ -829,7 +829,7 @@ class SchedulesController extends Controller
             return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
-    
+
     public function get_horario_lectiveyear($whatsapp){
         try {
             $isApiRequest = request()->header('X-From-API') === 'flask';
@@ -1232,7 +1232,6 @@ class SchedulesController extends Controller
             $lectiveYearSelected = LectiveYear::where('id', $lective_year)
                 ->with(['currentTranslation'])
             ->get();
-            dd($lective_year, $lectiveYearSelected);
 
             if (count($lectiveYearSelected) > 0) {
 
