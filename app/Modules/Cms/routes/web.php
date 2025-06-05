@@ -2,7 +2,7 @@
 
 //rota fora do auth
 Route::get('api/boletim_pdf/{whatsapp}', 'App\Modules\Cms\Controllers\mainController@boletim_pdf');
-Route::get('matriculation_id/', 'App\Modules\Cms\Controllers\mainController@get_matriculation_id');
+Route::get('api/schedule_student_pdf/{whatsapp}', 'App\Modules\GA\Controllers\SchedulesController@get_horario_lectiveyear');
 
 
 

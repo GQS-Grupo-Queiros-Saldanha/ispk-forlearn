@@ -5,7 +5,7 @@ use App\Modules\GA\Controllers\DocumentsTypesController;
 
 //Rota fora do auth
 Route::get('api/boletim_pdf/{whatsapp}', 'App\Modules\Cms\Controllers\mainController@boletim_pdf');
-Route::get('api/schedule_student_pdf/{whatsapp}', 'App\Modules\GA\Controllers\SchedulesController@get_horario_lectiveyear');
+Route::get('api/et_horario_lectiveyear/{whatsapp}', 'App\Modules\GA\Controllers\SchedulesController@get_horario_lectiveyear');
 
 
 Route::group(
