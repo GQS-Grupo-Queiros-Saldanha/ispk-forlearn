@@ -61,7 +61,7 @@
     <table class="table m-0 p-0">
         <tr>
             <td class="td-declaracao" rowspan="12" style="background-color: transparent; height:96px;">
-                <p style="text-align: center;margin-top: 205px;font-size: 31.5px;text-transform: uppercase!important;"
+                <p style="text-align: center;margin-top: 205px;font-size: 29.5px;text-transform: uppercase!important;"
                     class="institution-name">
                     <b>{{$institution->nome}}</b>
                 </p>
