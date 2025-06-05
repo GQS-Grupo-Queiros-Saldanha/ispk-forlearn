@@ -5,9 +5,12 @@
     $logotipo = 'https://' . $_SERVER['HTTP_HOST'] . '/instituicao-arquivo/' . $institution->logotipo;
 
     $logotipo = link_storage($logotipo);
+    
 
 @endphp
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
     .div-top {
         height: 190px;
         text-transform: none;
