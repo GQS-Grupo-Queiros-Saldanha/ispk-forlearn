@@ -831,7 +831,11 @@ class SchedulesController extends Controller
     }
 
     public function get_horario_lectiveyear($whatsapp){
-        try {
+        
+        $lective_year = '377';
+                
+        return $this->fetchForPDF($lective_year, 'pdf');
+        /*try {
             $isApiRequest = request()->header('X-From-API') === 'flask';
             $tokenRecebido = request()->bearerToken();
 
@@ -856,7 +860,7 @@ class SchedulesController extends Controller
                 }
 
                 $lective_year = $lective_year_api->lective_year_id;
-
+                $lective_year = '377';
                 //return $this->fetchForStudent('pdf', $lective_year, $api);
                 return $this->fetchForPDF($lective_year, 'pdf');
             }
@@ -864,7 +868,7 @@ class SchedulesController extends Controller
             return "Acesso Negado!";
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro interno: ' . $e->getMessage()], 500);
-        }
+        }*/
     }
 
 
