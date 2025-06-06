@@ -774,9 +774,16 @@ class SchedulesController extends Controller
         } catch (ModelNotFoundException $e) {
             Toastr::error(__('GA::schedules.not_found_message'), __('toastr.error'));
             Log::error($e);
+            if($api != null){
+                return response()->json(['error' => 'Desculpe mais não tem Horário para o seu Whatsapp'], 404);
+            }
             return redirect()->back() ?? abort(500);
+
         } catch (Exception | Throwable $e) {
             Log::error($e);
+            if($api != null){
+                return response()->json(['error' => 'Desculpe mais não tem Horário para o seu Whatsapp'], 404);
+            }
             return abort(500);
         }
     }
