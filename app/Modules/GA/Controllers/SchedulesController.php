@@ -832,10 +832,7 @@ class SchedulesController extends Controller
 
     public function get_horario_lectiveyear($whatsapp){
         
-        $lective_year = '377';
-                
-        return $this->fetchForPDF($lective_year, 'pdf');
-        /*try {
+        try {
             $isApiRequest = request()->header('X-From-API') === 'flask';
             $tokenRecebido = request()->bearerToken();
 
@@ -847,12 +844,13 @@ class SchedulesController extends Controller
                 $api = DB::table('users')->where('user_whatsapp', $whatsapp)->value('id');
 
                 $lective_year_api = DB::table('users')
-                    ->join('user_classes', 'user_classes.user_id', '=', 'users.id')
-                    ->where('users.user_whatsapp', $whatsapp)
-                    ->join('classes', 'classes.id', '=', 'user_classes.class_id')
-                    ->select('classes.lective_year_id')
-                    ->first();
+                    //->join('user_classes', 'user_classes.user_id', '=', 'users.id')
+                    ->where('users.user_whatsapp', $whatsapp)->select('id')->get();
+                    //->join('classes', 'classes.id', '=', 'user_classes.class_id')
+                    //->select('classes.lective_year_id')
+                    //->first();
 
+                return $lective_year_api;
                 if (!$lective_year_api || !isset($lective_year_api->lective_year_id)) {
                     return response()->json([
                         'error' => 'Ano lectivo não encontrado para este número de WhatsApp.'
@@ -860,15 +858,15 @@ class SchedulesController extends Controller
                 }
 
                 $lective_year = $lective_year_api->lective_year_id;
-                $lective_year = '377';
+
                 //return $this->fetchForStudent('pdf', $lective_year, $api);
-                return $this->fetchForPDF($lective_year, 'pdf');
+                //return $this->fetchForPDF($lective_year, 'pdf');
             }
 
             return "Acesso Negado!";
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro interno: ' . $e->getMessage()], 500);
-        }*/
+        }
     }
 
 
