@@ -1099,11 +1099,11 @@ class mainController extends Controller
             ->join('users as u', 'm.user_id', '=', 'u.id')
             ->where('u.user_whatsapp', $whatsapp)
             ->value('m.id'); //->pluck('m.id');  //Todos
-        
-        return $matriculationId;
+
+        return $this->boletim_pdf($matriculationId);
     }
 
-    public function boletim_pdf($matriculation, $whatsapp = null) //$whatsapp
+    public function boletim_pdf($matriculation) //$whatsapp
     {
         //$whatsapp = $request->input('whatsapp');
         //$matriculation = $request->input('matriculation');
@@ -1120,9 +1120,7 @@ class mainController extends Controller
             if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
                 return response('Não autorizado', 401);
             }
-            if($whatsapp !== null ) {
-                $matriculation = $this->get_matriculation_id($whatsapmatriculationp);
-            }
+            
         }
         
         // Verifica se o usuário está autenticado
