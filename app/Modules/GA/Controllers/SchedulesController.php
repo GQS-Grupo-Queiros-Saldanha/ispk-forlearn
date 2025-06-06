@@ -845,22 +845,20 @@ class SchedulesController extends Controller
 
                 $lective_year_api = DB::table('users')
                     //->join('user_classes', 'user_classes.user_id', '=', 'users.id')
-                    ->where('users.user_whatsapp', $whatsapp)->select('id')->get();
+                    ->where('users.user_whatsapp', $whatsapp)->select('id')->first();
                     //->join('classes', 'classes.id', '=', 'user_classes.class_id')
                     //->select('classes.lective_year_id')
                     //->first();
 
-                return $lective_year_api;
-                if (!$lective_year_api || !isset($lective_year_api->lective_year_id)) {
+                if (is_null($lective_year_api))  {
                     return response()->json([
-                        'error' => 'Ano lectivo não encontrado para este número de WhatsApp.'
+                        'error' => 'Horário não encontrado para este número de WhatsApp.'
                     ], 404);
                 }
 
-                $lective_year = $lective_year_api->lective_year_id;
-
+                $lective_year = $lective_year_api->id;
                 //return $this->fetchForStudent('pdf', $lective_year, $api);
-                //return $this->fetchForPDF($lective_year, 'pdf');
+                return $this->fetchForPDF($lective_year, 'pdf');
             }
 
             return "Acesso Negado!";
