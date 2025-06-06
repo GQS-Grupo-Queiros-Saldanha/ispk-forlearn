@@ -586,7 +586,7 @@ class SchedulesController extends Controller
     }
 
 
-    private function fetchForPDF($id, $action)
+    private function fetchForPDF($id, $action, $api = null)
     {
         try {
             // Find
@@ -763,7 +763,14 @@ class SchedulesController extends Controller
                 ->setOption('margin-right', '2mm')
                 ->setOption('footer-html', $footer_html)
                 ->setPaper('a4', 'landscape');
+            if($api != null){
+                
+                $filename = 'Horario_'.$classe->code.'_'.$lectiveYears->currentTranslation->display_name.'.pdf';
+                return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="'.$filename.'"');
+
+            }
             return $pdf->stream('Horario_'.$classe->code.'_'.$lectiveYears->currentTranslation->display_name.'.pdf');
+
         } catch (ModelNotFoundException $e) {
             Toastr::error(__('GA::schedules.not_found_message'), __('toastr.error'));
             Log::error($e);
@@ -857,8 +864,9 @@ class SchedulesController extends Controller
                 }
 
                 $lective_year = $lective_year_api->id;
+                $api = 'flask';
                 //return $this->fetchForStudent('pdf', $lective_year, $api);
-                return $this->fetchForPDF($lective_year, 'pdf');
+                return $this->fetchForPDF($lective_year, 'pdf', $api);
             }
 
             return "Acesso Negado!";
