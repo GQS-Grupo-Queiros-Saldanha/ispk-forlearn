@@ -857,7 +857,8 @@ class SchedulesController extends Controller
 
                 $lective_year = $lective_year_api->lective_year_id;
 
-                return $this->fetchForStudent('pdf', $lective_year, $api);
+                //return $this->fetchForStudent('pdf', $lective_year, $api);
+                return $this->fetchForPDF($lective_year, 'pdf');
             }
 
             return "Acesso Negado!";
