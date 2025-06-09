@@ -2156,6 +2156,13 @@ class MatriculationController extends Controller
     {
         return "/storage/matriculations/M+R.pdf";
     }
+    public function getWhatsapp($whatsapp){
+        $matriculationId = DB::table('users')
+            ->join('matriculation as m', 'm.user_id', '=', 'users.id')
+            ->where('users.user_whatsapp', $whatsapp)->select('id')->first();
+            return $matriculationId;
+            
+    }
 
     public static function openReport($id)
     {

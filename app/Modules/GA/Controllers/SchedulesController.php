@@ -857,12 +857,12 @@ class SchedulesController extends Controller
 
                 $api = DB::table('users')->where('user_whatsapp', $whatsapp)->value('id');
 
-                $lective_year_api = DB::table('users')
-                    //->join('user_classes', 'user_classes.user_id', '=', 'users.id')
-                    ->where('users.user_whatsapp', $whatsapp)->select('id')->first();
-                    //->join('classes', 'classes.id', '=', 'user_classes.class_id')
-                    //->select('classes.lective_year_id')
-                    //->first();
+                        $lective_year_api = DB::table('users')
+                            //->join('user_classes', 'user_classes.user_id', '=', 'users.id')
+                            ->where('users.user_whatsapp', $whatsapp)->select('id')->first();
+                            //->join('classes', 'classes.id', '=', 'user_classes.class_id')
+                            //->select('classes.lective_year_id')
+                            //->first();
 
                 if (is_null($lective_year_api))  {
                     return response()->json([
