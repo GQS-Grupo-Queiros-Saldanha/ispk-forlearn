@@ -2573,6 +2573,36 @@ class CandidatesController extends Controller
     return $pdf->stream($options['filename'] . $options['extension']);
   }
 
+  public function candidaturaswhatsapp($whatsapp){
+
+        
+        try{
+            $isApiRequest = request()->header('X-From-API') === 'flask';
+            $tokenRecebido = request()->bearerToken();
+            if($isApiRequest){
+                if($tokenRecebido!== env('FLASK_API_TOKEN')){
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
+            }
+            $UserId = DB::table('users')
+                ->where('users.user_whatsapp', $whatsapp)
+                ->select('users.id')
+                ->first();
+            $id = $UserId->id;
+            if (is_null($id))  {
+                    return response()->json([
+                        'error' => 'Candidatura não encontrada para este número de WhatsApp.'
+                    ], 404);
+                }
+
+            return $this->generatePDFForCandidate($id);
+        }
+        catch (Exception | Throwable $e) {
+            logError($e);
+            return response()->json($e->getMessage(), 500);
+        }
+    }
+
   public function generatePDFForCandidateAfterUpdate($id)
   {
 
@@ -2722,10 +2752,6 @@ class CandidatesController extends Controller
 
     return $pdf->stream($options['filename'] . $options['extension']);
   }
-
-
-
-
 
 
   public function coursesDisciplinesAjax(Request $request)
