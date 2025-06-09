@@ -2406,7 +2406,7 @@ class CandidatesController extends Controller
     }
   }
 
-  public function generatePDFForCandidate($id, Request $request)
+  public function generatePDFForCandidate($id)
   {
 
     // Find
@@ -2601,8 +2601,8 @@ class CandidatesController extends Controller
             logError($e);
             return response()->json($e->getMessage(), 500);
         }
-    }
-
+  }
+  
   public function generatePDFForCandidateAfterUpdate($id)
   {
 
