@@ -1837,7 +1837,7 @@ public function getcursoIndex()
         }
     }
 
-    public function generatePDF($id, Request $request)
+    public function generatePDF($id, Request $request, $api = null)
     {
         
          $userDepartment = Department::join('users_departments', 'users_departments.departments_id', '=', 'departments.id')
@@ -2036,6 +2036,9 @@ public function getcursoIndex()
             Storage::delete($temp_filename);
            
             return $merger->save($temp_filename, 'browser');
+        }
+        if($api != null){
+            return $pdf->stream($options['filename'] . $options['extension']);    
         }
         
         return $pdf->stream($options['filename'] . $options['extension']);
