@@ -1842,7 +1842,7 @@ public function getcursoIndex()
 
     public function generatePDF($id, Request $request, $api = null)
     {
-        
+        return 'e esta a funcao';
          $userDepartment = Department::join('users_departments', 'users_departments.departments_id', '=', 'departments.id')
         ->leftJoin('department_translations as dpt', function ($join) {
             $join->on('dpt.departments_id', '=', 'departments.id');
