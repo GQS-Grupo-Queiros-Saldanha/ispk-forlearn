@@ -1832,7 +1832,7 @@ public function getcursoIndex()
             ]);
 
             $api = $isApiRequest ? 'flask' : null;
-            return $id;
+
             return $this->generatePDF($id, $request, $api);
         }
         catch (Exception | Throwable $e) {
