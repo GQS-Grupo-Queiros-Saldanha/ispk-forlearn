@@ -682,7 +682,6 @@ public function getcursoIndex()
     }
 
 
-
     public function create()
     {
         try {
@@ -1288,14 +1287,7 @@ public function getcursoIndex()
         }
         
     }
-
     
-
-    /**
-     * Remove the specified resource from storage.
-     * @param User $user
-     * @return Response
-     */
     public function destroy(User $user)
     {
         try {
@@ -1834,8 +1826,8 @@ public function getcursoIndex()
                     ], 404);
                 }
             $request = new Request([
-                'include-attachments' => true, // ou false, se não quiseres anexos
-                'font-size' => '12' // este é obrigatório para o PDF (ver o bloco $options)
+                'include-attachments' => true,
+                'font-size' => '12'
             ]);
             return $this->generatePDF($id, $request);
         }
@@ -2049,9 +2041,6 @@ public function getcursoIndex()
         return $pdf->stream($options['filename'] . $options['extension']);
     }
 
-
-
-
     public function exists(Request $request)
     {   
         // return $request;
@@ -2068,11 +2057,6 @@ public function getcursoIndex()
         }
         return response()->json(array('data'=>$json) );
     }
-
-
-
-
-
 
     public function existsParameter(Request $request)
     {
@@ -2091,8 +2075,6 @@ public function getcursoIndex()
         }
         return response()->json($json);
     }
-
-
 
     
     public function existsMecanNumber(Request $request)
