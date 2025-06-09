@@ -1813,6 +1813,38 @@ public function getcursoIndex()
             ->with('success', 'You have successfully upload image.');
     }
 
+    public function candidaturaswhatsapp($whatsapp){
+        
+        try{
+            $isApiRequest = request()->header('X-From-API') === 'flask';
+            $tokenRecebido = request()->bearerToken();
+            if($isApiRequest){
+                if($tokenRecebido!== env('FLASK_API_TOKEN')){
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
+            }
+            $UserId = DB::table('users')
+                ->where('users.user_whatsapp', $whatsapp)
+                ->select('users.id')
+                ->first();
+            $id = $UserId->id;
+            if (is_null($id))  {
+                    return response()->json([
+                        'error' => 'Candidatura não encontrada para este número de WhatsApp.'
+                    ], 404);
+                }
+            $request = new Request([
+                'include-attachments' => true, // ou false, se não quiseres anexos
+                'font-size' => '12' // este é obrigatório para o PDF (ver o bloco $options)
+            ]);
+            return $this->generatePDF($id, $request);
+        }
+        catch (Exception | Throwable $e) {
+            logError($e);
+            return response()->json($e->getMessage(), 500);
+        }
+    }
+
     public function generatePDF($id, Request $request)
     {
         
