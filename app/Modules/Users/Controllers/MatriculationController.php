@@ -2157,14 +2157,40 @@ class MatriculationController extends Controller
         return "/storage/matriculations/M+R.pdf";
     }
     public function getWhatsapp($whatsapp){
-        $matriculationId = DB::table('users')
-            ->join('matriculation as m', 'm.user_id', '=', 'users.id')
-            ->where('users.user_whatsapp', $whatsapp)->select('id')->first();
-            return $matriculationId;
-            
+        
+        try{
+            $isApiRequest = request()->header('X-From-API') === 'flask';
+            $tokenRecebido = request()->bearerToken();
+            if($isApiRequest){
+                if($tokenRecebido!== env('FLASK_API_TOKEN')){
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
+            }
+            $matriculationId = DB::table('users')
+                ->join('matriculations as m', 'm.user_id', '=', 'users.id')
+                ->where('users.user_whatsapp', $whatsapp)
+                ->select('m.id')
+                ->first();
+            $id = $matriculationId->id;
+            if (is_null($id))  {
+                    return response()->json([
+                        'error' => 'Matricula não encontrado para este número de WhatsApp.'
+                    ], 404);
+                }
+
+            return $this->openReport($id);
+        }
+        catch (Exception | Throwable $e) {
+            logError($e);
+            return response()->json($e->getMessage(), 500);
+        }   
+        
+
     }
 
-    public static function openReport($id)
+
+
+    public static function openReport($id, $api=null)
     {
         
         $matriculation = Matriculation::where('id', $id)
@@ -2335,6 +2361,10 @@ class MatriculationController extends Controller
             ->setPaper('a4');
 
         // return $pdf->download('matriculation.pdf');
+        if($api != null){
+            $filename = 'Matricula_'.$matriculation->code.'.pdf';
+            return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="'.$filename.'"');
+        }
         return $pdf->stream($matriculation->code . '.pdf');
     }
 
