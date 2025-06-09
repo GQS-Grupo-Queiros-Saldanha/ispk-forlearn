@@ -1829,7 +1829,8 @@ public function getcursoIndex()
                 'include-attachments' => true,
                 'font-size' => '12'
             ]);
-            return $this->generatePDF($id, $request);
+            $api = $isApiRequest ? 'flask' : null;
+            return $this->generatePDF($id, $request, $api);
         }
         catch (Exception | Throwable $e) {
             logError($e);
@@ -2038,7 +2039,7 @@ public function getcursoIndex()
             return $merger->save($temp_filename, 'browser');
         }
         if($api != null){
-            return $pdf->stream($options['filename'] . $options['extension']);    
+            return "api"; //$pdf->stream($options['filename'] . $options['extension']);    
         }
         
         return $pdf->stream($options['filename'] . $options['extension']);
