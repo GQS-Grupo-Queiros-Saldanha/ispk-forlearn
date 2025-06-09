@@ -1287,7 +1287,7 @@ public function getcursoIndex()
         }
         
     }
-    
+
     public function destroy(User $user)
     {
         try {
@@ -1826,7 +1826,7 @@ public function getcursoIndex()
                     ], 404);
                 }
             $request = new Request([
-                'include-attachments' => true,
+                'include-attachments' => false,
                 'font-size' => '12'
             ]);
             return $this->generatePDF($id, $request);
