@@ -1826,7 +1826,7 @@ public function getcursoIndex()
                     ], 404);
                 }
             $request = new Request([
-                'include-attachments' => false,
+                'include-attachments' => true,
                 'font-size' => '12'
             ]);
             return $this->generatePDF($id, $request);
