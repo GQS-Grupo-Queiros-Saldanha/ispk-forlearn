@@ -10,7 +10,10 @@ To call this partial:
 <div @if (isset($child) && $child) data-parameter="{{ $parameter->id }}" @endif
     class="@if (isset($child) && $child) p-1 collapse bg-light-grey @endif">
     @php
-        $disabled = $action === 'show' || !Auth::user()->hasAnyRole($parameter->roles->pluck('id')->toArray());
+        
+        $currentUser = $user ?? Auth::user();
+
+        $disabled = $action === 'show' || !($currentUser && $currentUser->hasAnyRole($parameter->roles->pluck('id')->toArray()));
         $required = $parameter->required ? 'required' : null;
         $name = 'parameters[' . $parameter_group->id . '][' . $parameter->id . ']';
         
