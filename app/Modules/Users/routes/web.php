@@ -7,7 +7,7 @@ use App\Modules\Users\Controllers\UsersController;
 
 
 Route::post('/actualizar‑whatsapp', [UsersController::class, 'actualizarWhatsapp'])->name('actualizar-whatsapp');
-Route::post('/getwhatsapp/{whatsapp}', [Matriculation::class, 'getWhatsapp']);
+Route::post('api/getwhatsapp/{whatsapp}', [MatriculationController::class, 'getWhatsapp']);
 
 
 
