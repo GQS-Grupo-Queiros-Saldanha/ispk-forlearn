@@ -979,7 +979,114 @@ class TransactionsController extends Controller
 {
     $data = [
         'id_userContaCorrente' => 1162,
-        'htmlContaCorrente' => "<h1>Conta Corrente</h1>...",
+        'htmlContaCorrente' => '<style>
+            .divtable::-webkit-scrollbar {
+                width: 8px;
+                height: 2px;
+                    border-radius: 30px;
+                    box-shadow: inset 20px 20px 60px #bebebe,
+                        inset -20px -20px 60px #ffffff;
+                }
+                
+                .divtable::-webkit-scrollbar-track {
+                    background: #e0e0e0;
+                    box-shadow: inset 20px 20px 60px #bebebe,
+                        inset -20px -20px 60px #ffffff;
+                    border-radius: 30px;
+                    height: 2px;
+                }
+                
+                .divtable::-webkit-scrollbar-thumb {
+                    background-color: #343a40;
+                    border-radius: 30px;
+                    border: none;
+                    height: 2px;
+                }
+                
+                .divtable {
+                    height: 50vh;
+                }
+            </style>
+
+            <div style="background: #00d55a; padding: 3px; border-top-left-radius: 1pc; border-top-right-radius: 1pc" class="div-borda"></div>
+
+            <div class="divtable table-responsive mt-2">
+                <table style="z-index: 1;" id="requests-trans-table" class="table table-striped table-hover table-tesoraria">
+                    <thead>
+                        <th>#</th>
+                        <th class="checkbox-tesoraria"><i class="fa fa-check-square"></i></th>
+                        <th>Emolumento / Propina</th>
+                        <th>Valor</th>
+                        <th>Multa</th>
+                        <th>Pagamento</th>
+                        <th>Factura/Recibo nº</th>
+                        <th class="accoes-tesoraria">Acções</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td class="checkbox-tesoraria c-1"></td>
+                            <td>
+                                Exame de acesso
+                                (#EP01 - Matemática)
+                            </td>
+                            <td>5 000,00 <small>Kz</small></td>
+                            <td>0 <small>Kz</small></td>
+                            <td>
+                                <span class="bg-success p-1 text-white" id="status_">PAGO</span>
+                            </td>
+                            <td>24 - 000379</td>
+                            <td class="accoes-tesoraria">
+                                <a href="//ispk.forlearn.ao/pt/payments/requests/1514" class="btn btn-info btn-sm">
+                                    <i class="far fa-eye"></i>
+                                </a>
+                                <a class="btn btn-info btn-sm" href="//ispk.forlearn.ao/pt/payments/view-file/receipts/1962" target="_blank">
+                                    <i class="fas fa-receipt"></i>
+                                </a>
+                                <button type="button" onclick="showModal(0,1962,1514)" class="btn btn-sm btn-danger refund">
+                                    <i class="dynamic-datatable removebutton fas fa-undo"></i>
+                                </button>
+                                <button hidden value="checado1" style="background-color: #38c172; color: #ffffff;" type="submit" id="checado1" class="btn btn-sm checado">
+                                    <i class="fa fa-file-invoice-dollar"></i>
+                                </button>
+                                <button style="background: #388cf1" hidden value="checado1" id="btn-referenciaEmolumento1" data-toggle="modal" data-target="#modal-referenciaMulticaixa" type="button" class="btn btn-sm text-white btn-referenciaEmolumento">
+                                    <i style="font-size: 0.6pc" class="fas fa-r" aria-hidden="true"></i> 
+                                    <i style="font-size: 0.6pc" class="fas fa-m" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <input id="qdtIndex" type="hidden" value="1">
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Total a pagar: 0 <small>Kz</small></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <script>
+                function generateReceiptForTransaction(id) {
+                    console.log(id);
+                    var myNewTab = window.open("about:blank", "_blank");
+                    let route = "//ispk.forlearn.ao/pt/payments/receipt/0".slice(0, -1) + id;
+                    
+                    $.ajax({
+                        method: "GET",
+                        url: route
+                    }).done(function(url) {
+                        console.log(url);
+                        myNewTab.location.href = url;
+                    });
+                }
+            </script>',
         'ano_lectivo_estudante' => 2025
     ];
     
