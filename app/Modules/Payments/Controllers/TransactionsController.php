@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Modules\Payments\Controllers;
+use Illuminate\Http\Request;
 
 use App\Helpers\LanguageHelper;
 use App\Helpers\TimeHelper;
@@ -16,7 +17,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
+//use Illuminate\Support\Facades\Request;
 use Mail;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
@@ -550,13 +551,6 @@ class TransactionsController extends Controller
        
     }
 
-
-
-
-
-
-
-
     public function pagamentoGetOrigem()
     {
         
@@ -771,12 +765,6 @@ class TransactionsController extends Controller
         
     }
 
-
-
-
-
-
-
     public function getPagamentoDayAjax($date)
     {        
 
@@ -880,16 +868,6 @@ class TransactionsController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
     /**
      * Show the form for creating a new resource.
      *
@@ -926,25 +904,11 @@ class TransactionsController extends Controller
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return Response
-     */
     public function update(Request $request, $id)
     {
         //
@@ -987,50 +951,44 @@ class TransactionsController extends Controller
         return response()->json(['sent' => false]);
     }
 
+    public function Rotina_transation($id){
+
+        $Consulta=DB::select("SELECT trans.id, trans.type,trans.value as valor,trans.notes, art.article_id ,u.name, trs.transaction_id ,art.base_value,trs.value FROM article_requests as art JOIN transaction_article_requests as trs Join users u JOIN transactions as trans on trans.id=trs.transaction_id and u.id=art.user_id and art.id=trs.article_request_id where trans.type!='payment' and art.month and trans.notes='Débito inicial do valor base' and art.article_id=$id",[1]);
 
 
-
-public function Rotina_transation($id){
-
-  $Consulta=DB::select("SELECT trans.id, trans.type,trans.value as valor,trans.notes, art.article_id ,u.name, trs.transaction_id ,art.base_value,trs.value FROM article_requests as art JOIN transaction_article_requests as trs Join users u JOIN transactions as trans on trans.id=trs.transaction_id and u.id=art.user_id and art.id=trs.article_request_id where trans.type!='payment' and art.month and trans.notes='Débito inicial do valor base' and art.article_id=$id",[1]);
-
-
-
-   return  $collect=collect($Consulta) 
-    ->map(function($item){
-        $currentData = Carbon::now();
-  
-        DB::transaction(function  () use($item,$currentData) { 
-       
-            $transacao=DB::table('transactions  as ART')
-            ->where('ART.id',$item->id)
-            ->whereNotNull('ART.type')
-            ->update(['value' =>$item->base_value ,'updated_at'=> $currentData]);
-        });
-        return $item->id." Actualizado com sucesso";
+        return  $collect=collect($Consulta) 
+        ->map(function($item){
+            $currentData = Carbon::now();
+    
+            DB::transaction(function  () use($item,$currentData) { 
         
-    })
-    ;
+                $transacao=DB::table('transactions  as ART')
+                ->where('ART.id',$item->id)
+                ->whereNotNull('ART.type')
+                ->update(['value' =>$item->base_value ,'updated_at'=> $currentData]);
+            });
+            return $item->id." Actualizado com sucesso";
+            
+        });
 
 
-}
-    use Illuminate\Http\Request;
-    public function getContacorrentWhatsapp(){
-
-        // Simulando os dados que seriam recebidos do formulário
-
-        $data = [
-            'id_userContaCorrente' => 1162,
-            'htmlContaCorrente' => "<h1>Conta Corrente</h1><p>Detalhes da conta corrente...</p>",
-            'ano_lectivo_estudante' => 2025
-        ];
-
-        $request = new Request($data);
-        // Chama o método transactionPDF com os dados simulados
-        return $this->transactionPDF($request);
     }
 
-    public function transactionPDF(\Illuminate\Http\Request $request)
+
+    public function getContacorrentWhatsapp()
+{
+    $data = [
+        'id_userContaCorrente' => 1162,
+        'htmlContaCorrente' => "<h1>Conta Corrente</h1>...",
+        'ano_lectivo_estudante' => 2025
+    ];
+    
+    // Use a classe Request já importada (sem "\Illuminate\Http\")
+    $request = new Request($data);
+    return $this->transactionPDF($request);
+}
+
+    public function transactionPDF(\Illuminate\Http\Request $request, $api = null)
     {
         try{
         //    return $request;
