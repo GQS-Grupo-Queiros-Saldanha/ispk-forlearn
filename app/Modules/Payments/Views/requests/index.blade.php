@@ -914,7 +914,7 @@
                 verDeleteAllArticl();
                 if (vetorUserContaCorrente.length < 2) {
                     $("#htmlContaCorrente").val(htmlContaCorrente)
-                    $("#id_userContaCorrente").val(userId)
+                    $("#id_userContaCorrente").val(userId)//primeiro
                     vetorUserContaCorrente.push(htmlContaCorrente)
                     vetorUserContaCorrente.push(userId)
                     $("#ano-lectivo-estudante").val(anolectivo_ativo)
