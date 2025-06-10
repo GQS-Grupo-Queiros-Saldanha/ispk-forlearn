@@ -1014,10 +1014,21 @@ public function Rotina_transation($id){
 
 
 }
+    use Illuminate\Http\Request;
+    public function getContacorrentWhatsapp(){
 
+        // Simulando os dados que seriam recebidos do formulário
 
+        $data = [
+            'id_userContaCorrente' => 1162,
+            'htmlContaCorrente' => "<h1>Conta Corrente</h1><p>Detalhes da conta corrente...</p>",
+            'ano_lectivo_estudante' => 2025
+        ];
 
-
+        $request = new Request($data);
+        // Chama o método transactionPDF com os dados simulados
+        return $this->transactionPDF($request);
+    }
 
     public function transactionPDF(\Illuminate\Http\Request $request)
     {
@@ -1025,7 +1036,7 @@ public function Rotina_transation($id){
         //    return $request;
             $userId=$request->id_userContaCorrente;
             $html=$request->htmlContaCorrente;
-            $institution = Institution::latest()->first();
+            $institution = Institution::latest()->first(); //Esta linha obtém o último registo criado na tabela institutions e guarda-o na variável $institution.
             $titulo_documento = "Conta corrente";
             $documentoGerado_documento = "Data: ";
             $documentoCode_documento = 9;
@@ -1204,6 +1215,9 @@ public function Rotina_transation($id){
                     // $pdf->setOption('no-stop-slow-scripts', true);
                     // $pdf->setOption('footer-html', $footer_html);
 
+            if($api != null){
+                return $pdf->stream('conta_corrente.pdf');        
+            }
             return $pdf->stream('conta_corrente.pdf');
         } catch (Exception | Throwable $e) {
             return $e;

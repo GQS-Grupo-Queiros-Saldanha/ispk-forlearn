@@ -117,9 +117,10 @@
                         <input hidden type="text" name="htmlContaCorrente" id="htmlContaCorrente">
                         <input type="hidden" name="ano_lectivo_estudante" id="ano-lectivo-estudante">
                         <br>
-                        <button style="border-radius: 6px; background: #20c7f9" type="submit"
-                            class="btn btn-lg text-white mt-2 gerar-conta-corrente"><i class="fas fa-file-pdf"
-                                aria-hidden="true"></i> Gerar PDF </button>
+                        <button style="border-radius: 6px; background: #20c7f9" type="submit" class="btn btn-lg text-white mt-2 gerar-conta-corrente">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i> 
+                            Gerar PDF 
+                        </button>
                     </div>
                 </form>
             </div>
@@ -1018,7 +1019,7 @@
             })
         }
 
-        // Metodo que lista os emolumentos para o finalista
+        // Metodo que lista os emolumentos para o finalista aqui
         function getEmolumentoFinalista(lective_years_id) {
             var userId = selectedUserId;
             selectAnoLetivo.val(0);
