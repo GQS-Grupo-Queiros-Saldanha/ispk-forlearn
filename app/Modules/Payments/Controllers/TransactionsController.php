@@ -1100,7 +1100,7 @@ class TransactionsController extends Controller
         try{
         //    return $request;
             $userId=$request->id_userContaCorrente;
-            dd($html=$request->htmlContaCorrente);
+            $html=$request->htmlContaCorrente;
             $institution = Institution::latest()->first(); //Esta linha obtém o último registo criado na tabela institutions e guarda-o na variável $institution.
             $titulo_documento = "Conta corrente";
             $documentoGerado_documento = "Data: ";
