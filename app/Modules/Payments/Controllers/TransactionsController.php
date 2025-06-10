@@ -1105,6 +1105,7 @@ class TransactionsController extends Controller
             $titulo_documento = "Conta corrente";
             $documentoGerado_documento = "Data: ";
             $documentoCode_documento = 9;
+            return $request->ano_lectivo_estudante;
 
             $anoLectivo=0;
             if ($request->ano_lectivo_estudante==null) {
