@@ -11,7 +11,8 @@ To call this partial:
     class="@if (isset($child) && $child) p-1 collapse bg-light-grey @endif">
     @php
     
-        $disabled = $action === 'show' || !Auth::user()->hasAnyRole($parameter->roles->pluck('id')->toArray());
+        $disabled = $action === 'show' || !(Auth::check() && Auth::user()->hasAnyRole($parameter->roles->pluck('id')->toArray()));
+
         $required = $parameter->required ? 'required' : null;
         $name = 'parameters[' . $parameter_group->id . '][' . $parameter->id . ']';
         
