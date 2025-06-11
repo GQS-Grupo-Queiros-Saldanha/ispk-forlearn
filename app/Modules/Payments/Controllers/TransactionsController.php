@@ -974,6 +974,8 @@ class TransactionsController extends Controller
 
     }
     /*Zona API Whatsapp*/
+    private $articlesUtil;
+
     private function orderPay($model){
         $organizado = ['partial' => [],'pending' => [],'total' => [],];
         foreach ($model as $objeto) {
@@ -1316,11 +1318,10 @@ class TransactionsController extends Controller
                                 return response()->json(array('data'=>false));
                             }
             } catch (Exception | Throwable $e) {
-                // return $e;
                 logError($e);
-                return Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+                return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
             }
-    
+
     }
 
     public function getContacorrentWhatsapp()
