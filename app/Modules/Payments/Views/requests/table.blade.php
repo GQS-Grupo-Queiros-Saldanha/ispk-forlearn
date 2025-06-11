@@ -35,7 +35,8 @@
         $id_api = 616
         $user = auth()->user();
         @if($user == null)
-        $user = $id_api;
+            $user = $id_api;
+        @endif
 
     <table style="z-index: 1;" id="requests-trans-table" class="table table-striped table-hover table-tesoraria">
         <thead>
