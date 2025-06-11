@@ -1330,7 +1330,7 @@ class TransactionsController extends Controller
                                 if ($user == null) {
                                 $user = $userId;
                                 }
-                                return response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data, 'userId'=>$user]);
+                                return response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data, 'userAPI'=>$user]);
                             } else {
                                 return response()->json(array('data'=>false));
                             }
