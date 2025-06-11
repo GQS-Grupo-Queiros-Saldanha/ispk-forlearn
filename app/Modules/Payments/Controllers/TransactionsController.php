@@ -1324,7 +1324,13 @@ class TransactionsController extends Controller
                                 $view = view("Payments::requests.table")->with($data)->render();
                                 $html_view = view("Payments::requests.table-estorno")->with($data)->render();
                                 // return response()->json($data);
-                                return response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data]);
+                                $id_api = 616;
+                                $user = auth()->user();
+
+                                if ($user == null) {
+                                $user = $userId;
+                                }
+                                return response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data, 'userId'=>$user]);
                             } else {
                                 return response()->json(array('data'=>false));
                             }
