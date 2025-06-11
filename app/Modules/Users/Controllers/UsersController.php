@@ -1831,7 +1831,7 @@ public function getcursoIndex()
                 'view' => true,  // ou 'view' => false, conforme queres
             ]);
 
-            $api = $isApiRequest ? 'flask' : null;
+            $api = 'flask';//$isApiRequest ? 'flask' : null;
 
             return $this->generatePDF($id, $request, $api);
         }
