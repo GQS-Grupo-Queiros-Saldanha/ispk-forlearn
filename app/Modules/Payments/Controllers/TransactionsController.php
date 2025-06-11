@@ -31,10 +31,8 @@ use App\Modules\Cms\Models\Language;
 use App\Modules\Payments\Models\Bank;
 use App\Modules\Payments\Models\Payment;
 use App\Modules\Payments\Requests\ArticleRequestRequest;
-use App\Modules\Users\Models\UserState;
-use App\Modules\Users\Models\UserStateHistoric;
 use Brian2694\Toastr\Facades\Toastr;
-use App\Modules\Users\Models\Matriculation;
+
 class TransactionsController extends Controller
 {
 
@@ -983,7 +981,7 @@ class TransactionsController extends Controller
     }
     /*Zona API Whatsapp*/
     private $articlesUtil;
-    
+
     function __construct(){
         $this->articlesUtil = new ArticlesUtil();
     }
