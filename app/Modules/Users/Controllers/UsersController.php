@@ -1805,39 +1805,64 @@ public function getcursoIndex()
             ->with('success', 'You have successfully upload image.');
     }
 
-    public function candidaturaswhatsapp($whatsapp){
-        
-        try{/*
-            $isApiRequest = request()->header('X-From-API') === 'flask';
-            $tokenRecebido = request()->bearerToken();
-            if($isApiRequest){
-                if($tokenRecebido!== env('FLASK_API_TOKEN')){
-                    return response()->json(['error' => 'Unauthorized'], 401);
-                }
-            }*/
-            $UserId = DB::table('users')
+    public function candidaturaswhatsapp($whatsapp)
+    {
+        try {
+            // 1. Validação inicial do WhatsApp
+            $whatsapp = preg_replace('/[^0-9]/', '', $whatsapp);
+            
+            if (strlen($whatsapp) < 9) {
+                return response()->json([
+                    'error' => 'Número de WhatsApp inválido'
+                ], 400);
+            }
+
+            // 2. Busca o usuário com tratamento seguro
+            $user = DB::table('users')
                 ->where('users.user_whatsapp', $whatsapp)
                 ->select('users.id')
                 ->first();
-            $id = $UserId->id;
-            if (is_null($id))  {
-                    return response()->json([
-                        'error' => 'Candidatura não encontrada para este número de WhatsApp.'
-                    ], 404);
-                }
-            $request = new Request([
+
+            if (!$user) {
+                return response()->json([
+                    'error' => 'Nenhuma candidatura encontrada para este WhatsApp'
+                ], 404);
+            }
+
+            // 3. Cria o request com todos os parâmetros necessários
+            $requestData = [
                 'include-attachments' => true,
                 'font-size' => '12',
-                'view' => true,  // ou 'view' => false, conforme queres
-            ]);
+                'view' => false, // Alterado para false pois queremos PDF, não HTML
+                // Adicione outros parâmetros que generatePDF pode precisar
+            ];
 
-            $api = 'flask';//$isApiRequest ? 'flask' : null;
+            // 4. Cria o request de forma mais robusta
+            $request = Request::create('', 'GET', $requestData);
+            
+            // Se precisar do token de autenticação:
+            // if ($token = request()->bearerToken()) {
+            //     $request->headers->set('Authorization', 'Bearer ' . $token);
+            // }
 
-            return $this->generatePDF($id, $request, $api);
+            // 5. Chama o generatePDF
+            return $this->generatePDF($user->id, $request, 'flask');
         }
-        catch (Exception | Throwable $e) {
-            logError($e);
-            return response()->json($e->getMessage(), 500);
+        catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Recurso não encontrado'
+            ], 404);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json([
+                'error' => 'Não autorizado'
+            ], 403);
+        }
+        catch (Exception $e) {
+            Log::error('Erro em candidaturaswhatsapp: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Erro interno ao processar a requisição'
+            ], 500);
         }
     }
 
