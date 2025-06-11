@@ -33,7 +33,6 @@
 <div class="divtable table-responsive mt-2">
     @php $total_to_pay = 0; @endphp
     @php $user =  $user = auth()->check() ? auth()->user() : $userApi @endphp
-    print_r($user);
 
     @if ($user)
         <table style="z-index: 1;" id="requests-trans-table" class="table table-striped table-hover table-tesoraria">
