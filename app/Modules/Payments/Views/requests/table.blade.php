@@ -33,7 +33,7 @@
 <div class="divtable table-responsive mt-2">
     @php $total_to_pay = 0; @endphp
 
-    @if (auth()->check() || auth()->user()->hasRole('admin'))
+    @if (user)
 
         <table style="z-index: 1;" id="requests-trans-table" class="table table-striped table-hover table-tesoraria">
             <thead>
@@ -778,9 +778,7 @@
                 @endif
                 <input id="qdtIndex" type="hidden" value="{{ $i }}">
             </tbody>
-@else
-    <h1>erro</h1>
-@endif
+
         <tfoot>
             <tr>
                 <td></td>
