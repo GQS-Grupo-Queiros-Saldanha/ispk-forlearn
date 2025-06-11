@@ -973,6 +973,25 @@ class TransactionsController extends Controller
 
 
     }
+    /*Zona API Whatsapp*/
+    private function orderPay($model){
+        $organizado = ['partial' => [],'pending' => [],'total' => [],];
+        foreach ($model as $objeto) {
+            switch ($objeto->status) {
+                case 'partial':
+                    $organizado['partial'][] = $objeto;
+                    break;
+                case 'pending':
+                    $organizado['pending'][] = $objeto;
+                    break;
+                case 'total':
+                    $organizado['total'][] = $objeto;
+                break;
+            }
+        }
+        $resultado = array_merge($organizado['partial'], $organizado['pending'], $organizado['total']);
+        return $resultado;
+    }
 
     private function transactionsBy($userId,$anoLectivo){
         try{ 
