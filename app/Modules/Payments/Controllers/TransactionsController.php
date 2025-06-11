@@ -1321,16 +1321,15 @@ class TransactionsController extends Controller
                             ];
 
                             if ($qdt_model>0 || $qdt_disciplines>0) {
-                                $view = view("Payments::requests.table")->with($data)->render();
+                                $user = auth()->user();
+                                if ($user == null) {$user = $userId;}
+
+                                $view = view("Payments::requests.table",['userApi'=>$user])->with($data)->render();
                                 $html_view = view("Payments::requests.table-estorno")->with($data)->render();
                                 // return response()->json($data);
-                                $id_api = 616;
-                                $user = auth()->user();
+                                
 
-                                if ($user == null) {
-                                $user = $userId;
-                                }
-                                return response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data, 'userAPI'=>$user]);
+                                return response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data]);
                             } else {
                                 return response()->json(array('data'=>false));
                             }
