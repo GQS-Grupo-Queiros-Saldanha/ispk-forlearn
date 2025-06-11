@@ -32,7 +32,7 @@
     class="div-borda"></div>
 <div class="divtable table-responsive mt-2">
     @php $total_to_pay = 0; @endphp
-        $id_api = 616
+        $id_api = 616;
         $user = auth()->user();
         @if($user == null)
             $user = $id_api;
