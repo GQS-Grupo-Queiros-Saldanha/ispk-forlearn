@@ -1347,7 +1347,9 @@ class TransactionsController extends Controller
             'htmlContaCorrente' => $html,
             'ano_lectivo_estudante' => $anoLectivo
         ];
-        
+        if (!Auth::check()) {
+            Auth::loginUsingId($id);
+        }
         // Use a classe Request já importada (sem "\Illuminate\Http\")
         $request = new Request($data);
         return $this->transactionPDF($request);
