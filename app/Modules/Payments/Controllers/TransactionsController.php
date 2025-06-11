@@ -1322,7 +1322,7 @@ class TransactionsController extends Controller
 
                             if ($qdt_model>0 || $qdt_disciplines>0) {
                                 $user = auth()->user();
-                                if ($user == null) {$user = $userId;}
+                                if ($user == null) {$user = User::find($userId);}
 
                                 $view = view("Payments::requests.table",['userApi'=>$user])->with($data)->render();
                                 $html_view = view("Payments::requests.table-estorno")->with($data)->render();
