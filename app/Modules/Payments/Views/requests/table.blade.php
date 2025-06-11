@@ -34,7 +34,6 @@
     @php $total_to_pay = 0; @endphp
 
     @if (user)
-
         <table style="z-index: 1;" id="requests-trans-table" class="table table-striped table-hover table-tesoraria">
             <thead>
                 <th>#</th>
@@ -244,9 +243,6 @@
                                         @else
                                             <?php echo number_format($articles->base_value ?: 0, 2, ',', ' '); ?> <small>Kz</small>
                                         @endif
-
-
-
                                     </td>
                                     <td>
 
@@ -792,7 +788,7 @@
             </tr>
 
         </tfoot>
-
+    @endif
     </table>
 </div>
 <script>
