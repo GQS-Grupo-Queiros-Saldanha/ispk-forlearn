@@ -58,7 +58,7 @@ To call this partial:
             
 
                 <select @if ($parameter->options->contains('has_related_parameters', true)) data-options-have-related-parameters="true" @endif
-                    name="{{ $name }}" class="form-control form-control-sm{{ $errors->has($name) ? ' is-invalid' : '' }}"
+                    name="{{ $name }}" class="form-control form-control-sm{{ (isset($errors) && $errors->has($name)) ? ' is-invalid' : '' }}"
                     readonly disabled style="display: none" style="font-size: {{$options['font-size']}}">
                     @if (!$parameter->required && empty($value))
                         <option value="" selected disabled></option>
