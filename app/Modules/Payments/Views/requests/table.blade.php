@@ -35,7 +35,7 @@
     
     @if (!auth()->check() || !auth()->user()->hasRole('admin'))
         <h1>erro</h1>
-    @endif
+    
 
 
     <table style="z-index: 1;" id="requests-trans-table" class="table table-striped table-hover table-tesoraria">
@@ -781,6 +781,7 @@
             @endif
             <input id="qdtIndex" type="hidden" value="{{ $i }}">
         </tbody>
+    @endif
         <tfoot>
             <tr>
                 <td></td>
