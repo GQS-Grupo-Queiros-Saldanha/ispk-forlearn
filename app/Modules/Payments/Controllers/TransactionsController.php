@@ -974,126 +974,353 @@ class TransactionsController extends Controller
 
     }
 
+    private function transactionsBy($userId,$anoLectivo){
+        try{ 
+            $getRegraImplementEmolu=null;
+            $object=[];
+            $data_anolectivo=null;
+            $totalValorTrans=0;
+            $arrayMonth_getRegraImplementada=[];
+            $arrayMonth_getRegraImplementEmolu=[];
+            $lectiveYearSelected = LectiveYear::whereId($anoLectivo)->first();
+            
+
+                    // consultar criada para os estorno, que sera mostrado no modal.
+                    $modelo = DB::table('articles as art')
+                        ->leftJoin('article_translations as at', function ($join) {
+                            $join->on('art.id', '=', 'at.article_id');
+                            $join->on('at.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                            $join->on('at.active', '=', DB::raw(true));
+                        })
+                        ->join('article_requests as article_ret', function ($join) {
+                            $join->on('art.id', '=', 'article_ret.article_id');
+                        })
+                        ->join('transaction_article_requests as trans_artic_req', function ($join) {
+                            $join->on('article_ret.id', '=', 'trans_artic_req.article_request_id');
+                        })
+                        ->join('transactions as tran', function ($join) {
+                            $join->on('trans_artic_req.transaction_id', '=', 'tran.id');
+                        })
+                        ->leftJoin('transaction_receipts as trant_receipts', function ($join) {
+                            $join->on('tran.id', '=', 'trant_receipts.transaction_id');
+                        })
+                        ->leftJoin('historic_user_balance as historic_saldo',function ($join){
+                            $join->on('tran.id','=','historic_saldo.id_transaction');
+                        })
+                        ->leftJoin('user_parameters as up',function ($join){
+                            $join->on('up.users_id','=','tran.updated_by')
+                            ->where('up.parameters_id','=',1);
+                        })
+                        ->leftJoin('disciplines', 'disciplines.id', '=', 'article_ret.discipline_id')
+                        ->leftJoin('disciplines_translations as dcp', function ($join) {
+                            $join->on('dcp.discipline_id', '=', 'disciplines.id');
+                            $join->on('dcp.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                            $join->on('dcp.active', '=', DB::raw(true));
+                        })
+                        ->select([
+                            'dcp.display_name as discipline_name',
+                            'disciplines.code as codigo_disciplina',
+                            'article_ret.discipline_id as discipline_id',
+                            'article_ret.id as article_req_id',
+                            'tran.value as value',
+                            'tran.id as transaction_id',
+                            'up.value as nome_creador',
+                            'historic_saldo.valor_credit as valor_credit',
+                            'at.display_name as article_name',
+                            'article_ret.year as article_year',
+                            'article_ret.month as article_month',
+                            'article_ret.base_value as base_value',
+                            'article_ret.extra_fees_value as extra_fees_value',
+                            'article_ret.status as status',
+                            'article_ret.discipline_id as art_idDisciplina',
+                            'article_ret.meta as meta',
+                            'trant_receipts.created_at as created_at_arti',
+                            'tran.data_from as data_from',
+                            'tran.updated_at as updated_at',
+                            'trant_receipts.path as path',
+                            'trant_receipts.code as code'
+                        ])
+                        ->where('article_ret.user_id', $userId)
+                        ->where('trant_receipts.code', '!=', null)
+                        ->where('tran.data_from', '=','Estorno')
+                        ->orderBy('article_ret.year', 'ASC')
+                        ->orderBy('article_ret.month', 'ASC')
+                        ->whereBetween('art.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                    ->get()
+                    ->groupBy('transaction_id');
+
+                    $modelo=collect($modelo)->map(function ($item) 
+                    { 
+                        foreach ($item as $key => $value) {
+                            $array=null;
+                            $code=null;
+                            if ($value->path!=null) {
+                                $array=explode("-",$value->path);
+                                $code=explode(".",$array[2]);
+                                $value->{'code_recibo'} = $array[1].'-'.$code[0];
+                            }
+                            else{
+                              $value->{'code_recibo'} ="Erro criação";  
+                            }
+                        }
+                        return $item;
+                    });
+                    $totalValorTrans=collect($modelo)->map(function ($item) use($object,$totalValorTrans)
+                    { 
+                        foreach ($item as $key => $value) {
+                            if (empty($object)){
+                                $object []= $value->code_recibo; 
+                                $totalValorTrans+=$value->value;
+
+                            }
+                            elseif(in_array($value->code_recibo,$object)){
+
+                            }
+                            else{
+                                $object []= $value->code_recibo;
+                                $totalValorTrans+=$value->value;
+                            }
+                        }
+                        return $totalValorTrans;
+                    });
+                    $data_anolectivo=$lectiveYearSelected->start_date.' - '.$lectiveYearSelected->end_date;
+
+                        $disciplines = DB::table('articles as art')
+                            ->join('article_requests','article_requests.article_id','=','art.id')
+                            ->join('disciplines', 'disciplines.id', '=', 'article_requests.discipline_id')
+                            ->leftJoin('disciplines_translations as dcp', function ($join) {
+                                $join->on('dcp.discipline_id', '=', 'disciplines.id');
+                                $join->on('dcp.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                                $join->on('dcp.active', '=', DB::raw(true));
+                            })
+                            ->join('courses_translations as ct', function ($join) {
+                                $join->on('ct.courses_id', '=', 'disciplines.courses_id');
+                                $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                                $join->on('ct.active', '=', DB::raw(true));
+                            })
+                            ->select([
+                                'article_requests.id as article_req_id',
+                                'dcp.display_name as discipline_name',
+                                'disciplines.code as codigo_disciplina',
+                                'article_requests.discipline_id as discipline_id',
+                                'ct.display_name as course_name',
+                                'dcp.abbreviation as abbreviation'
+                            ])
+                            ->whereNull('article_requests.deleted_at')
+                            ->whereNull('article_requests.deleted_by')
+                            ->whereNull('art.deleted_by')
+                            ->where('article_requests.user_id',$userId)
+                            ->whereBetween('art.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                        ->get();
+
+                        $qdt_disciplines=count($disciplines);
+
+                        $metrics = DB::table('articles as art')
+                            ->join('article_requests','article_requests.article_id','=','art.id')
+                            ->join('metricas', 'metricas.id', '=', 'article_requests.metric_id')
+                            ->select([
+                                'article_requests.id as article_req_id',
+                                'article_requests.metric_id as metric_id',
+                                'metricas.nome as nome'
+                            ])
+                            ->whereNull('article_requests.deleted_at')
+                            ->whereNull('article_requests.deleted_by')
+                            ->whereNull('art.deleted_by')
+                            ->where('article_requests.user_id',$userId)
+                            ->whereBetween('art.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                        ->get();
+
+                            $consultArt = DB::table('articles as art')
+                                ->leftJoin('article_translations as at', function ($join) {
+                                    $join->on('art.id', '=', 'at.article_id');
+                                    $join->on('at.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                                    $join->on('at.active', '=', DB::raw(true));
+                                })
+                                ->join('article_requests as article_ret', function ($join) {
+                                    $join->on('art.id', '=', 'article_ret.article_id');
+                                })
+                                ->join('transaction_article_requests as trans_artic_req', function ($join) {
+                                    $join->on('article_ret.id', '=', 'trans_artic_req.article_request_id');
+                                })
+
+                                ->join('transactions as tran', function ($join) {
+                                    $join->on('trans_artic_req.transaction_id', '=', 'tran.id');
+                                })
+
+                                ->leftJoin('transaction_receipts as trant_receipts', function ($join) {
+                                    $join->on('tran.id', '=', 'trant_receipts.transaction_id');
+                                })
+                                ->leftJoin('historic_user_balance as historic_saldo',function ($join){
+                                    $join->on('tran.id','=','historic_saldo.id_transaction');
+                                })
+                                ->select([
+                                    'article_ret.id as article_req_id',
+                                    'tran.id as transaction_id',
+                                    'tran.type as trans_type',
+                                    'historic_saldo.valor_credit as valor_credit',
+                                    'at.display_name as article_name',
+                                    'article_ret.year as article_year',
+                                    'article_ret.month as article_month',
+                                    'article_ret.base_value as base_value',
+                                    'article_ret.extra_fees_value as extra_fees_value',
+                                    'article_ret.status as status',
+                                    'article_ret.discipline_id as art_idDisciplina',
+                                    'article_ret.meta as meta',
+                                    'trant_receipts.created_at as created_at_arti',
+                                    'tran.data_from as data_from',
+                                    'trant_receipts.code as code'
+                                ])
+                                ->where('article_ret.user_id', $userId)
+                                ->whereNull('article_ret.deleted_at')
+                                ->whereNull('article_ret.deleted_by')
+                                ->whereNull('tran.deleted_at')
+                                ->where('tran.type','!=','debit')
+                                ->orderBy('article_ret.year', 'ASC')
+                                ->orderBy('article_ret.month', 'ASC')
+                                ->where('tran.data_from', '!=','Estorno')
+                                // ->orderBy('tran.id', 'ASC')
+                                ->orderBy('trant_receipts.code', 'ASC')
+                                ->whereBetween('art.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                            ->get();
+                            $i=0;
+                            $collet=collect($consultArt)->map(function($item){
+                                return $item->article_req_id;
+                              
+                            });
+                
+                        
+                            
+                            $consultRecibos = DB::table('articles as art')
+                                ->leftJoin('article_translations as at', function ($join) {
+                                    $join->on('art.id', '=', 'at.article_id');
+                                    $join->on('at.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                                    $join->on('at.active', '=', DB::raw(true));
+                                })
+                                ->join('article_requests as article_ret', function ($join) {
+                                    $join->on('art.id', '=', 'article_ret.article_id');
+                                })
+                                ->join('transaction_article_requests as trans_artic_req', function ($join) {
+                                    $join->on('article_ret.id', '=', 'trans_artic_req.article_request_id');
+                                })
+
+                                ->join('transactions as tran', function ($join) {
+                                    $join->on('trans_artic_req.transaction_id', '=', 'tran.id');
+                                })
+
+                                ->leftJoin('transaction_receipts as trant_receipts', function ($join) {
+                                    $join->on('tran.id', '=', 'trant_receipts.transaction_id');
+                                })
+                                ->leftJoin('historic_user_balance as historic_saldo',function ($join){
+                                    $join->on('tran.id','=','historic_saldo.id_transaction');
+                                })
+                                ->select([
+                                    'article_ret.id as article_req_id',
+                                    'tran.id as transaction_id',
+                                    'tran.type as trans_type',
+                                    'historic_saldo.valor_credit as valor_credit',
+                                    'at.display_name as article_name',
+                                    'article_ret.year as article_year',
+                                    'article_ret.month as article_month',
+                                    'article_ret.base_value as base_value',
+                                    'article_ret.discipline_id as art_idDisciplina',
+                                    'article_ret.meta as meta',
+                                    'article_ret.extra_fees_value as extra_fees_value',
+                                    'article_ret.status as status',
+                                    'tran.data_from as data_from',
+                                    'trant_receipts.code as code'
+                                ])
+                                ->where('article_ret.user_id', $userId)
+                                ->where('tran.type', '=', 'debit')
+                                ->whereNull('article_ret.deleted_at')
+                                ->whereNull('article_ret.deleted_by')
+                                ->whereNull('tran.deleted_at')
+                                ->whereNotin('trans_artic_req.article_request_id',$collet) 
+                                ->orderBy('article_ret.year', 'ASC')
+                                ->orderBy('article_ret.month', 'ASC')
+                                // ->orderBy('tran.id', 'ASC')
+                                ->orderBy('trant_receipts.code', 'ASC')
+                                ->whereBetween('art.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                            ->get();
+                            
+                            $model= $consultArt->merge($consultRecibos);
+                            
+                            $model = $this->orderPay($model);
+
+                            $qdt_model=count($model);
+
+                            $classe = $this->articlesUtil->getMatriculationClass($anoLectivo, $userId);
+                            
+                                // esta consulta vai verificar se este alguma regra implementada, tanto faze regra por curso o no ambito geral por anolectivo.
+
+                                $getRegraImplementada =  $this->articlesUtil->getRegraImplementada($anoLectivo, $userId);
+
+                                if (count($getRegraImplementada)>0) {
+                                    foreach ($getRegraImplementada as $key => $value) {
+                                        $arrayMonth_getRegraImplementada[]=$value->mes;
+                                    }
+                                }else{
+
+                                    
+                                    $getRegraImplementEmolu =  $this->articlesUtil->getRegraImplementEmolu($anoLectivo, $userId);
+                                  
+                                    if (count($getRegraImplementEmolu)>0) {
+                                        foreach ($getRegraImplementEmolu as $key => $value) {
+                                            $arrayMonth_getRegraImplementEmolu[]=$value->mes;
+                                        }   
+                                    }
+                                }      
+
+                            $data=[
+                                'arrayMonth_getRegraImplementada'=>$arrayMonth_getRegraImplementada,
+                                'arrayMonth_getRegraImplementEmolu'=>$arrayMonth_getRegraImplementEmolu,
+                                'getRegraImplementEmolu'=>$getRegraImplementEmolu,
+                                'getRegraImplementada'=>$getRegraImplementada,
+                                'disciplines'=>$disciplines,
+                                'model'=>$model,
+                                'modelo'=>$modelo,
+                                'metrics'=>$metrics
+                            ];
+                            // if(auth()->user()->id == 845)dd($data);
+                            
+                            
+                            $detalheEstorno=[
+                                'totalValorTrans'=>$totalValorTrans,
+                                'data_anolectivo'=>$data_anolectivo,
+                            ];
+
+                            if ($qdt_model>0 || $qdt_disciplines>0) {
+                                $view = view("Payments::requests.table")->with($data)->render();
+                                $html_view = view("Payments::requests.table-estorno")->with($data)->render();
+                                // return response()->json($data);
+                                return response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data]);
+                            } else {
+                                return response()->json(array('data'=>false));
+                            }
+            } catch (Exception | Throwable $e) {
+                // return $e;
+                logError($e);
+                return Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+            }
+    
+    }
 
     public function getContacorrentWhatsapp()
-{
-    $data = [
-        'id_userContaCorrente' => 616,
-        'htmlContaCorrente' => '<style>
-            .divtable::-webkit-scrollbar {
-                width: 8px;
-                height: 2px;
-                    border-radius: 30px;
-                    box-shadow: inset 20px 20px 60px #bebebe,
-                        inset -20px -20px 60px #ffffff;
-                }
-                
-                .divtable::-webkit-scrollbar-track {
-                    background: #e0e0e0;
-                    box-shadow: inset 20px 20px 60px #bebebe,
-                        inset -20px -20px 60px #ffffff;
-                    border-radius: 30px;
-                    height: 2px;
-                }
-                
-                .divtable::-webkit-scrollbar-thumb {
-                    background-color: #343a40;
-                    border-radius: 30px;
-                    border: none;
-                    height: 2px;
-                }
-                
-                .divtable {
-                    height: 50vh;
-                }
-            </style>
+    {
+        $id = 616;
+        $anoLectivo = 9;
+        $html = $this->transactionsBy($id, $anoLectivo);
 
-            <div style="background: #00d55a; padding: 3px; border-top-left-radius: 1pc; border-top-right-radius: 1pc" class="div-borda"></div>
 
-            <div class="divtable table-responsive mt-2">
-                <table style="z-index: 1;" id="requests-trans-table" class="table table-striped table-hover table-tesoraria">
-                    <thead>
-                        <th>#</th>
-                        <th class="checkbox-tesoraria"><i class="fa fa-check-square"></i></th>
-                        <th>Emolumento / Propina</th>
-                        <th>Valor</th>
-                        <th>Multa</th>
-                        <th>Pagamento</th>
-                        <th>Factura/Recibo nº</th>
-                        <th class="accoes-tesoraria">Acções</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td class="checkbox-tesoraria c-1"></td>
-                            <td>
-                                Exame de acesso
-                                (#EP01 - Matemática)
-                            </td>
-                            <td>5 000,00 <small>Kz</small></td>
-                            <td>0 <small>Kz</small></td>
-                            <td>
-                                <span class="bg-success p-1 text-white" id="status_">PAGO</span>
-                            </td>
-                            <td>24 - 000379</td>
-                            <td class="accoes-tesoraria">
-                                <a href="//ispk.forlearn.ao/pt/payments/requests/1514" class="btn btn-info btn-sm">
-                                    <i class="far fa-eye"></i>
-                                </a>
-                                <a class="btn btn-info btn-sm" href="//ispk.forlearn.ao/pt/payments/view-file/receipts/1962" target="_blank">
-                                    <i class="fas fa-receipt"></i>
-                                </a>
-                                <button type="button" onclick="showModal(0,1962,1514)" class="btn btn-sm btn-danger refund">
-                                    <i class="dynamic-datatable removebutton fas fa-undo"></i>
-                                </button>
-                                <button hidden value="checado1" style="background-color: #38c172; color: #ffffff;" type="submit" id="checado1" class="btn btn-sm checado">
-                                    <i class="fa fa-file-invoice-dollar"></i>
-                                </button>
-                                <button style="background: #388cf1" hidden value="checado1" id="btn-referenciaEmolumento1" data-toggle="modal" data-target="#modal-referenciaMulticaixa" type="button" class="btn btn-sm text-white btn-referenciaEmolumento">
-                                    <i style="font-size: 0.6pc" class="fas fa-r" aria-hidden="true"></i> 
-                                    <i style="font-size: 0.6pc" class="fas fa-m" aria-hidden="true"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <input id="qdtIndex" type="hidden" value="1">
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>Total a pagar: 0 <small>Kz</small></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <script>
-                function generateReceiptForTransaction(id) {
-                    console.log(id);
-                    var myNewTab = window.open("about:blank", "_blank");
-                    let route = "//ispk.forlearn.ao/pt/payments/receipt/0".slice(0, -1) + id;
-                    
-                    $.ajax({
-                        method: "GET",
-                        url: route
-                    }).done(function(url) {
-                        console.log(url);
-                        myNewTab.location.href = url;
-                    });
-                }
-            </script>',
-        'ano_lectivo_estudante' => 9
-    ];
-    
-    // Use a classe Request já importada (sem "\Illuminate\Http\")
-    $request = new Request($data);
-    return $this->transactionPDF($request);
-}
+        $data = [
+            'id_userContaCorrente' => $id,
+            'htmlContaCorrente' => $html,
+            'ano_lectivo_estudante' => $anoLectivo
+        ];
+        
+        // Use a classe Request já importada (sem "\Illuminate\Http\")
+        $request = new Request($data);
+        return $this->transactionPDF($request);
+    }
 
     public function transactionPDF(\Illuminate\Http\Request $request, $api = null)
     {
