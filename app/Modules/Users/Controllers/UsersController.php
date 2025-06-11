@@ -1807,14 +1807,14 @@ public function getcursoIndex()
 
     public function candidaturaswhatsapp($whatsapp){
         
-        try{
+        try{/*
             $isApiRequest = request()->header('X-From-API') === 'flask';
             $tokenRecebido = request()->bearerToken();
             if($isApiRequest){
                 if($tokenRecebido!== env('FLASK_API_TOKEN')){
                     return response()->json(['error' => 'Unauthorized'], 401);
                 }
-            }
+            }*/
             $UserId = DB::table('users')
                 ->where('users.user_whatsapp', $whatsapp)
                 ->select('users.id')
@@ -1950,11 +1950,14 @@ public function getcursoIndex()
         ->first();
         if (isset($foto->value)) {
             $user->image = $foto->value;
-        }   
+        }
+        $userApi = auth()->user();
+        if ($userApi == null) {$userApi = User::find($id);}
+   
       
          $data = [
             'action' => 'print',
-            'user' => $user,
+            'user' => $user ?? $userApi,
              'Departamento'=>$Departamento,
              'Funcionario' => $Funcionario,
             'parameter_groups' => $parameter_groups,
