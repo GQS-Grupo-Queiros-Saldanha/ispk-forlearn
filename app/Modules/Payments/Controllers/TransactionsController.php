@@ -1354,7 +1354,7 @@ class TransactionsController extends Controller
 
         $data = [
             'id_userContaCorrente' => $id,
-            'htmlContaCorrente' => $html,
+            'htmlContaCorrente' => $this->transactionsBy($id, $anoLectivo),
             'ano_lectivo_estudante' => $anoLectivo
         ];
         
