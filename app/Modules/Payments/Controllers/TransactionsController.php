@@ -1344,7 +1344,12 @@ class TransactionsController extends Controller
     {
         $id = 616;
         $anoLectivo = 9;
-        $html = $this->transactionsBy($id, $anoLectivo);
+        
+        $jsonString = $this->transactionsBy($id, $anoLectivo);  // resposta JSON como string
+        $data = json_decode($jsonString, true);                // converte JSON para array associativo
+
+        $html = $data['html'] ?? '';                            // pega a propriedade html ou string vazia se não existir
+
 
 
         $data = [
