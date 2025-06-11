@@ -983,6 +983,10 @@ class TransactionsController extends Controller
     }
     /*Zona API Whatsapp*/
     private $articlesUtil;
+    
+    function __construct(){
+        $this->articlesUtil = new ArticlesUtil();
+    }
 
     private function orderPay($model){
         $organizado = ['partial' => [],'pending' => [],'total' => [],];
