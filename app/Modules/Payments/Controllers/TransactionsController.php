@@ -26,13 +26,7 @@ use App\Modules\Payments\Models\DisciplineArticle;
 use App\Model\Institution;
 use App\Modules\GA\Models\LectiveYear;
 
-//Models Instanciado para Usar a API
-use App\Modules\Cms\Models\Language;
-use App\Modules\Payments\Models\Bank;
-use App\Modules\Payments\Models\Payment;
-use App\Modules\Payments\Requests\ArticleRequestRequest;
-use App\Modules\Payments\Util\ArticlesUtil;
-use Brian2694\Toastr\Facades\Toastr;
+use app\Modules\Payments\Controller\ArticleRequestController;
 
 class TransactionsController extends Controller
 {
