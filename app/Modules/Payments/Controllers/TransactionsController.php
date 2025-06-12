@@ -980,65 +980,49 @@ class TransactionsController extends Controller
     public function getContacorrentWhatsapp($whatsapp)
     {
         
-           try {
+        try {
+            $isApiRequest = request()->header('X-From-API') === 'flask';
+            $tokenRecebido = request()->bearerToken();
 
-            $whatsapp = preg_replace('/[^0-9]/', '', $whatsapp);            
-            if (strlen($whatsapp) < 9) {
-                return response()->json([
-                    'error' => 'Número de WhatsApp inválido'
-                ], 400);
-            }
+            if ($isApiRequest) {
+                if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
+                    abort(403, 'Unauthorized');
+                }
 
-            $anoLectivo = 9;
-            $userId = DB::table('users')
-                ->where('users.user_whatsapp', $whatsapp)
-                ->select('users.id')
-                ->first();
+                $anoLectivo = 9;
+                $userId = DB::table('users')
+                    ->where('users.user_whatsapp', $whatsapp)
+                    ->select('users.id')
+                    ->first();
 
-            if (!$userId) {
-                return response()->json([
-                    'error' => 'Nenhuma Conta Corrente encontrada para este WhatsApp'
-                ], 404);
-            }
+                if (!$userId) {
+                    return response()->json([
+                        'error' => 'Nenhuma Conta Corrente encontrada para este WhatsApp'
+                    ], 404);
+                }
 
-        
-             if ($token = request()->bearerToken()) {
-                 $request->headers->set('Authorization', 'Bearer ' . $token);
-            }
+                // Gerar o PDF
+                $articleRequest = new ArticleRequestsController();
+                $userApi = true;
 
-            // Gerar o PDF
-            $articleRequest = new ArticleRequestsController();
-            $userApi = true;
-
-            $htmlContaCorrente = $articleRequest->transactionsBy($userId, $anoLectivo, $userApi);
-        
-            $data = [
-                'id_userContaCorrente' => $userId,
-                'htmlContaCorrente' => $htmlContaCorrente,
-                'ano_lectivo_estudante' => $anoLectivo  
-            ];
+                $htmlContaCorrente = $articleRequest->transactionsBy($userId, $anoLectivo, $userApi);
             
-            $api = 'flask';
-            $request = new \Illuminate\Http\Request($data);
-            return $this->transactionPDF($request, $api);
-        }
-        catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => 'Recurso não encontrado'
-            ], 404);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json([
-                'error' => 'Não autorizado'
-            ], 403);
-        }
-        catch (Exception $e) {
-            Log::error('Erro em candidaturaswhatsapp: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Erro interno ao processar a requisição'
-            ], 500);
+                $data = [
+                    'id_userContaCorrente' => $userId,
+                    'htmlContaCorrente' => $htmlContaCorrente,
+                    'ano_lectivo_estudante' => $anoLectivo  
+                ];
+                
+                $api = 'flask';
+                $request = new \Illuminate\Http\Request($data);
+                return $this->transactionPDF($request, $api);
             }
+            return response()->json(['error' => 'Acesso Negado!'], 403);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro interno: ' . $e->getMessage()], 500);
         }
+    }
 
     public function transactionPDF(\Illuminate\Http\Request $request, $api = null)
     {
