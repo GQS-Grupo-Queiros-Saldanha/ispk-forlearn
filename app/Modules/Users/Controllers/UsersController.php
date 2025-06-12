@@ -1840,10 +1840,10 @@ public function getcursoIndex()
             // 4. Cria o request de forma mais robusta
             $request = Request::create('', 'GET', $requestData);
             
-            // Se precisar do token de autenticação:
-            // if ($token = request()->bearerToken()) {
-            //     $request->headers->set('Authorization', 'Bearer ' . $token);
-            // }
+            
+             if ($token = request()->bearerToken()) {
+                 $request->headers->set('Authorization', 'Bearer ' . $token);
+            }
 
             // 5. Chama o generatePDF
             return $this->generatePDF($user->id, $request, 'flask');

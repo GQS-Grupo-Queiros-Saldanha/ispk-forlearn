@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 
-Route::get('/api/getContacorrentWhatsapp', 'App\Modules\Payments\Controllers\TransactionsController@getContacorrentWhatsapp');
+Route::get('/api/getContacorrentWhatsapp/{whatsapp}', 'App\Modules\Payments\Controllers\TransactionsController@getContacorrentWhatsapp');
 
 
 Route::group(

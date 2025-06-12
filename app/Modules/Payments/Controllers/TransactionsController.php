@@ -977,29 +977,68 @@ class TransactionsController extends Controller
     }
     /*Zona API Whatsapp*/
 
-    public function getContacorrentWhatsapp()
+    public function getContacorrentWhatsapp($whatsapp)
     {
-        $userId = 616;
-        $anoLectivo = 9;
-
-       
-        $articleRequest = new ArticleRequestsController();
-        $userApi = true;
-
-        $htmlContaCorrente = $articleRequest->transactionsBy($userId, $anoLectivo, $userApi);
-       
-        $data = [
-            'id_userContaCorrente' => $userId,
-            'htmlContaCorrente' => $htmlContaCorrente,
-            'ano_lectivo_estudante' => $anoLectivo  
-        ];
         
-        // Use a classe Request já importada (sem "\Illuminate\Http\")
-        $api = 'flask';
-        $request = new \Illuminate\Http\Request($data);
-        return $this->transactionPDF($request, $api);
-    }
+           try {
 
+            $whatsapp = preg_replace('/[^0-9]/', '', $whatsapp);            
+            if (strlen($whatsapp) < 9) {
+                return response()->json([
+                    'error' => 'Número de WhatsApp inválido'
+                ], 400);
+            }
+
+            $anoLectivo = 9;
+            $userId = DB::table('users')
+                ->where('users.user_whatsapp', $whatsapp)
+                ->select('users.id')
+                ->first();
+
+            if (!$userId) {
+                return response()->json([
+                    'error' => 'Nenhuma Conta Corrente encontrada para este WhatsApp'
+                ], 404);
+            }
+
+        
+             if ($token = request()->bearerToken()) {
+                 $request->headers->set('Authorization', 'Bearer ' . $token);
+            }
+
+            // Gerar o PDF
+            $articleRequest = new ArticleRequestsController();
+            $userApi = true;
+
+            $htmlContaCorrente = $articleRequest->transactionsBy($userId, $anoLectivo, $userApi);
+        
+            $data = [
+                'id_userContaCorrente' => $userId,
+                'htmlContaCorrente' => $htmlContaCorrente,
+                'ano_lectivo_estudante' => $anoLectivo  
+            ];
+            
+            $api = 'flask';
+            $request = new \Illuminate\Http\Request($data);
+            return $this->transactionPDF($request, $api);
+        }
+        catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Recurso não encontrado'
+            ], 404);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json([
+                'error' => 'Não autorizado'
+            ], 403);
+        }
+        catch (Exception $e) {
+            Log::error('Erro em candidaturaswhatsapp: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Erro interno ao processar a requisição'
+            ], 500);
+            }
+        }
 
     public function transactionPDF(\Illuminate\Http\Request $request, $api = null)
     {
