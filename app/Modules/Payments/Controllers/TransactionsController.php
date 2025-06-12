@@ -981,6 +981,7 @@ class TransactionsController extends Controller
     {
         
         try {
+            
             $isApiRequest = request()->header('X-From-API') === 'flask';
             $tokenRecebido = request()->bearerToken();
 
@@ -990,13 +991,15 @@ class TransactionsController extends Controller
                 }
 
                 $anoLectivo = 9;
-                $userId = DB::table('users')->where('users.user_whatsapp', $whatsapp)->select('users.id')->first();
+                $user = DB::table('users')->where('users.user_whatsapp', $whatsapp)->select('users.id')->first();
 
-                if (!$userId) {
+                if (!$user) {
                     return response()->json([
                         'error' => 'Nenhuma Conta Corrente encontrada para este WhatsApp'
                     ], 404);
                 }
+
+                $userId = $user->id;
 
                 // Gerar o PDF
                 $articleRequest = new ArticleRequestsController();
