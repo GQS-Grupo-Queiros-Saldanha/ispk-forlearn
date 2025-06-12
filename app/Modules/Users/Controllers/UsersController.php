@@ -1977,7 +1977,7 @@ public function getcursoIndex()
             $user->image = $foto->value;
         }
         $userApi = auth()->user();
-        if ($userApi == null) {$userApi = User::find($id);}
+        if ($userApi == null) {$userApi = User::whereId($id)->first();}
    
       
          $data = [

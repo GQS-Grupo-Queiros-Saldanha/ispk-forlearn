@@ -37,11 +37,11 @@
             <thead>
                 <th>#</th>
 
-                @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                         auth()->user()->hasRole('tesoureiro') ||
-                         auth()->user()->hasRole('superadmin') ||
-                         auth()->user()->hasRole('promotor') ||
-                         auth()->user()->hasRole('presidente'))
+                @if ( $user->hasRole('chefe_tesoureiro') ||
+                         $user->hasRole('tesoureiro') ||
+                         $user->hasRole('superadmin') ||
+                         $user->hasRole('promotor') ||
+                         $user->hasRole('presidente'))
                     <th class="checkbox-tesoraria"><i class="fa fa-check-square"></i></th>
                 @endif
                 <th>Emolumento / Propina</th>
@@ -102,19 +102,19 @@
                                     <td>{{ $count++ }} </td>
 
                                     @if ($articles->status == 'total')
-                                        @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                                                 auth()->user()->hasRole('tesoureiro') ||
-                                                 auth()->user()->hasRole('superadmin') ||
-                                                 auth()->user()->hasRole('promotor') ||
-                                                 auth()->user()->hasRole('presidente'))
+                                        @if ( $user->hasRole('chefe_tesoureiro') ||
+                                                 $user->hasRole('tesoureiro') ||
+                                                 $user->hasRole('superadmin') ||
+                                                 $user->hasRole('promotor') ||
+                                                 $user->hasRole('presidente'))
                                             <td class="checkbox-tesoraria c-1"></td>
                                         @endif
                                     @elseif($articles->status == 'pending' || $articles->status == 'partial')
-                                        @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                                                 auth()->user()->hasRole('tesoureiro') ||
-                                                 auth()->user()->hasRole('superadmin') ||
-                                                 auth()->user()->hasRole('promotor') ||
-                                                 auth()->user()->hasRole('presidente'))
+                                        @if ( $user->hasRole('chefe_tesoureiro') ||
+                                                 $user->hasRole('tesoureiro') ||
+                                                 $user->hasRole('superadmin') ||
+                                                 $user->hasRole('promotor') ||
+                                                 $user->hasRole('presidente'))
                                             @php $i =$count-1; @endphp
                                             <td class="checkbox-tesoraria c-2">
                                                 @if ($articles->art_idDisciplina == '' || $articles->article_req_id)
@@ -340,9 +340,9 @@
                                                 <i class="far fa-eye"></i>
                                             </a>
                                             @if (
-                                                ! auth()->user()->hasAnyPermission('view-tesouraria-estudante') &&
-                                                    ! auth()->user()->hasAnyPermission('secretario_view_RH'))
-                                                @if ( auth()->user()->hasAnyPermission('apagar_emolumentos'))
+                                                ! $user->hasAnyPermission('view-tesouraria-estudante') &&
+                                                    ! $user->hasAnyPermission('secretario_view_RH'))
+                                                @if ( $user->hasAnyPermission('apagar_emolumentos'))
                                                     <button class="btn btn-sm btn-danger" type="button"
                                                         onclick="deleteArticleRequest({{ $articles->article_req_id }})">
                                                         <i class="fas fa-trash-alt"></i>
@@ -354,7 +354,7 @@
                                                     <i class="fa fa-file-invoice-dollar"></i>
                                                 </button>
                                             @endif
-                                            @if ( auth()->user()->hasRole('superadmin'))
+                                            @if ( $user->hasRole('superadmin'))
                                                 <button style="background: #388cf1" hidden
                                                     value="checado{{ $i }}"
                                                     id="btn-referenciaEmolumento{{ $i }}" data-toggle="modal"
@@ -368,16 +368,16 @@
                                         </td>
                                     @elseif($articles->status == 'pending' && $articles->extra_fees_value != 0 && $articles->data_from != '')
                                         <td class="accoes-tesoraria">
-                                            @if ( auth()->user()->hasRole('superadmin'))
+                                            @if ( $user->hasRole('superadmin'))
                                                 <a href="{{ route('requests.show', $articles->article_req_id) }}"
                                                     class="btn btn-info btn-sm">
                                                     <i class="far fa-eye"></i>
                                                 </a>
                                             @endif
                                             @if (
-                                                ! auth()->user()->hasAnyPermission('view-tesouraria-estudante') &&
-                                                    ! auth()->user()->hasAnyPermission('secretario_view_RH'))
-                                                @if ( auth()->user()->hasAnyPermission('apagar_emolumentos'))
+                                                ! $user->hasAnyPermission('view-tesouraria-estudante') &&
+                                                    ! $user->hasAnyPermission('secretario_view_RH'))
+                                                @if ( $user->hasAnyPermission('apagar_emolumentos'))
                                                     <button class="btn btn-sm btn-danger" type="button"
                                                         onclick="deleteArticleRequest({{ $articles->article_req_id }})">
                                                         <i class="fas fa-trash-alt"></i>
@@ -390,7 +390,7 @@
                                                     <i class="fa fa-file-invoice-dollar"></i>
                                                 </button>
                                             @endif
-                                            @if ( auth()->user()->hasRole('superadmin'))
+                                            @if ( $user->hasRole('superadmin'))
                                                 <button style="background: #388cf1" hidden
                                                     value="checado{{ $i }}"
                                                     id="btn-referenciaEmolumento{{ $i }}" data-toggle="modal"
@@ -402,13 +402,13 @@
                                             @endif
                                         </td>
                                     @elseif($articles->status == 'pending' && $articles->extra_fees_value != 0)
-                                        @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                                                 auth()->user()->hasRole('tesoureiro') ||
-                                                 auth()->user()->hasRole('superadmin') ||
-                                                 auth()->user()->hasRole('promotor') ||
-                                                 auth()->user()->hasRole('presidente'))
+                                        @if ( $user->hasRole('chefe_tesoureiro') ||
+                                                 $user->hasRole('tesoureiro') ||
+                                                 $user->hasRole('superadmin') ||
+                                                 $user->hasRole('promotor') ||
+                                                 $user->hasRole('presidente'))
                                             <td class="accoes-tesoraria">
-                                                @if ( auth()->user()->hasRole('superadmin'))
+                                                @if ( $user->hasRole('superadmin'))
                                                     <a href="{{ route('requests.show', $articles->article_req_id) }}"
                                                         class="btn btn-info btn-sm">
                                                         <i class="far fa-eye"></i>
@@ -423,9 +423,9 @@
                                                                                         <i class="dynamic-datatable removebutton fas fa-undo"></i>
                                                                                     </a> --}}
                                                 @if (
-                                                    ! auth()->user()->hasAnyPermission('view-tesouraria-estudante') &&
-                                                        ! auth()->user()->hasAnyPermission('secretario_view_RH'))
-                                                    @if ( auth()->user()->hasAnyPermission('estorn-transacion'))
+                                                    ! $user->hasAnyPermission('view-tesouraria-estudante') &&
+                                                        ! $user->hasAnyPermission('secretario_view_RH'))
+                                                    @if ( $user->hasAnyPermission('estorn-transacion'))
                                                         <button type="button"
                                                             onclick="showModal({{ $saldo }},{{ $transaction_id }},{{ $articles->article_req_id }})"
                                                             class="btn btn-sm btn-danger refund">
@@ -442,7 +442,7 @@
                                                     </button>
                                                 @endif
 
-                                                @if ( auth()->user()->hasRole('superadmin'))
+                                                @if ( $user->hasRole('superadmin'))
                                                     <button style="background: #388cf1" hidden
                                                         value="checado{{ $i }}"
                                                         id="btn-referenciaEmolumento{{ $i }}"
@@ -458,16 +458,16 @@
                                         @endif
                                     @elseif($articles->status == 'pending' && $articles->extra_fees_value == 0)
                                         <td class="accoes-tesoraria">
-                                            @if ( auth()->user()->hasRole('superadmin'))
+                                            @if ( $user->hasRole('superadmin'))
                                                 <a href="{{ route('requests.show', $articles->article_req_id) }}"
                                                     class="btn btn-info btn-sm">
                                                     <i class="far fa-eye"></i>
                                                 </a>
                                             @endif
                                             @if (
-                                                ! auth()->user()->hasAnyPermission('view-tesouraria-estudante') &&
-                                                    ! auth()->user()->hasAnyPermission('secretario_view_RH'))
-                                                @if ( auth()->user()->hasAnyPermission('apagar_emolumentos'))
+                                                ! $user->hasAnyPermission('view-tesouraria-estudante') &&
+                                                    ! $user->hasAnyPermission('secretario_view_RH'))
+                                                @if ( $user->hasAnyPermission('apagar_emolumentos'))
                                                     <button class="btn btn-sm btn-danger" type="button"
                                                         onclick="deleteArticleRequest({{ $articles->article_req_id }})">
                                                         <i class="fas fa-trash-alt"></i>
@@ -480,7 +480,7 @@
                                                 </button>
                                             @endif
 
-                                            @if ( auth()->user()->hasRole('superadmin'))
+                                            @if ( $user->hasRole('superadmin'))
                                                 <button style="background: #388cf1" hidden
                                                     value="checado{{ $i }}"
                                                     id="btn-referenciaEmolumento{{ $i }}" data-toggle="modal"
@@ -494,13 +494,13 @@
                                     @elseif ($articles->status == 'total' || ($articles->status == 'partial' && $articles->data_from == ''))
                                         @if ($repet == 1)
                                             @php $repet=$articles->code; @endphp
-                                            @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                                                     auth()->user()->hasRole('tesoureiro') ||
-                                                     auth()->user()->hasRole('superadmin') ||
-                                                     auth()->user()->hasRole('promotor') ||
-                                                     auth()->user()->hasRole('presidente'))
+                                            @if ( $user->hasRole('chefe_tesoureiro') ||
+                                                     $user->hasRole('tesoureiro') ||
+                                                     $user->hasRole('superadmin') ||
+                                                     $user->hasRole('promotor') ||
+                                                     $user->hasRole('presidente'))
                                                 <td class="accoes-tesoraria">
-                                                    @if ( auth()->user()->hasRole('superadmin'))
+                                                    @if ( $user->hasRole('superadmin'))
                                                         <a href="{{ route('requests.show', $articles->article_req_id) }}"
                                                             class="btn btn-info btn-sm">
                                                             <i class="far fa-eye"></i>
@@ -515,9 +515,9 @@
                                                                                                 <i class="dynamic-datatable removebutton fas fa-undo"></i>
                                                                                             </a> --}}
                                                     @if (
-                                                        ! auth()->user()->hasAnyPermission('view-tesouraria-estudante') &&
-                                                            ! auth()->user()->hasAnyPermission('secretario_view_RH'))
-                                                        @if ( auth()->user()->hasAnyPermission('estorn-transacion'))
+                                                        ! $user->hasAnyPermission('view-tesouraria-estudante') &&
+                                                            ! $user->hasAnyPermission('secretario_view_RH'))
+                                                        @if ( $user->hasAnyPermission('estorn-transacion'))
                                                             <button type="button"
                                                                 onclick="showModal({{ $saldo }},{{ $transaction_id }},{{ $articles->article_req_id }})"
                                                                 class="btn btn-sm btn-danger refund">
@@ -536,7 +536,7 @@
                                                         </button>
                                                     @endif
 
-                                                    @if ( auth()->user()->hasRole('superadmin'))
+                                                    @if ( $user->hasRole('superadmin'))
                                                         <button style="background: #388cf1" hidden
                                                             value="checado{{ $i }}"
                                                             id="btn-referenciaEmolumento{{ $i }}"
@@ -553,7 +553,7 @@
                                         @elseif($repet != $articles->code && $articles->data_from == '')
                                             @php $repet=$articles->code; @endphp
                                             <td class="accoes-tesoraria">
-                                                @if ( auth()->user()->hasRole('superadmin'))
+                                                @if ( $user->hasRole('superadmin'))
                                                     <a href="{{ route('requests.show', $articles->article_req_id) }}"
                                                         class="btn btn-info btn-sm">
                                                         <i class="far fa-eye"></i>
@@ -568,9 +568,9 @@
                                                                                             <i class="dynamic-datatable removebutton fas fa-undo"></i>
                                                                                         </a> --}}
                                                 @if (
-                                                    ! auth()->user()->hasAnyPermission('view-tesouraria-estudante') &&
-                                                        ! auth()->user()->hasAnyPermission('secretario_view_RH'))
-                                                    @if ( auth()->user()->hasAnyPermission('estorn-transacion'))
+                                                    ! $user->hasAnyPermission('view-tesouraria-estudante') &&
+                                                        ! $user->hasAnyPermission('secretario_view_RH'))
+                                                    @if ( $user->hasAnyPermission('estorn-transacion'))
                                                         <button type="button"
                                                             onclick="showModal({{ $saldo }},{{ $transaction_id }},{{ $articles->article_req_id }})"
                                                             class="btn btn-sm btn-danger refund">
@@ -587,7 +587,7 @@
                                                     </button>
                                                 @endif
 
-                                                @if ( auth()->user()->hasRole('superadmin'))
+                                                @if ( $user->hasRole('superadmin'))
                                                     <button style="background: #388cf1" hidden
                                                         value="checado{{ $i }}"
                                                         id="btn-referenciaEmolumento{{ $i }}"
@@ -601,23 +601,23 @@
                                                 @endif
                                             </td>
                                         @else
-                                            @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                                                     auth()->user()->hasRole('tesoureiro') ||
-                                                     auth()->user()->hasRole('superadmin') ||
-                                                     auth()->user()->hasRole('promotor') ||
-                                                     auth()->user()->hasRole('presidente'))
+                                            @if ( $user->hasRole('chefe_tesoureiro') ||
+                                                     $user->hasRole('tesoureiro') ||
+                                                     $user->hasRole('superadmin') ||
+                                                     $user->hasRole('promotor') ||
+                                                     $user->hasRole('presidente'))
                                                 <td class="accoes-tesoraria">
-                                                    @if ( auth()->user()->hasRole('superadmin'))
+                                                    @if ( $user->hasRole('superadmin'))
                                                         <a href="{{ route('requests.show', $articles->article_req_id) }}"
                                                             class="btn btn-info btn-sm">
                                                             <i class="far fa-eye"></i>
                                                         </a>
                                                     @endif
-                                                    @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                                                             auth()->user()->hasRole('tesoureiro') ||
-                                                             auth()->user()->hasRole('superadmin') ||
-                                                             auth()->user()->hasRole('promotor') ||
-                                                             auth()->user()->hasRole('presidente'))
+                                                    @if ( $user->hasRole('chefe_tesoureiro') ||
+                                                             $user->hasRole('tesoureiro') ||
+                                                             $user->hasRole('superadmin') ||
+                                                             $user->hasRole('promotor') ||
+                                                             $user->hasRole('presidente'))
                                                         <button hidden value="checado{{ $i }}"
                                                             style="  background-color: #38c172;color: #ffffff;"
                                                             type="submit" id="checado{{ $i }}"
@@ -626,7 +626,7 @@
                                                         </button>
                                                     @endif
 
-                                                    @if ( auth()->user()->hasRole('superadmin'))
+                                                    @if ( $user->hasRole('superadmin'))
                                                         <button style="background: #388cf1" hidden
                                                             value="checado{{ $i }}"
                                                             id="btn-referenciaEmolumento{{ $i }}"
@@ -645,26 +645,26 @@
                                         @foreach ($disciplines as $discipline)
                                             @if ($discipline->article_req_id == $articles->article_req_id)
                                                 @if ($discipline->discipline_id != null)
-                                                    @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                                                             auth()->user()->hasRole('tesoureiro') ||
-                                                             auth()->user()->hasRole('superadmin') ||
-                                                             auth()->user()->hasRole('promotor') ||
-                                                             auth()->user()->hasRole('presidente'))
+                                                    @if ( $user->hasRole('chefe_tesoureiro') ||
+                                                             $user->hasRole('tesoureiro') ||
+                                                             $user->hasRole('superadmin') ||
+                                                             $user->hasRole('promotor') ||
+                                                             $user->hasRole('presidente'))
                                                         <td class="accoes-tesoraria">
-                                                            @if ( auth()->user()->hasRole('superadmin'))
+                                                            @if ( $user->hasRole('superadmin'))
                                                                 <a href="{{ route('requests.show', $articles->article_req_id) }}"
                                                                     class="btn btn-info btn-sm">
                                                                     <i class="far fa-eye"></i>
                                                                 </a>
                                                             @endif
                                                             @if (
-                                                                ! auth()->user()->hasAnyPermission('view-tesouraria-estudante') &&
-                                                                    ! auth()->user()->hasAnyPermission('secretario_view_RH'))
+                                                                ! $user->hasAnyPermission('view-tesouraria-estudante') &&
+                                                                    ! $user->hasAnyPermission('secretario_view_RH'))
                                                                 <a href="{{ route('requests.edit', $articles->article_req_id) }}"
                                                                     class="btn btn-warning btn-sm">
                                                                     <i class="fas fa-edit"></i>
                                                                 </a>
-                                                                @if ( auth()->user()->hasAnyPermission('apagar_emolumentos'))
+                                                                @if ( $user->hasAnyPermission('apagar_emolumentos'))
                                                                     <button class="btn btn-sm btn-danger" type="button"
                                                                         onclick="deleteArticleRequest({{ $articles->article_req_id }})">
                                                                         <i class="fas fa-trash-alt"></i>
@@ -675,22 +675,22 @@
                                                         </td>
                                                     @endif
                                                 @else
-                                                    @if ( auth()->user()->hasRole('chefe_tesoureiro') ||
-                                                             auth()->user()->hasRole('tesoureiro') ||
-                                                             auth()->user()->hasRole('superadmin') ||
-                                                             auth()->user()->hasRole('promotor') ||
-                                                             auth()->user()->hasRole('presidente'))
+                                                    @if ( $user->hasRole('chefe_tesoureiro') ||
+                                                             $user->hasRole('tesoureiro') ||
+                                                             $user->hasRole('superadmin') ||
+                                                             $user->hasRole('promotor') ||
+                                                             $user->hasRole('presidente'))
                                                         <td class="accoes-tesoraria">
-                                                            @if ( auth()->user()->hasRole('superadmin'))
+                                                            @if ( $user->hasRole('superadmin'))
                                                                 <a href="{{ route('requests.show', $articles->article_req_id) }}"
                                                                     class="btn btn-info btn-sm">
                                                                     <i class="far fa-eye"></i>
                                                                 </a>
                                                             @endif
                                                             @if (
-                                                                ! auth()->user()->hasAnyPermission('view-tesouraria-estudante') &&
-                                                                    ! auth()->user()->hasAnyPermission('secretario_view_RH'))
-                                                                @if ( auth()->user()->hasAnyPermission('apagar_emolumentos'))
+                                                                ! $user->hasAnyPermission('view-tesouraria-estudante') &&
+                                                                    ! $user->hasAnyPermission('secretario_view_RH'))
+                                                                @if ( $user->hasAnyPermission('apagar_emolumentos'))
                                                                     <button type="button" class="btn btn-sm btn-danger"
                                                                         type="button"
                                                                         onclick="deleteArticleRequest({{ $articles->article_req_id }})">

@@ -1947,7 +1947,9 @@ class ArticleRequestsController extends Controller
                                             $arrayMonth_getRegraImplementEmolu[]=$value->mes;
                                         }   
                                     }
-                                }      
+                                } 
+                            
+                            $user = User::whereId($userId)->first();
 
                             $data=[
                                 'arrayMonth_getRegraImplementada'=>$arrayMonth_getRegraImplementada,
@@ -1957,7 +1959,9 @@ class ArticleRequestsController extends Controller
                                 'disciplines'=>$disciplines,
                                 'model'=>$model,
                                 'modelo'=>$modelo,
-                                'metrics'=>$metrics
+                                'metrics'=>$metrics,
+                                'user'=> $isApi ? auth()->user() : $user
+                                
                             ];
                             // if(auth()->user()->id == 845)dd($data);
                             
