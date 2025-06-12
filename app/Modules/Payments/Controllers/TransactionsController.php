@@ -981,8 +981,8 @@ class TransactionsController extends Controller
     {
         
         try {
-            //$isApiRequest = request()->header('X-From-API') === 'flask';
-            //$tokenRecebido = request()->bearerToken();
+            $isApiRequest = request()->header('X-From-API') === 'flask';
+            $tokenRecebido = request()->bearerToken();
 
             if ($isApiRequest) {
                 if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
