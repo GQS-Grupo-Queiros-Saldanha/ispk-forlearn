@@ -1210,7 +1210,9 @@ class TransactionsController extends Controller
                     // $pdf->setOption('footer-html', $footer_html);
 
             if($api != null){
-                return $pdf->stream('conta_corrente.pdf');        
+                
+                $filename = 'conta_corrente.pdf';
+                return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="'.$filename.'"');     
             }
             return $pdf->stream('conta_corrente.pdf');
         } catch (Exception | Throwable $e) {
