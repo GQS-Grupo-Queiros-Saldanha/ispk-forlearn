@@ -984,9 +984,9 @@ class TransactionsController extends Controller
 
        
         $articleRequest = new ArticleRequestsController();
-        $isApi = true;
+        $userApi = true;
 
-        $htmlContaCorrente = $articleRequest->transactionsBy($userId, $anoLectivo, $isApi);
+        $htmlContaCorrente = $articleRequest->transactionsBy($userId, $anoLectivo, $userApi);
        
         $data = [
             'id_userContaCorrente' => $userId,
