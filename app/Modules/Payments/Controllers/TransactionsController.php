@@ -981,8 +981,8 @@ class TransactionsController extends Controller
     {
         
         try {
-            $isApiRequest = request()->header('X-From-API') === 'flask';
-            $tokenRecebido = request()->bearerToken();
+            //$isApiRequest = request()->header('X-From-API') === 'flask';
+            //$tokenRecebido = request()->bearerToken();
 
             if ($isApiRequest) {
                 if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
@@ -990,10 +990,7 @@ class TransactionsController extends Controller
                 }
 
                 $anoLectivo = 9;
-                $userId = DB::table('users')
-                    ->where('users.user_whatsapp', $whatsapp)
-                    ->select('users.id')
-                    ->first();
+                $userId = DB::table('users')->where('users.user_whatsapp', $whatsapp)->select('users.id')->first();
 
                 if (!$userId) {
                     return response()->json([
