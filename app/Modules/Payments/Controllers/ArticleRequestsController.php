@@ -1960,7 +1960,7 @@ class ArticleRequestsController extends Controller
                                 'model'=>$model,
                                 'modelo'=>$modelo,
                                 'metrics'=>$metrics,
-                                'user'=> $isApi ? auth()->user() : $user
+                                'user'=> $userApi ? auth()->user() : $user
                                 
                             ];
                             // if(auth()->user()->id == 845)dd($data);
