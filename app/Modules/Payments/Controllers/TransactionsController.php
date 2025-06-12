@@ -26,7 +26,8 @@ use App\Modules\Payments\Models\DisciplineArticle;
 use App\Model\Institution;
 use App\Modules\GA\Models\LectiveYear;
 
-use app\Modules\Payments\Controller\ArticleRequestController;
+use App\Modules\Payments\Controllers\ArticleRequestController;
+
 
 class TransactionsController extends Controller
 {
