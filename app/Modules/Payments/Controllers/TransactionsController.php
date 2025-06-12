@@ -1340,28 +1340,34 @@ class TransactionsController extends Controller
 
     }
 
+
+
     public function getContacorrentWhatsapp()
     {
-        $id = 616;
+        $userId = 616;
         $anoLectivo = 9;
 
-        $jsonString = $this->transactionsBy($id, $anoLectivo);  
-        $html = json_decode($jsonString, true);                
+       
+        $articleRequest = new ArticleRequestController();
+        $isApi = true;
 
-        //$html = $data['html'] ?? '';
-
-
-
+        $htmlContaCorrente = $articleRequest->transactionsBy($userId, $anoLectivo, $isApi);
+       
         $data = [
-            'id_userContaCorrente' => $id,
-            'htmlContaCorrente' => $this->transactionsBy($id, $anoLectivo),
-            'ano_lectivo_estudante' => $anoLectivo
+            'id_userContaCorrente' => $userId,
+            'htmlContaCorrente' => $htmlContaCorrente,
+            'ano_lectivo_estudante' => $anoLectivo  
         ];
         
         // Use a classe Request já importada (sem "\Illuminate\Http\")
-        $request = new Request($data);
-        return $this->transactionPDF($request);
+       
+        return $this->transactionPDF($data);
     }
+
+
+
+
+
 
     public function transactionPDF(\Illuminate\Http\Request $request, $api = null)
     {

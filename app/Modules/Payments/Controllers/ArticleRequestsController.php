@@ -1653,7 +1653,7 @@ class ArticleRequestsController extends Controller
         return $resultado;
     }    
 
-    public function transactionsBy($userId,$anoLectivo){
+    public function transactionsBy($userId,$anoLectivo, $isApi = false){
         try{ 
             $getRegraImplementEmolu=null;
             $object=[];
@@ -1970,10 +1970,10 @@ class ArticleRequestsController extends Controller
                             if ($qdt_model>0 || $qdt_disciplines>0) {
                                 $view = view("Payments::requests.table")->with($data)->render();
                                 $html_view = view("Payments::requests.table-estorno")->with($data)->render();
-                                // return response()->json($data);
-                                return response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data]);
+                     
+                                return $isApi ? $view : response()->json(['html'=>$view,'data_html'=>$html_view,'detalheEstorno'=>$detalheEstorno,'data'=>$data]);
                             } else {
-                                return response()->json(array('data'=>false));
+                                return $isApi ? null :response()->json(array('data'=>false));
                             }
             } catch (Exception | Throwable $e) {
                 // return $e;
