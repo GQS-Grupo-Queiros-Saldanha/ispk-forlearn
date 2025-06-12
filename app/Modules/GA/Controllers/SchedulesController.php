@@ -772,12 +772,13 @@ class SchedulesController extends Controller
             return $pdf->stream('Horario_'.$classe->code.'_'.$lectiveYears->currentTranslation->display_name.'.pdf');
 
         } catch (ModelNotFoundException $e) {
-            Toastr::error(__('GA::schedules.not_found_message'), __('toastr.error'));
-            Log::error($e);
+            
             if($api != null){
                 return response()->json(['error' => 'Desculpe mais não tem Horário para o seu Whatsapp'], 404);
             }
             return redirect()->back() ?? abort(500);
+            Toastr::error(__('GA::schedules.not_found_message'), __('toastr.error'));
+            Log::error($e);
 
         } catch (Exception | Throwable $e) {
             Log::error($e);
