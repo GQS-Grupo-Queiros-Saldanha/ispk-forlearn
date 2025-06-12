@@ -995,13 +995,9 @@ class TransactionsController extends Controller
         ];
         
         // Use a classe Request já importada (sem "\Illuminate\Http\")
-       
-        return $this->transactionPDF($data);
+        $api = 'flask';
+        return $this->transactionPDF($data, $api);
     }
-
-
-
-
 
 
     public function transactionPDF(\Illuminate\Http\Request $request, $api = null)
