@@ -2071,10 +2071,9 @@ public function getcursoIndex()
         }
         if($api != null){
 
-            return $pdf->stream($options['filename'] . $options['extension']);
-    
+            $filename = $options['filename'] . $options['extension'];
+            return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="'.$filename.'"');
         }
-        
         return $pdf->stream($options['filename'] . $options['extension']);
     }
 
