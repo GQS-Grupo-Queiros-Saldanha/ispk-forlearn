@@ -26,7 +26,7 @@ use App\Modules\Payments\Models\DisciplineArticle;
 use App\Model\Institution;
 use App\Modules\GA\Models\LectiveYear;
 
-use App\Modules\Payments\Controllers\ArticleRequestController;
+use App\Modules\Payments\Controllers\ArticleRequestsController;
 
 
 class TransactionsController extends Controller
@@ -983,7 +983,7 @@ class TransactionsController extends Controller
         $anoLectivo = 9;
 
        
-        $articleRequest = new ArticleRequestController();
+        $articleRequest = new ArticleRequestsController();
         $isApi = true;
 
         $htmlContaCorrente = $articleRequest->transactionsBy($userId, $anoLectivo, $isApi);
