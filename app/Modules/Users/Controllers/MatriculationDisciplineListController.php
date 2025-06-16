@@ -26,7 +26,6 @@ use PDF;
 use App\Modules\GA\Models\LectiveYear;
 use App\Model\Institution;
 use App\Modules\Avaliations\Models\PlanoEstudoAvaliacao;
-use Illuminate\Support\Facades\Log;
 
 class MatriculationDisciplineListController extends Controller
 {
@@ -1053,122 +1052,89 @@ class MatriculationDisciplineListController extends Controller
   }
 
 
-  public function avaliacoes($id_disciplina, $anoLectivo)
+ public function avaliacoes($id_disciplina, $anoLectivo)
 {
-    // 📌 Etapa 1: Buscar Disciplina e calcular semestre
-    $disciplina = DB::table('disciplines')->where('id', $id_disciplina)->first();
-    \Log::debug('Disciplina buscada', ['id_disciplina' => $id_disciplina, 'disciplina' => $disciplina]);
+  $avaliacaos = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
+    // LEFT JOIN em 'study_plan_editions' pode falhar se não existir edição de plano associada
+    ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
+    // LEFT JOIN em 'study_plans' pode falhar se 'stpeid.study_plans_id' for nulo ou inválido
+    ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
+    // LEFT JOIN em 'courses' pode falhar se 'stp.courses_id' for nulo
 
-    if (!$disciplina) {
-        \Log::error('Disciplina não encontrada', ['id_disciplina' => $id_disciplina]);
-        return collect();
+    // JOIN complexo com múltiplas condições: tradução do curso
+    ->leftJoin('courses_translations as ct', function ($join) {
+      $join->on('ct.courses_id', '=', 'crs.id');
+      $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+      $join->on('ct.active', '=', DB::raw(true));
+      // Esse JOIN pode falhar caso não haja tradução ativa na língua atual
+    })
+
+    ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
+    // LEFT JOIN em 'disciplines' pode falhar se não houver disciplina associada ao plano
+
+    ->leftJoin('disciplines_translations as dt', function ($join) {
+      $join->on('dt.discipline_id', '=', 'dp.id');
+      $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+      $join->on('dt.active', '=', DB::raw(true));
+      // Falha caso não exista tradução ativa para a disciplina nessa linguagem
+    })
+
+    ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
+    // Falha se o plano não estiver vinculado a uma avaliação
+
+    ->leftJoin('avaliacao_aluno_historicos', 'avaliacao_aluno_historicos.plano_estudo_avaliacaos_id', '=', 'plano_estudo_avaliacaos.id')
+    // JOIN com histórico de alunos, pode não existir registro (sem efeito direto se não usado depois)
+
+    //->join('calendario_prova as c_p', 'c_p.id_avaliacao', '=', 'avl.id')
+    // ESTE JOIN FOI COMENTADO - Se estiver descomentado, a consulta só retorna se houver uma entrada na tabela 'calendario_prova'
+    // Portanto, como está comentado, os campos 'c_p.date_start', 'c_p.data_end' e 'c_p.simestre' abaixo vão gerar erro ou nulls
+
+    ->select([
+      'avl.id as id',
+      'avl.nome as nome',
+      'dp.code as discipline_code',
+      'c_p.date_start as inicio', // Esse campo virá NULL, pois o JOIN com 'calendario_prova' está comentado
+      'c_p.data_end as fim',
+      'c_p.simestre'
+    ])
+
+    ->where('dp.id', $id_disciplina) // Filtro necessário, mas se a disciplina não existir, retorna vazio
+    //->where('c_p.deleted_by', null) // Comentado, mas se habilitado e o campo não for null, irá filtrar demais
+    //->where('c_p.lectiveYear', $anoLectivo) // Comentado, mesmo efeito acima
+
+    ->whereNotIn('avl.code_dev', ['recursos']) // Exclui avaliações com code_dev = 'recursos'
+    ->distinct('');
+
+  // Periodo da disciplina (anual ou semestral)
+  $period_disciplina = DB::table('disciplines')
+    ->where('id', $id_disciplina)
+    ->get();
+
+  $Simestre = $period_disciplina->map(function ($item, $key) {
+    $periodo = substr($item->code, -3, 1);
+    if ($periodo == "1") {
+      return 1;
     }
-
-    $periodo = substr($disciplina->code, -3, 1);
-    switch ($periodo) {
-        case '1': $Simestre = 1; break;
-        case '2': $Simestre = 4; break;
-        case 'A': $Simestre = 2; break;
-        default: $Simestre = 0;
+    if ($periodo == "2") {
+      return 4;
     }
-    \Log::debug('Simestre calculado', ['periodo' => $periodo, 'simestre' => $Simestre]);
+    if ($periodo == "A") {
+      return 2;
+    } else {
+      return 0;
+    }
+  });
 
-    // 📌 Etapa 2: Começar a montar a query
-    $query = DB::table('plano_estudo_avaliacaos as pea');
+  $avaliacaos = $avaliacaos
+    ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
+    // Este filtro depende dos campos que vêm de 'c_p'. Como o JOIN está comentado, esses campos virão NULL, e a comparação falhará (consulta vazia)
 
-    \Log::debug('Query criada com alias "pea"');
+    ->where('simestre', $Simestre)
+    // Também depende do JOIN com 'c_p'. Se estiver comentado, esse campo será NULL e a comparação também falhará
 
-    // 📌 Etapa 3: Join com study_plan_editions
-    $query->leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'pea.study_plan_editions_id');
-    \Log::debug('Join com study_plan_editions aplicado');
+    ->get();
 
-    // 📌 Etapa 4: Join com study_plans
-    $query->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id');
-    \Log::debug('Join com study_plans aplicado');
-
-    // 📌 Etapa 5: Join com courses
-    $query->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id');
-    \Log::debug('Join com courses aplicado');
-
-    // 📌 Etapa 6: Join com courses_translations
-    $query->leftJoin('courses_translations as ct', function ($join) {
-        $join->on('ct.courses_id', '=', 'crs.id');
-        $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-        $join->on('ct.active', '=', DB::raw(true));
-    });
-    \Log::debug('Join com courses_translations aplicado');
-
-    // 📌 Etapa 7: Join com disciplines
-    $query->leftJoin('disciplines as dp', 'dp.id', '=', 'pea.disciplines_id');
-    \Log::debug('Join com disciplines aplicado');
-
-    // 📌 Etapa 8: Join com disciplines_translations
-    $query->leftJoin('disciplines_translations as dt', function ($join) {
-        $join->on('dt.discipline_id', '=', 'dp.id');
-        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-        $join->on('dt.active', '=', DB::raw(true));
-    });
-    \Log::debug('Join com disciplines_translations aplicado');
-
-    // 📌 Etapa 9: Join com avaliacaos
-    $query->leftJoin('avaliacaos as avl', 'avl.id', '=', 'pea.avaliacaos_id');
-    \Log::debug('Join com avaliacaos aplicado');
-
-    // 📌 Etapa 10: Join com avaliacao_aluno_historicos
-    $query->leftJoin('avaliacao_aluno_historicos as aah', 'aah.plano_estudo_avaliacaos_id', '=', 'pea.id');
-    \Log::debug('Join com avaliacao_aluno_historicos aplicado');
-
-    // 📌 Etapa 11: Join com calendario_prova
-    $query->join('calendario_prova as cp', 'cp.id_avaliacao', '=', 'avl.id');
-    \Log::debug('Join com calendario_prova aplicado');
-
-    // 📌 Etapa 12: Selects
-    $query->select([
-        'avl.id as id',
-        'avl.nome as nome',
-        'dp.code as discipline_code',
-        'cp.date_start as inicio',
-        'cp.data_end as fim',
-        'cp.simestre'
-    ]);
-    \Log::debug('Campos selecionados definidos');
-
-    // 📌 Etapa 13: Where condições
-    $query->where('dp.id', $id_disciplina);
-    \Log::debug('Where discipline id aplicado', ['id_disciplina' => $id_disciplina]);
-
-    $query->where('cp.deleted_by', null);
-    \Log::debug('Where deleted_by aplicado');
-
-    $query->where('cp.lectiveYear', $anoLectivo);
-    \Log::debug('Where ano lectivo aplicado', ['anoLectivo' => $anoLectivo]);
-
-    $query->whereNotIn('avl.code_dev', ['recursos']);
-    \Log::debug('Filtro para remover "recursos" aplicado');
-
-    // 📌 Etapa 14: Adiciona filtros de data e semestre
-    $hoje = date('Y-m-d');
-    $query->whereRaw('"' . $hoje . '" between `date_start` and `data_end`');
-    \Log::debug('Filtro de data aplicado', ['data' => $hoje]);
-
-    $query->where('cp.simestre', $Simestre);
-    \Log::debug('Filtro de semestre aplicado', ['simestre' => $Simestre]);
-
-    $query->distinct();
-
-    // 📌 Etapa Final: Execução da query
-    \Log::debug('Query final montada', [
-        'sql' => $query->toSql(),
-        'bindings' => $query->getBindings()
-    ]);
-
-    $avaliacoes = $query->get();
-    \Log::debug('Resultado da query', [
-        'total' => $avaliacoes->count(),
-        'avaliacoes' => $avaliacoes
-    ]);
-
-    return $avaliacoes;
+  return $avaliacaos;
 }
 
 }
