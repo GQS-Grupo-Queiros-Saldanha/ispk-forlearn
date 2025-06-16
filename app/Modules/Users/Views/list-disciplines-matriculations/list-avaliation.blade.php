@@ -285,6 +285,7 @@
                 let disciplinaId = selectDiscipline.val();
                 if (!disciplinaId) {
                     console.warn('Disciplina não selecionada ainda.');
+                    console.log('Disciplina ID:', disciplinaId);
                     return;
                 }
 
