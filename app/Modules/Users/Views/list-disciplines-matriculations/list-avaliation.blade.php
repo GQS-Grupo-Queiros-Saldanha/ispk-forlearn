@@ -275,6 +275,9 @@
                 selectClasse.change(function() {
                     selectAvaluation.empty();
                     get_avaliations();
+                    console.log(get_avaliations());
+                    console.log(selectDiscipline.val());
+
                 });
             @endif
 
@@ -282,12 +285,7 @@
                 //setando as avaliacoes
                 let Value = selectDiscipline.val();
 
-                let disciplinaId = selectDiscipline.val();
-                if (!disciplinaId) {
-                    console.warn('Disciplina não selecionada ainda.');
-                    console.log('Disciplina ID:', disciplinaId);
-                    return;
-                }
+
 
                 $("#Ano_lectivo_foi").val(lective_year);
                 $.ajax({
