@@ -26,6 +26,7 @@ use PDF;
 use App\Modules\GA\Models\LectiveYear;
 use App\Model\Institution;
 use App\Modules\Avaliations\Models\PlanoEstudoAvaliacao;
+use Illuminate\Support\Facades\Log;
 
 class MatriculationDisciplineListController extends Controller
 {
@@ -40,7 +41,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
       $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
-      //Curso 
+      //Curso
       $courses = Course::with([
         'currentTranslation'
       ])->whereNull('deleted_by')
@@ -207,7 +208,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereIn('code_dev.code', ["confirm", "p_matricula"])
         ->where('user_emolumento.status', "total")
         ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        //fim dos pagos 
+        //fim dos pagos
 
 
         ->select([
@@ -471,7 +472,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
       $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
-      //Curso 
+      //Curso
       $courses = Course::with([
         'currentTranslation'
       ])->whereNull('deleted_by')
@@ -582,7 +583,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereIn('code_dev.code', ["prova_parcelar"])
         ->where('user_emolumento.status', "total")
         ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        //fim dos pagos 
+        //fim dos pagos
 
 
         ->select([
@@ -706,7 +707,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
       $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
-      //Curso 
+      //Curso
       $courses = Course::with([
         'currentTranslation'
       ])->whereNull('deleted_by')
@@ -877,7 +878,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereIn('code_dev.code', $codev)
         ->where('user_emolumento.status', "total")
         ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        //fim dos pagos 
+        //fim dos pagos
 
 
         ->select([
@@ -1053,58 +1054,74 @@ class MatriculationDisciplineListController extends Controller
 
 
   public function avaliacoes($id_disciplina, $anoLectivo)
-  {
-    $avaliacaos = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
-      ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
-      ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
-      ->leftJoin('courses_translations as ct', function ($join) {
-        $join->on('ct.courses_id', '=', 'crs.id');
-        $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-        $join->on('ct.active', '=', DB::raw(true));
-      })->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
-      ->leftJoin('disciplines_translations as dt', function ($join) {
-        $join->on('dt.discipline_id', '=', 'dp.id');
-        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-        $join->on('dt.active', '=', DB::raw(true));
-      })->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
-      ->leftJoin('avaliacao_aluno_historicos', 'avaliacao_aluno_historicos.plano_estudo_avaliacaos_id', '=', 'plano_estudo_avaliacaos.id')
-      ->join('calendario_prova as c_p', 'c_p.id_avaliacao', '=', 'avl.id')
-      ->select(['avl.id as id', 'avl.nome as nome', 'dp.code as discipline_code', 'c_p.date_start as inicio', 'c_p.data_end as fim', 'c_p.simestre'])
-      ->where('dp.id', $id_disciplina)
-      ->where('c_p.deleted_by', null)
-      ->where('c_p.lectiveYear', $anoLectivo)
-      ->whereNotIn('avl.code_dev', ['recursos'])
-      ->distinct('');
+{
+    Log::debug("Início da função avaliacoes", ['id_disciplina' => $id_disciplina, 'anoLectivo' => $anoLectivo]);
 
-    //Periodo da disciplina (saber se é anual ou simestral)
-    $period_disciplina = DB::table('disciplines')
-      ->where('id', $id_disciplina)
-      ->get();
+    $avaliacaosQuery = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
+        ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
+        ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
+        ->leftJoin('courses_translations as ct', function ($join) {
+            $join->on('ct.courses_id', '=', 'crs.id');
+            $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+            $join->on('ct.active', '=', DB::raw(true));
+        })
+        ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
+        ->leftJoin('disciplines_translations as dt', function ($join) {
+            $join->on('dt.discipline_id', '=', 'dp.id');
+            $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+            $join->on('dt.active', '=', DB::raw(true));
+        })
+        ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
+        ->leftJoin('avaliacao_aluno_historicos', 'avaliacao_aluno_historicos.plano_estudo_avaliacaos_id', '=', 'plano_estudo_avaliacaos.id')
+        ->join('calendario_prova as c_p', 'c_p.id_avaliacao', '=', 'avl.id')
+        ->select([
+            'avl.id as id',
+            'avl.nome as nome',
+            'dp.code as discipline_code',
+            'c_p.date_start as inicio',
+            'c_p.data_end as fim',
+            'c_p.simestre'
+        ])
+        ->where('dp.id', $id_disciplina)
+        ->where('c_p.deleted_by', null)
+        ->where('c_p.lectiveYear', $anoLectivo)
+        ->whereNotIn('avl.code_dev', ['recursos'])
+        ->distinct();
+
+    Log::debug('Query inicial montada para avaliacoes', ['query' => $avaliacaosQuery->toSql(), 'bindings' => $avaliacaosQuery->getBindings()]);
+
+    // Periodo da disciplina (anual ou semestral)
+    $period_disciplina = DB::table('disciplines')->where('id', $id_disciplina)->get();
+
+    Log::debug('Periodo da disciplina obtido', ['period_disciplina' => $period_disciplina]);
 
     $Simestre = $period_disciplina->map(function ($item, $key) {
-      $periodo = substr($item->code, -3, 1);
-      if ($periodo == "1") {
-        return 1;
-      }
-      if ($periodo == "2") {
-        return 4;
-      }
-      if ($periodo == "A") {
-        return 2;
-      } else {
+        $periodo = substr($item->code, -3, 1);
+        if ($periodo == "1") {
+            return 1;
+        }
+        if ($periodo == "2") {
+            return 4;
+        }
+        if ($periodo == "A") {
+            return 2;
+        }
         return 0;
-      }
-    });
+    })->first();
 
-    $avaliacaos = $avaliacaos
-      ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
-      ->where('simestre', $Simestre)
-      ->get();
+    Log::debug('Valor do Simestre calculado', ['Simestre' => $Simestre]);
 
+    if (!$Simestre) {
+        Log::warning('Simestre não identificado para disciplina', ['id_disciplina' => $id_disciplina]);
+    }
 
+    $avaliacaosFinal = $avaliacaosQuery
+        ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
+        ->where('simestre', $Simestre)
+        ->get();
 
+    Log::debug('Avaliações finais obtidas', ['count' => $avaliacaosFinal->count(), 'avaliacoes' => $avaliacaosFinal]);
 
-
-    return $avaliacaos;
-  }
+    return $avaliacaosFinal;
+}
 }

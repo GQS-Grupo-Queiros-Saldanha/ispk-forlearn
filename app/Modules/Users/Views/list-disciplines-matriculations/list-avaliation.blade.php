@@ -275,9 +275,6 @@
                 selectClasse.change(function() {
                     selectAvaluation.empty();
                     get_avaliations();
-                    console.log(get_avaliations());
-                    console.log(selectDiscipline.val());
-
                 });
             @endif
 
