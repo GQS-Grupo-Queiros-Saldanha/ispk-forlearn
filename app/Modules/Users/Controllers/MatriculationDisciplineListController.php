@@ -1055,73 +1055,120 @@ class MatriculationDisciplineListController extends Controller
 
   public function avaliacoes($id_disciplina, $anoLectivo)
 {
-    Log::debug("Início da função avaliacoes", ['id_disciplina' => $id_disciplina, 'anoLectivo' => $anoLectivo]);
+    // 📌 Etapa 1: Buscar Disciplina e calcular semestre
+    $disciplina = DB::table('disciplines')->where('id', $id_disciplina)->first();
+    \Log::debug('Disciplina buscada', ['id_disciplina' => $id_disciplina, 'disciplina' => $disciplina]);
 
-    $avaliacaosQuery = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
-        ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
-        ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
-        ->leftJoin('courses_translations as ct', function ($join) {
-            $join->on('ct.courses_id', '=', 'crs.id');
-            $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-            $join->on('ct.active', '=', DB::raw(true));
-        })
-        ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
-        ->leftJoin('disciplines_translations as dt', function ($join) {
-            $join->on('dt.discipline_id', '=', 'dp.id');
-            $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-            $join->on('dt.active', '=', DB::raw(true));
-        })
-        ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
-        ->leftJoin('avaliacao_aluno_historicos', 'avaliacao_aluno_historicos.plano_estudo_avaliacaos_id', '=', 'plano_estudo_avaliacaos.id')
-        ->join('calendario_prova as c_p', 'c_p.id_avaliacao', '=', 'avl.id')
-        ->select([
-            'avl.id as id',
-            'avl.nome as nome',
-            'dp.code as discipline_code',
-            'c_p.date_start as inicio',
-            'c_p.data_end as fim',
-            'c_p.simestre'
-        ])
-        ->where('dp.id', $id_disciplina)
-        ->where('c_p.deleted_by', null)
-        ->where('c_p.lectiveYear', $anoLectivo)
-        ->whereNotIn('avl.code_dev', ['recursos'])
-        ->distinct();
-
-    Log::debug('Query inicial montada para avaliacoes', ['query' => $avaliacaosQuery->toSql(), 'bindings' => $avaliacaosQuery->getBindings()]);
-
-    // Periodo da disciplina (anual ou semestral)
-    $period_disciplina = DB::table('disciplines')->where('id', $id_disciplina)->get();
-
-    Log::debug('Periodo da disciplina obtido', ['period_disciplina' => $period_disciplina]);
-
-    $Simestre = $period_disciplina->map(function ($item, $key) {
-        $periodo = substr($item->code, -3, 1);
-        if ($periodo == "1") {
-            return 1;
-        }
-        if ($periodo == "2") {
-            return 4;
-        }
-        if ($periodo == "A") {
-            return 2;
-        }
-        return 0;
-    })->first();
-
-    Log::debug('Valor do Simestre calculado', ['Simestre' => $Simestre]);
-
-    if (!$Simestre) {
-        Log::warning('Simestre não identificado para disciplina', ['id_disciplina' => $id_disciplina]);
+    if (!$disciplina) {
+        \Log::error('Disciplina não encontrada', ['id_disciplina' => $id_disciplina]);
+        return collect();
     }
 
-    $avaliacaosFinal = $avaliacaosQuery
-        ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
-        ->where('simestre', $Simestre)
-        ->get();
+    $periodo = substr($disciplina->code, -3, 1);
+    switch ($periodo) {
+        case '1': $Simestre = 1; break;
+        case '2': $Simestre = 4; break;
+        case 'A': $Simestre = 2; break;
+        default: $Simestre = 0;
+    }
+    \Log::debug('Simestre calculado', ['periodo' => $periodo, 'simestre' => $Simestre]);
 
-    Log::debug('Avaliações finais obtidas', ['count' => $avaliacaosFinal->count(), 'avaliacoes' => $avaliacaosFinal]);
+    // 📌 Etapa 2: Começar a montar a query
+    $query = DB::table('plano_estudo_avaliacaos as pea');
 
-    return $avaliacaosFinal;
+    \Log::debug('Query criada com alias "pea"');
+
+    // 📌 Etapa 3: Join com study_plan_editions
+    $query->leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'pea.study_plan_editions_id');
+    \Log::debug('Join com study_plan_editions aplicado');
+
+    // 📌 Etapa 4: Join com study_plans
+    $query->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id');
+    \Log::debug('Join com study_plans aplicado');
+
+    // 📌 Etapa 5: Join com courses
+    $query->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id');
+    \Log::debug('Join com courses aplicado');
+
+    // 📌 Etapa 6: Join com courses_translations
+    $query->leftJoin('courses_translations as ct', function ($join) {
+        $join->on('ct.courses_id', '=', 'crs.id');
+        $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+        $join->on('ct.active', '=', DB::raw(true));
+    });
+    \Log::debug('Join com courses_translations aplicado');
+
+    // 📌 Etapa 7: Join com disciplines
+    $query->leftJoin('disciplines as dp', 'dp.id', '=', 'pea.disciplines_id');
+    \Log::debug('Join com disciplines aplicado');
+
+    // 📌 Etapa 8: Join com disciplines_translations
+    $query->leftJoin('disciplines_translations as dt', function ($join) {
+        $join->on('dt.discipline_id', '=', 'dp.id');
+        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+        $join->on('dt.active', '=', DB::raw(true));
+    });
+    \Log::debug('Join com disciplines_translations aplicado');
+
+    // 📌 Etapa 9: Join com avaliacaos
+    $query->leftJoin('avaliacaos as avl', 'avl.id', '=', 'pea.avaliacaos_id');
+    \Log::debug('Join com avaliacaos aplicado');
+
+    // 📌 Etapa 10: Join com avaliacao_aluno_historicos
+    $query->leftJoin('avaliacao_aluno_historicos as aah', 'aah.plano_estudo_avaliacaos_id', '=', 'pea.id');
+    \Log::debug('Join com avaliacao_aluno_historicos aplicado');
+
+    // 📌 Etapa 11: Join com calendario_prova
+    $query->join('calendario_prova as cp', 'cp.id_avaliacao', '=', 'avl.id');
+    \Log::debug('Join com calendario_prova aplicado');
+
+    // 📌 Etapa 12: Selects
+    $query->select([
+        'avl.id as id',
+        'avl.nome as nome',
+        'dp.code as discipline_code',
+        'cp.date_start as inicio',
+        'cp.data_end as fim',
+        'cp.simestre'
+    ]);
+    \Log::debug('Campos selecionados definidos');
+
+    // 📌 Etapa 13: Where condições
+    $query->where('dp.id', $id_disciplina);
+    \Log::debug('Where discipline id aplicado', ['id_disciplina' => $id_disciplina]);
+
+    $query->where('cp.deleted_by', null);
+    \Log::debug('Where deleted_by aplicado');
+
+    $query->where('cp.lectiveYear', $anoLectivo);
+    \Log::debug('Where ano lectivo aplicado', ['anoLectivo' => $anoLectivo]);
+
+    $query->whereNotIn('avl.code_dev', ['recursos']);
+    \Log::debug('Filtro para remover "recursos" aplicado');
+
+    // 📌 Etapa 14: Adiciona filtros de data e semestre
+    $hoje = date('Y-m-d');
+    $query->whereRaw('"' . $hoje . '" between `date_start` and `data_end`');
+    \Log::debug('Filtro de data aplicado', ['data' => $hoje]);
+
+    $query->where('cp.simestre', $Simestre);
+    \Log::debug('Filtro de semestre aplicado', ['simestre' => $Simestre]);
+
+    $query->distinct();
+
+    // 📌 Etapa Final: Execução da query
+    \Log::debug('Query final montada', [
+        'sql' => $query->toSql(),
+        'bindings' => $query->getBindings()
+    ]);
+
+    $avaliacoes = $query->get();
+    \Log::debug('Resultado da query', [
+        'total' => $avaliacoes->count(),
+        'avaliacoes' => $avaliacoes
+    ]);
+
+    return $avaliacoes;
 }
+
 }
