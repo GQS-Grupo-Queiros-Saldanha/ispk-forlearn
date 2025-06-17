@@ -173,7 +173,7 @@ class RequerimentoController extends Controller
     {
         try {
 
-            // return $this->studant_get_year(9178,8);
+            // return $this->studant_get_year(9178,8); 
 
             $turnos = DB::table('schedule_types as st')
                 ->join('schedule_type_translations as stt', "st.id", "stt.schedule_type_id")
@@ -735,7 +735,7 @@ class RequerimentoController extends Controller
         return $plano;
     }
 
-    # Pegar os articles que serão requeridos
+    # Pegar os articles que serão requeridos 
 
     public function getUserArticle($id)
     {
@@ -764,7 +764,7 @@ class RequerimentoController extends Controller
             switch ($dados[1]) {
                 case '2':
 
-                    // Certificados
+                    // Certificados 
 
                     $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
@@ -966,7 +966,7 @@ class RequerimentoController extends Controller
         $data = explode(',', $data);
         $ano = $data[0];
         $doc_type = $data[1];
-
+       
         $lectiveYears = LectiveYear::with(['currentTranslation'])
             ->get();
 
@@ -996,7 +996,7 @@ class RequerimentoController extends Controller
 
 
         } else if ($doc_type == 12 || $doc_type == 4 || $doc_type == 5 || $doc_type == 6 || $doc_type == 2) {
-
+            
             $matriculation = DB::table('users')
                 ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
                 ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
@@ -1018,7 +1018,7 @@ class RequerimentoController extends Controller
                 ->orderBy("u_p.value")
                 ->distinct()
                 ->get();
-
+                
 
         } else {
 
@@ -1037,7 +1037,7 @@ class RequerimentoController extends Controller
                 ->distinct()
                 ->get();
         }
-
+       
         return $data = [
             'doc_type' => $doc_type,
             'matriculation' => $matriculation
@@ -1138,7 +1138,7 @@ class RequerimentoController extends Controller
                 ]
             );
 
-            // Guarda o codigo do documento
+            // Guarda o codigo do documento 
 
             $requerimento = DB::table('requerimento')->insertGetId(
                 [
@@ -1153,7 +1153,7 @@ class RequerimentoController extends Controller
 
 
 
-            # Se for um diploma
+            # Se for um diploma 
 
             if ($type == 5) {
 
@@ -1502,8 +1502,8 @@ class RequerimentoController extends Controller
 
         // $year=  DB::table('matriculations as mt')
         // ->join("")
-        // ->where('user_id',$id)
-        // ->where('lective_year',$lective_year)
+        // ->where('user_id',$id) 
+        // ->where('lective_year',$lective_year) 
         // ->whereNull('deleted_at')
         // ->whereNull('deleted_by')
         // ->select(["id","course_year"])
@@ -1630,6 +1630,8 @@ class RequerimentoController extends Controller
 
     public function mudanca_turma_store(Request $request)
     {
+
+
 
 
         if (
@@ -1959,7 +1961,7 @@ class RequerimentoController extends Controller
                             ]
                         );
 
-                        // Guarda o codigo do documento
+                        // Guarda o codigo do documento 
 
                         if ($emo[2] == '4') {
 
@@ -2114,18 +2116,18 @@ class RequerimentoController extends Controller
 
     public function get_finalists(Request $request, $course_id, $lective_year)
     {
-
+        
         $type = $request->query('type',null);
 
         $lectiveYearSelected = DB::table('lective_years')->where('id', $lective_year)->first();
         $students = [];
 
         if(isset($type) && $type == 'all'){
-
-
+            
+            
 
             // $students_ids= studentsSelectList()->pluck('id')->toArray();
-
+           
             $students = DB::table('users')
             // ->whereIn('users.id',$students_ids)
             ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
@@ -2157,8 +2159,8 @@ class RequerimentoController extends Controller
             ->orderBy("name")
             ->distinct('id')
             ->get();
-
-
+          
+           
 
         }
         else if(isset($type) && $type =='finalists'){
@@ -2206,15 +2208,15 @@ class RequerimentoController extends Controller
 
             //     $grades = DB::table('new_old_grades')
             //             ->where('user_id', $student->user_id)
-            //             ->distinct(['user_id','grade'])
+            //             ->distinct(['user_id','grade'])  
             //             ->get();
 
-
+                        
 
             //             $tfc = $allDiscipline->where('tfc',1)->first();
 
             //             $dispensou_tfc = false;
-
+                        
             //             if(isset($tfc)){
             //                 $tfc = $tfc->id;
 
@@ -2230,9 +2232,9 @@ class RequerimentoController extends Controller
             //             })->count();
 
             //             $completou = $allDiscipline->count() == $grades_count;
-
+             
             //         return $completou && !$dispensou_tfc;
-
+         
             //         });
 
 
@@ -2269,13 +2271,13 @@ class RequerimentoController extends Controller
                     ->orderBy("name")
                     ->distinct('id')
                     ->get();
-
-
+    
+    
             }
 
 
         }
-
+       
 
         return response()->json($students);
     }
@@ -2430,7 +2432,7 @@ class RequerimentoController extends Controller
                 return redirect()->back();
             }
 
-            //gerar validade
+            //gerar validade 
             event(new PaidStudentCardEvent($request->students));
 
             // GUARDAR REQUERIMENTO
@@ -2482,7 +2484,7 @@ class RequerimentoController extends Controller
         ->firstOrFail();
 
         $titulo = $article->currentTranslation->display_name;
-
+       
 
         $lectiveYears = LectiveYear::with(['currentTranslation'])
             ->get();
@@ -2545,7 +2547,7 @@ class RequerimentoController extends Controller
 
             if(isset($codigo_documento))
             $id_codigo_documento = $codigo_documento->id;
-
+          
 
 
             DB::table('requerimento')->insert(
@@ -2573,17 +2575,17 @@ class RequerimentoController extends Controller
     }
 
 
-
+    
     public function solicitacao_estagio_store(Request $request)
     {
         try {
             DB::beginTransaction();
 
             // Definir código do emolumento para solicitação de estágio
-
+            
             $codev = ($request->type === 'estagio') ? "solicitacao_estagio" :
             (($request->type === 'carta') ? "carta_recomendacao" : '');
-
+   
    $title = ($request->type === 'estagio') ? "Solicitação de Estágio" :
             (($request->type === 'carta') ? "Carta de Recomendação" : '');
 
@@ -2598,7 +2600,7 @@ class RequerimentoController extends Controller
 
             $article_id = $emolumento[0]->id_emolumento;
 
-
+          
             // Criar requisição de artigo automaticamente
             $article_request_id = createAutomaticArticleRequest($request->students, $article_id, null, null);
 
@@ -2697,7 +2699,7 @@ class RequerimentoController extends Controller
 
             // Obter todos os anos letivos disponíveis
             $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
-
+             
             // Preparar dados para a view
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
@@ -2818,28 +2820,80 @@ class RequerimentoController extends Controller
 
         try {
 
-            // Pagamento de Transporte Escolar
-                $articleTransporte = Article::where('id', 367)
-                ->first();
 
-                dd($articleTransporte);
+            DB::beginTransaction();
+            //codev dos emolumentos
+            $codev = "tfc_inscricao";
+
+            //Emolumento com base no ano lectivo
+            $emolumento = EmolumentCodevLective($codev, $request->anoLectivo);
+
+            if ($emolumento->isEmpty()) {
+                Toastr::warning(__('A forLEARN não encontrou um emolumento de trabalho de fim de curso (inscrição) configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
+                return redirect()->back();
+            }
+
+            
+
+            $article_id = $emolumento[0]->id_emolumento;
 
 
-                if (!$articleTransporte) {
-                    Toastr::error(__('A forLEARN não conseguiu encontrar configurado o emolumento de transporte escolar do curso do estudante selecionado! Contacte o apoio técnico.'), __('toastr.error'));
-                    return back();
+
+            $article_request_id = createAutomaticArticleRequest($request->students, $article_id, null, null);
+
+            if (!$article_request_id) {
+                Toastr::error(__(' Não foi possivel criar o emolumento de  trabalho de fim de curso (inscrição), por favor tente novamente'), __('toastr.error'));
+                return redirect()->back();
+            }
+
+            // GUARDAR REQUERIMENTO
+
+            DB::table('requerimento')->insert(
+                [
+                    'article_id' => $article_request_id,
+                    "user_id" => $request->students,
+                    'year' => $request->anoLectivo
+                ]
+            );
+
+
+              //codev dos emolumentos
+              $codev = "trabalho_fim_curso";
+
+              //Emolumento com base no ano lectivo
+              $emolumentos = EmolumentCodevLective($codev, $request->anoLectivo);
+  
+              if ($emolumentos->isEmpty()) {
+                  Toastr::warning(__('A forLEARN não encontrou um emolumento de trabalho de fim de curso configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
+                  return redirect()->back();
+              }
+
+            foreach($emolumentos as $emolumento){
+
+                $article_id = $emolumento->id_emolumento;
+
+                $article_request_id = createAutomaticArticleRequest($request->students, $article_id, null, null);
+
+                if (!$article_request_id) {
+                    Toastr::error(__(' Não foi possivel criar o emolumento de  trabalho de fim de curso, por favor tente novamente'), __('toastr.error'));
+                    return redirect()->back();
                 }
 
-                $articleTransporteId = $articleTransporte->id;
-                // Gerar pedidos de transporte escolar para os meses do ano letivo
-                $requestsTransporte = $this->createAutomaticArticleRequestsTransporte($user->id, $articleTransporteId, $anoFirst, $anoEnd);
-                if (!$requestsTransporte) {
-                    throw new Exception('Could not create automatic [Pagamento de Transporte Escolar (id: ' . $articleTransporteId . ')] article request payment for student (id: ' . $user->id . ') matriculation');
-                }
+                // GUARDAR REQUERIMENTO
 
+            DB::table('requerimento')->insert(
+                [
+                    'article_id' => $article_request_id,
+                    "user_id" => $request->students,
+                    'year' => $request->anoLectivo
+                ]
+            );
 
-           Toastr::success(__('O requerimento  Transporte Escolar foi criado com sucesso.'), __('toastr.success'));
+            }
 
+            Toastr::success(__('O requerimento  trabalho final de curso foi criado com sucesso.'), __('toastr.success'));
+
+            DB::commit();
             return redirect()->back();
         } catch (Exception | Throwable $e) {
             DB::rollBack();
@@ -2861,7 +2915,7 @@ class RequerimentoController extends Controller
                                     ->where('article_id', 327)
                                     ->select(['id','user_id'])
                                     ->get();
-
+          
             foreach($article_requests as $ar){
 
  // GUARDAR REQUERIMENTO
@@ -2879,7 +2933,7 @@ class RequerimentoController extends Controller
 
             }
 
-
+           
             DB::commit();
 
           dd('sucesso');
