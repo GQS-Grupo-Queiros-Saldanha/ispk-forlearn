@@ -722,7 +722,6 @@ class MatriculationDisciplineListController extends Controller
 
 
   public function studentEvaluationListPdf(Request $request, $type)
-
   {
 
     try {
@@ -833,13 +832,13 @@ class MatriculationDisciplineListController extends Controller
                 $sub->select(DB::raw(1))
                     ->from('article_requests as ar')
                     ->join('articles as art', 'art.id', '=', 'ar.article_id')
-                    ->whereRaw('ar.user_id = mat.user_id')
+                    ->whereColumn('ar.user_id', 'mat.user_id')
                     ->where('ar.status', 'pending')
                     ->where('ar.month', 1) // Janeiro
                     ->whereNull('ar.deleted_at')
                     ->whereNull('art.deleted_at');
-            });  
-        })
+              });
+          })
         ->when($type == 'exame_especial', function ($query) {
           return $query->join("tb_exame_studant as sc", 'sc.id_user', 'user.id');
         })
