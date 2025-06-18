@@ -40,7 +40,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
       $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
-      //Curso
+      //Curso 
       $courses = Course::with([
         'currentTranslation'
       ])->whereNull('deleted_by')
@@ -204,7 +204,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereIn('code_dev.code', ["confirm", "p_matricula"])
         ->where('user_emolumento.status', "total")
         ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        //fim dos pagos
+        //fim dos pagos 
 
 
         ->select([
@@ -468,7 +468,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
       $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
-      //Curso
+      //Curso 
       $courses = Course::with([
         'currentTranslation'
       ])->whereNull('deleted_by')
@@ -579,7 +579,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereIn('code_dev.code', ["prova_parcelar"])
         ->where('user_emolumento.status', "total")
         ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        //fim dos pagos
+        //fim dos pagos 
 
 
         ->select([
@@ -703,7 +703,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
       $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
-      //Curso
+      //Curso 
       $courses = Course::with([
         'currentTranslation'
       ])->whereNull('deleted_by')
@@ -811,10 +811,10 @@ class MatriculationDisciplineListController extends Controller
           break;
       }
       //devedor a implemetar
-      $dividas = $this->get_payments($item->id_anoLectivo, $item->mat);
+      /*$dividas = $this->get_payments($item->id_anoLectivo, $item->mat);
       if (isset($dividas) && ($dividas > 0)){
         // devedor 
-      }
+      }*/
 
       //Vai ser a consulta geral
       $model = DB::table("matriculations as mat")
@@ -826,6 +826,7 @@ class MatriculationDisciplineListController extends Controller
           return $query->join("tb_segunda_chamada_prova_parcelar as sc", 'sc.matriculation_id', 'mat.id');
         })
         ->when($type == 'recurso', function ($query) {
+          //return $query->join("tb_recurso_student as sc", 'sc.matriculation_id', 'mat.id');
           return $query
             ->join("tb_recurso_student as sc", 'sc.matriculation_id', '=', 'mat.id')
             ->whereNotExists(function ($sub) {
@@ -887,7 +888,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereIn('code_dev.code', $codev)
         ->where('user_emolumento.status', "total")
         ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        //fim dos pagos
+        //fim dos pagos 
 
 
         ->select([
@@ -1062,89 +1063,59 @@ class MatriculationDisciplineListController extends Controller
   }
 
 
- public function avaliacoes($id_disciplina, $anoLectivo)
-{
-  $avaliacaos = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
-    // LEFT JOIN em 'study_plan_editions' pode falhar se não existir edição de plano associada
-    ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
-    // LEFT JOIN em 'study_plans' pode falhar se 'stpeid.study_plans_id' for nulo ou inválido
-    ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
-    // LEFT JOIN em 'courses' pode falhar se 'stp.courses_id' for nulo
+  public function avaliacoes($id_disciplina, $anoLectivo)
+  {
+    $avaliacaos = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
+      ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
+      ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
+      ->leftJoin('courses_translations as ct', function ($join) {
+        $join->on('ct.courses_id', '=', 'crs.id');
+        $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+        $join->on('ct.active', '=', DB::raw(true));
+      })->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
+      ->leftJoin('disciplines_translations as dt', function ($join) {
+        $join->on('dt.discipline_id', '=', 'dp.id');
+        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+        $join->on('dt.active', '=', DB::raw(true));
+      })->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
+      ->leftJoin('avaliacao_aluno_historicos', 'avaliacao_aluno_historicos.plano_estudo_avaliacaos_id', '=', 'plano_estudo_avaliacaos.id')
+      ->join('calendario_prova as c_p', 'c_p.id_avaliacao', '=', 'avl.id')
+      ->select(['avl.id as id', 'avl.nome as nome', 'dp.code as discipline_code', 'c_p.date_start as inicio', 'c_p.data_end as fim', 'c_p.simestre'])
+      ->where('dp.id', $id_disciplina)
+      ->where('c_p.deleted_by', null)
+      ->where('c_p.lectiveYear', $anoLectivo)
+      ->whereNotIn('avl.code_dev', ['recursos'])
+      ->distinct('');
 
-    // JOIN complexo com múltiplas condições: tradução do curso
-    ->leftJoin('courses_translations as ct', function ($join) {
-      $join->on('ct.courses_id', '=', 'crs.id');
-      $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-      $join->on('ct.active', '=', DB::raw(true));
-      // Esse JOIN pode falhar caso não haja tradução ativa na língua atual
-    })
+    //Periodo da disciplina (saber se é anual ou simestral)
+    $period_disciplina = DB::table('disciplines')
+      ->where('id', $id_disciplina)
+      ->get();
 
-    ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
-    // LEFT JOIN em 'disciplines' pode falhar se não houver disciplina associada ao plano
+    $Simestre = $period_disciplina->map(function ($item, $key) {
+      $periodo = substr($item->code, -3, 1);
+      if ($periodo == "1") {
+        return 1;
+      }
+      if ($periodo == "2") {
+        return 4;
+      }
+      if ($periodo == "A") {
+        return 2;
+      } else {
+        return 0;
+      }
+    });
 
-    ->leftJoin('disciplines_translations as dt', function ($join) {
-      $join->on('dt.discipline_id', '=', 'dp.id');
-      $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-      $join->on('dt.active', '=', DB::raw(true));
-      // Falha caso não exista tradução ativa para a disciplina nessa linguagem
-    })
+    $avaliacaos = $avaliacaos
+      ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
+      ->where('simestre', $Simestre)
+      ->get();
 
-    ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
-    // Falha se o plano não estiver vinculado a uma avaliação
 
-    ->leftJoin('avaliacao_aluno_historicos', 'avaliacao_aluno_historicos.plano_estudo_avaliacaos_id', '=', 'plano_estudo_avaliacaos.id')
-    // JOIN com histórico de alunos, pode não existir registro (sem efeito direto se não usado depois)
 
-    //->join('calendario_prova as c_p', 'c_p.id_avaliacao', '=', 'avl.id')
-    // ESTE JOIN FOI COMENTADO - Se estiver descomentado, a consulta só retorna se houver uma entrada na tabela 'calendario_prova'
-    // Portanto, como está comentado, os campos 'c_p.date_start', 'c_p.data_end' e 'c_p.simestre' abaixo vão gerar erro ou nulls
 
-    ->select([
-      'avl.id as id',
-      'avl.nome as nome',
-      'dp.code as discipline_code',
-      'c_p.date_start as inicio', // Esse campo virá NULL, pois o JOIN com 'calendario_prova' está comentado
-      'c_p.data_end as fim',
-      'c_p.simestre'
-    ])
 
-    ->where('dp.id', $id_disciplina) // Filtro necessário, mas se a disciplina não existir, retorna vazio
-    //->where('c_p.deleted_by', null) // Comentado, mas se habilitado e o campo não for null, irá filtrar demais
-    //->where('c_p.lectiveYear', $anoLectivo) // Comentado, mesmo efeito acima
-
-    ->whereNotIn('avl.code_dev', ['recursos']) // Exclui avaliações com code_dev = 'recursos'
-    ->distinct('');
-
-  // Periodo da disciplina (anual ou semestral)
-  $period_disciplina = DB::table('disciplines')
-    ->where('id', $id_disciplina)
-    ->get();
-
-  $Simestre = $period_disciplina->map(function ($item, $key) {
-    $periodo = substr($item->code, -3, 1);
-    if ($periodo == "1") {
-      return 1;
-    }
-    if ($periodo == "2") {
-      return 4;
-    }
-    if ($periodo == "A") {
-      return 2;
-    } else {
-      return 0;
-    }
-  });
-
-  $avaliacaos = $avaliacaos
-    ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
-    // Este filtro depende dos campos que vêm de 'c_p'. Como o JOIN está comentado, esses campos virão NULL, e a comparação falhará (consulta vazia)
-
-    ->where('simestre', $Simestre)
-    // Também depende do JOIN com 'c_p'. Se estiver comentado, esse campo será NULL e a comparação também falhará
-
-    ->get();
-
-  return $avaliacaos;
-}
-
+    return $avaliacaos;
+  }
 }
