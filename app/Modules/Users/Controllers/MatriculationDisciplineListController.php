@@ -825,20 +825,8 @@ class MatriculationDisciplineListController extends Controller
           return $query->join("tb_segunda_chamada_prova_parcelar as sc", 'sc.matriculation_id', 'mat.id');
         })
         ->when($type == 'recurso', function ($query) {
-          //return $query->join("tb_recurso_student as sc", 'sc.matriculation_id', 'mat.id');
-          return $query
-            ->join("tb_recurso_student as sc", 'sc.matriculation_id', '=', 'mat.id')
-            ->whereNotExists(function ($sub) {
-                $sub->select(DB::raw(1))
-                    ->from('article_requests as ar')
-                    ->join('articles as art', 'art.id', '=', 'ar.article_id')
-                    ->whereColumn('ar.user_id', 'mat.user_id')
-                    ->where('ar.status', 'pending')
-                    ->where('ar.month', 1) // Janeiro
-                    ->whereNull('ar.deleted_at')
-                    ->whereNull('art.deleted_at');
-              });
-          })
+          return $query->join("tb_recurso_student as sc", 'sc.matriculation_id', 'mat.id');
+        })
         ->when($type == 'exame_especial', function ($query) {
           return $query->join("tb_exame_studant as sc", 'sc.id_user', 'user.id');
         })
@@ -932,6 +920,24 @@ class MatriculationDisciplineListController extends Controller
         $model->where("turma.lective_year_id", $AnoLectivo)
         ->where("turma.id", $classe)
         ->get();
+
+      if ($type == 'recurso') {
+          $model = $model->reject(function ($item) {
+            $dividas = $this->get_payments($item->id_anoLectivo, $item->mat);
+
+            $bolseiro = DB::table('scholarship_holder as hold')
+              ->where('hold.user_id', $item->id)
+              ->where('are_scholarship_holder', 1)
+              ->join('scholarship_entity as ent', function ($join) {
+                $join->on('ent.id', 'hold.scholarship_entity_id')
+                  ->where('type', 'BOLSA');
+              })
+              ->exists();
+
+            return isset($dividas) && ($dividas > 0) && !$bolseiro;
+          });
+      }
+
 
       if ($type == 'segunda_chamada') {
 
