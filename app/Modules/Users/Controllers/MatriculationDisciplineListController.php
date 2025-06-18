@@ -127,9 +127,6 @@ class MatriculationDisciplineListController extends Controller
           ->where("id", $request->classe)
           ->first();
 
-
-
-
         // "course": "11",
         // "curricular_year": "1",
         // "discipline": "153",
@@ -813,11 +810,13 @@ class MatriculationDisciplineListController extends Controller
           $codev = ["exame_extraordinario"];
           break;
       }
+      //devedor a implemetar
+      $dividas = $this->get_payments($item->id_anoLectivo, $item->mat);
+      if (isset($dividas) && ($dividas > 0)){
+        // devedor 
+      }
 
       //Vai ser a consulta geral
-
-
-
       $model = DB::table("matriculations as mat")
 
         ->leftJoin("matriculation_classes as mat_class", 'mat.id', 'mat_class.matriculation_id')
@@ -827,7 +826,18 @@ class MatriculationDisciplineListController extends Controller
           return $query->join("tb_segunda_chamada_prova_parcelar as sc", 'sc.matriculation_id', 'mat.id');
         })
         ->when($type == 'recurso', function ($query) {
-          return $query->join("tb_recurso_student as sc", 'sc.matriculation_id', 'mat.id');
+          return $query
+            ->join("tb_recurso_student as sc", 'sc.matriculation_id', '=', 'mat.id')
+            ->whereNotExists(function ($sub) {
+                $sub->select(DB::raw(1))
+                    ->from('article_requests as ar')
+                    ->join('articles as art', 'art.id', '=', 'ar.article_id')
+                    ->whereRaw('ar.user_id = mat.user_id')
+                    ->where('ar.status', 'pending')
+                    ->where('ar.month', 1) // Janeiro
+                    ->whereNull('ar.deleted_at')
+                    ->whereNull('art.deleted_at');
+            });  
         })
         ->when($type == 'exame_especial', function ($query) {
           return $query->join("tb_exame_studant as sc", 'sc.id_user', 'user.id');
