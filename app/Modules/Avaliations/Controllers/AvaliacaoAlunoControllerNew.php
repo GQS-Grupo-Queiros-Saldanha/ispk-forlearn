@@ -2894,7 +2894,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                     return 0;
                 });
 
-                Log::info('Semestre calculado', ['Simestre' => $Simestre->toArray()]);
+                Log::info('Semestre calculado', ['Simestre' => 2]);
 
                 // Pega avaliações no intervalo de data
                 $avaliacao_time = $this->avaliacaoes($id_disciplina, $anoLectivo);
