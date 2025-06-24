@@ -1,9 +1,10 @@
 <title>Avaliações | forLEARN® by GQS</title>
 @extends('layouts.generic_index_new')
 @php
-$title = 'LANÇAR NOTAS';
-if($segunda_chamada)
-    $title .= ' - 2ª CHAMADA';
+    $title = 'LANÇAR NOTAS';
+    if ($segunda_chamada) {
+        $title .= ' - 2ª CHAMADA';
+    }
 @endphp
 @section('page-title', $title)
 @section('breadcrumb')
@@ -17,45 +18,51 @@ if($segunda_chamada)
 @endsection
 @section('styles-new')
     @parent
-    <link rel="stylesheet" href="{{ asset('css/new_table_panel.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/new_table_panel.css') }}" />
     <style>
         .red {
             background-color: red !important;
         }
+
         #ConteudoMain {
             display: none;
         }
+
         .regime {
             width: 5%;
         }
+
         .dt-buttons {
             float: left;
             margin-bottom: 20px;
         }
+
         .dataTables_filter label {
             float: right;
         }
+
         .dataTables_length label {
             margin-left: 10px;
         }
 
-        .devedor{
-            background-color:red !important;
-            color:white
-        }
-        .recurso{
-            background-color:orange;
-            color:white;
+        .devedor {
+            background-color: red !important;
+            color: white
         }
 
-        .dispensado{
-            background-color:blue;
-            color:white
+        .recurso {
+            background-color: orange;
+            color: white;
         }
 
-        .neen{
-            background-color:green;
-            color:white
+        .dispensado {
+            background-color: blue;
+            color: white
+        }
+
+        .neen {
+            background-color: green;
+            color: white
         }
     </style>
 @endsection
@@ -166,11 +173,12 @@ if($segunda_chamada)
                                     </div>
                                 </div>
 
-                                <input type='hidden'  id="pauta" value="" name="pauta" class="form-control">
-                                <input type='hidden'  id="version" value="" name="version" class="form-control">
-                             
-                                @if($segunda_chamada)
-                                <input type='hidden'  value="{{$segunda_chamada}}" name="segunda_chamada" class="form-control">
+                                <input type='hidden' id="pauta" value="" name="pauta" class="form-control">
+                                <input type='hidden' id="version" value="" name="version" class="form-control">
+
+                                @if ($segunda_chamada)
+                                    <input type='hidden' value="{{ $segunda_chamada }}" name="segunda_chamada"
+                                        class="form-control">
                                 @endif
 
                                 <div class="col-6" id="caixaAvalicao" style="display: none">
@@ -196,16 +204,16 @@ if($segunda_chamada)
                                     </div>
                                 </div>
                                 <div class="row">
-                                <div class="col-6" id="caixaDesc" style="display: none">
-                                    <div class="form-group col">
-                                        <label>Adicione uma descrição da pauta</label>
-                                        <textarea class="form-control" name="description" id="description"></textarea>
+                                    <div class="col-6" id="caixaDesc" style="display: none">
+                                        <div class="form-group col">
+                                            <label>Adicione uma descrição da pauta</label>
+                                            <textarea class="form-control" name="description" id="description"></textarea>
+                                        </div>
                                     </div>
                                 </div>
-                                </div>
-                                
+
                             </div>
-                            
+
                         </div>
                         <hr>
                         <div id="tabela_new" style="display: none;">
@@ -229,7 +237,7 @@ if($segunda_chamada)
                             </div>
                         </div>
                     </form>
-                   
+
                     <div class="col-12">
                         <div id="div_btn_save" class=" float-right">
                             <span class="btn btn-success mb-3 ml-3" id="btn-Enviar" data-toggle="modal"
@@ -239,32 +247,29 @@ if($segunda_chamada)
                             </span>
                         </div>
                     </div>
-                  
+
                     <div class="col-12">
                         <a id="btn_pdf" class=" float-right">
-                            <span class="btn btn-danger mb-3 ml-3" 
-                                >
+                            <span class="btn btn-danger mb-3 ml-3">
                                 <i class="fas fa-file-pdf"></i>
                                 Gerar pdf
                             </span>
                         </a>
                     </div>
 
-                    @if(auth()->user()->hasRole('coordenador-curso'))
-                    <div class="col-12">
-                        <a id="btn_historic" class=" float-right">
-                            <span class="btn btn-primary mb-3 ml-3" data-toggle="modal"
-                            data-target="#historicModal">
-                                <i class="fa fa-history"></i>
-                                Histórico de alterações
-                            </span>
-                        </a>
-                    </div>
+                    @if (auth()->user()->hasRole('coordenador-curso'))
+                        <div class="col-12">
+                            <a id="btn_historic" class=" float-right">
+                                <span class="btn btn-primary mb-3 ml-3" data-toggle="modal" data-target="#historicModal">
+                                    <i class="fa fa-history"></i>
+                                    Histórico de alterações
+                                </span>
+                            </a>
+                        </div>
                     @endif
-                    <div class="col-12"  id="nav-lock-pauta">
+                    <div class="col-12" id="nav-lock-pauta">
                         <a class="float-right" id="btn_lock_pauta">
-                            <span class="btn btn-warning mb-3 ml-3" data-toggle="modal"
-                            data-target="#lockModal">
+                            <span class="btn btn-warning mb-3 ml-3" data-toggle="modal" data-target="#lockModal">
                                 <i class="fa fa-lock"></i>
                                 Fechar pauta
                             </span>
@@ -272,22 +277,21 @@ if($segunda_chamada)
                     </div>
                     <div class="col-12" id="nav-open-pauta">
                         <a id="btn_open_pauta" class=" float-right" href="">
-                            <span class="btn btn-warning mb-3 ml-3"
-                           >
+                            <span class="btn btn-warning mb-3 ml-3">
                                 <i class="fa fa-unlock"></i>
                                 Abrir pauta
                             </span>
                         </a>
                     </div>
-                    
-                  
+
+
                 </div>
             </div>
         </div>
     </section>
 @endsection
 @section('models')
-<div class="modal fade" id="lockModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="lockModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -295,23 +299,23 @@ if($segunda_chamada)
                     <h5 class="modal-title"> Aviso! </h5>
                 </div>
                 <div class="modal-body">
-                   <p>Após o fecho da pauta, já não será possível alterá-la.<br>
-                   Tem certeza que deseja continuar?</p>
-                   </div>
-                   <form action="{{ route('lock-pauta') }}" method="POST" id="id_form_lock">
-                   @csrf
+                    <p>Após o fecho da pauta, já não será possível alterá-la.<br>
+                        Tem certeza que deseja continuar?</p>
+                </div>
+                <form action="{{ route('lock-pauta') }}" method="POST" id="id_form_lock">
+                    @csrf
                     <input type="hidden" value="" id="lock" name="pauta_id">
-                   </form>
-                   <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btn-callLock">Sim, tenho certeza</button>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-callLock">Sim, tenho certeza</button>
+                </div>
+
             </div>
-                  
-            </div>
-            
+
         </div>
     </div>
-<div class="modal fade" id="historicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="historicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -322,19 +326,19 @@ if($segunda_chamada)
                     </button>
                 </div>
                 <div class="modal-body"></div>
-                    <table id="historic-table" class="table">
-                        <thead>
-                           
-                                <th># </th>
-                                <th>Descrição</th>
-                                <th>Ver</th>
-                                <th>Publicado por</th>
-                                <th>Publicado a</th>
-                                
-                            </tr>
-                        </thead>
-                        
-                    </table>
+                <table id="historic-table" class="table">
+                    <thead>
+
+                        <th># </th>
+                        <th>Descrição</th>
+                        <th>Ver</th>
+                        <th>Publicado por</th>
+                        <th>Publicado a</th>
+
+                        </tr>
+                    </thead>
+
+                </table>
             </div>
         </div>
     </div>
@@ -374,9 +378,9 @@ if($segunda_chamada)
                             <br> Por favor seja rigoroso na informação prestada.
                         </p>
                     </div>
-                  
-    
-                                
+
+
+
                     <div style="margin-top:50px; !important">
                         <p style="padding:5px; !important">Verifique se os dados estão correctos, nomeadamente: </p>
                         <ul>
@@ -445,101 +449,99 @@ if($segunda_chamada)
             let pauta_id;
             let pauta_path;
 
-           
+
             let elementLockPauta = $('#nav-lock-pauta').html();
             let elementOpenPauta = $('#nav-open-pauta').html();
             $('#btn_lock_pauta').remove();
             $('#btn_open_pauta').remove();
 
-          
-
-                            console.log(selectedLective)
-                            var lective = "<input type='hidden' name='selectedLective' id='selectedLective' class='form-control' value=" +
-                            selectedLective + "> ";
-                             $('#id_form_Nota').append(lective);
 
 
-    function getHistoric(){
-     
-        var url = '/avaliations/historico-pauta-ajax/' + pauta_id;
-        console.log(url)
-        $('#historic-table').DataTable({
-           ajax: url,
-           columns:[
-            {
-            data: 'DT_RowIndex',
-            orderable: false,
-            searchable: false
-            },
-            {
-                data: 'description',
-                name: 'description'
+            console.log(selectedLective)
+            var lective =
+                "<input type='hidden' name='selectedLective' id='selectedLective' class='form-control' value=" +
+                selectedLective + "> ";
+            $('#id_form_Nota').append(lective);
+
+
+            function getHistoric() {
+
+                var url = '/avaliations/historico-pauta-ajax/' + pauta_id;
+                console.log(url)
+                $('#historic-table').DataTable({
+                    ajax: url,
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'description',
+                            name: 'description'
+                        },
+                        {
+                            data: 'file',
+                            name: 'file'
+                        },
+                        {
+                            data: 'name',
+                            name: 'posted_by'
+                        },
+                        {
+                            data: 'updated_at',
+                            name: 'posted_at',
+                        }
+
+                    ],
+                    language: {
+                        url: '{{ asset('lang/datatables/' . App::getLocale() . '.json') }}',
+                    }
+                });
             }
-            ,
-            {
-                data: 'file',
-                name: 'file'
-            }
-            ,
-            {
-                data:'name',
-                name: 'posted_by'
-            },
-            {
-                data:'updated_at',
-                name:'posted_at',
-            }
-           
-           ],
-           language: {
-                    url: '{{ asset('lang/datatables/' . App::getLocale() . '.json') }}',
+
+
+
+            function setar_pauta(whoIs) {
+
+                console.log(whoIs)
+
+                const pauta_status = {
+                    'PF1': '40',
+                    'PF2': '40',
+                    'OA': '40',
+                    'Recurso': '10',
+                    'Neen': '20',
+                    'oral': '25',
+                    'Exame_especial': '35',
+                    'Extraordinario': '45',
+                    'Trabalho': '50',
+                    'Defesa': '50',
+                    'TESP': '60'
+                };
+
+                var pauta_tipo = "";
+                var tipo = 0;
+
+                if (whoIs == "teacher") {
+                    metric = metrica_code_dev;
                 }
-        });
-    }
-
-
-
-    function setar_pauta(whoIs) {        
-
-             console.log(whoIs)
-
-             const  pauta_status=  {
-  'PF1': '40',
-  'PF2': '40',
-  'OA': '40',
-  'Recurso': '10',
-  'Neen': '20',
-  'oral': '25',
-  'Exame_especial': '35',
-  'Extraordinario': '45',
-  'Trabalho': '50',
-  'Defesa': '50',
-  'TESP': '60'
-};
-
-            var pauta_tipo = "";
-            var tipo = 0;
-
-            if(whoIs == "teacher"){
-                metric = metrica_code_dev;
-            }
-            if(whoIs == "super"){
-                metric =  $("#metrica_id_Select").find('option:selected').data('metric');
-            }
-            
-           
-            
-            $.each(pauta_status, function(chave, valor) {
-                if(chave == metric){
-                    pauta_tipo = metric;
-                    tipo = valor;
+                if (whoIs == "super") {
+                    metric = $("#metrica_id_Select").find('option:selected').data('metric');
                 }
-            });
-            var paut = pauta_tipo + "," + tipo;
-            $('#pauta').val(paut);
-            console.log($('#pauta').val())
-        }
-            //Carregar              
+
+
+
+                $.each(pauta_status, function(chave, valor) {
+                    if (chave == metric) {
+                        pauta_tipo = metric;
+                        tipo = valor;
+                    }
+                });
+                var paut = pauta_tipo + "," + tipo;
+                $('#pauta').val(paut);
+                console.log($('#pauta').val())
+            }
+            //Carregar
             ambiente();
             //Evento de mudança na select anolectivo
             lective_year.change(function() {
@@ -552,9 +554,9 @@ if($segunda_chamada)
             Disciplina_id_Select.change(function() {
                 //chamndo a função de mudança de frames
                 $("#avaliacao_id_Select").empty();
-               
+
                 $("#description").val('');
-            
+
                 // $("#tabela_new").empty();
                 $("#tabela_new").hide();
                 $("#students_new").empty();
@@ -572,12 +574,12 @@ if($segunda_chamada)
                     console.log('a')
                     avaliacao_id_Select.prop('disabled', true);
                 } else {
-                   
+
                     avaliacao_id_Select.prop('disabled', false);
                     $("#tabela_new").show();
                 }
             });
-            
+
             //Função de mudança de frame
             function ambiente() {
                 var anoL = lective_year.val();
@@ -625,10 +627,10 @@ if($segunda_chamada)
                                 ',' + row.course_id + ',' + row.discipline_id + ' ">#' + row
                                 .code + '  ' + row.dt_display_name + '</option>');
                         });
-                      
+
                         Disciplina_id_Select.prop('disabled', false);
                         Disciplina_id_Select.selectpicker('refresh');
-                       
+
                     } else {
                         Disciplina_id_Select.empty();
                         Disciplina_id_Select.prop('disabled', true);
@@ -638,16 +640,16 @@ if($segunda_chamada)
 
             function Turma(id_plano, anolectivo) {
                 var re = /\s*,\s*/;
+                console.log(id_plano, anolectivo);
                 var Planno_disciplina = id_plano.split(re);
-                let url= "/pt/avaliations/turma_teacher/" + id_plano + "/" + anolectivo;
-                
-                @if($segunda_chamada)
-                url += "?segunda_chamada=true";
-                
+                let url = "/pt/avaliations/turma_teacher/" + id_plano + "/" + anolectivo;
+
+                @if ($segunda_chamada)
+                    url += "?segunda_chamada=true";
                 @endif
 
                 console.log(url);
-                
+
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -660,7 +662,7 @@ if($segunda_chamada)
                         if (id_plano == 00) return false;
                     },
                 }).done(function(data) {
-                   
+
                     if (data == 500) {
                         Turma_id_Select.empty();
                         Turma_id_Select.prop('disabled', true);
@@ -673,7 +675,7 @@ if($segunda_chamada)
                         $("#modalAviso").modal('show');
                     } else {
                         if (data['whoIs'] == "super") {
-                            //chama o metodo para trazer o tratamento do loop da turma  
+                            //chama o metodo para trazer o tratamento do loop da turma
                             TurmaLoop(data, "coordenador")
                             //para trazer outra select na avaliacao de notas
                             $("#caixaAvalicao").show();
@@ -711,18 +713,18 @@ if($segunda_chamada)
                             metrica_id_teacher = data['metrica'].length > 0 ? data['metrica'][0].mtrc_id :
                                 "Sem métrica no intervalo";
                             //metrica_id_teacher=data['metrica'][0].mtrc_id;
-                           metrica_code_dev = data['metrica'][0].code_dev;
-                            
+                            metrica_code_dev = data['metrica'][0].code_dev;
+
                             discipline_id = data['disciplina'];
                             id_planoEstudo = data['plano_estudo'];
-                           
+
                             TurmaLoop(data, "teacher")
                             setar_pauta("teacher");
                             $("#tabela_new").hide();
                         }
                     }
 
-                   
+
 
                 });
             }
@@ -743,10 +745,10 @@ if($segunda_chamada)
             metrica_id_Select.change(function() {
                 $("#description").val('');
                 if (metrica_id_Select.val() != "") {
-                     setar_pauta("super");
-                    
+                    setar_pauta("super");
+
                     studentCourse_coordenador(id_planoEstudo);
-                   
+
                 } else {
                     $("#description").val('');
                     $("#students_new").hide();
@@ -768,7 +770,7 @@ if($segunda_chamada)
                         validar_metrica = data['metrica'].length > 0 ? data['metrica'][0].mtrc_nome : "";
                         //console.log(data['metrica'][0].mtrc_nome+" : id da métrica ou sem métrica ");
                         if (validar_metrica == "") {
-                            //alert("Sem métrica")    
+                            //alert("Sem métrica")
                             $("#textoAviso").text("");
                             $("#textoAviso").text(
                                 "Caro docente, verificou-se que não há calendário de prova disponível, razão pela qual não pode fazer o lançamento de notas. Contacte o superior hierárquico para habilitar ou extender a data do calendáro de prova."
@@ -812,9 +814,11 @@ if($segunda_chamada)
                 }).done(function(data) {
                     if (data['metricas'].length) {
                         $("#metrica_id_Select").empty();
-                        metrica_id_Select.append('<option selected="" value="">Selecione a métrica</option>');
+                        metrica_id_Select.append(
+                            '<option selected="" value="">Selecione a métrica</option>');
                         $.each(data['metricas'], function(index, row) {
-                            $("#metrica_id_Select").append('<option value="' + row.id + '" data-metric ="'+ row.code_dev+'">' + row
+                            $("#metrica_id_Select").append('<option value="' + row.id +
+                                '" data-metric ="' + row.code_dev + '">' + row
                                 .nome + '</option>');
                         });
                         metrica_id_Select.prop('disabled', false);
@@ -835,11 +839,11 @@ if($segunda_chamada)
                 cargo = Disciplina_id_Select.val().split(",")[0];
                 console.log(cargo);
                 let url = "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id_Select.val() +
-                        "/" + id_planoEstudo + "/" + avaliacao_id_Select.val() + "/" + turma + "/" +
-                        lective_year_select + "?whoIs=" + cargo;
+                    "/" + id_planoEstudo + "/" + avaliacao_id_Select.val() + "/" + turma + "/" +
+                    lective_year_select + "?whoIs=" + cargo;
 
-                @if($segunda_chamada)
-                url += "&segunda_chamada=true";
+                @if ($segunda_chamada)
+                    url += "&segunda_chamada=true";
                 @endif
                 console.log(url);
                 $.ajax({
@@ -853,13 +857,13 @@ if($segunda_chamada)
                     beforeSend: function() {},
                 }).done(function(data) {
                     //Limpar a tabela sempre que for inicializada (Aberto o Modal)
-                   
 
-                   
-                    
-                           
+
+
+
+
                     $("#students_new").empty();
-                   
+
                     // var resultGrades = dataResult.data;
                     var resultStudents = data.students;
                     var students_segunda_chamada = data.students_segunda_chamada;
@@ -875,8 +879,8 @@ if($segunda_chamada)
                     pauta_path = data.pauta_path;
 
                     getHistoric();
-                    if(pauta_path != null){
-                        $('#btn_pdf').attr('href',pauta_path);
+                    if (pauta_path != null) {
+                        $('#btn_pdf').attr('href', pauta_path);
                         $('#btn_pdf').find('span').removeClass('btn-danger');
                         $('#btn_pdf').find('span').addClass('btn-primary');
                     }
@@ -886,34 +890,32 @@ if($segunda_chamada)
                     $('#lock').val(pauta_id);
                     $('#version').val(version);
 
-                    if(estado_pauta_lancar ==  1){
-                    
+                    if (estado_pauta_lancar == 1) {
+
                         showOpenPauta();
-                      
-                        $('#btn_open_pauta').attr('href',open_url);
+
+                        $('#btn_open_pauta').attr('href', open_url);
 
                         ElementoBTN_salvar = $("#div_btn_save").html();
-                            callSumit = $("#ocultar_btn").html();
-                            $("#btn-Enviar").remove();
-                            $("#btn-callSubmit").remove();
-                            $(".notaCampo").attr("disabled", true);
-                    }
-                    else{
+                        callSumit = $("#ocultar_btn").html();
+                        $("#btn-Enviar").remove();
+                        $("#btn-callSubmit").remove();
+                        $(".notaCampo").attr("disabled", true);
+                    } else {
                         hideOpenPauta();
 
                         if (ElementoBTN_salvar.length) {
-                                $("#div_btn_save").html(ElementoBTN_salvar);
-                                $("#ocultar_btn").html(callSumit);
-                            }
+                            $("#div_btn_save").html(ElementoBTN_salvar);
+                            $("#ocultar_btn").html(callSumit);
+                        }
                     }
-                   
-                    if(estado_pauta_lancar != 1 && data.grades.length > 0){
+
+                    if (estado_pauta_lancar != 1 && data.grades.length > 0) {
                         showLockPauta();
-                    }
-                    else{
+                    } else {
                         hideLockPauta();
                     }
-                   
+
                     if (resultStudents.length > 0) {
                         var dd = 0;
                         resultStudents.forEach(function(student) {
@@ -927,9 +929,10 @@ if($segunda_chamada)
                                 }
                             });
                             regime = student.e_f == 0 ? "Frequência" : "Exame";
-                            console.log('xjahs:'+ presencaClass,ausente,pauta_path)
+                            console.log('xjahs:' + presencaClass, ausente, pauta_path)
                             //validação se faltou ou não na prova
-                            if ((presencaClass == null && ausente == 1 )|| (presencaClass == null && ausente == null && pauta_path != null)) {
+                            if ((presencaClass == null && ausente == 1) || (presencaClass == null &&
+                                    ausente == null && pauta_path != null)) {
                                 //essa linhas é dos alunos que faltaram
                                 linha = "Linha_checado";
                                 bodyData += '<tr style="background-color:#f4f4f4;" id=' + linha +
@@ -943,7 +946,8 @@ if($segunda_chamada)
                                     regime + "</td><td width='120'>" + student.n_student +
                                     "</td> <td style='font-size:0.9pc'>" + student.user_name +
                                     "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value=" +
-                                    student.user_id + "><input type='number' readonly id='nota_checado" +
+                                    student.user_id +
+                                    "><input type='number' readonly id='nota_checado" +
                                     student.user_id +
                                     "'  min='0' max='20' name='notas[]' class='form-control' value=" +
                                     Nota_aluno +
@@ -976,11 +980,11 @@ if($segunda_chamada)
                             }
                         });
                         Nota_aluno = '';
-                        console.log('ola'+estado_pauta_lancar);
-                        if(estado_pauta_lancar != null){
+                        console.log('ola' + estado_pauta_lancar);
+                        if (estado_pauta_lancar != null) {
                             setarDesc();
                         }
-                        
+
                     } else {
                         bodyData += '<tr>'
                         bodyData +=
@@ -988,44 +992,45 @@ if($segunda_chamada)
                         bodyData += '</tr>'
                     }
                     $("#students_new").append(bodyData);
-                    
-                   
 
-                        resultStudents.forEach(function(student) {
-                         
-                            if(students_segunda_chamada.length > 0 && students_segunda_chamada.includes(student.user_id)) {   
-                                $("#nota_checado"+student.user_id).prop('readonly', true);
-                                $("#" + student.user_id).prop('readonly', true);
-                            }
-                        });
 
-                        
+
+                    resultStudents.forEach(function(student) {
+
+                        if (students_segunda_chamada.length > 0 && students_segunda_chamada
+                            .includes(student.user_id)) {
+                            $("#nota_checado" + student.user_id).prop('readonly', true);
+                            $("#" + student.user_id).prop('readonly', true);
+                        }
+                    });
+
+
 
                 });
             }
 
-            function showLockPauta(){
-                 $("#nav-lock-pauta").html(elementLockPauta);
+            function showLockPauta() {
+                $("#nav-lock-pauta").html(elementLockPauta);
             }
 
-            function hideLockPauta(){
-                elementLockPauta =  $("#nav-lock-pauta").html();
+            function hideLockPauta() {
+                elementLockPauta = $("#nav-lock-pauta").html();
                 $("#btn_lock_pauta").remove();
             }
 
-            function showOpenPauta(){
-                 $("#nav-open-pauta").html(elementOpenPauta);
+            function showOpenPauta() {
+                $("#nav-open-pauta").html(elementOpenPauta);
             }
 
-            function hideOpenPauta(){
-                elementOpenPauta =  $("#nav-open-pauta").html();
+            function hideOpenPauta() {
+                elementOpenPauta = $("#nav-open-pauta").html();
 
             }
 
-            function setarDesc(){
-                
-                    $('description').text('');
-                    $("#caixaDesc").attr('style','');
+            function setarDesc() {
+
+                $('description').text('');
+                $("#caixaDesc").attr('style', '');
 
             }
 
@@ -1033,10 +1038,10 @@ if($segunda_chamada)
                 cargo = Disciplina_id_Select.val().split(",")[0];
                 console.log(cargo);
                 var turma = Turma_id_Select.val();
-                let url ="/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" +
-                        id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year+ "?whoIs=" + cargo;
-                @if($segunda_chamada)
-                url += "&segunda_chamada=true";
+                let url = "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" +
+                    id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year + "?whoIs=" + cargo;
+                @if ($segunda_chamada)
+                    url += "&segunda_chamada=true";
                 @endif
                 console.log(url)
                 $.ajax({
@@ -1048,42 +1053,40 @@ if($segunda_chamada)
                     cache: false,
                     dataType: 'json',
                     success: function(dataResult) {
-                        
-                            
+
+
                         //Estado da publish
                         var estado_pauta = dataResult.estado_pauta;
                         estado_pauta_lancar = dataResult.estado_pauta_lancar;
                         pauta_id = dataResult.pauta_id;
                         pauta_path = dataResult.pauta_path;
                         getHistoric();
-                      
-                        if(pauta_path != null){
-                        $('#btn_pdf').attr('href',pauta_path);
-                        $('#btn_pdf').find('span').removeClass('btn-danger');
-                        $('#btn_pdf').find('span').addClass('btn-primary');
-                    }
-                        
-                      
+
+                        if (pauta_path != null) {
+                            $('#btn_pdf').attr('href', pauta_path);
+                            $('#btn_pdf').find('span').removeClass('btn-danger');
+                            $('#btn_pdf').find('span').addClass('btn-primary');
+                        }
+
+
 
                         $('#lock').val(pauta_id);
                         var open_url = '/pt/avaliations/open-pauta/' + pauta_id;
-                       
-                        if(estado_pauta_lancar ==  1 && whoIs != "teacher"){
-                        showOpenPauta();
-                        $('#btn_open_pauta').attr('href',open_url);
-                    }
-                    else{
-                        hideOpenPauta(); 
-                    }
 
-                    if(estado_pauta_lancar != 1 && dataResult.grades.length > 0){
-                        showLockPauta();
-                    }
-                    else{
-                        hideLockPauta();
-                    }
+                        if (estado_pauta_lancar == 1 && whoIs != "teacher") {
+                            showOpenPauta();
+                            $('#btn_open_pauta').attr('href', open_url);
+                        } else {
+                            hideOpenPauta();
+                        }
 
-                    
+                        if (estado_pauta_lancar != 1 && dataResult.grades.length > 0) {
+                            showLockPauta();
+                        } else {
+                            hideLockPauta();
+                        }
+
+
                         if (estado_pauta == 1) {
                             $("#textoAviso").text("");
                             $("#textoAviso").text(
@@ -1103,7 +1106,7 @@ if($segunda_chamada)
                         }
 
                         // Estado lançar pauta
-                        
+
                         if (estado_pauta_lancar == 1 && cargo == 'teacher') {
                             $("#textoAviso").text("");
                             $("#textoAviso").text(
@@ -1115,7 +1118,7 @@ if($segunda_chamada)
                             $("#btn-Enviar").remove();
                             $("#btn-callSubmit").remove();
                             $(".notaCampo").attr("disabled", true);
-                          
+
                         } else if (estado_pauta_lancar == 0) {
                             if (ElementoBTN_salvar.length) {
                                 $("#div_btn_save").html(ElementoBTN_salvar);
@@ -1155,9 +1158,11 @@ if($segunda_chamada)
                                     regime = "";
                                     regime = student.e_f == 0 ? "Frequência" : "Exame";
                                     //validação se faltou ou não na prova
-                                   console.log('zkjd'+pauta_path)
-                                    if ((presencaClass == null && ausente == 1 )|| (presencaClass == null && ausente == null && pauta_path != null)) {
-                                       
+                                    console.log('zkjd' + pauta_path)
+                                    if ((presencaClass == null && ausente == 1) || (
+                                            presencaClass == null && ausente == null &&
+                                            pauta_path != null)) {
+
                                         //essa linhas é dos alunos que faltaram
                                         linha = "Linha_checado";
                                         bodyData +=
@@ -1174,7 +1179,8 @@ if($segunda_chamada)
                                             student.user_name +
                                             "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value=" +
                                             student.user_id +
-                                            "><input type='number'  readonly id='nota_checado" + student
+                                            "><input type='number'  readonly id='nota_checado" +
+                                            student
                                             .user_id +
                                             "'  min='0' max='20' name='notas[]' class='form-control notaCampo' value=" +
                                             Nota_aluno +
@@ -1220,15 +1226,16 @@ if($segunda_chamada)
 
                         }
                         $("#students_new").append(bodyData);
-                        
+
                         resultStudents.forEach(function(student) {
-                            if(students_segunda_chamada.length > 0 && students_segunda_chamada.includes(student.user_id)) {   
-                                $("#nota_checado"+student.user_id).prop('readonly', true);
+                            if (students_segunda_chamada.length > 0 && students_segunda_chamada
+                                .includes(student.user_id)) {
+                                $("#nota_checado" + student.user_id).prop('readonly', true);
                                 $("#" + student.user_id).prop('readonly', true);
                             }
                         });
 
-                         
+
                     },
                     error: function(dataResult) {
                         console.log('error' + result);
@@ -1237,24 +1244,24 @@ if($segunda_chamada)
             }
             //Fim do Cláudio JS
 
-           
+
             $("#btn-callSubmit").click(function() {
-           
-                if($("#description").val() == "" && whoIs == "super" && estado_pauta_lancar != null)
-                        alert("O campo de descrição é obrigatório!");
+
+                if ($("#description").val() == "" && whoIs == "super" && estado_pauta_lancar != null)
+                    alert("O campo de descrição é obrigatório!");
                 else {
                     $("#id_form_Nota").submit();
-                    }
+                }
 
-                
+
             });
 
             $("#btn-callLock").click(function() {
-               
+
                 $("#id_form_lock").submit();
 
-           
-       });
+
+            });
             var selectStudyPlan = $("#course_id");
             var selectDiscipline = $("#discipline_id");
             var selectAvaliation = $("#avaliacao_id");
@@ -1374,10 +1381,10 @@ if($segunda_chamada)
                     $("#metrica_id").empty();
                     $("#students tr").empty();
                 } else {
-                    let url= "/avaliations/avaliacao_ajax/" + discipline_id;
-                    @if($segunda_chamada)
-                url += "?segunda_chamada=true";
-                @endif
+                    let url = "/avaliations/avaliacao_ajax/" + discipline_id;
+                    @if ($segunda_chamada)
+                        url += "?segunda_chamada=true";
+                    @endif
                     $.ajax({
                         url: url,
                         type: "GET",
@@ -1517,7 +1524,7 @@ if($segunda_chamada)
                     var course_id = $('#course_id').val();
                     var avaliacao_id = $('#avaliacao_id').val();
                     var class_id = $('#class_id').val();
-                    console.log('course_id'+$course_id)
+                    console.log('course_id' + $course_id)
                     cargo = Disciplina_id_Select.val().split(",")[0];
                     console.log(cargo);
                     $.ajax({
@@ -1531,8 +1538,8 @@ if($segunda_chamada)
                         dataType: 'json',
                         success: function(dataResult) {
                             //Limpar a tabela sempre que for inicializada (Aberto o Modal)
-                         
-                         
+
+
                             $("#students tr").empty();
                             var resultGrades = dataResult.data;
                             var resultStudents = dataResult.students;
@@ -1544,7 +1551,7 @@ if($segunda_chamada)
                             version = dataResult.version;
                             $('#version').val(version);
                             var students_segunda_chamada = dataResult.students_segunda_chamada;
-                            
+
                             for (a = 0; a < resultStudents.length; a++) {
                                 var dd = a;
                                 flag = true;
@@ -1651,13 +1658,16 @@ if($segunda_chamada)
                                 }
                             }
                             $("#students").append(bodyData);
-                    
-                              resultStudents.forEach(function(student) {
-                            if(students_segunda_chamada.length > 0 && students_segunda_chamada.includes(student.user_id)) {   
-                                $("#nota_checado"+student.user_id).prop('readonly', true);
-                                $("#" + student.user_id).prop('readonly', true);
-                            }
-                        });
+
+                            resultStudents.forEach(function(student) {
+                                if (students_segunda_chamada.length > 0 &&
+                                    students_segunda_chamada.includes(student.user_id)
+                                    ) {
+                                    $("#nota_checado" + student.user_id).prop(
+                                        'readonly', true);
+                                    $("#" + student.user_id).prop('readonly', true);
+                                }
+                            });
 
                         },
                         error: function(dataResult) {}
@@ -1701,19 +1711,19 @@ if($segunda_chamada)
             let checkbox = document.getElementById('' + element.id);
             console.log(checkbox.checked)
             if (checkbox.checked) {
-               
+
                 linha1.css("background-color", "#f4f4f4");
                 span.css("background-color", "red")
                 span.text("AUSENTE");
                 inputNota.val("");
-                inputNota.prop("readonly",true);
+                inputNota.prop("readonly", true);
             } else {
                 linha1.css("background-color", "#fff");
                 span.css("background-color", "#38C172")
                 span.text("PRESENTE");
                 inputNota.val("");
                 inputNota.prop('disabled', false);
-                inputNota.prop("readonly",false);
+                inputNota.prop("readonly", false);
                 checkbox.value = "";
             }
         }
