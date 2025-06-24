@@ -47,7 +47,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -210,7 +210,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 $plano_estudo = $request->id_plano_estudo;
                 $discipline_id = $id_disc[2];
                 $avaliacao_id = $request->avaliacao;
-                // 
+                //
                 $spea = PlanoEstudoAvaliacao::join('avaliacaos', 'avaliacaos.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
                     ->select('plano_estudo_avaliacaos.id')
                     ->where('plano_estudo_avaliacaos.study_plan_editions_id', $plano_estudo)
@@ -339,7 +339,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                     });
 
 
-                //notificar o professor 
+                //notificar o professor
                 $icon = "fa fa-list";
                 $subject = "[" . $disciplina_notification->disciplina . "-" . $prova->prova . "]-Lançamento de notas";
                 $disciplina_n = $disciplina_notification->disciplina;
@@ -349,7 +349,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 $notificar = collect($Professores)->map(function ($item) use ($icon, $subject, $disciplina_n, $prova_n, $turma_n) {
                     $body = "
                 <p>
-                Caro(a) professor(a),<b>" . $item["name"] . "</b> a prova <b>" . $prova_n . "</b> da disciplina 
+                Caro(a) professor(a),<b>" . $item["name"] . "</b> a prova <b>" . $prova_n . "</b> da disciplina
                 <b>" . $disciplina_n . "</b> referente à turma <b>" . $turma_n . "</b> no qual estás associado(a) como docente, foi feita a atribuição de notas aos estudantes pelo seu coordenador de curso.<br>
                 Clique no botão abaixo para ir ao painel de visualização.
                  <br>
@@ -533,7 +533,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 $notificar = collect($coordenadores)->map(function ($item) use ($icon, $subject, $disciplina_n, $prova_n, $turma_n) {
                     $body = "
         <p>
-        Caro(a) coordenador(a),<b>" . $item["name"] . "</b> a prova <b>" . $prova_n . "</b> da disciplina 
+        Caro(a) coordenador(a),<b>" . $item["name"] . "</b> a prova <b>" . $prova_n . "</b> da disciplina
         <b>" . $disciplina_n . "</b> referente à turma <b>" . $turma_n . "</b> no qual és coordenador do curso foi lançada com sucesso!<br>
         Clique no botão abaixo para ir ao painel de visualização.
          <br>
@@ -1234,7 +1234,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             $metrics_analise_exame = Metrica::where('id', $metrica_id)->where('code_dev', 'Neen')->get();
             $metrics_analise_Recurso_Ou_exame_especial_oral = Metrica::where('id', $metrica_id)->first();
             //Condição Para ver se a disciplina não tem exame obrigatório e a metrica em questão é NEEN
-            //Trazer apenas os alunos que na MAC têm nota maior >= 7 e Menor < 14 
+            //Trazer apenas os alunos que na MAC têm nota maior >= 7 e Menor < 14
 
             //atribuir exame padrao , quando a disciplina não tem o exame obrigatório marcado
             $obrigatorioExame = $Discipline_exame_mandatory->isNotEmpty() ? $Discipline_exame_mandatory[0]->has_mandatory_exam : 0;
@@ -1260,7 +1260,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                     $dados = $reprovados->unique('user_id');
                 } else {
-                    //$consulta_alunoG=$this->students_matriculado($id,$lectiveYearSelected); 
+                    //$consulta_alunoG=$this->students_matriculado($id,$lectiveYearSelected);
                     //$consulta_alunoG->where('mc.class_id', $class_id)->where('md.exam_only',1) ->get();
                     $dados = $consulta_aluno->where('mc.class_id', $class_id)->get();
                     //$dados=$Colection;
@@ -1698,7 +1698,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             ->where('code_dev.code', $article_id)
             ->where('user_emolumento.status', "total")
             ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-            //fim dos pagos 
+            //fim dos pagos
             ->where('tb_recurso.id_lectiveYear', $lectiveYearSelected->id)
             ->where('tb_recurso.discipline_id', $id_disciplina)
             ->where('tb_recurso.estado_exame', 1)
@@ -1766,7 +1766,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             ->where('code_dev.code', $article_id)
             ->where('user_emolumento.status', "total")
             ->where('article_emolumento.anoLectivo', $lectiveYearSelected->id)
-            //fim dos pagos 
+            //fim dos pagos
             ->where('tb_exame_studant.id_lectiveYear', $lectiveYearSelected->id)
             ->where('tb_exame_studant.id_discipline', $id_disciplina)
             ->where('tb_exame_studant.id_class', $id_turma)
@@ -1822,7 +1822,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             ->where('code_dev.code', $article_id)
             ->where('user_emolumento.status', "total")
             ->where('article_emolumento.anoLectivo', $lectiveYearSelected->id)
-            //fim dos pagos 
+            //fim dos pagos
             ->where('tb_exame_studant.id_lectiveYear', $lectiveYearSelected->id)
             ->where('tb_exame_studant.id_discipline', $id_disciplina)
             ->where('mc.class_id', $id_turma)
@@ -1925,7 +1925,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-    //Pega os estudades matriculados 
+    //Pega os estudades matriculados
     public function students_matriculado($id, $lectiveYearSelectedId)
     {
         $students = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
@@ -2419,7 +2419,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function disciplina_teacher($anolectivo)
     {
-        //Método pega todas as disciplinas associadas aos planos de estudo e avaliaçoes 
+        //Método pega todas as disciplinas associadas aos planos de estudo e avaliaçoes
         //do respectivos professores, coordenador do curso ou outro cargo
 
         try {
@@ -2440,7 +2440,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 return response()->json(['disciplina' => $all_disciplines, 'whoIs' => "todos"]);
             }
 
-            //se o coordenador for o logado na plataforma 
+            //se o coordenador for o logado na plataforma
             //Entra neste bloco e trás toda as disciplinas do curso
             if ($user->hasAnyRole(['coordenador-curso'])) {
                 $course_id = DB::table('coordinator_course')
@@ -2666,9 +2666,9 @@ class AvaliacaoAlunoControllerNew extends Controller
                 }
 
                 if ($cargo == "coordenador" || $verificarDisciplina->user_type == "coordenador") {
-                    //Pega avalicao mac e metrica OA (Sem cumprir a regra do calendário de data) 
+                    //Pega avalicao mac e metrica OA (Sem cumprir a regra do calendário de data)
                     $avaliacao = $this->avaliacaoesOA($id_disciplina, $anoLectivo);
-                    //Pega as todas as turmas do coordenador 
+                    //Pega as todas as turmas do coordenador
                     $turmas = $this->turmas_coordenador($courseYear, $id_plano_estudo, $id_curso, $anoLectivo);
                     return response()->json(['turma' => $turmas, 'avaliacao' => $avaliacao->first(), 'whoIs' => "super", 'plano_estudo' => $id_plano_estudo, 'disciplina' => $id_disciplina, 'periodo' => $Simestre]);
                 }
@@ -2686,9 +2686,9 @@ class AvaliacaoAlunoControllerNew extends Controller
             }
 
             //Pega todas as avaliaçoes das disciplina selecionada
-            //como o objectivo é retornar por época de calendário 
+            //como o objectivo é retornar por época de calendário
             //A ideia é colocar um calendário nas Mac e criar também calendário de cada item da Mac(PF1, PF2 e OA)
-            //No final retornar apenas a pauta do item da avaliaçao selecionada, 
+            //No final retornar apenas a pauta do item da avaliaçao selecionada,
             //EX: seleciona a disciplina, seleciona a turma e no final aparece a pauta daquela época.
             // return response()->json(array('turma'=>$turma, 'metrica'=>$metrica_filtrada, 'pea'=>$pea));
         } catch (Exception | Throwable $e) {
@@ -2764,139 +2764,253 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
     public function getTurmasDisciplina(Request $request, $id_edicao_plain, $anoLectivo)
+{
+    try {
+        \Log::info('Iniciando getTurmasDisciplina', [
+            'id_edicao_plain' => $id_edicao_plain,
+            'anoLectivo' => $anoLectivo,
+            'segunda_chamada' => $request->query('segunda_chamada', null)
+        ]);
 
-    {
-        try {
-            $segunda_chamada = $request->query('segunda_chamada', null);
-            $id = explode(",", $id_edicao_plain);
+        $segunda_chamada = $request->query('segunda_chamada', null);
+        $id = explode(",", $id_edicao_plain);
 
-            $cargo = $id[0];
-            $id_curso = $id[1];
-            $id_disciplina = trim($id[2]);
-            $currentData = Carbon::now();
-            $teacher_id = Auth::id();
+        $cargo = $id[0];
+        $id_curso = $id[1];
+        $id_disciplina = trim($id[2]);
+        $currentData = Carbon::now();
+        $teacher_id = Auth::id();
 
-            //Pega o ano curricular da disciplina.
-            //pega tbm o id_plano_estudo.
-            //    if(auth()->user()->id == 24)$cargo = "coordenador";
-            $courseYear = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
-                // ->where('stpeid.id', $id_edicao_plain)
-                ->where('plano_estudo_avaliacaos.disciplines_id', $id_disciplina)
-                ->where('stpeid.lective_years_id', $anoLectivo)
-                ->select(['plano_estudo_avaliacaos.*', 'stpeid.*'])
-                ->get();
+        \Log::info('Parâmetros extraídos', [
+            'cargo' => $cargo,
+            'id_curso' => $id_curso,
+            'id_disciplina' => $id_disciplina,
+            'teacher_id' => $teacher_id,
+            'currentData' => $currentData->toDateTimeString()
+        ]);
 
-            //Primeiro if compara se está fazia a associação entre disciplina e plano de estudo e avalização.
-            if (!$courseYear->isEmpty()) {
-                $id_plano_estudo = $courseYear[0]['study_plan_editions_id'];
-                $verificarDisciplina = new VerificarDisciplina($id_disciplina);
-                if ($cargo == "todos") {
-                    //Bloco que verifica se os dois cargos e descobre se vai retornar as turmas dele sendo
+        // Pega o ano curricular da disciplina e o id_plano_estudo
+        $courseYear = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
+            ->where('plano_estudo_avaliacaos.disciplines_id', $id_disciplina)
+            ->where('stpeid.lective_years_id', $anoLectivo)
+            ->select(['plano_estudo_avaliacaos.*', 'stpeid.*']);
 
-                    //professor ou coordenandor
-                    $verifyCoordenador = $verificarDisciplina->verifyIsCoordernador($teacher_id);
+        \Log::info('Consulta courseYear construída', [
+            'query' => $courseYear->toSql(),
+            'bindings' => $courseYear->getBindings()
+        ]);
 
-                    $verificarDisciplina->user_type = $verifyCoordenador ? "coordenador" : "teacher";
-                }
+        $courseYear = $courseYear->get();
 
-                if ($cargo == "coordenador" || $verificarDisciplina->user_type == "coordenador") {
-                    //Pega avalicao no intervalo de data (Sem cumprir a regra do calendário de data) 
-                    $avaliacao = $this->avaliacaoes_coordenador($id_disciplina, $anoLectivo);
+        \Log::info('Resultado courseYear', [
+            'count' => $courseYear->count(),
+            'data' => $courseYear->toArray()
+        ]);
 
-                    if (isset($segunda_chamada)) {
-                        $avaliacao = $avaliacao->whereNotIn('avl.nome', ['Recursos']);
-                    }
-                    //Pega as todas as turmas do coordenador 
-                    $turmas = $this->turmas_coordenador($courseYear, $id_plano_estudo, $id_curso, $anoLectivo);
-                    return response()->json(['turma' => $turmas, 'avaliacao' => $avaliacao->get(), 'whoIs' => "super", 'plano_estudo' => $id_plano_estudo, 'disciplina' => $id_disciplina]);
-                } else if ($cargo == "teacher" ||  $verificarDisciplina->user_type == "teacher") {
-                    //Programdor que está a mexer aqui me perdoa pelos id fixos dos periodos
-                    //Periodo da disciplina (saber se é anual ou simestral)
-                    $period_disciplina = DB::table('disciplines')
-                        ->where('id', $id_disciplina)
-                        ->get();
+        // Verifica se a associação entre disciplina e plano de estudo existe
+        if (!$courseYear->isEmpty()) {
+            $id_plano_estudo = $courseYear[0]['study_plan_editions_id'];
 
-                    $Simestre = $period_disciplina->map(function ($item, $key) {
-                        $periodo = substr($item->code, -3, 1);
-                        if ($periodo == "1") {
-                            return 1;
-                        }
-                        if ($periodo == "2") {
-                            return 4;
-                        }
-                        if ($periodo == "A") {
-                            return 2;
-                        } else {
-                            return 0;
-                        }
-                    });
-                    //Fim do periodos
-                    //Pega avalicao no intervalo de data
-                    $avaliacao_time = $this->avaliacaoes($id_disciplina, $anoLectivo);
+            \Log::info('id_plano_estudo extraído', ['id_plano_estudo' => $id_plano_estudo]);
 
+            $verificarDisciplina = new VerificarDisciplina($id_disciplina);
+            if ($cargo == "todos") {
+                $verifyCoordenador = $verificarDisciplina->verifyIsCoordernador($teacher_id);
+                $verificarDisciplina->user_type = $verifyCoordenador ? "coordenador" : "teacher";
 
-
-                    $avaliacao = $avaliacao_time
-                        ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
-                        ->where('simestre', $Simestre)
-                        ->first();
-
-
-
-                    $id_avl = $avaliacao['avl_id'];
-                    //Para pegar as métricas das avalições e colocar trazer 
-
-                    //no calendário certo
-
-                    //Pega toda as turmas do professor onde ele leciona esta disciplina
-                    $turmas = $this->turmas_teacher($teacher_id, $courseYear, $id_plano_estudo, $anoLectivo);
-
-                    if (isset($segunda_chamada)) {
-                        $metrica = $this->metricas_avaliacoes($currentData);
-                        $Metrica_calendario = $metrica
-                            ->join('calendarie_metrica_segunda_chamada as sc', 'sc.id_calendarie_metrica', 'c_m.id')
-                            ->where('mtrc.avaliacaos_id', $id_avl)
-                            ->where('mtrc.calendario', '!=', 1)
-                            ->where('c_m.id_periodo_simestre', $Simestre)
-                            ->whereDate('sc.data_inicio', '<=', date("Y-m-d"))
-                            ->whereDate('sc.data_fim', '>=', date("Y-m-d"))
-                            ->orderBy('sc.data_inicio', 'DESC')
-                            ->get();
-                        $avaliacao = $avaliacao->avl_nome == 'Recursos' ? null : $avaliacao;
-                    } else {
-
-                        $metrica = $this->metricas_avaliacoes($currentData);
-                        $Metrica_calendario = $metrica
-                            ->where('mtrc.avaliacaos_id', $id_avl)
-                            ->where('mtrc.calendario', '!=', 1)
-                            ->where('c_m.id_periodo_simestre', $Simestre)
-                            ->whereDate('c_m.data_inicio', '<=', date("Y-m-d"))
-                            ->whereDate('c_m.data_fim', '>=', date("Y-m-d"))
-                            ->orderBy('c_m.data_inicio', 'DESC')
-                            ->get();
-                    }
-                    return response()->json(['turma' => $turmas, 'avaliacao' => $avaliacao, 'metrica' => $Metrica_calendario, 'whoIs' => 'teacher', 'plano_estudo' => $id_plano_estudo, 'disciplina' => $id_disciplina]);
-                }
-            } else {
-                return response()->json(500);
+                \Log::info('Cargo "todos" verificado', [
+                    'verifyCoordenador' => $verifyCoordenador,
+                    'user_type' => $verificarDisciplina->user_type
+                ]);
             }
 
+            if ($cargo == "coordenador" || $verificarDisciplina->user_type == "coordenador") {
+                \Log::info('Entrando no bloco de coordenador');
 
+                // Pega avaliações para coordenador
+                $avaliacao = $this->avaliacaoes_coordenador($id_disciplina, $anoLectivo);
 
-            //    Pega todas as avaliaçoes das disciplina selecionada
-            //    como o objectivo é retornar por época de calendário 
-            //    A ideia é colocar um calendário nas Mac e criar também calendário de cada item da Mac(PF1, PF2 e OA)
-            //    No final retornar apenas a pauta do item da avaliaçao selecionada, 
-            //   EX:seleciona a disciplina, seleciona a turma e no final aparece a pauta daquela época.
-            //   return response()->json(array('turma'=>$turma, 'metrica'=>$metrica_filtrada, 'pea'=>$pea));
+                if (isset($segunda_chamada)) {
+                    $avaliacao = $avaliacao->whereNotIn('avl.nome', ['Recursos']);
+                }
 
-        } catch (Exception | Throwable $e) {
-            dd($e);
-            dd("Error to get classes that you are teacher or manager!");
-            logError($e);
-            return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+                \Log::info('Consulta avaliacao (coordenador) construída', [
+                    'query' => $avaliacao->toSql(),
+                    'bindings' => $avaliacao->getBindings()
+                ]);
+
+                // Pega turmas do coordenador
+                $turmas = $this->turmas_coordenador($courseYear, $id_plano_estudo, $id_curso, $anoLectivo);
+
+                $avaliacaoResult = $avaliacao->get();
+
+                \Log::info('Resultados do bloco coordenador', [
+                    'turmas_count' => count($turmas),
+                    'avaliacao_count' => $avaliacaoResult->count(),
+                    'avaliacao_data' => $avaliacaoResult->toArray()
+                ]);
+
+                // Verifica campos nulos em avaliacao
+                foreach ($avaliacaoResult as $row) {
+                    if (is_null($row->avl_id) || is_null($row->avl_nome)) {
+                        \Log::warning('Campos nulos detectados em avaliacao (coordenador)', [
+                            'row' => $row->toArray()
+                        ]);
+                    }
+                }
+
+                return response()->json([
+                    'turma' => $turmas,
+                    'avaliacao' => $avaliacaoResult,
+                    'whoIs' => "super",
+                    'plano_estudo' => $id_plano_estudo,
+                    'disciplina' => $id_disciplina
+                ]);
+            } else if ($cargo == "teacher" || $verificarDisciplina->user_type == "teacher") {
+                \Log::info('Entrando no bloco de teacher');
+
+                // Pega o período da disciplina
+                $period_disciplina = DB::table('disciplines')
+                    ->where('id', $id_disciplina)
+                    ->get();
+
+                \Log::info('Resultado period_disciplina', [
+                    'count' => $period_disciplina->count(),
+                    'data' => $period_disciplina->toArray()
+                ]);
+
+                $Simestre = $period_disciplina->map(function ($item, $key) {
+                    $periodo = substr($item->code, -3, 1);
+                    if ($periodo == "1") {
+                        return 1;
+                    }
+                    if ($periodo == "2") {
+                        return 4;
+                    }
+                    if ($periodo == "A") {
+                        return 2;
+                    }
+                    return 0;
+                });
+
+                \Log::info('Semestre calculado', ['Simestre' => $Simestre->toArray()]);
+
+                // Pega avaliações no intervalo de data
+                $avaliacao_time = $this->avaliacaoes($id_disciplina, $anoLectivo);
+
+                \Log::info('Consulta avaliacao_time construída', [
+                    'query' => $avaliacao_time->toSql(),
+                    'bindings' => $avaliacao_time->getBindings()
+                ]);
+
+                $avaliacao = $avaliacao_time
+                    ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
+                    ->where('simestre', $Simestre)
+                    ->first();
+
+                \Log::info('Resultado avaliacao (teacher)', [
+                    'avaliacao' => $avaliacao ? (array)$avaliacao : null
+                ]);
+
+                if (!$avaliacao) {
+                    \Log::warning('Nenhuma avaliação encontrada para o teacher', [
+                        'id_disciplina' => $id_disciplina,
+                        'anoLectivo' => $anoLectivo,
+                        'Simestre' => $Simestre->toArray(),
+                        'current_date' => date("Y-m-d")
+                    ]);
+                }
+
+                $id_avl = $avaliacao ? $avaliacao['avl_id'] : null;
+
+                \Log::info('ID da avaliação', ['id_avl' => $id_avl]);
+
+                // Pega turmas do professor
+                $turmas = $this->turmas_teacher($teacher_id, $courseYear, $id_plano_estudo, $anoLectivo);
+
+                \Log::info('Turmas do teacher', ['turmas_count' => count($turmas)]);
+
+                // Pega métricas
+                $metrica = $this->metricas_avaliacoes($currentData);
+
+                \Log::info('Consulta metrica construída', [
+                    'query' => $metrica->toSql(),
+                    'bindings' => $metrica->getBindings()
+                ]);
+
+                if (isset($segunda_chamada)) {
+                    $Metrica_calendario = $metrica
+                        ->join('calendarie_metrica_segunda_chamada as sc', 'sc.id_calendarie_metrica', 'c_m.id')
+                        ->where('mtrc.avaliacaos_id', $id_avl)
+                        ->where('mtrc.calendario', '!=', 1)
+                        ->where('c_m.id_periodo_simestre', $Simestre)
+                        ->whereDate('sc.data_inicio', '<=', date("Y-m-d"))
+                        ->whereDate('sc.data_fim', '>=', date("Y-m-d"))
+                        ->orderBy('sc.data_inicio', 'DESC');
+
+                    \Log::info('Consulta Metrica_calendario (segunda chamada) construída', [
+                        'query' => $Metrica_calendario->toSql(),
+                        'bindings' => $Metrica_calendario->getBindings()
+                    ]);
+
+                    $Metrica_calendario = $Metrica_calendario->get();
+
+                    $avaliacao = $avaliacao && $avaliacao->avl_nome == 'Recursos' ? null : $avaliacao;
+                } else {
+                    $Metrica_calendario = $metrica
+                        ->where('mtrc.avaliacaos_id', $id_avl)
+                        ->where('mtrc.calendario', '!=', 1)
+                        ->where('c_m.id_periodo_simestre', $Simestre)
+                        ->whereDate('c_m.data_inicio', '<=', date("Y-m-d"))
+                        ->whereDate('c_m.data_fim', '>=', date("Y-m-d"))
+                        ->orderBy('c_m.data_inicio', 'DESC');
+
+                    \Log::info('Consulta Metrica_calendario construída', [
+                        'query' => $Metrica_calendario->toSql(),
+                        'bindings' => $Metrica_calendario->getBindings()
+                    ]);
+
+                    $Metrica_calendario = $Metrica_calendario->get();
+                }
+
+                \Log::info('Resultado Metrica_calendario', [
+                    'count' => $Metrica_calendario->count(),
+                    'data' => $Metrica_calendario->toArray()
+                ]);
+
+                // Verifica campos nulos em Metrica_calendario
+                foreach ($Metrica_calendario as $row) {
+                    if (is_null($row->mtrc_id) || is_null($row->mtrc_nome) || is_null($row->c_m_inicio) || is_null($row->c_m_fim)) {
+                        \Log::warning('Campos nulos detectados em Metrica_calendario', [
+                            'row' => $row->toArray()
+                        ]);
+                    }
+                }
+
+                return response()->json([
+                    'turma' => $turmas,
+                    'avaliacao' => $avaliacao,
+                    'metrica' => $Metrica_calendario,
+                    'whoIs' => 'teacher',
+                    'plano_estudo' => $id_plano_estudo,
+                    'disciplina' => $id_disciplina
+                ]);
+            }
+        } else {
+            \Log::warning('Nenhum courseYear encontrado', [
+                'id_disciplina' => $id_disciplina,
+                'anoLectivo' => $anoLectivo
+            ]);
+            return response()->json(500);
         }
+    } catch (Exception | Throwable $e) {
+        \Log::error('Erro em getTurmasDisciplina', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
     }
+}
 
 
 
@@ -3016,89 +3130,145 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     //Pegar as avaliações ao atribuir notas OA sem calendário
     private function avaliacaoesOA($id_disciplina, $anoLectivo)
-    {
+{
+    \Log::info('Iniciando avaliacaoesOA', [
+        'id_disciplina' => $id_disciplina,
+        'anoLectivo' => $anoLectivo
+    ]);
 
-        $avaliacaos = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
-            ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
-            ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
-            ->leftJoin('courses_translations as ct', function ($join) {
-                $join->on('ct.courses_id', '=', 'crs.id');
-                $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('ct.active', '=', DB::raw(true));
-            })
+    $avaliacaos = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
+        ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
+        ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
+        ->leftJoin('courses_translations as ct', function ($join) {
+            $join->on('ct.courses_id', '=', 'crs.id');
+            $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+            $join->on('ct.active', '=', DB::raw(true));
+        })
+        ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
+        ->leftJoin('disciplines_translations as dt', function ($join) {
+            $join->on('dt.discipline_id', '=', 'dp.id');
+            $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+            $join->on('dt.active', '=', DB::raw(true));
+        })
+        ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
+        ->join('metricas as mtr', 'mtr.avaliacaos_id', '=', 'avl.id')
+        ->select([
+            'avl.id as avl_id',
+            'avl.nome as avl_nome',
+            'dp.code as discipline_code',
+            'mtr.nome as metrica',
+            'mtr.id as id_metrica'
+        ])
+        ->where('dp.id', $id_disciplina)
+        ->where('avl.deleted_by', null)
+        ->where('mtr.calendario', 1)
+        ->where('avl.anoLectivo', $anoLectivo)
+        ->distinct();
 
-            ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
-            ->leftJoin('disciplines_translations as dt', function ($join) {
-                $join->on('dt.discipline_id', '=', 'dp.id');
-                $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('dt.active', '=', DB::raw(true));
-            })
+    \Log::info('Consulta construída', [
+        'query' => $avaliacaos->toSql(),
+        'bindings' => $avaliacaos->getBindings()
+    ]);
 
-            ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
-            ->join('metricas as mtr', 'mtr.avaliacaos_id', '=', 'avl.id')
-            ->select(['avl.id as avl_id', 'avl.nome as avl_nome', 'dp.code as discipline_code', 'mtr.nome as metrica', 'mtr.id as id_metrica'])
-            ->where('dp.id', $id_disciplina)
-            ->where('avl.deleted_by', null)
-            ->where('mtr.calendario', 1)
-            ->where('avl.anoLectivo', $anoLectivo)
-            ->distinct();
+    $result = $avaliacaos->get();
 
-        return $avaliacaos;
+    \Log::info('Resultado da consulta', [
+        'count' => $result->count(),
+        'data' => $result->toArray()
+    ]);
+
+    if ($result->isEmpty()) {
+        \Log::warning('Nenhum resultado encontrado para a consulta', [
+            'id_disciplina' => $id_disciplina,
+            'anoLectivo' => $anoLectivo
+        ]);
     }
 
-
-
-
-
-    //Pegar as métricas da avalicao
-    private function metricas_avaliacoes($data)
-    {
-
-        $metricas = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
-            ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
-            ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
-            ->leftJoin('courses_translations as ct', function ($join) {
-                $join->on('ct.courses_id', '=', 'crs.id');
-                $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('ct.active', '=', DB::raw(true));
-            })
-            ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
-            ->leftJoin('disciplines_translations as dt', function ($join) {
-                $join->on('dt.discipline_id', '=', 'dp.id');
-                $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('dt.active', '=', DB::raw(true));
-            })
-            ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
-            ->leftJoin('metricas as mtrc', 'mtrc.avaliacaos_id', '=', 'avl.id')
-            ->leftJoin('calendarie_metrica as c_m', 'mtrc.id', '=', 'c_m.id_metrica')
-            ->whereNull('c_m.deleted_at')
-            ->select([
-                'mtrc.id as mtrc_id',
-                'mtrc.avaliacaos_id as mtrc_avaliacaos_id',
-                'mtrc.nome as mtrc_nome',
-                'c_m.data_inicio as c_m_inicio',
-                'c_m.data_fim as c_m_fim',
-                'avl.nome as avalicacao',
-                'avl.id as avl_id',
-                'mtrc.code_dev as code_dev',
-                'c_m.id as cm_id'
-            ])
-            //comparar se o period_type for 1 ou 2 semestre
-            //e volta
-            // ->when($pea->period_type_id == 2 && Str::contains($discCode, "A"), function ($q) {
-            // return $q->where('mtrc.nome', '!=', 'PF2');
-            // })
-            // ->when($pea->period_type_id == 3 && Str::contains($discCode, "A"), function ($q) {
-            // return $q->where('mtrc.nome', '!=', 'PF1');
-            // })
-            //->where('mtrc.avaliacaos_id', $id_avl_uniq)
-
-
-            ->distinct();
-
-
-        return $metricas;
+    // Verificar se campos específicos estão retornando null
+    foreach ($result as $row) {
+        if (is_null($row->avl_id) || is_null($row->avl_nome) || is_null($row->discipline_code) ||
+            is_null($row->metrica) || is_null($row->id_metrica)) {
+            \Log::warning('Campos nulos detectados', [
+                'row' => $row->toArray()
+            ]);
+        }
     }
+
+    return $avaliacaos;
+}
+
+
+
+
+
+   private function metricas_avaliacoes($data)
+{
+    \Log::info('Iniciando metricas_avaliacoes', [
+        'data' => $data
+    ]);
+
+    $metricas = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
+        ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
+        ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
+        ->leftJoin('courses_translations as ct', function ($join) {
+            $join->on('ct.courses_id', '=', 'crs.id');
+            $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+            $join->on('ct.active', '=', DB::raw(true));
+        })
+        ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
+        ->leftJoin('disciplines_translations as dt', function ($join) {
+            $join->on('dt.discipline_id', '=', 'dp.id');
+            $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+            $join->on('dt.active', '=', DB::raw(true));
+        })
+        ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
+        ->leftJoin('metricas as mtrc', 'mtrc.avaliacaos_id', '=', 'avl.id')
+        ->leftJoin('calendarie_metrica as c_m', 'mtrc.id', '=', 'c_m.id_metrica')
+        ->whereNull('c_m.deleted_at')
+        ->select([
+            'mtrc.id as mtrc_id',
+            'mtrc.avaliacaos_id as mtrc_avaliacaos_id',
+            'mtrc.nome as mtrc_nome',
+            'c_m.data_inicio as c_m_inicio',
+            'c_m.data_fim as c_m_fim',
+            'avl.nome as avalicacao',
+            'avl.id as avl_id',
+            'mtrc.code_dev as code_dev',
+            'c_m.id as cm_id'
+        ])
+        ->distinct();
+
+    \Log::info('Consulta construída', [
+        'query' => $metricas->toSql(),
+        'bindings' => $metricas->getBindings()
+    ]);
+
+    $result = $metricas->get();
+
+    \Log::info('Resultado da consulta', [
+        'count' => $result->count(),
+        'data' => $result->toArray()
+    ]);
+
+    if ($result->isEmpty()) {
+        \Log::warning('Nenhum resultado encontrado para a consulta', [
+            'data' => $data
+        ]);
+    }
+
+    // Verificar se campos específicos estão retornando null
+    foreach ($result as $row) {
+        if (is_null($row->mtrc_id) || is_null($row->mtrc_avaliacaos_id) || is_null($row->mtrc_nome) ||
+            is_null($row->c_m_inicio) || is_null($row->c_m_fim) || is_null($row->avalicacao) ||
+            is_null($row->avl_id) || is_null($row->code_dev) || is_null($row->cm_id)) {
+            \Log::warning('Campos nulos detectados', [
+                'row' => $row->toArray()
+            ]);
+        }
+    }
+
+    return $metricas;
+}
 
 
 
@@ -3897,7 +4067,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
             $metrica_id = $request->metrica_teacher;
-            $course = $discipline[1]; //curso 
+            $course = $discipline[1]; //curso
             $discipline_id = $discipline[2];
             $avaliacao_id = $request->id_avaliacao;
 
@@ -5654,7 +5824,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
         //   if(auth()->user()->id == 12438){
 
-        //     return view("Avaliations::academic-path.repair_academic_path2")->with($data);  
+        //     return view("Avaliations::academic-path.repair_academic_path2")->with($data);
         //   }
         return view("Avaliations::academic-path.repair_academic_path")->with($data);
     }
