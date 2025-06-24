@@ -24,6 +24,7 @@ use App\Modules\Users\Models\User;
 use App\Modules\Users\Models\UserState;
 use App\Modules\Users\Models\UserStateHistoric;
 use App\NotaEstudante;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 //use Barryvdh\DomPDF\PDF;
@@ -2766,7 +2767,7 @@ class AvaliacaoAlunoControllerNew extends Controller
     public function getTurmasDisciplina(Request $request, $id_edicao_plain, $anoLectivo)
 {
     try {
-        \Log::info('Iniciando getTurmasDisciplina', [
+        Log::info('Iniciando getTurmasDisciplina', [
             'id_edicao_plain' => $id_edicao_plain,
             'anoLectivo' => $anoLectivo,
             'segunda_chamada' => $request->query('segunda_chamada', null)
@@ -2781,7 +2782,7 @@ class AvaliacaoAlunoControllerNew extends Controller
         $currentData = Carbon::now();
         $teacher_id = Auth::id();
 
-        \Log::info('Parâmetros extraídos', [
+        Log::info('Parâmetros extraídos', [
             'cargo' => $cargo,
             'id_curso' => $id_curso,
             'id_disciplina' => $id_disciplina,
@@ -2795,14 +2796,14 @@ class AvaliacaoAlunoControllerNew extends Controller
             ->where('stpeid.lective_years_id', $anoLectivo)
             ->select(['plano_estudo_avaliacaos.*', 'stpeid.*']);
 
-        \Log::info('Consulta courseYear construída', [
+        Log::info('Consulta courseYear construída', [
             'query' => $courseYear->toSql(),
             'bindings' => $courseYear->getBindings()
         ]);
 
         $courseYear = $courseYear->get();
 
-        \Log::info('Resultado courseYear', [
+        Log::info('Resultado courseYear', [
             'count' => $courseYear->count(),
             'data' => $courseYear->toArray()
         ]);
@@ -2811,21 +2812,21 @@ class AvaliacaoAlunoControllerNew extends Controller
         if (!$courseYear->isEmpty()) {
             $id_plano_estudo = $courseYear[0]['study_plan_editions_id'];
 
-            \Log::info('id_plano_estudo extraído', ['id_plano_estudo' => $id_plano_estudo]);
+            Log::info('id_plano_estudo extraído', ['id_plano_estudo' => $id_plano_estudo]);
 
             $verificarDisciplina = new VerificarDisciplina($id_disciplina);
             if ($cargo == "todos") {
                 $verifyCoordenador = $verificarDisciplina->verifyIsCoordernador($teacher_id);
                 $verificarDisciplina->user_type = $verifyCoordenador ? "coordenador" : "teacher";
 
-                \Log::info('Cargo "todos" verificado', [
+                Log::info('Cargo "todos" verificado', [
                     'verifyCoordenador' => $verifyCoordenador,
                     'user_type' => $verificarDisciplina->user_type
                 ]);
             }
 
             if ($cargo == "coordenador" || $verificarDisciplina->user_type == "coordenador") {
-                \Log::info('Entrando no bloco de coordenador');
+                Log::info('Entrando no bloco de coordenador');
 
                 // Pega avaliações para coordenador
                 $avaliacao = $this->avaliacaoes_coordenador($id_disciplina, $anoLectivo);
@@ -2834,7 +2835,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                     $avaliacao = $avaliacao->whereNotIn('avl.nome', ['Recursos']);
                 }
 
-                \Log::info('Consulta avaliacao (coordenador) construída', [
+                Log::info('Consulta avaliacao (coordenador) construída', [
                     'query' => $avaliacao->toSql(),
                     'bindings' => $avaliacao->getBindings()
                 ]);
@@ -2844,7 +2845,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                 $avaliacaoResult = $avaliacao->get();
 
-                \Log::info('Resultados do bloco coordenador', [
+                Log::info('Resultados do bloco coordenador', [
                     'turmas_count' => count($turmas),
                     'avaliacao_count' => $avaliacaoResult->count(),
                     'avaliacao_data' => $avaliacaoResult->toArray()
@@ -2853,7 +2854,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 // Verifica campos nulos em avaliacao
                 foreach ($avaliacaoResult as $row) {
                     if (is_null($row->avl_id) || is_null($row->avl_nome)) {
-                        \Log::warning('Campos nulos detectados em avaliacao (coordenador)', [
+                        Log::warning('Campos nulos detectados em avaliacao (coordenador)', [
                             'row' => $row->toArray()
                         ]);
                     }
@@ -2867,14 +2868,14 @@ class AvaliacaoAlunoControllerNew extends Controller
                     'disciplina' => $id_disciplina
                 ]);
             } else if ($cargo == "teacher" || $verificarDisciplina->user_type == "teacher") {
-                \Log::info('Entrando no bloco de teacher');
+                Log::info('Entrando no bloco de teacher');
 
                 // Pega o período da disciplina
                 $period_disciplina = DB::table('disciplines')
                     ->where('id', $id_disciplina)
                     ->get();
 
-                \Log::info('Resultado period_disciplina', [
+                Log::info('Resultado period_disciplina', [
                     'count' => $period_disciplina->count(),
                     'data' => $period_disciplina->toArray()
                 ]);
@@ -2893,12 +2894,12 @@ class AvaliacaoAlunoControllerNew extends Controller
                     return 0;
                 });
 
-                \Log::info('Semestre calculado', ['Simestre' => $Simestre->toArray()]);
+                Log::info('Semestre calculado', ['Simestre' => $Simestre->toArray()]);
 
                 // Pega avaliações no intervalo de data
                 $avaliacao_time = $this->avaliacaoes($id_disciplina, $anoLectivo);
 
-                \Log::info('Consulta avaliacao_time construída', [
+                Log::info('Consulta avaliacao_time construída', [
                     'query' => $avaliacao_time->toSql(),
                     'bindings' => $avaliacao_time->getBindings()
                 ]);
@@ -2908,12 +2909,12 @@ class AvaliacaoAlunoControllerNew extends Controller
                     ->where('simestre', $Simestre)
                     ->first();
 
-                \Log::info('Resultado avaliacao (teacher)', [
+                Log::info('Resultado avaliacao (teacher)', [
                     'avaliacao' => $avaliacao ? (array)$avaliacao : null
                 ]);
 
                 if (!$avaliacao) {
-                    \Log::warning('Nenhuma avaliação encontrada para o teacher', [
+                    Log::warning('Nenhuma avaliação encontrada para o teacher', [
                         'id_disciplina' => $id_disciplina,
                         'anoLectivo' => $anoLectivo,
                         'Simestre' => $Simestre->toArray(),
@@ -2923,17 +2924,17 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                 $id_avl = $avaliacao ? $avaliacao['avl_id'] : null;
 
-                \Log::info('ID da avaliação', ['id_avl' => $id_avl]);
+                Log::info('ID da avaliação', ['id_avl' => $id_avl]);
 
                 // Pega turmas do professor
                 $turmas = $this->turmas_teacher($teacher_id, $courseYear, $id_plano_estudo, $anoLectivo);
 
-                \Log::info('Turmas do teacher', ['turmas_count' => count($turmas)]);
+                Log::info('Turmas do teacher', ['turmas_count' => count($turmas)]);
 
                 // Pega métricas
                 $metrica = $this->metricas_avaliacoes($currentData);
 
-                \Log::info('Consulta metrica construída', [
+                Log::info('Consulta metrica construída', [
                     'query' => $metrica->toSql(),
                     'bindings' => $metrica->getBindings()
                 ]);
@@ -2948,7 +2949,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ->whereDate('sc.data_fim', '>=', date("Y-m-d"))
                         ->orderBy('sc.data_inicio', 'DESC');
 
-                    \Log::info('Consulta Metrica_calendario (segunda chamada) construída', [
+                    Log::info('Consulta Metrica_calendario (segunda chamada) construída', [
                         'query' => $Metrica_calendario->toSql(),
                         'bindings' => $Metrica_calendario->getBindings()
                     ]);
@@ -2965,7 +2966,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ->whereDate('c_m.data_fim', '>=', date("Y-m-d"))
                         ->orderBy('c_m.data_inicio', 'DESC');
 
-                    \Log::info('Consulta Metrica_calendario construída', [
+                    Log::info('Consulta Metrica_calendario construída', [
                         'query' => $Metrica_calendario->toSql(),
                         'bindings' => $Metrica_calendario->getBindings()
                     ]);
@@ -2973,7 +2974,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                     $Metrica_calendario = $Metrica_calendario->get();
                 }
 
-                \Log::info('Resultado Metrica_calendario', [
+                Log::info('Resultado Metrica_calendario', [
                     'count' => $Metrica_calendario->count(),
                     'data' => $Metrica_calendario->toArray()
                 ]);
@@ -2981,7 +2982,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 // Verifica campos nulos em Metrica_calendario
                 foreach ($Metrica_calendario as $row) {
                     if (is_null($row->mtrc_id) || is_null($row->mtrc_nome) || is_null($row->c_m_inicio) || is_null($row->c_m_fim)) {
-                        \Log::warning('Campos nulos detectados em Metrica_calendario', [
+                        Log::warning('Campos nulos detectados em Metrica_calendario', [
                             'row' => $row->toArray()
                         ]);
                     }
@@ -2997,14 +2998,14 @@ class AvaliacaoAlunoControllerNew extends Controller
                 ]);
             }
         } else {
-            \Log::warning('Nenhum courseYear encontrado', [
+            Log::warning('Nenhum courseYear encontrado', [
                 'id_disciplina' => $id_disciplina,
                 'anoLectivo' => $anoLectivo
             ]);
             return response()->json(500);
         }
     } catch (Exception | Throwable $e) {
-        \Log::error('Erro em getTurmasDisciplina', [
+        Log::error('Erro em getTurmasDisciplina', [
             'message' => $e->getMessage(),
             'trace' => $e->getTraceAsString()
         ]);
@@ -3075,6 +3076,11 @@ class AvaliacaoAlunoControllerNew extends Controller
     //Pegar as avaliações ao atribuir notas com calendário
     private function avaliacaoes($id_disciplina, $anoLectivo)
     {
+        Log::info('Iniciando avaliacaoes', [
+            'id_disciplina' => $id_disciplina,
+            'anoLectivo' => $anoLectivo
+        ]);
+
         $avaliacaos = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
             ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
             ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
@@ -3082,19 +3088,58 @@ class AvaliacaoAlunoControllerNew extends Controller
                 $join->on('ct.courses_id', '=', 'crs.id');
                 $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 $join->on('ct.active', '=', DB::raw(true));
-            })->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
+            })
+            ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
             ->leftJoin('disciplines_translations as dt', function ($join) {
                 $join->on('dt.discipline_id', '=', 'dp.id');
                 $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 $join->on('dt.active', '=', DB::raw(true));
-            })->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
+            })
+            ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
             ->leftJoin('avaliacao_aluno_historicos', 'avaliacao_aluno_historicos.plano_estudo_avaliacaos_id', '=', 'plano_estudo_avaliacaos.id')
             ->join('calendario_prova as c_p', 'c_p.id_avaliacao', '=', 'avl.id')
-            ->select(['avl.code_dev as codev', 'avl.id as avl_id', 'avl.nome as avl_nome', 'dp.code as discipline_code', 'c_p.date_start as inicio', 'c_p.data_end as fim', 'c_p.simestre'])
+            ->select([
+                'avl.code_dev as codev',
+                'avl.id as avl_id',
+                'avl.nome as avl_nome',
+                'dp.code as discipline_code',
+                'c_p.date_start as inicio',
+                'c_p.data_end as fim',
+                'c_p.simestre'
+            ])
             ->where('dp.id', $id_disciplina)
             ->where('c_p.deleted_by', null)
             ->where('c_p.lectiveYear', $anoLectivo)
             ->distinct();
+
+        Log::info('Consulta avaliacaoes construída', [
+            'query' => $avaliacaos->toSql(),
+            'bindings' => $avaliacaos->getBindings()
+        ]);
+
+        $result = $avaliacaos->get();
+
+        Log::info('Resultado da consulta avaliacaoes', [
+            'count' => $result->count(),
+            'data' => $result->toArray()
+        ]);
+
+        if ($result->isEmpty()) {
+            Log::warning('Nenhum resultado encontrado para avaliacaoes', [
+                'id_disciplina' => $id_disciplina,
+                'anoLectivo' => $anoLectivo
+            ]);
+        }
+
+        foreach ($result as $row) {
+            if (is_null($row->codev) || is_null($row->avl_id) || is_null($row->avl_nome) ||
+                is_null($row->discipline_code) || is_null($row->inicio) || is_null($row->fim) ||
+                is_null($row->simestre)) {
+                Log::warning('Campos nulos detectados em avaliacaoes', [
+                    'row' => $row->toArray()
+                ]);
+            }
+        }
 
         return $avaliacaos;
     }
@@ -3131,7 +3176,7 @@ class AvaliacaoAlunoControllerNew extends Controller
     //Pegar as avaliações ao atribuir notas OA sem calendário
     private function avaliacaoesOA($id_disciplina, $anoLectivo)
 {
-    \Log::info('Iniciando avaliacaoesOA', [
+    Log::info('Iniciando avaliacaoesOA', [
         'id_disciplina' => $id_disciplina,
         'anoLectivo' => $anoLectivo
     ]);
@@ -3165,20 +3210,20 @@ class AvaliacaoAlunoControllerNew extends Controller
         ->where('avl.anoLectivo', $anoLectivo)
         ->distinct();
 
-    \Log::info('Consulta construída', [
+    Log::info('Consulta construída', [
         'query' => $avaliacaos->toSql(),
         'bindings' => $avaliacaos->getBindings()
     ]);
 
     $result = $avaliacaos->get();
 
-    \Log::info('Resultado da consulta', [
+    Log::info('Resultado da consulta', [
         'count' => $result->count(),
         'data' => $result->toArray()
     ]);
 
     if ($result->isEmpty()) {
-        \Log::warning('Nenhum resultado encontrado para a consulta', [
+        Log::warning('Nenhum resultado encontrado para a consulta', [
             'id_disciplina' => $id_disciplina,
             'anoLectivo' => $anoLectivo
         ]);
@@ -3188,7 +3233,7 @@ class AvaliacaoAlunoControllerNew extends Controller
     foreach ($result as $row) {
         if (is_null($row->avl_id) || is_null($row->avl_nome) || is_null($row->discipline_code) ||
             is_null($row->metrica) || is_null($row->id_metrica)) {
-            \Log::warning('Campos nulos detectados', [
+            Log::warning('Campos nulos detectados', [
                 'row' => $row->toArray()
             ]);
         }
@@ -3203,7 +3248,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
    private function metricas_avaliacoes($data)
 {
-    \Log::info('Iniciando metricas_avaliacoes', [
+    Log::info('Iniciando metricas_avaliacoes', [
         'data' => $data
     ]);
 
@@ -3238,20 +3283,20 @@ class AvaliacaoAlunoControllerNew extends Controller
         ])
         ->distinct();
 
-    \Log::info('Consulta construída', [
+    Log::info('Consulta construída', [
         'query' => $metricas->toSql(),
         'bindings' => $metricas->getBindings()
     ]);
 
     $result = $metricas->get();
 
-    \Log::info('Resultado da consulta', [
+    Log::info('Resultado da consulta', [
         'count' => $result->count(),
         'data' => $result->toArray()
     ]);
 
     if ($result->isEmpty()) {
-        \Log::warning('Nenhum resultado encontrado para a consulta', [
+        Log::warning('Nenhum resultado encontrado para a consulta', [
             'data' => $data
         ]);
     }
@@ -3261,7 +3306,7 @@ class AvaliacaoAlunoControllerNew extends Controller
         if (is_null($row->mtrc_id) || is_null($row->mtrc_avaliacaos_id) || is_null($row->mtrc_nome) ||
             is_null($row->c_m_inicio) || is_null($row->c_m_fim) || is_null($row->avalicacao) ||
             is_null($row->avl_id) || is_null($row->code_dev) || is_null($row->cm_id)) {
-            \Log::warning('Campos nulos detectados', [
+            Log::warning('Campos nulos detectados', [
                 'row' => $row->toArray()
             ]);
         }
