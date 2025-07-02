@@ -138,7 +138,7 @@ class MatriculationExport implements FromCollection, WithHeadings
                $new_object->municip = $candidate->municip;
                $new_object->origin = 'Angola';
              
-               $turno = substr($candidate->turma,-1);
+               $turno = substr($candidate->turma, -3, 1);
                $new_object->period = ($turno == 'M' || $turno == 'T')? 'Regular' : 'Noturno';
                $new_object->department = $candidate->department;
                $new_object->course = $candidate->course;
