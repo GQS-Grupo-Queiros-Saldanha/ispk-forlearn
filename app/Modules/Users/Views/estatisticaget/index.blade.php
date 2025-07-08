@@ -28,10 +28,6 @@
         @endforeach
         </select>
     </div>
-@endsection
-
-@section('body')
-
     <div class="row">
         <div class="d-flex justify-content-between w-100">
             <!-- Curso -->
@@ -55,6 +51,9 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('body')
 
     <table>
         <thead>
@@ -262,16 +261,6 @@
             </tr>
         </tbody>
     </table>
-  
-
-    <div class="d-flex mb-2 gap-3">
-        <button id="pdf" class="btn btn-success">
-            <i class="fas fa-file-pdf"></i> Gerar PDF
-        </button>
-        <!--<button type="submit" class="btn btn-dark">
-            <i class="fas fa-file-pdf"></i> Sem ação
-        </button>-->
-    </div>
 @endsection
 
 @section('scripts-new')
