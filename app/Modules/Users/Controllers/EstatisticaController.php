@@ -84,7 +84,7 @@ class EstatisticaController extends Controller
     ];
     return $data;
    }
-   public function student(){
+   public function student($classId){
     
     $alunos = DB::table('user_classes as uc')
         ->join('user_parameters as up', function ($join) {
@@ -99,6 +99,6 @@ class EstatisticaController extends Controller
 
         $totalAlunos = $alunos->count();
     
-        return
+        return response()->json(['alunos' => $totalAlunos]);
    }
 }
