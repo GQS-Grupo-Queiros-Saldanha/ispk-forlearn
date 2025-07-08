@@ -10,7 +10,6 @@
 
 @section('styles-new')
     @parent
-    <link rel="stylesheet" href="{{ asset('css/new_table_panel.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/new_switcher.css') }}">
     <style>
         table {border-collapse: collapse; width: 100%; margin: 20px 0;}
