@@ -312,7 +312,7 @@
             const lectiveYear = lectiveSelector.value;
             loadTurmas(courseId, lectiveYear);
         });
-    }
+    });
 </script>
     
 @endsection
