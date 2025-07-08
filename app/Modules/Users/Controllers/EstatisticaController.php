@@ -43,6 +43,6 @@ use App\Model\Institution;
 class EstatisticaController extends Controller
 { 
    public function index(){
-    return"ola";
+    return view('User::estatisticaget.index');
    } 
 }
