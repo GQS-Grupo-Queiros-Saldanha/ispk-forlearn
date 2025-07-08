@@ -5,6 +5,7 @@ use App\Modules\Users\Controllers\UserAvatarController;
 use App\Modules\Users\Controllers\centralNotification;
 use App\Modules\Users\Controllers\UsersController;
 use App\Modules\Users\Controllers\MatriculationController;
+use App\Modules\Users\Controllers\EstatisticaController; 
 
 Route::post('/actualizar‑whatsapp', [UsersController::class, 'actualizarWhatsapp'])->name('actualizar-whatsapp');
 Route::get('/api/getwhatsapp/{whatsapp}', 'App\Modules\Users\Controllers\MatriculationController@getWhatsapp');
@@ -26,6 +27,8 @@ Route::group(
     ],
     function () {
 
+        
+        Route::get('estatisticaget', [EstatisticaController::class, 'index']);
         // Route::get('users/testeParametro', 'UsersController@updateParametro');
         // Route::get('users/testeParametro', 'UsersController@updateUsuario');
         //Emarq
