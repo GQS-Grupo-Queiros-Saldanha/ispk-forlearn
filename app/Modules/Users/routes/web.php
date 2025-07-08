@@ -28,7 +28,7 @@ Route::group(
     function () {
 
         
-        Route::get('estatisticaget', [EstatisticaController::class, 'index']);
+        Route::get('/estatisticaget', [EstatisticaController::class, 'index']);
         // Route::get('users/testeParametro', 'UsersController@updateParametro');
         // Route::get('users/testeParametro', 'UsersController@updateUsuario');
         //Emarq
