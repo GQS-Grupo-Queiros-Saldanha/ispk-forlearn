@@ -44,7 +44,7 @@ class EstatisticaController extends Controller
 { 
    public function index(){
     $data = $this->api();
-    return view('User::estatisticaget.index')->with($data);
+    return view('Users::estatisticaget.index')->with($data);
    }
 
    public function api(){
