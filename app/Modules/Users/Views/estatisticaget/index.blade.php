@@ -36,9 +36,9 @@
                 <label for="selectorCurso">Curso</label>
                 <select class="form-control form-control-sm" name="curso" id="selectorCurso">
                     <option selected>Selecione o Curso</option>
-                    {{--@foreach ($courses as $c)
+                    @foreach ($courses as $c)
                         <option value="{{ $c->id }}">{{ $c->currentTranslation->display_name }}</option>
-                    @endforeach--}}
+                    @endforeach
                 </select>
             </div>
 
