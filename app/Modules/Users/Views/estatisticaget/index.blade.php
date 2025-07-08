@@ -12,6 +12,11 @@
     @parent
     <link rel="stylesheet" href="{{ asset('css/new_table_panel.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/new_switcher.css') }}">
+    <style>
+        table {border-collapse: collapse; width: 100%; margin: 20px 0;}
+        th, td {border: 1px solid #ddd; padding: 8px; text-align: center;}
+        th {background-color: #f2f2f2;}
+    </style>
 @endsection
 
 @section('selects')
