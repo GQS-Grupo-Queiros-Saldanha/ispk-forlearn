@@ -1,11 +1,11 @@
 <title>Melhores Estudantes | forLEARN® by GQS</title>
 @extends('layouts.generic_index_new')
-@section('page-title', 'Melhor Estudante')
+@section('page-title', 'Estatistica de pagamento')
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="/">Home</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('panel_avaliation') }}">Avaliações</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Melhor Estudante</li>
+    <li class="breadcrumb-item"><a href="{{ route('panel_avaliation') }}">****</a></li>
+    <li class="breadcrumb-item active" aria-current="page">*******</li>
 @endsection
 
 @section('styles-new')

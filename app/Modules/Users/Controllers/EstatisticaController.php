@@ -43,6 +43,45 @@ use App\Model\Institution;
 class EstatisticaController extends Controller
 { 
    public function index(){
-    return view('User::estatisticaget.index');
-   } 
+    $data = $this->api();
+    return view('User::estatisticaget.index')->with($data);
+   }
+
+   public function api(){
+     //se o usuario for candidato a estudante, redirecionar para o perfil
+     $userId = auth()->user()->id;
+     $user = User::whereId($userId)->first();
+
+     $courses = Course::with([
+         'currentTranslation'
+     ])
+         ->where('id', '!=', 22)
+         ->where('id', '!=', 18);
+
+     if ($user->hasAnyRole(['candidado-a-estudante'])) {
+
+         return redirect()->route('candidates.show', $userId)->with($data);
+     }
+
+     $lectiveYears = LectiveYear::with(['currentTranslation'])
+         ->get();
+
+     $currentData = Carbon::now();
+     $lectiveYearSelected = DB::table('lective_years')
+         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
+         ->first();
+     $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+
+     $dd = [
+         'courses' => $courses->get(),
+         'lectiveYearSelected' => $lectiveYearSelected,
+         'lectiveYears' => $lectiveYears
+     ];
+     $data = [
+        'courses' => $courses->get(),
+        'lectiveYearSelected' => $lectiveYearSelected,
+        'lectiveYears' => $lectiveYears
+    ];
+    return $data;
+   }
 }
