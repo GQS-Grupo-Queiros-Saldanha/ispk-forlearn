@@ -18,11 +18,11 @@
     <div class="mb-2">
         <label for="lective_year">Ano lectivo</label>
         <select name="lective_year" id="lective_year" class="form-control form-control-sm">
-        {{--@foreach ($lectiveYears as $lectiveYear)
+        @foreach ($lectiveYears as $lectiveYear)
             <option value="{{ $lectiveYear->id }}" @if ($lectiveYearSelected == $lectiveYear->id) selected @endif>
                 {{ $lectiveYear->currentTranslation->display_name }}
             </option>
-        @endforeach--}}
+        @endforeach
         </select>
     </div>
 @endsection
@@ -36,9 +36,9 @@
                 <label for="selectorCurso">Curso</label>
                 <select class="form-control form-control-sm" name="curso" id="selectorCurso">
                     <option selected>Selecione o Curso</option>
-                    {{--@foreach ($courses as $c)
+                    @foreach ($courses as $c)
                         <option value="{{ $c->id }}">{{ $c->currentTranslation->display_name }}</option>
-                    @endforeach--}}
+                    @endforeach
                 </select>
             </div>
 
@@ -54,7 +54,7 @@
     </div>
 
     <div class="card mr-1">
-        <h4>Ranking</h4>
+       
         <table class="table table_pauta table-hover dark">
             <thead class="table_pauta">
                 <tr>
