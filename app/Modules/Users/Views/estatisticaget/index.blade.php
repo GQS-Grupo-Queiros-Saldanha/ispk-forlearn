@@ -54,21 +54,210 @@
     </div>
 
     <div class="card mr-1">
-       
-        <table class="table table_pauta table-hover dark">
-            <thead class="table_pauta">
+        <table>
+            <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Turma</th>
-                    <th>Estudante</th>
-                    <th>Nota Final</th>
+                    <th rowspan="2"></th>
+                    <th colspan="4">1ano</th>
+                    <th colspan="4">2ano</th>
+                    <th colspan="4">3ano</th>
+                    <th colspan="4">4ano</th>
+                    <th colspan="4">5ano</th>
+                </tr>
+                <tr>
+                    <!-- 1ano -->
+                    <th>M</th>
+                    <th>T</th>
+                    <th>N</th>
+                    <th>PT</th>
+                    
+                    <!-- 2ano -->
+                    <th>M</th>
+                    <th>T</th>
+                    <th>N</th>
+                    <th>PT</th>
+                    
+                    <!-- 3ano -->
+                    <th>M</th>
+                    <th>T</th>
+                    <th>N</th>
+                    <th>PT</th>
+                    
+                    <!-- 4ano -->
+                    <th>M</th>
+                    <th>T</th>
+                    <th>N</th>
+                    <th>PT</th>
+                    
+                    <!-- 5ano -->
+                    <th>M</th>
+                    <th>T</th>
+                    <th>N</th>
+                    <th>PT</th>
                 </tr>
             </thead>
-            <tbody id="students-table">
-                <!-- Coloquei pelo JS -->
-                <div class="alert alert-primary d-none" id="alert" role="alert" >
-                    Não foram encontrados alunos com média maior ou igual a 14.
-                  </div>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>EC</td>
+                    <td>23</td>
+                    <td>54</td>
+                    <td>87</td>
+                    <td>09</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>ENT</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>HID</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>GEO</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>PET</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>QUI</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>REC</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
             </tbody>
         </table>
     </div>
