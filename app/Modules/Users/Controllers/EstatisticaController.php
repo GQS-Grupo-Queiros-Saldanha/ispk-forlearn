@@ -84,4 +84,21 @@ class EstatisticaController extends Controller
     ];
     return $data;
    }
+   public function student(){
+    
+    $alunos = DB::table('user_classes as uc')
+        ->join('user_parameters as up', function ($join) {
+            $join->on('up.users_id', '=', 'uc.user_id')
+                ->where('up.parameters_id', '=', 1); // só pega o valor se for o nome (id = 1)
+        })
+        ->join('classes as c', 'c.id', '=', 'uc.class_id')
+        ->where('uc.class_id', $classId)
+        ->select('up.users_id as aluno_id', 'up.value as aluno', 'c.code as turma')
+        ->groupBy('up.users_id', 'up.value', 'c.code')
+        ->get();
+
+        $totalAlunos = $alunos->count();
+    
+        return
+   }
 }

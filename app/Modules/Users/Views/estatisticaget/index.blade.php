@@ -312,7 +312,22 @@
             const lectiveYear = lectiveSelector.value;
             loadTurmas(courseId, lectiveYear);
         });
+
+        turmaSelector.addEventListener('change', function () {
+            const turma = this.value;
+            if (!turma) return;
+    
+            fetch(`/pt/estatisticaget/student/${turma}`)
+                .then(res => res.json())
+                .then(json => {
+                    const alunos = json.alunos || [];
+                    console.log(alunos);
+                  
+                })
+                .catch(error => console.error('Erro na entrega dos dados:', error));
+        });
     });
+    
 </script>
     
 @endsection
