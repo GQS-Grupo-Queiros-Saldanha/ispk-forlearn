@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    <div class="card mr-1">
+    <div>
         <table>
             <thead>
                 <tr>
