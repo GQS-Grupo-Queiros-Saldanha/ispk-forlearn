@@ -1415,7 +1415,7 @@ class mainController extends Controller
           return "Nenhum curso associado";
       }
 
-      $disciplines = $this->get_disciplines($lectiveYearSelected_id, $student, $matriculations->user_id);
+      $disciplines = $this->get_disciplines($lectiveYearSelected_id, $student);
       $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->user_id);
       $matriculations = $this->get_matriculation_student($lective_year, $student, $matriculations->user_id);
       $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
