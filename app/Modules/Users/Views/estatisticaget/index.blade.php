@@ -135,6 +135,7 @@
                         .then(res => res.json())
                         .then(json => {
                             const totalAlunos = json.total ?? 0;
+                            const protocolo = json.protocolo ?? 0;
                             const periodo = turma.display_name.charAt(3);
 
                             if (periodo === "T") {
@@ -148,6 +149,7 @@
                             document.getElementById(`manha_${course.id}`).textContent = manha;
                             document.getElementById(`tarde_${course.id}`).textContent = tarde;
                             document.getElementById(`noite_${course.id}`).textContent = noite;
+                            document.getElementById(`protocolo_${course.id}`).textContent = protocolo;
                         });
                 });
             });
