@@ -84,44 +84,48 @@ class EstatisticaController extends Controller
     ];
     return $data;
    }
-   public function student($classId){
-    try {
-        $classId = $request->input('class_id');
+   public function student($classId)
+    {
+        try {
+            $currentDate = Carbon::now();
 
-        $currentData = Carbon::now();
-        $lectiveYearSelected = DB::table('lective_years')
-            ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
-            ->first();
+            $lectiveYearSelected = DB::table('lective_years')
+                ->whereRaw('"' . $currentDate . '" between `start_date` and `end_date`')
+                ->first();
 
-        if (!$lectiveYearSelected) {
-            return response()->json(['erro' => 'Ano lectivo não encontrado.'], 404);
-        }
-        $alunos =Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
-            ->where('matriculations.lective_year', $lectiveYearSelected->id)
-            ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
-            ->join('classes as cl', function ($join) use ($classId) {
-                $join->on('cl.id', '=', 'mc.class_id');
-                $join->on('mc.matriculation_id', '=', 'matriculations.id');
-                $join->on('matriculations.course_year', '=', 'cl.year');
+            if (!$lectiveYearSelected) {
+                return response()->json(['erro' => 'Ano lectivo não encontrado.'], 404);
+            }
 
-                if ($classId) {
+            $alunos = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
+                ->where('matriculations.lective_year', $lectiveYearSelected->id)
+                ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+                ->join('classes as cl', function ($join) use ($classId) {
+                    $join->on('cl.id', '=', 'mc.class_id');
+                    $join->on('mc.matriculation_id', '=', 'matriculations.id');
+                    $join->on('matriculations.course_year', '=', 'cl.year');
                     $join->where('cl.id', '=', $classId);
-                }
-            })
-            ->leftJoin('user_parameters as u_p', function ($join) {
-                $join->on('u0.id', '=', 'u_p.users_id')
-                    ->where('u_p.parameters_id', 1); // Nome do estudante
-            })
-            ->select('u_p.value as student_name')
-            ->groupBy('u_p.value')
-            ->orderBy('u_p.value', 'asc')
-            ->pluck('student_name'); // Retorna só os nomes como array
+                })
+                ->leftJoin('user_parameters as u_p', function ($join) {
+                    $join->on('u0.id', '=', 'u_p.users_id')
+                        ->where('u_p.parameters_id', 1);
+                })
+                ->select('u_p.value as student_name')
+                ->groupBy('u_p.value')
+                ->orderBy('u_p.value', 'asc')
+                ->get();
 
-            $totalAlunos = $alunos->count(); 
-            return response()->json(['alunos' => $totalAlunos]);
+            $nomes = $alunos->pluck('student_name');
+            $totalAlunos = $nomes->count();
 
-    } catch (Exception | Throwable $e) {
-    logError($e);
-    return response()->json(['erro' => $e->getMessage()], 500);
+            return response()->json([
+                'total' => $totalAlunos,
+                'alunos' => $nomes,
+            ]);
+
+        } catch (Exception | Throwable $e) {
+            logError($e);
+            return response()->json(['erro' => $e->getMessage()], 500);
+        }
     }
 }

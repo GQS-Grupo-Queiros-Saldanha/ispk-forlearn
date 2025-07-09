@@ -134,6 +134,7 @@
                     fetch(`/pt/estatisticaget/student/${turma.id}`)
                         .then(res => res.json())
                         .then(json => {
+                            console.log(json);
                             const totalAlunos = json.alunos ?? 0;
                             const periodo = turma.display_name.charAt(3);
 
