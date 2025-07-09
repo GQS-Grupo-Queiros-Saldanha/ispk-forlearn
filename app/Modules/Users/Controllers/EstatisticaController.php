@@ -121,16 +121,17 @@ class EstatisticaController extends Controller
             foreach ($alunos as $aluno) {
                 $bolsa = DB::table('scholarship_holder')
                     ->where('user_id', $aluno->user_id)
-                    ->whereIn('scholarship_entity_id', [1, 16, 17])
                     ->where('are_scholarship_holder', 1)
                     ->first();
-
-                if ($bolsa) {
+            
+                // Verifica se o aluno tem bolsa COM entidade 1, 16 ou 17
+                if ($bolsa && in_array($bolsa->scholarship_entity_id, [1, 16, 17])) {
                     $protocolo[] = $aluno->student_name;
                 } else {
                     $resultado[] = $aluno->student_name;
                 }
             }
+            
 
             return response()->json([
                 'total' => count($resultado),
