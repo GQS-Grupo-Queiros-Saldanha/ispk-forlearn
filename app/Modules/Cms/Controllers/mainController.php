@@ -1398,7 +1398,7 @@ class mainController extends Controller
       ->where("user_id",$student)
       ->whereNull("deleted_at")
       ->where("lective_year",$lectiveYearSelected_id)
-      ->select(["lective_year","id"])
+      ->select(["lective_year","id", "user_id"])
       ->orderBy("lective_year","asc")
       ->first();
 
