@@ -111,7 +111,7 @@
                     <td id="manha_{{ $c->id }}"></td>
                     <td id="tarde_{{ $c->id }}"></td>
                     <td id="noite_{{ $c->id }}"></td>
-                    <td id="protocolo"></td>
+                    <td id="protocolo_{{ $c->id }}"></td>
                 </tr>
             @endforeach
         </tbody>
@@ -153,7 +153,7 @@
                             document.getElementById(`manha_${course.id}`).textContent = manha;
                             document.getElementById(`tarde_${course.id}`).textContent = tarde;
                             document.getElementById(`noite_${course.id}`).textContent = noite;
-                            document.getElementById(`protocolo`).textContent = protocolo;
+                            document.getElementById(`protocolo_${course.id}`).textContent = protocolo;
                         });
                 });
             });
