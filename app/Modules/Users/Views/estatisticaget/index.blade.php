@@ -99,14 +99,18 @@
         </thead>
         <tbody>
             @foreach ($courses as $c)
+                @php
+                    $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
+                @endphp
                 <tr>
-                    <td>{{strtoupper(substr($c->currentTranslation->display_name, 0, 1). substr(strstr($c->currentTranslation->display_name, ' '), 1, 1) )}}</td>
-                    <td id="manha"></td>
-                    <td id="tarde"></td>
-                    <td id="noite"></td>
-                    <td id="protocolo"></td>
+                    <td>{{ $sigla }}</td>
+                    <td id="manha_{{ $c->id }}"></td>
+                    <td id="tarde_{{ $c->id }}"></td>
+                    <td id="noite_{{ $c->id }}"></td>
+                    <td id="protocolo_{{ $c->id }}"></td>
                 </tr>
             @endforeach
+        
             <tr>
                 <!--2ano-->
                 <td>02</td>
@@ -134,79 +138,44 @@
 
 @section('scripts-new')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const courseSelector = document.getElementById('selectorCurso');
-        const lectiveSelector = document.getElementById('lective_year');
-        const turmaSelector = document.getElementById('selectorTurma');
-        const table = document.getElementById('students-table');
-        const alertBox = document.getElementById('alert');
+   document.addEventListener('DOMContentLoaded', function () {
+    const lectiveSelector = document.getElementById('lective_year');
+    const lectiveYear = lectiveSelector.value;
     
-        // Função que carrega as turmas com base no curso e ano letivo
-        function loadTurmas(courseId, lectiveYear) {
-            if (!courseId || !lectiveYear) return;
+    const courses = @json($courses);
 
-                fetch(`/pt/grades/teacher_disciplines/${courseId}/${lectiveYear}`)
-                    .then(res => res.json())
-                    .then(response => {
-                        const turmas = response.turma || [];
-                        turmaSelector.innerHTML = '';
+    courses.forEach(course => {
+        let manha = 0, tarde = 0, noite = 0;
 
-                        const defaultOption = document.createElement('option');
-                        defaultOption.value = '';
-                        defaultOption.selected = true;
-                        defaultOption.textContent = 'Seleciona a turma';
-                        turmaSelector.appendChild(defaultOption);
+        fetch(`/pt/grades/teacher_disciplines/${course.id}/${lectiveYear}`)
+            .then(res => res.json())
+            .then(response => {
+                const turmas = response.turma || [];
 
-                        if (turmas.length > 0) {
-                           // Inicializar variáveis fora do loop
-                            let manha = 0, tarde = 0, noite = 0;
+                turmas.forEach(turma => {
+                    fetch(`/pt/estatisticaget/student/${turma.id}`)
+                        .then(res => res.json())
+                        .then(json => {
+                            const totalAlunos = json.alunos ?? 0;
+                            const periodo = turma.display_name.charAt(3);
 
-                            turmas.forEach(turma => {
-                                const option = document.createElement('option');
-                                option.value = turma.id;
-                                option.textContent = turma.display_name;
-                                turmaSelector.appendChild(option);
+                            if (periodo === "T") {
+                                tarde += totalAlunos;
+                            } else if (periodo === "M") {
+                                manha += totalAlunos;
+                            } else {
+                                noite += totalAlunos;
+                            }
 
-                                // Buscar alunos da turma
-                                fetch(`/pt/estatisticaget/student/${turma.id}`)
-                                    .then(res => res.json())
-                                    .then(json => {
-                                        const totalAlunos = json.alunos ?? 0;
-                                        console.log(`Turma ${turma.display_name} (ID ${turma.id}): ${totalAlunos} alunos`);
-
-                                        const periodo = turma.display_name.charAt(3); // Atenção: é `charAt`, não `chart`
-
-                                        if (periodo === "T") {
-                                            tarde += totalAlunos;
-                                        } else if (periodo === "M") {
-                                            manha += totalAlunos;
-                                        } else {
-                                            noite += totalAlunos;
-                                        }
-
-                                        // Atualizar os valores na tabela
-                                        document.getElementById("manha").textContent = manha;
-                                        document.getElementById("tarde").textContent = tarde;
-                                        document.getElementById("noite").textContent = noite;
-                                    })
-                                    .catch(error => console.error('Erro ao buscar alunos da turma:', error));
-                            });
-
-
-                            turmaSelector.disabled = false;
-                            $('.selectpicker').selectpicker('refresh');
-                        } else {
-                            turmaSelector.disabled = true;
-                        }
-                    })
-                    .catch(error => console.error('Erro ao carregar turmas:', error));
-                }
-                courseSelector.addEventListener('change', function () {
-                const courseId = this.value;
-                const lectiveYear = lectiveSelector.value;
-                loadTurmas(courseId, lectiveYear);
+                            document.getElementById(`manha_${course.id}`).textContent = manha;
+                            document.getElementById(`tarde_${course.id}`).textContent = tarde;
+                            document.getElementById(`noite_${course.id}`).textContent = noite;
+                        });
+                });
             });
+        });
     });
+
 </script>
     
 @endsection
