@@ -130,10 +130,11 @@ class EstatisticaController extends Controller
                 $alunosFiltrados[] = $aluno->student_name;
             }
         }
-
+        \Log::debug('ALUNOS:', $alunosFiltrados);
+        \Log::debug('PROTOCOLO:', $protocolo);
         return response()->json([
             'total' => count($alunosFiltrados),
-            'alunos' => count($alunosFiltrados),
+            'alunos' => $alunosFiltrados,
             'protocolo' => count($protocolo),
         ]);
 
