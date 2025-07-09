@@ -124,7 +124,7 @@ class EstatisticaController extends Controller
         $protocolo = [];
 
         foreach ($alunos as $aluno) {
-            if (in_array($aluno->scholarship_entity_id, [1, 16, 17])) {
+            if (in_array($aluno->scholarship_entity_id, [1, 10, 17])) {
                 $protocolo[] = $aluno->student_name;
             } else {
                 $alunosFiltrados[] = $aluno->student_name;
