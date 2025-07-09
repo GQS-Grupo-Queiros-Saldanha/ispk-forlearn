@@ -100,7 +100,7 @@
         <tbody>
             <tr>
                 <td>1</td>
-                <td id="manha">EC</td>
+                <td>EC</td>
                 <td id="manha">87</td>
                 <td id="tarde">23</td>
                 <td id="noite">54</td>
@@ -156,22 +156,40 @@
                         turmaSelector.appendChild(defaultOption);
 
                         if (turmas.length > 0) {
+                           // Inicializar variáveis fora do loop
+                            let manha = 0, tarde = 0, noite = 0;
+
                             turmas.forEach(turma => {
                                 const option = document.createElement('option');
                                 option.value = turma.id;
                                 option.textContent = turma.display_name;
                                 turmaSelector.appendChild(option);
 
-                                //busca os alunos dessa turma
+                                // Buscar alunos da turma
                                 fetch(`/pt/estatisticaget/student/${turma.id}`)
                                     .then(res => res.json())
                                     .then(json => {
                                         const totalAlunos = json.alunos ?? 0;
                                         console.log(`Turma ${turma.display_name} (ID ${turma.id}): ${totalAlunos} alunos`);
-                                        // Aqui podes guardar ou mostrar os dados conforme precisares
+
+                                        const periodo = turma.display_name.charAt(3); // Atenção: é `charAt`, não `chart`
+
+                                        if (periodo === "T") {
+                                            tarde += totalAlunos;
+                                        } else if (periodo === "M") {
+                                            manha += totalAlunos;
+                                        } else {
+                                            noite += totalAlunos;
+                                        }
+
+                                        // Atualizar os valores na tabela
+                                        document.getElementById("manha").textContent = manha;
+                                        document.getElementById("tarde").textContent = tarde;
+                                        document.getElementById("noite").textContent = noite;
                                     })
                                     .catch(error => console.error('Erro ao buscar alunos da turma:', error));
                             });
+
 
                             turmaSelector.disabled = false;
                             $('.selectpicker').selectpicker('refresh');
