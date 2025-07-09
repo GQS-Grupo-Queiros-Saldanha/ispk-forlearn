@@ -121,7 +121,7 @@ class EstatisticaController extends Controller
             foreach ($alunos as $aluno) {
                 $bolsa = DB::table('scholarship_holder')
                     ->where('user_id', $aluno->user_id)
-                    ->whereIn('scholarship_entity_id', [1, 10, 17])
+                    ->whereIn('scholarship_entity_id', [1, 16, 17])
                     ->where('are_scholarship_holder', 1)
                     ->first();
 

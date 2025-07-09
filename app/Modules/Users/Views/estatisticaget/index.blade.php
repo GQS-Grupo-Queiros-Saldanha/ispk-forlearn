@@ -60,40 +60,9 @@
             <tr>
                 <th rowspan="2"></th>
                 <th colspan="4">1ano</th>
-                <th colspan="4">2ano</th>
-                <th colspan="4">3ano</th>
-                <th colspan="4">4ano</th>
-                <th colspan="4">5ano</th>
             </tr>
             <tr>
                 <!-- 1ano -->
-                <th>M</th>
-                <th>T</th>
-                <th>N</th>
-                <th>PT</th>
-                <th></th>
-                
-                <!-- 2ano -->
-                <th>M</th>
-                <th>T</th>
-                <th>N</th>
-                <th>PT</th>
-                
-                <!-- 3ano -->
-                <th>M</th>
-                <th>T</th>
-                <th>N</th>
-                <th>PT</th>
-                <th></th>
-                
-                <!-- 4ano -->
-                <th>M</th>
-                <th>T</th>
-                <th>N</th>
-                <th>PT</th>
-                <th></th>
-                
-                <!-- 5ano -->
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
