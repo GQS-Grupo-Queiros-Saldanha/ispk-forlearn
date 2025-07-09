@@ -135,7 +135,7 @@
                         .then(res => res.json())
                         .then(json => {
                             console.log(json);
-                            const totalAlunos = json.alunos ?? 0;
+                            const totalAlunos = json.total ?? 0;
                             const periodo = turma.display_name.charAt(3);
 
                             if (periodo === "T") {
