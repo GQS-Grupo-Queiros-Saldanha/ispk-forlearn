@@ -85,20 +85,43 @@ class EstatisticaController extends Controller
     return $data;
    }
    public function student($classId){
-    
-    $alunos = DB::table('user_classes as uc')
-        ->join('user_parameters as up', function ($join) {
-            $join->on('up.users_id', '=', 'uc.user_id')
-                ->where('up.parameters_id', '=', 1); // só pega o valor se for o nome (id = 1)
-        })
-        ->join('classes as c', 'c.id', '=', 'uc.class_id')
-        ->where('uc.class_id', $classId)
-        ->select('up.users_id as aluno_id', 'up.value as aluno', 'c.code as turma')
-        ->groupBy('up.users_id', 'up.value', 'c.code')
-        ->get();
+    try {
+        $classId = $request->input('class_id');
 
-        $totalAlunos = $alunos->count(); 
-    
-        return response()->json(['alunos' => $totalAlunos]);
-   }
+        $currentData = Carbon::now();
+        $lectiveYearSelected = DB::table('lective_years')
+            ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
+            ->first();
+
+        if (!$lectiveYearSelected) {
+            return response()->json(['erro' => 'Ano lectivo não encontrado.'], 404);
+        }
+        $alunos =Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
+            ->where('matriculations.lective_year', $lectiveYearSelected->id)
+            ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+            ->join('classes as cl', function ($join) use ($classId) {
+                $join->on('cl.id', '=', 'mc.class_id');
+                $join->on('mc.matriculation_id', '=', 'matriculations.id');
+                $join->on('matriculations.course_year', '=', 'cl.year');
+
+                if ($classId) {
+                    $join->where('cl.id', '=', $classId);
+                }
+            })
+            ->leftJoin('user_parameters as u_p', function ($join) {
+                $join->on('u0.id', '=', 'u_p.users_id')
+                    ->where('u_p.parameters_id', 1); // Nome do estudante
+            })
+            ->select('u_p.value as student_name')
+            ->groupBy('u_p.value')
+            ->orderBy('u_p.value', 'asc')
+            ->pluck('student_name'); // Retorna só os nomes como array
+
+            $totalAlunos = $alunos->count(); 
+            return response()->json(['alunos' => $totalAlunos]);
+
+    } catch (Exception | Throwable $e) {
+    logError($e);
+    return response()->json(['erro' => $e->getMessage()], 500);
+    }
 }
