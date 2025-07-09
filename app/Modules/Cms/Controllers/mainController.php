@@ -62,7 +62,7 @@ class mainController extends Controller
                 return $this->student();
             }
 
-            // Para tesoureiros Chefes 
+            // Para tesoureiros Chefes
             if (Auth::check() && (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('chefe_tesoureiro') || Auth::user()->hasRole('promotor') || Auth::user()->hasRole('presidente'))) {
                 return $this->staff();
             }
@@ -85,7 +85,7 @@ class mainController extends Controller
             $lective = DB::table('lective_years')
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
-                
+
                 $institution = Institution::latest()->first();
                 $logotipo = $_SERVER['HTTP_HOST'] . "/storage/" . $institution->logotipo;
                 $mesAtual = date('n');
@@ -103,7 +103,7 @@ class mainController extends Controller
                 $student = auth()->user()->id;
                 $melhoria_notas = get_melhoria_notas($student, $lective->id, 0);
                $d = $this->schedule();
-             
+
                if(is_array($d)){
 
                 $data = [
@@ -128,7 +128,7 @@ class mainController extends Controller
                     'lectiveYears' => $d['lectiveYears'],
                     'teacher_discipline' => $d['teacher_discipline'],
                     "melhoria_notas" => $melhoria_notas
-                ]; 
+                ];
             }
             else {
                 $data = [
@@ -145,10 +145,10 @@ class mainController extends Controller
                     "config" => $config,
                     "institution" => $institution,
                     "melhoria_notas" => $melhoria_notas
-                ]; 
+                ];
             }
                 return view('Cms::initial.student',$data);
-                        
+
         } catch (Exception | Throwable $e) {
             Log::error($e);
             return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
@@ -780,7 +780,7 @@ class mainController extends Controller
 
         try{
             $currentData = Carbon::now();
-    
+
             $lectiveYearSelected = DB::table('lective_years')
             ->when(isset($lective_year),function($q)use($lective_year){
                 $q->where('id',$lective_year);
@@ -789,12 +789,12 @@ class mainController extends Controller
                 $q->whereRaw('"' . $currentData . '" between `start_date` and `end_date`');
             })
            ->first();
-         
+
             if (isset($lectiveYearSelected)) {
-    
+
                 $lectiveYears = LectiveYear::with(['currentTranslation'])
                 ->get();
-    
+
                 $user = User::whereId(Auth::user()->id)->with([
                     'classes',
                     'matriculation' => function ($q) use($lectiveYearSelected) {
@@ -805,10 +805,10 @@ class mainController extends Controller
                         ]);
                     }
                 ])->firstOrFail();
-    
+
                 // Find
                 //$schedule = Schedule::whereId(14)->with([
-                
+
                 // Verifica se existe matrícula para o estudante
                 if ($user->matriculation == null) {
                     // return $user->matriculation;
@@ -829,7 +829,7 @@ class mainController extends Controller
                     case 7:
                         $period = PeriodTypeEnum::SEGUNDO_SEMESTRE;
                }
-    
+
                 $classes = $user->matriculation->classes->pluck('id')->all();
                 $discipline_list = $user->matriculation->disciplines->pluck('id')->all();
                 $schedule_id = Schedule::whereHas('events.discipline', function ($q) use ($discipline_list) {
@@ -867,34 +867,34 @@ class mainController extends Controller
                 ->where('period_type_id',$period)
                 ->whereBetween('start_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
                 ->orderBy('schedule_type_id', 'ASC')->get();
-    
+
                 if (count($schedule_id) > 0) {
-                
+
                     $events_by_type = [];
                     $schedule_id->groupBy('type.id')->each(function ($item, $key) use (&$events_by_type) {
                         $events = collect([]);
-    
+
                         $item->each(function ($item, $key) use (&$events) {
                             $events = $events->merge($item->events);
                         });
                         $events_by_type[$key] = $events;
                     });
-    
-    
+
+
                     $days_of_the_week = DayOfTheWeek::with([
                         'currentTranslation'
                     ])
                     ->WhereNull("deleted_at")
                     ->get();
-    
+
                     $schedule_types = ScheduleType::with([
                         'times',
                         'currentTranslation'
                     ])->get();
                     $sc = new SchedulesController();
-                  
+
                     $teacher_discipline = $sc->get_teacher_discipline($schedule_id);
-                    
+
                     return [
                         'schedule_types' => $schedule_types,
                         'days_of_the_week' => $days_of_the_week,
@@ -904,24 +904,24 @@ class mainController extends Controller
                         'lectiveYearSelected' => $lectiveYearSelected->id,
                         'lectiveYears' => $lectiveYears,
                         'teacher_discipline' => $teacher_discipline
-            
+
                     ];
-                
+
                 }
                 else {
                     return 1;
                 }
-                
+
             }
             else {
                 return 2;
             }
-    
+
         } catch (Exception | Throwable $e) {
             Log::error($e);
             return $e;
         }
-    
+
         }
 
     public static function times($student = null)
@@ -1081,7 +1081,7 @@ class mainController extends Controller
             'lectiveYears',
             'teacher_discipline'
         ))->render();
-        return response()->json($html);    
+        return response()->json($html);
 
 }
     public function matriculation_classes($matriculation_id)
@@ -1113,16 +1113,16 @@ class mainController extends Controller
         // Se não for, continua com a matrícula fornecida ou a do usuário autenticado
 
         $isApiRequest = request()->header('X-From-API') === 'flask';
-        $tokenRecebido = request()->bearerToken(); 
+        $tokenRecebido = request()->bearerToken();
 
         if ($isApiRequest) {
             // validar token
             if ($tokenRecebido !== env('FLASK_API_TOKEN')) {
                 return response('Não autorizado', 401);
             }
-            
+
         }
-        
+
         // Verifica se o usuário está autenticado
         $matriculations = DB::table("matriculations")
         ->where("id", $matriculation)
@@ -1270,15 +1270,15 @@ class mainController extends Controller
     //ATENÇAÕ REGIÃO CRÍTICA
 
     public function get_classes_grades($class_id,$lectiveYearSelected){
-       
-        
+
+
         try{
-       
+
             $matriculations = $this->get_all_matriculation_student($lectiveYearSelected, $class_id);
             $data = [];
             foreach($matriculations as $key=>$item){
               $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
-            
+
               if(!empty($result))
               $data[$key] = [
                 "user_id"=> $item->user_id,
@@ -1289,7 +1289,7 @@ class mainController extends Controller
 
 
          return response()->json($data);
-     
+
         }
        catch(Exception $e){
           dd($e);
@@ -1298,23 +1298,23 @@ class mainController extends Controller
 
   public function update_percurso_grades(Request $request){
 
-     
-   
+
+
     try{
         DB::beginTransaction();
         $data = $request->json()->all();
 
         foreach ($data as $key => $aluno) {
             $userId = $aluno['user_id'];
-    
+
             foreach ($aluno['boletim'] as $disciplina) {
                 $disciplinaId = $disciplina['discipline_id'];
                 $codigo = $disciplina['codigo'];
                 $nomeDisciplina = $disciplina['disciplina'];
                 $notaFinal = $disciplina['nota_final'];
                 $notaPercurso = $disciplina['nota_percurso'];
-    
-              
+
+
                 $Percurso = DB::table('new_old_grades')->updateOrInsert(
                     [
                         'user_id' => $userId,
@@ -1335,7 +1335,7 @@ class mainController extends Controller
             'success' => true,
             'message' => 'Dados processados com sucesso.'
         ], 200);
- 
+
     }
    catch(Exception $e){
     DB::rollBack();
@@ -1346,50 +1346,50 @@ class mainController extends Controller
 
 
   private function get_all_matriculation_student($lective_year=null, $class_id){
-       
-      
-      
 
-      $emolumento_confirma_prematricula= mainController::pre_matricula_confirma_emolumento($lective_year, $matriculations->user_id);
-          
+
+
+
+      $emolumento_confirma_prematricula= mainController::pre_matricula_confirma_emolumento($lective_year);
+
       return $model = Matriculation::leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
               ->join('classes as cl', function ($join)  {
                   $join->on('cl.id', '=', 'mc.class_id');
                   $join->on('mc.matriculation_id', '=', 'matriculations.id');
                   $join->on('matriculations.course_year', '=', 'cl.year');
-              })                             
-                                  
+              })
+
             ->leftJoin('article_requests as art_requests',function ($join) use($emolumento_confirma_prematricula)
               {
                   $join->on('art_requests.user_id','=','matriculations.user_id')
                   ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula);
               })
-              
+
               ->join('matriculation_disciplines as mat_disc','mat_disc.matriculation_id','matriculations.id')
 
-              
+
               ->select([
                   'matriculations.*'
               ])
-              ->where('art_requests.deleted_by', null) 
+              ->where('art_requests.deleted_by', null)
               ->where('art_requests.deleted_at', null)
               ->where('matriculations.lective_year', $lective_year)
               ->where('mc.class_id',$class_id)
-              
-              
+
+
               ->distinct('matriculations.user_id')
               ->get();
   }
-  
-  
+
+
   public function get_boletim_student_new($lective_year=null, $student=null){
-   
+
      $currentData = Carbon::now();
        $lectiveYearSelected = DB::table('lective_years')
       ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
       ->first();
       $lectiveYearSelected_id = $lectiveYearSelected->id ?? 6;
-      
+
       if(isset($lective_year)){
           $lectiveYearSelected_id = $lective_year;
       }
@@ -1401,7 +1401,7 @@ class mainController extends Controller
       ->select(["lective_year","id"])
       ->orderBy("lective_year","asc")
       ->first();
-     
+
       if(!isset($matriculations->lective_year)){
           return "Nenhuma matrícula encontrada neste ano lectivo";
       }
@@ -1409,21 +1409,21 @@ class mainController extends Controller
       $courses = DB::table("user_courses")
       ->where("users_id",$student)
       ->select(["courses_id"])
-      ->first(); 
+      ->first();
 
       if(!isset($courses->courses_id)){
           return "Nenhum curso associado";
       }
-      
+
       $disciplines = $this->get_disciplines($lectiveYearSelected_id, $student, $matriculations->user_id);
-      $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->user_id); 
+      $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->user_id);
       $matriculations = $this->get_matriculation_student($lective_year, $student, $matriculations->user_id);
       $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
       $melhoria_notas = get_melhoria_notas($student, $lective_year, 0);
-   
+
      $notas_percurso = DB::table('new_old_grades as nog')
      ->where('nog.user_id',$student)
-     ->whereIn('discipline_id',$disciplines->pluck('id_disciplina')) 
+     ->whereIn('discipline_id',$disciplines->pluck('id_disciplina'))
      ->get();
 
 
@@ -1432,7 +1432,7 @@ class mainController extends Controller
 
       foreach ($semestres as $semestre) {
           $dadosSemestre = [];
-           
+
           foreach ($disciplines as $index => $disciplina) {
               if ($index[3] != $semestre) continue;
 
@@ -1449,27 +1449,27 @@ class mainController extends Controller
                   $notas_percurso
               );
 
-                   
-    
+
+
               $temNotaFinal = $dadosDisciplina['nota_final'] !== null;
-              
+
 $temNotaPercurso = $dadosDisciplina['nota_percurso'] !== null;
 
 $notasSaoDiferentes = $dadosDisciplina['nota_final'] != $dadosDisciplina['nota_percurso'];
 
 if (
     (
-        ($temNotaFinal && !$temNotaPercurso) || 
+        ($temNotaFinal && !$temNotaPercurso) ||
         ($temNotaPercurso && $notasSaoDiferentes)
-    ) 
-){    
+    )
+){
                   $dadosSemestre[] = $dadosDisciplina;
               }
-             
+
           }
 
       }
-      
+
       return $dadosSemestre
       ;
   }
@@ -1506,29 +1506,29 @@ if (
                   $notas['pf1'] = $nota;
                   $percentuais['pf1'] = $percentual;
                   break;
-          
+
               case 'pf2':
                   $notas['pf2'] = $nota;
                   $percentuais['pf2'] = $percentual;
                   break;
-          
+
               case 'oa':
                   $notas['oa'] = $nota;
                   $percentuais['oa'] = $percentual;
                   break;
-          
+
               case 'neen':
                   $notas['neen'] = round($nota ?? 0);
                   break;
-          
+
               case 'oral':
                   $notas['oral'] = round($nota ?? 0);
                   break;
-          
+
               case 'recurso':
                   $notas['recurso'] = round($nota ?? 0);
                   break;
-          
+
               case 'exame_especial':
                   $notas['especial'] = round($nota ?? 0);
                   break;
@@ -1539,7 +1539,7 @@ if (
                   // Nenhuma ação necessária
                   break;
           }
-          
+
       }
 
       // Calcular MAC
@@ -1568,7 +1568,7 @@ if (
           $notas['mac_cor'] = 'for-red';
           $notas['final_estado'] = 'Recurso';
           $notas['final_cor'] = 'for-red';
-          
+
       }
 
       // Calcular final se necessário
@@ -1588,7 +1588,7 @@ if (
               $notas['final_estado'] = 'Recurso';
               $notas['final_cor'] = 'for-red';
           }
-       
+
       }
 
       if ($notas['final_estado'] === 'Recurso' && $notas['recurso'] !== null) {
@@ -1602,7 +1602,7 @@ if (
               $notas['final_estado'] = 'Reprovado(a)';
               $notas['final_cor'] = 'for-red';
           }
-       
+
       }
 
       if ($notas['final_estado'] === 'Reprovado(a)' && $notas['especial'] !== null) {
@@ -1615,7 +1615,7 @@ if (
               $notas['final_estado'] = 'Reprovado(a)';
               $notas['final_cor'] = 'for-red';
           }
-       
+
       }
 
       if ($notas['final_estado'] === 'Reprovado(a)' && $notas['extra_nota'] !== null) {
@@ -1630,19 +1630,19 @@ if (
             $notas['final_cor'] = 'for-red';
         }
 
-     
+
         }
 
    }
    else{
     $notas['final'] = $notas['melhoria_nota'];
    }
-   
+
       $nota_percurso = $notas_percurso->filter(function($item) use($disciplina){
           return $item->discipline_id == $disciplina->id_disciplina;
     })->first();
 
-      
+
       return [
         'discipline_id' => $disciplina->id_disciplina,
           'codigo' => $index,
