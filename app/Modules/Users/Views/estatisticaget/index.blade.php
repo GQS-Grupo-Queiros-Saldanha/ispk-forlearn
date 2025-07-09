@@ -101,15 +101,13 @@
             @foreach ($courses as $c)
                 <tr>
                     <td>{{strtoupper(substr($c->currentTranslation->display_name, 0, 1). substr(strstr($c->currentTranslation->display_name, ' '), 1, 1) )}}</td>
-                    
+                    <td id="manha"></td>
+                    <td id="tarde"></td>
+                    <td id="noite"></td>
+                    <td id="protocolo"></td>
                 </tr>
             @endforeach
             <tr>
-                <td>EC</td>
-                <td id="manha"></td>
-                <td id="tarde"></td>
-                <td id="noite"></td>
-                <td id="protocolo"></td>
                 <!--2ano-->
                 <td>02</td>
                 <td></td>
