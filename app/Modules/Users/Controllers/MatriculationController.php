@@ -460,7 +460,7 @@ class MatriculationController extends Controller
     
     private function getEmolumentoEstudent($lectiveYearSelected)
     {
-            Log::info($lectiveYearSelected);
+            Log::info("log info",$lectiveYearSelected);
             $consultArt = DB::table('articles as art')
             ->leftJoin('article_translations as at', function ($join) {
                 $join->on('art.id', '=', 'at.article_id');
