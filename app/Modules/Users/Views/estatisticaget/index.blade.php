@@ -98,6 +98,11 @@
             </tr>
         </thead>
         <tbody>
+            @foreach ($courses as $c)
+                <tr>
+                    <td>{{ substr($c->currentTranslation->display_name, 0, 1) . substr($c->currentTranslation->display_name, 1, 1) }}</td>
+                </tr>
+            @endforeach
             <tr>
                 <td>EC</td>
                 <td id="manha"></td>
@@ -122,7 +127,6 @@
                 <td></td>
                 <td></td>
                 <td></td>
-               
                 <td></td>
             </tr>
         </tbody>
