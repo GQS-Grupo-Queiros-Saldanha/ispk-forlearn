@@ -85,47 +85,62 @@ class EstatisticaController extends Controller
     return $data;
    }
    public function student($classId)
-    {
-        try {
-            $currentDate = Carbon::now();
+   {
+    try {
+        $currentDate = Carbon::now();
 
-            $lectiveYearSelected = DB::table('lective_years')
-                ->whereRaw('"' . $currentDate . '" between `start_date` and `end_date`')
-                ->first();
+        $lectiveYearSelected = DB::table('lective_years')
+            ->whereRaw('"' . $currentDate . '" between `start_date` and `end_date`')
+            ->first();
 
-            if (!$lectiveYearSelected) {
-                return response()->json(['erro' => 'Ano lectivo não encontrado.'], 404);
-            }
-
-            $alunos = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
-                ->where('matriculations.lective_year', $lectiveYearSelected->id)
-                ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
-                ->join('classes as cl', function ($join) use ($classId) {
-                    $join->on('cl.id', '=', 'mc.class_id');
-                    $join->on('mc.matriculation_id', '=', 'matriculations.id');
-                    $join->on('matriculations.course_year', '=', 'cl.year');
-                    $join->where('cl.id', '=', $classId);
-                })
-                ->leftJoin('user_parameters as u_p', function ($join) {
-                    $join->on('u0.id', '=', 'u_p.users_id')
-                        ->where('u_p.parameters_id', 1);
-                })
-                ->select('u_p.value as student_name')
-                ->groupBy('u_p.value')
-                ->orderBy('u_p.value', 'asc')
-                ->get();
-
-            $nomes = $alunos->pluck('student_name');
-            $totalAlunos = $nomes->count();
-
-            return response()->json([
-                'total' => $totalAlunos,
-                'alunos' => $nomes,
-            ]);
-
-        } catch (Exception | Throwable $e) {
-            logError($e);
-            return response()->json(['erro' => $e->getMessage()], 500);
+        if (!$lectiveYearSelected) {
+            return response()->json(['erro' => 'Ano lectivo não encontrado.'], 404);
         }
+
+        $alunos = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
+            ->where('matriculations.lective_year', $lectiveYearSelected->id)
+            ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+            ->join('classes as cl', function ($join) use ($classId) {
+                $join->on('cl.id', '=', 'mc.class_id');
+                $join->on('mc.matriculation_id', '=', 'matriculations.id');
+                $join->on('matriculations.course_year', '=', 'cl.year');
+                $join->where('cl.id', '=', $classId);
+            })
+            ->leftJoin('user_parameters as u_p', function ($join) {
+                $join->on('u0.id', '=', 'u_p.users_id')
+                    ->where('u_p.parameters_id', 1); // Nome do estudante
+            })
+            ->leftJoin('scholarship_holder as sh', 'sh.user_id', '=', 'u0.id')
+            ->select([
+                'u0.id as user_id',
+                'u_p.value as student_name',
+                'sh.scholarship_entity_id',
+            ])
+            ->groupBy('u0.id', 'u_p.value', 'sh.scholarship_entity_id')
+            ->orderBy('u_p.value', 'asc')
+            ->get();
+
+        $alunosFiltrados = [];
+        $protocolo = [];
+
+        foreach ($alunos as $aluno) {
+            if (in_array($aluno->scholarship_entity_id, [1, 16, 17])) {
+                $protocolo[] = $aluno->student_name;
+            } else {
+                $alunosFiltrados[] = $aluno->student_name;
+            }
+        }
+
+        return response()->json([
+            'total' => count($alunosFiltrados),
+            'alunos' => $alunosFiltrados,
+            'protocolo' => $protocolo,
+        ]);
+
+    } catch (Exception | Throwable $e) {
+        logError($e);
+        return response()->json(['erro' => $e->getMessage()], 500);
     }
+}
+
 }
