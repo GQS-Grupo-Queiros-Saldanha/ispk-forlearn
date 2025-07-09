@@ -55,7 +55,7 @@
 
 @section('body')
 
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th rowspan="2"></th>
@@ -99,12 +99,12 @@
         </thead>
         <tbody>
             <tr>
-                <td>1</td>
                 <td>EC</td>
-                <td id="manha">87</td>
-                <td id="tarde">23</td>
-                <td id="noite">54</td>
-                <td id="protocolo">96</td>
+                <td></td>
+                <td id="manha"></td>
+                <td id="tarde"></td>
+                <td id="noite"></td>
+                <td id="protocolo"></td>
                 <!--2ano-->
                 <td>02</td>
                 <td></td>
