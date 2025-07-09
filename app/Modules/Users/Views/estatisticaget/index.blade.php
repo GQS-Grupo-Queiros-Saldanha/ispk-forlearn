@@ -67,30 +67,35 @@
             </tr>
             <tr>
                 <!-- 1ano -->
+                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
                 
                 <!-- 2ano -->
+                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
                 
                 <!-- 3ano -->
+                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
                 
                 <!-- 4ano -->
+                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
                 
                 <!-- 5ano -->
+                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
@@ -107,7 +112,7 @@
                     <td id="manha_{{ $c->id }}"></td>
                     <td id="tarde_{{ $c->id }}"></td>
                     <td id="noite_{{ $c->id }}"></td>
-                    <td id="protocolo_{{ $c->id }}"></td>
+                    <td id="protocolo"></td>
                 </tr>
             @endforeach
         </tbody>
@@ -149,7 +154,7 @@
                             document.getElementById(`manha_${course.id}`).textContent = manha;
                             document.getElementById(`tarde_${course.id}`).textContent = tarde;
                             document.getElementById(`noite_${course.id}`).textContent = noite;
-                            document.getElementById(`protocolo_${course.id}`).textContent = protocolo;
+                            document.getElementById(`protocolo`).textContent = protocolo;
                         });
                 });
             });
