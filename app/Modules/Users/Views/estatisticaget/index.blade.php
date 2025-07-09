@@ -110,28 +110,6 @@
                     <td id="protocolo_{{ $c->id }}"></td>
                 </tr>
             @endforeach
-        
-            <tr>
-                <!--2ano-->
-                <td>02</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <!--3ano-->
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <!--4ano-->
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
         </tbody>
     </table>
 @endsection
