@@ -320,7 +320,7 @@
             fetch(`/pt/estatisticaget/student/${turma}`)
                 .then(res => res.json())
                 .then(json => {
-                    const totalAlunos = json.alunos ?? 0; // Usa nullish coalescing para valores nulos/undefined
+                    const totalAlunos = json.alunos ?? 0; 
                     console.log('Total de alunos:', totalAlunos);
                 })
                 .catch(error => console.error('Erro na entrega dos dados:', error));
