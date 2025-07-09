@@ -365,6 +365,7 @@
                 }
 
                 ajaxMatricula("/users/get_matriculation_list_by/" + lective_years);
+                console.log(lective_years);
             })
 
             curso.bind('change keypress', function() {
