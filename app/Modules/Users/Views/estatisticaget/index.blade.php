@@ -67,39 +67,38 @@
             </tr>
             <tr>
                 <!-- 1ano -->
-                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
+                <th></th>
                 
                 <!-- 2ano -->
-                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
                 
                 <!-- 3ano -->
-                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
+                <th></th>
                 
                 <!-- 4ano -->
-                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
+                <th></th>
                 
                 <!-- 5ano -->
-                <th></th>
                 <th>M</th>
                 <th>T</th>
                 <th>N</th>
                 <th>PT</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
