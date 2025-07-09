@@ -275,59 +275,51 @@
         // Função que carrega as turmas com base no curso e ano letivo
         function loadTurmas(courseId, lectiveYear) {
             if (!courseId || !lectiveYear) return;
-    
-            fetch(`/pt/grades/teacher_disciplines/${courseId}/${lectiveYear}`)
-                .then(res => res.json())
-                .then(response => {
-                    const turmas = response.turma || [];
-                    turmaSelector.innerHTML = '';
-    
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
-                    defaultOption.selected = true;
-                    defaultOption.textContent = 'Seleciona a turma';
-                    turmaSelector.appendChild(defaultOption);
-    
-                    if (turmas.length > 0) {
-                        turmas.forEach(turma => {
-                            const option = document.createElement('option');
-                            option.value = turma.id;
-                            option.textContent = turma.display_name;
-                            turmaSelector.appendChild(option);
-                        });
-    
-                        turmaSelector.disabled = false;
-                        $('.selectpicker').selectpicker('refresh');
-                        // getUrl(); // se realmente precisares disto
-                    } else {
-                        turmaSelector.disabled = true;
-                    }
-                })
-                .catch(error => console.error('Erro ao carregar turmas:', error));
-        }
-    
-        // Quando o utilizador muda o curso, carregar as turmas
-        courseSelector.addEventListener('change', function () {
-            const courseId = this.value;
-            const lectiveYear = lectiveSelector.value;
-            loadTurmas(courseId, lectiveYear);
-        });
 
-        turmaSelector.addEventListener('change', function () {
-            const turma = this.value;
-            if (!turma) return;
-    
-            fetch(`/pt/estatisticaget/student/${turma}`)
-                .then(res => res.json())
-                .then(json => {
-                    const totalAlunos = json.alunos ?? 0; 
-                    console.log('Total de alunos:', totalAlunos);
-                })
-                .catch(error => console.error('Erro na entrega dos dados:', error));
+                fetch(`/pt/grades/teacher_disciplines/${courseId}/${lectiveYear}`)
+                    .then(res => res.json())
+                    .then(response => {
+                        const turmas = response.turma || [];
+                        turmaSelector.innerHTML = '';
 
-        });
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.selected = true;
+                        defaultOption.textContent = 'Seleciona a turma';
+                        turmaSelector.appendChild(defaultOption);
+
+                        if (turmas.length > 0) {
+                            turmas.forEach(turma => {
+                                const option = document.createElement('option');
+                                option.value = turma.id;
+                                option.textContent = turma.display_name;
+                                turmaSelector.appendChild(option);
+
+                                // 👇 Aqui está a parte nova: já busca os alunos dessa turma
+                                fetch(`/pt/estatisticaget/student/${turma.id}`)
+                                    .then(res => res.json())
+                                    .then(json => {
+                                        const totalAlunos = json.alunos ?? 0;
+                                        console.log(`Turma ${turma.display_name} (ID ${turma.id}): ${totalAlunos} alunos`);
+                                        // Aqui podes guardar ou mostrar os dados conforme precisares
+                                    })
+                                    .catch(error => console.error('Erro ao buscar alunos da turma:', error));
+                            });
+
+                            turmaSelector.disabled = false;
+                            $('.selectpicker').selectpicker('refresh');
+                        } else {
+                            turmaSelector.disabled = true;
+                        }
+                    })
+                    .catch(error => console.error('Erro ao carregar turmas:', error));
+                }
+                courseSelector.addEventListener('change', function () {
+                const courseId = this.value;
+                const lectiveYear = lectiveSelector.value;
+                loadTurmas(courseId, lectiveYear);
+            });
     });
-    
 </script>
     
 @endsection
