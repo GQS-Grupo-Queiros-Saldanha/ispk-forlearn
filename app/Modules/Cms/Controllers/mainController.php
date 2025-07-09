@@ -1414,6 +1414,7 @@ class mainController extends Controller
       if(!isset($courses->courses_id)){
           return "Nenhum curso associado";
       }
+      dd($matriculations);
 
       $disciplines = $this->get_disciplines($lectiveYearSelected_id, $student);
       $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->user_id);
