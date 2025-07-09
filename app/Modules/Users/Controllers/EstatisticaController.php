@@ -97,7 +97,7 @@ class EstatisticaController extends Controller
         ->groupBy('up.users_id', 'up.value', 'c.code')
         ->get();
 
-        $totalAlunos = $alunos->count();
+        $totalAlunos = $alunos->count(); 
     
         return response()->json(['alunos' => $totalAlunos]);
    }

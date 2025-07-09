@@ -100,31 +100,35 @@
         <tbody>
             <tr>
                 <td>1</td>
-                <td>EC</td>
-                <td>23</td>
-                <td>54</td>
-                <td>87</td>
-                <td>09</td>
+                <td id="manha">EC</td>
+                <td id="tarde">23</td>
+                <td id="noite">54</td>
+                <td id="protocolo">87</td>
+                <!--2ano-->
+                <td>02</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <!--3ano-->
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
+                <!--4ano-->
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+               
                 <td></td>
             </tr>
             <tr>
                 <td>2</td>
                 <td>ENT</td>
-                <td></td>
+                <td>00</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -295,7 +299,7 @@
                                 option.textContent = turma.display_name;
                                 turmaSelector.appendChild(option);
 
-                                // 👇 Aqui está a parte nova: já busca os alunos dessa turma
+                                //busca os alunos dessa turma
                                 fetch(`/pt/estatisticaget/student/${turma.id}`)
                                     .then(res => res.json())
                                     .then(json => {
