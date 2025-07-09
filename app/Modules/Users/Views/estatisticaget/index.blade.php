@@ -100,7 +100,6 @@
         <tbody>
             <tr>
                 <td>EC</td>
-                <td></td>
                 <td id="manha"></td>
                 <td id="tarde"></td>
                 <td id="noite"></td>
