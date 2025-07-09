@@ -349,6 +349,7 @@
                 curso_years.prop('disabled', false);
                 curso_years.prop('disabled', false);
                 curso_years.selectpicker('refresh');
+                console.log(lective_years);
 
                 if (lective_years > 6) {
                     $("#group1").hide();
@@ -365,7 +366,7 @@
                 }
 
                 ajaxMatricula("/users/get_matriculation_list_by/" + lective_years);
-                console.log(lective_years);
+                
             })
 
             curso.bind('change keypress', function() {
