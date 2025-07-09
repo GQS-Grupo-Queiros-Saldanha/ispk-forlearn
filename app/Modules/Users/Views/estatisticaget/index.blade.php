@@ -100,7 +100,7 @@
         <tbody>
             @foreach ($courses as $c)
                 <tr>
-                    <td>{{ substr($c->currentTranslation->display_name, 0, 1) . substr($c->currentTranslation->display_name, 1, 1) }}</td>
+                    <td>{{ strtoupper(substr($c->currentTranslation->display_name, 0, 2)) }}</td>
                 </tr>
             @endforeach
             <tr>
