@@ -460,7 +460,7 @@ class MatriculationController extends Controller
     
     private function getEmolumentoEstudent($lectiveYearSelected)
     {
-       
+            Log::info($lectiveYearSelected);
             $consultArt = DB::table('articles as art')
             ->leftJoin('article_translations as at', function ($join) {
                 $join->on('art.id', '=', 'at.article_id');
@@ -903,38 +903,6 @@ class MatriculationController extends Controller
             return response()->json($e->getMessage(), 500);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public function index()
@@ -2451,7 +2419,7 @@ class MatriculationController extends Controller
             //->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
             ->first();
             
-              $emolumento_confirma_prematricula= self::pre_matricula_confirma_emolumento( $lectiveYearSelected->id);
+            $emolumento_confirma_prematricula= self::pre_matricula_confirma_emolumento( $lectiveYearSelected->id);
             
             $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
                 ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
