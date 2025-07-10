@@ -87,8 +87,6 @@ class EstatisticaController extends Controller
    }
    public function student($classId, $courseYear)
    {
-       //Log::info("Turma: $classId | Ano curricular: $courseYear");
-   
        try {
            $currentDate = Carbon::now();
    
@@ -103,39 +101,45 @@ class EstatisticaController extends Controller
            $alunos = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
                ->where('matriculations.lective_year', $lectiveYearSelected->id)
                ->where('matriculations.course_year', $courseYear)
-               ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
-               ->join('classes as cl', function ($join) use ($classId) {
-                   $join->on('cl.id', '=', 'mc.class_id');
-                   $join->on('mc.matriculation_id', '=', 'matriculations.id');
-                   $join->where('cl.id', '=', $classId);
-               })
+               ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+               ->where('mc.class_id', $classId)
                ->leftJoin('user_parameters as u_p', function ($join) {
                    $join->on('u0.id', '=', 'u_p.users_id')
-                       ->where('u_p.parameters_id', 1);
+                       ->where('u_p.parameters_id', 1); // Nome do aluno
                })
-               ->select('u0.id as user_id', 'u_p.value as student_name')
-               ->groupBy('u0.id', 'u_p.value')
+               ->leftJoin('scholarship_holder as sh', function ($join) {
+                   $join->on('u0.id', '=', 'sh.user_id')
+                        ->where('sh.are_scholarship_holder', 1);
+               })
+               ->leftJoin('scholarship_entity as se', 'se.id', '=', 'sh.scholarship_entity_id')
+               ->select([
+                   'u0.id as user_id',
+                   'u_p.value as student_name',
+                   'sh.are_scholarship_holder as is_scholar',
+                   'se.company as entidade',
+                   'se.type as categoria'
+               ])
+               ->groupBy('u0.id', 'u_p.value', 'sh.are_scholarship_holder', 'se.company', 'se.type')
                ->orderBy('u_p.value', 'asc')
                ->get();
-               Log::info("Número de alunos: ".$alunos);
-
-           $userIds = $alunos->pluck('user_id')->toArray();
    
-           $protocolos = DB::table('scholarship_holder')
-               ->whereIn('user_id', $userIds)
-               ->whereIn('scholarship_entity_id', [1, 10, 17])
-               ->pluck('user_id')
-               ->toArray();
+           // Separar os bolseiros
+           $bolseiros = $alunos->filter(function ($aluno) {
+               return $aluno->is_scholar == 1;
+           });
    
            return response()->json([
-               'total' => count($alunos),
-               'protocolo' => count($protocolos)
+               'total' => $alunos->count(),
+               'protocolo' => $bolseiros->count(),
+               'alunos' => $alunos
            ]);
    
        } catch (Exception | Throwable $e) {
            logError($e);
            return response()->json(['erro' => $e->getMessage()], 500);
        }
+   }
+   
    }
    
 
