@@ -280,16 +280,25 @@ document.addEventListener('DOMContentLoaded', function () {
         coursesToLoad.forEach(course => {
             for (let year = 1; year <= 5; year++) {
                 fetch(`/api/payment-stats?course_id=${course.id}&year=${year}&lective_year=${lectiveYear}&class_id=${classId || ''}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        document.getElementById(`manha_${year}_${course.id}`).textContent = data.manha || '0';
-                        document.getElementById(`tarde_${year}_${course.id}`).textContent = data.tarde || '0';
-                        document.getElementById(`noite_${year}_${course.id}`).textContent = data.noite || '0';
-                        document.getElementById(`protocolo_${year}_${course.id}`).textContent = data.protocolo || '0';
-                        
-                        // Atualizar totais
-                        updateTotals(year, data);
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById(`manha_${year}_${course.id}`).textContent = data.manha || '0';
+                    document.getElementById(`tarde_${year}_${course.id}`).textContent = data.tarde || '0';
+                    document.getElementById(`noite_${year}_${course.id}`).textContent = data.noite || '0';
+
+                    // 🔽 AQUI está a linha que deves adicionar:
+                    const totalProtocolo = data.protocolo?.total ?? data.protocolo ?? 0;
+                    document.getElementById(`protocolo_${year}_${course.id}`).textContent = totalProtocolo;
+
+                    // atualizar totais:
+                    updateTotals(year, {
+                        manha: data.manha,
+                        tarde: data.tarde,
+                        noite: data.noite,
+                        protocolo: totalProtocolo
                     });
+                });
+
             }
         });
     }
