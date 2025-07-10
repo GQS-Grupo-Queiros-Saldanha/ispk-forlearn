@@ -136,7 +136,7 @@
             };
 
             // Faço fetch das turmas associadas ao curso e ano lectivo
-            fetch(`/pt/grades/teacher_disciplines/${course.id}/2`)
+            fetch(`/pt/grades/teacher_disciplines/${course.id}/${lectiveYear}`)
                 .then(res => res.json())
                 .then(response => {
                     const turmas = response.turma || [];
@@ -152,6 +152,8 @@
                         
                         const ano = parseInt(codigo.charAt(2));
                         console.log(ano);
+                        console.log(`Código: ${codigo}, carácter 2: ${codigo.charAt(2)}, substring(2, 3): ${codigo.substring(2, 3)}, substring(2, 4): ${codigo.substring(2, 4)}`);
+
 
                         // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
                         if (![1, 2, 3, 4, 5].includes(ano)) return;
