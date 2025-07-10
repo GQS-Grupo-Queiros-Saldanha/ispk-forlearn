@@ -141,6 +141,7 @@
                             const totalAlunos = json.total ?? 0;
                             const protocolo = json.protocolo;
                             const periodo = turma.display_name.charAt(3);
+                            console.log('total: ', totalAlunos, 'protocolo:', protocolo );
 
                             if (periodo === "T") {
                                 tarde += totalAlunos;

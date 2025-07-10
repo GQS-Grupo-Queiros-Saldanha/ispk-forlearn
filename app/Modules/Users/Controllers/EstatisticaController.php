@@ -115,7 +115,7 @@ class EstatisticaController extends Controller
                 ->orderBy('u_p.value', 'asc')
                 ->get();
 
-            /*$resultado = [];
+            $resultado = [];
             $protocolo = [];
 
             foreach ($alunos as $aluno) {
@@ -129,12 +129,13 @@ class EstatisticaController extends Controller
                 } else {
                     $resultado[] = $aluno->student_name;
                 }
-            }*/
+            }
             
 
             return response()->json([
-                'total' => count($alunos),
-                'alunos' => $alunos
+                'total' => count($resultado),
+                'alunos' => $resultado,
+                'protocolo' => $protocolo
             ]);
 
         } catch (Exception | Throwable $e) {
