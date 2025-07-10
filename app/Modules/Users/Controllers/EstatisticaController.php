@@ -126,9 +126,10 @@ class EstatisticaController extends Controller
                 ->toArray();
             
             // Separar os nomes dos alunos
+            /*
             $alunosNormais = $alunos->reject(fn($a) => in_array($a->user_id, $protocolos))->pluck('student_name');
             $alunosProtocolo = $alunos->filter(fn($a) => in_array($a->user_id, $protocolos))->pluck('student_name');
-            
+            */
             // Devolver os dados separados
             return response()->json([
                 'total' => $alunosNormais->count(),
