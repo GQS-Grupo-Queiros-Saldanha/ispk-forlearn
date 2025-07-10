@@ -11,8 +11,6 @@ Route::post('/actualizar‑whatsapp', [UsersController::class, 'actualizarWhatsa
 Route::get('/api/getwhatsapp/{whatsapp}', 'App\Modules\Users\Controllers\MatriculationController@getWhatsapp');
 Route::get('/api/candidaturaswhatsapp/{whatsapp}', 'App\Modules\Users\Controllers\UsersController@candidaturaswhatsapp');
 
-
-
 Route::group(
     [
         'module' => 'Users',

@@ -136,7 +136,7 @@
             };
 
             // Faço fetch das turmas associadas ao curso e ano lectivo
-            fetch(`/pt/grades/teacher_disciplines/${course.id}/${lectiveYear}`)
+            fetch(`/pt/grades/teacher_disciplines/${course.id}/2`)
                 .then(res => res.json())
                 .then(response => {
                     const turmas = response.turma || [];
