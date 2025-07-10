@@ -94,87 +94,99 @@
             </thead>
             <tbody>
                 @foreach ($courses as $c)
-                    @php
-                        $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
-                    @endphp
-                    <tr>
-                        <td class="fw-semibold bg-light">{{ $sigla }}</td>
-                        <!-- 1ano -->
-                        <td id="manha_{{ $c->id }}">-</td>
-                        <td id="tarde_{{ $c->id }}">-</td>
-                        <td id="noite_{{ $c->id }}">-</td>
-                        <td id="protocolo_{{ $c->id }}">-</td>
-                        
-                        <!-- 2ano -->
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        
-                        <!-- 3ano -->
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        
-                        <!-- 4ano -->
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        
-                        <!-- 5ano -->
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
-                @endforeach
+                @php
+                    $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
+                @endphp
+                <tr>
+                    <td class="fw-semibold bg-light">{{ $sigla }}</td>
+                    @for ($ano = 1; $ano <= 5; $ano++)
+                        <td id="manha_{{ $c->id }}_{{ $ano }}">-</td>
+                        <td id="tarde_{{ $c->id }}_{{ $ano }}">-</td>
+                        <td id="noite_{{ $c->id }}_{{ $ano }}">-</td>
+                        <td id="protocolo_{{ $c->id }}_{{ $ano }}">-</td>
+                    @endfor
+                </tr>
+            @endforeach
+
             </tbody>
         </table>
     </div>
 @endsection
 
 @section('scripts-new')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const lectiveSelector = document.getElementById('lective_year');
-            const lectiveYear = lectiveSelector.value;
-            
-            const courses = @json($courses);
+@section('scripts-new')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Primeiro, obtenho o valor do ano lectivo seleccionado
+        const lectiveSelector = document.getElementById('lective_year');
+        const lectiveYear = lectiveSelector.value;
 
-            courses.forEach(course => {
-                let manha = 0, tarde = 0, noite = 0;
+        // Carrego todos os cursos que vieram do backend via Blade
+        const courses = @json($courses);
 
-                fetch(`/pt/grades/teacher_disciplines/${course.id}/${lectiveYear}`)
-                    .then(res => res.json())
-                    .then(response => {
-                        const turmas = response.turma || [];
-                        console.log(turmas);
-                        turmas.forEach(turma => {
-                            fetch(`/pt/estatisticaget/student/${turma.id}`)
-                                .then(res => res.json())
-                                .then(json => {
-                                    const totalAlunos = json.total ?? 0;
-                                    const protocolo = json.protocolo;
-                                    const periodo = turma.display_name.charAt(3);
+        // Agora, para cada curso, vou iniciar a recolha de dados
+        courses.forEach(course => {
+            // Crio um mapa para armazenar os totais de cada ano e período (manhã, tarde, noite e protocolo)
+            const totais = {
+                1: { M: 0, T: 0, N: 0, PT: 0 },
+                2: { M: 0, T: 0, N: 0, PT: 0 },
+                3: { M: 0, T: 0, N: 0, PT: 0 },
+                4: { M: 0, T: 0, N: 0, PT: 0 },
+                5: { M: 0, T: 0, N: 0, PT: 0 },
+            };
 
-                                    if (periodo === "T") {
-                                        tarde += totalAlunos;
-                                    } else if (periodo === "M") {
-                                        manha += totalAlunos;
-                                    } else {
-                                        noite += totalAlunos;
-                                    }
+            // Faço fetch das turmas associadas ao curso e ano lectivo
+            fetch(`/pt/grades/teacher_disciplines/${course.id}/${lectiveYear}`)
+                .then(res => res.json())
+                .then(response => {
+                    const turmas = response.turma || [];
 
-                                    document.getElementById(`manha_${course.id}`).textContent = manha;
-                                    document.getElementById(`tarde_${course.id}`).textContent = tarde;
-                                    document.getElementById(`noite_${course.id}`).textContent = noite;
-                                    document.getElementById(`protocolo_${course.id}`).textContent = protocolo;
-                                });
-                        });
+                    // Percorro cada turma devolvida
+                    turmas.forEach(turma => {
+                        const codigo = turma.display_name;
+
+                        // Verifico se o código da turma tem pelo menos 4 caracteres
+                        if (codigo.length < 4) return;
+
+                        // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
+                        const ano = parseInt(codigo.charAt(2));
+
+                        // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
+                        if (![1, 2, 3, 4, 5].includes(ano)) return;
+
+                        // Extraio o período da turma a partir do 4.º carácter (posição 3)
+                        const periodo = codigo.charAt(3);
+
+                        // Faço fetch dos dados estatísticos desta turma específica
+                        fetch(`/pt/estatisticaget/student/${turma.id}`)
+                            .then(res => res.json())
+                            .then(json => {
+                                const totalAlunos = json.total ?? 0;
+                                const totalProtocolo = json.protocolo ?? 0;
+
+                                // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
+                                if (periodo === "M") {
+                                    totais[ano].M += totalAlunos;
+                                } else if (periodo === "T") {
+                                    totais[ano].T += totalAlunos;
+                                } else if (periodo === "N") {
+                                    totais[ano].N += totalAlunos;
+                                }
+
+                                // Protocolo é independente do período, mas é somado ao ano correto
+                                totais[ano].PT += totalProtocolo;
+
+                                // Após cada fetch individual, atualizo os elementos da tabela
+                                document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
+                                document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
+                                document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
+                                document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
+                            });
                     });
-            });
+                });
         });
-    </script>
+    });
+</script>
+@endsection
+
 @endsection
