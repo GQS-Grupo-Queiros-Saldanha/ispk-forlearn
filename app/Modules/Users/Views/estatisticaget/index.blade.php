@@ -150,7 +150,7 @@
                     .then(res => res.json())
                     .then(response => {
                         const turmas = response.turma || [];
-
+                        console.log(turmas);
                         turmas.forEach(turma => {
                             fetch(`/pt/estatisticaget/student/${turma.id}`)
                                 .then(res => res.json())
