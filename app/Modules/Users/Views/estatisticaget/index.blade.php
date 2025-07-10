@@ -142,7 +142,7 @@
                             const protocolo = json.protocolo;
                             cont valorOriginal = json.valororiginal;
                             const periodo = turma.display_name.charAt(3);
-                            console.log('total: ', totalAlunos, 'protocolo:', protocolo );
+                            console.log('real:',valorOriginal 'total: ', totalAlunos 'protocolo:', protocolo );
 
                             if (periodo === "T") {
                                 tarde += totalAlunos;
