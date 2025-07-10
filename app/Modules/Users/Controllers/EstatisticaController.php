@@ -85,7 +85,7 @@ class EstatisticaController extends Controller
     ];
     return $data;
    }
-   public function student($classId)
+   public function student($classId, $courseYear=2)
     {
         Log::info($classId);
         try {
@@ -105,7 +105,7 @@ class EstatisticaController extends Controller
                 ->join('classes as cl', function ($join) use ($classId) {
                     $join->on('cl.id', '=', 'mc.class_id');
                     $join->on('mc.matriculation_id', '=', 'matriculations.id');
-                    $join->on('matriculations.course_year', '=', 'cl.year');
+                    $join->on('matriculations.course_year', '=', $courseYear);
                     $join->where('cl.id', '=', $classId);
                 })
                 ->leftJoin('user_parameters as u_p', function ($join) {
