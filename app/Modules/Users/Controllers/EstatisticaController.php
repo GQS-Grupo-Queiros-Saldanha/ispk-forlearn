@@ -133,7 +133,7 @@ class EstatisticaController extends Controller
             
 
             return response()->json([
-                'alunos' => $alunos
+                'alunos' => count($alunos)
             ]);
 
         } catch (Exception | Throwable $e) {
