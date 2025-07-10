@@ -87,7 +87,7 @@ class EstatisticaController extends Controller
    }
    public function student($classId, $courseYear)
    {
-       Log::info("Turma: $classId | Ano curricular: $courseYear");
+       //Log::info("Turma: $classId | Ano curricular: $courseYear");
    
        try {
            $currentDate = Carbon::now();
@@ -117,7 +117,7 @@ class EstatisticaController extends Controller
                ->groupBy('u0.id', 'u_p.value')
                ->orderBy('u_p.value', 'asc')
                ->get();
-   
+               Log::info("alunos:", count($calunos));
            $userIds = $alunos->pluck('user_id')->toArray();
    
            $protocolos = DB::table('scholarship_holder')
