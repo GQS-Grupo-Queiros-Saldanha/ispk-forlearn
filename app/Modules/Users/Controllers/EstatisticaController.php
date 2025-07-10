@@ -148,5 +148,55 @@ class EstatisticaController extends Controller
             return response()->json(['erro' => $e->getMessage()], 500);
         }
     }
+    public function paymentStats(Request $request)
+{
+    try {
+        $courseId = $request->input('course_id');
+        $year = $request->input('year');
+        $lectiveYear = $request->input('lective_year');
+        $classId = $request->input('class_id');
+
+        $turmas = DB::table('classes')
+            ->where('course_id', $courseId)
+            ->where('year', $year)
+            ->when($classId, function ($query) use ($classId) {
+                return $query->where('id', $classId);
+            })
+            ->get();
+
+        $contadores = [
+            'manha' => 0,
+            'tarde' => 0,
+            'noite' => 0,
+            'protocolo' => 0
+        ];
+
+        foreach ($turmas as $turma) {
+            $turmaCode = $turma->name; // Ex: EC1N01
+            $periodo = strtolower(substr($turmaCode, 3, 1)); // 'm', 't', 'n'
+
+            $periodoNome = match($periodo) {
+                'm' => 'manha',
+                't' => 'tarde',
+                'n' => 'noite',
+                default => null,
+            };
+
+            if (!$periodoNome) continue;
+
+            $response = $this->student($turma->id)->getData(true);
+
+            $contadores[$periodoNome] += $response['total'];
+            $contadores['protocolo'] += $response['protocolo'];
+        }
+
+        return response()->json($contadores);
+
+    } catch (\Throwable $e) {
+        logError($e);
+        return response()->json(['erro' => $e->getMessage()], 500);
+    }
+}
+
 
 }
