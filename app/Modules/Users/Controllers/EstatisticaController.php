@@ -140,7 +140,7 @@ class EstatisticaController extends Controller
        }
    }
    
-   }
+
    
 
 }
