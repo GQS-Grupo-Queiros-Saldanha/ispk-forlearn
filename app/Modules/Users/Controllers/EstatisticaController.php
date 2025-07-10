@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\DB;
 use LDAP\Result;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Log;
 
 use PDF;
 use App\Model\Institution;
