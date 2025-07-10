@@ -30,7 +30,7 @@ Route::group(
         
         Route::get('/estatisticaget', [EstatisticaController::class, 'index']);
         Route::get('/estatisticaget/student/{turma}', [EstatisticaController::class, 'student']);
-        Route::get('/payment-stats', [EstatisticaController::class, 'paymentStats']);
+        
         // Route::get('users/testeParametro', 'UsersController@updateParametro');
         // Route::get('users/testeParametro', 'UsersController@updateUsuario');
         //Emarq
