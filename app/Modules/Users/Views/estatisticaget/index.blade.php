@@ -140,6 +140,7 @@
                 .then(res => res.json())
                 .then(response => {
                     const turmas = response.turma || [];
+                    console.log(course.id,lectiveYear)
 
                     // Percorro cada turma devolvida
                     turmas.forEach(turma => {
