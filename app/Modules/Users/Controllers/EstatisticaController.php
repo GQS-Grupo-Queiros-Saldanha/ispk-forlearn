@@ -116,14 +116,25 @@ class EstatisticaController extends Controller
                 ->get();
 
 
-            $bolsa = DB::table('scholarship_holder')
-                ->where('user_id', $aluno->user_id, || 'scholarship_entity_id' in (1,10,17))
-                ->first();
-            
+            $userIds = $alunos->pluck('user_id')->toArray();
 
+            // Buscar os alunos com bolsa de protocolo
+            $protocolos = DB::table('scholarship_holder')
+                ->whereIn('user_id', $userIds)
+                ->whereIn('scholarship_entity_id', [1, 10, 17])
+                ->pluck('user_id')
+                ->toArray();
+            
+            // Separar os nomes dos alunos
+            $alunosNormais = $alunos->reject(fn($a) => in_array($a->user_id, $protocolos))->pluck('student_name');
+            $alunosProtocolo = $alunos->filter(fn($a) => in_array($a->user_id, $protocolos))->pluck('student_name');
+            
+            // Devolver os dados separados
             return response()->json([
-                'total' => count($alunos),
-                'protocolo' => count($bolsa)
+                'total' => $alunosNormais->count(),
+                'alunos' => $alunosNormais,
+                'protocolo' => $alunosProtocolo->count(),
+                'protocolo_nomes' => $alunosProtocolo
             ]);
 
         } catch (Exception | Throwable $e) {

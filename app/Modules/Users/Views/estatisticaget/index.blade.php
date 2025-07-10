@@ -141,7 +141,6 @@
 
                             const totalAlunos = json.total ?? 0;
                             const protocolo = json.protocolo;
-                            const valorOriginal = json.valororiginal;
 
                             const periodo = turma.display_name.charAt(3);
                            
