@@ -1937,7 +1937,7 @@ class MatriculationController extends Controller
             $lectiveYearSelected = DB::table('lective_years')
                 ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
                 ->first();
-            
+             
              $emolumento_confirma_prematricula= self::pre_matricula_confirma_emolumento( $lectiveYearSelected->id);
             
                 $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
