@@ -140,7 +140,6 @@
                 .then(res => res.json())
                 .then(response => {
                     const turmas = response.turma || [];
-                    console.log(course.id,lectiveYear)
 
                     // Percorro cada turma devolvida
                     turmas.forEach(turma => {
@@ -150,9 +149,9 @@
                         if (codigo.length < 4) return;
 
                         // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
-                        
-                        const ano = 2;
-                     
+                       for(let a = 1; a < 5, a ++){
+                        const ano = a;
+                       }
 
                         // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
                         if (![1, 2, 3, 4, 5].includes(ano)) return;
