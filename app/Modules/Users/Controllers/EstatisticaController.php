@@ -117,7 +117,7 @@ class EstatisticaController extends Controller
                ->groupBy('u0.id', 'u_p.value')
                ->orderBy('u_p.value', 'asc')
                ->get();
-               Log::info("Número de alunos: " . count($alunos));
+               Log::info("Número de alunos: ".$alunos);
 
            $userIds = $alunos->pluck('user_id')->toArray();
    
