@@ -149,8 +149,8 @@
                         if (codigo.length < 4) return;
 
                         // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
-                       for(let a = 1; a < 5, a ++){
-                        const ano = a;
+                        for(let a = 1; a <= 5; a++) { 
+                            const ano = a;
                        }
 
                         // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
