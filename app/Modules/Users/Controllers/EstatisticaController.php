@@ -85,9 +85,10 @@ class EstatisticaController extends Controller
     ];
     return $data;
    }
-   public function student($classId, $courseYear=2)
+   public function student($classId, $courseYear)
     {
-        Log::info($classId);
+        Log::info("Turma: $classId | Ano curricular: $courseYear");
+
         try {
             $currentDate = Carbon::now();
 
@@ -101,42 +102,33 @@ class EstatisticaController extends Controller
 
             $alunos = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
                 ->where('matriculations.lective_year', $lectiveYearSelected->id)
+                ->where('matriculations.course_year', $courseYear)
                 ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
                 ->join('classes as cl', function ($join) use ($classId) {
                     $join->on('cl.id', '=', 'mc.class_id');
                     $join->on('mc.matriculation_id', '=', 'matriculations.id');
-                    $join->on('matriculations.course_year', '=', $courseYear);
                     $join->where('cl.id', '=', $classId);
                 })
                 ->leftJoin('user_parameters as u_p', function ($join) {
                     $join->on('u0.id', '=', 'u_p.users_id')
-                        ->where('u_p.parameters_id', 1); // nome do aluno
+                        ->where('u_p.parameters_id', 1);
                 })
                 ->select('u0.id as user_id', 'u_p.value as student_name')
                 ->groupBy('u0.id', 'u_p.value')
                 ->orderBy('u_p.value', 'asc')
                 ->get();
 
-
             $userIds = $alunos->pluck('user_id')->toArray();
 
-            // Buscar os alunos com bolsa de protocolo
             $protocolos = DB::table('scholarship_holder')
                 ->whereIn('user_id', $userIds)
                 ->whereIn('scholarship_entity_id', [1, 10, 17])
                 ->pluck('user_id')
                 ->toArray();
-            
-            // Separar os nomes dos alunos
-            /*
-            $alunosNormais = $alunos->reject(fn($a) => in_array($a->user_id, $protocolos))->pluck('student_name');
-            $alunosProtocolo = $alunos->filter(fn($a) => in_array($a->user_id, $protocolos))->pluck('student_name');
-            */
-            // Devolver os dados separados
+
             return response()->json([
                 'total' => count($alunos),
                 'protocolo' => count($protocolos)
-
             ]);
 
         } catch (Exception | Throwable $e) {
