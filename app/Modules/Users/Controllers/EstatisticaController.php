@@ -85,7 +85,7 @@ class EstatisticaController extends Controller
     ];
     return $data;
    }
-   public function student($classId, $courseYear = 2)
+   public function student($classId, $courseYear = 1)
     {
         
         Log::info("Turma: $classId | Ano curricular: $courseYear");
