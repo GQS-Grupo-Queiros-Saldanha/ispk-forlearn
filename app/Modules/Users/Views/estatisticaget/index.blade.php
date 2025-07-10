@@ -152,9 +152,7 @@
                         // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
                         
                         const ano = parseInt(codigo.charAt(2));
-                        console.log(ano);
-                        console.log(`Código: ${codigo}, carácter 2: ${codigo.charAt(2)}, substring(2, 3): ${codigo.substring(2, 3)}, substring(2, 4): ${codigo.substring(2, 4)}`);
-
+                     
 
                         // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
                         if (![1, 2, 3, 4, 5].includes(ano)) return;
