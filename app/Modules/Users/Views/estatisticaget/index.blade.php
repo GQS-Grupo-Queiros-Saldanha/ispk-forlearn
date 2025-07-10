@@ -144,7 +144,7 @@
                             const valorOriginal = json.valororiginal;
 
                             const periodo = turma.display_name.charAt(3);
-                            console.log('real:'valorOriginal 'total:' totalAlunos 'protocolo:' protocolo );
+                           
 
                             if (periodo === "T") {
                                 tarde += totalAlunos;
