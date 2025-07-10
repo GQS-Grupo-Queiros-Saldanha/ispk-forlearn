@@ -132,10 +132,9 @@ class EstatisticaController extends Controller
             */
             // Devolver os dados separados
             return response()->json([
-                'total' => $alunosNormais->count(),
-                'alunos' => $alunosNormais,
-                'protocolo' => $alunosProtocolo->count(),
-                'protocolo_nomes' => $alunosProtocolo
+                'total' => count($alunos),
+                'protocolo' => count($protocolos)
+
             ]);
 
         } catch (Exception | Throwable $e) {
