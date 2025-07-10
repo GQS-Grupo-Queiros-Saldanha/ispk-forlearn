@@ -140,6 +140,7 @@
                         .then(json => {
                             const totalAlunos = json.total ?? 0;
                             const protocolo = json.protocolo;
+                            cont valorOriginal = json.valororiginal;
                             const periodo = turma.display_name.charAt(3);
                             console.log('total: ', totalAlunos, 'protocolo:', protocolo );
 

@@ -134,7 +134,7 @@ class EstatisticaController extends Controller
 
             return response()->json([
                 'total' => count($resultado),
-                'alunos' => $resultado,
+                'valororiginal' => count($aluno),
                 'protocolo' => count($protocolo)
             ]);
 
