@@ -85,8 +85,8 @@ class EstatisticaController extends Controller
     ];
     return $data;
    }
-   public function student($classId, $courseYear)
-   {
+   public function student($classId)
+   {    $courseYear = 2;
        try {
            $currentDate = Carbon::now();
    
