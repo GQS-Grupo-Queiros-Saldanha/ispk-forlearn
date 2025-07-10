@@ -151,7 +151,7 @@
 
                         // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
                         
-                        const ano = parseInt(codigo.charAt(2));
+                        const ano = 2;
                      
 
                         // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
