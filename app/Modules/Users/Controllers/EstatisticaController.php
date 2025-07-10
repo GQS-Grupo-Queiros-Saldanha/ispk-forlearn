@@ -115,27 +115,15 @@ class EstatisticaController extends Controller
                 ->orderBy('u_p.value', 'asc')
                 ->get();
 
-            $resultado = [];
-            $protocolo = [];
 
-            foreach ($alunos as $aluno) {
-                $bolsa = DB::table('scholarship_holder')
-                    ->where('user_id', $aluno->user_id)
-                    ->first();
-            
-                // Verifica se o aluno tem bolsa COM entidade 1, 10 ou 17
-                if ($bolsa && in_array($bolsa->scholarship_entity_id, [1, 10, 17])) {
-                    $protocolo[] = $aluno->student_name;
-                } else {
-                    $resultado[] = $aluno->student_name;
-                }
-            }
+            $bolsa = DB::table('scholarship_holder')
+                ->where('user_id', $aluno->user_id, || 'scholarship_entity_id' in (1,10,17))
+                ->first();
             
 
             return response()->json([
-                'total' => count($resultado),
-                'valororiginal' => count($alunos),
-                'protocolo' => count($protocolo)
+                'total' => count($alunos),
+                'protocolo' => count($bolsa)
             ]);
 
         } catch (Exception | Throwable $e) {
