@@ -133,7 +133,7 @@ class EstatisticaController extends Controller
            log::info($bolseiros);
            return response()->json([
                'total' => $alunos->count(),
-               'protocolo' => $bolseiros->count() + 6,
+               'protocolo' => $bolseiros->count(),
                'alunos' => $alunos
            ]);
    
