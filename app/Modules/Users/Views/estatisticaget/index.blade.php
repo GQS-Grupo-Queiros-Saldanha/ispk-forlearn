@@ -144,7 +144,7 @@
                         const turmas = response.turma || [];
                         if (ano == 2) {
                                 const codlista = [
-                                    {curso: "EC" id: "46", periodo: "M" }, { id: "47", periodo: "T" },
+                                    {curso: "EC", id: "46", periodo: "M" }, {curso: "EC", id: "47", periodo: "T" }
                                 ];
                                     // Percorro cada turma devolvida
                                     turmas.forEach(turma => {
