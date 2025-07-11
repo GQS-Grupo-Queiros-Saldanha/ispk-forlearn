@@ -157,31 +157,62 @@
 
                             // Extraio o período da turma a partir do 4.º carácter (posição 3)
                             const periodo = codigo.charAt(3);
-                            // Faço fetch dos dados estatísticos desta turma específica
-                            fetch(`/pt/estatisticaget/student/${turma.id}/${ano}`)
-                                .then(res => res.json())
-                                .then(json => {
-                                    const totalAlunos = json.total ?? 0;
-                                    const totalProtocolo = json.protocolo ?? 0;
-                                    console.log(turma.id);
-                                    // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
-                                    if (periodo === "M") {
-                                        totais[ano].M += totalAlunos;
-                                    } else if (periodo === "T") {
-                                        totais[ano].T += totalAlunos;
-                                    } else if (periodo === "N") {
-                                        totais[ano].N += totalAlunos;
-                                    }
+                            if( ano == 2){
+                                codturma = 47;
+                                // Faço fetch dos dados estatísticos desta turma específica
+                                fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
+                                    .then(res => res.json())
+                                    .then(json => {
+                                        const totalAlunos = json.total ?? 0;
+                                        const totalProtocolo = json.protocolo ?? 0;
+                                        console.log(turma.id);
+                                        // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
+                                        if (periodo === "M") {
+                                            totais[ano].M += totalAlunos;
+                                        } else if (periodo === "T") {
+                                            totais[ano].T += totalAlunos;
+                                        } else if (periodo === "N") {
+                                            totais[ano].N += totalAlunos;
+                                        }
 
-                                    // Protocolo é independente do período, mas é somado ao ano correto
-                                    totais[ano].PT += totalProtocolo;
+                                        // Protocolo é independente do período, mas é somado ao ano correto
+                                        totais[ano].PT += totalProtocolo;
 
-                                    // Após cada fetch individual, atualizo os elementos da tabela
-                                    document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
-                                    document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
-                                    document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
-                                    document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                                });
+                                        // Após cada fetch individual, atualizo os elementos da tabela
+                                        document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
+                                        document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
+                                        document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
+                                        document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
+                                    });
+                            }else{
+                                codturma = turma.id;
+                                // Faço fetch dos dados estatísticos desta turma específica
+                                fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
+                                    .then(res => res.json())
+                                    .then(json => {
+                                        const totalAlunos = json.total ?? 0;
+                                        const totalProtocolo = json.protocolo ?? 0;
+                                        console.log(turma.id);
+                                        // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
+                                        if (periodo === "M") {
+                                            totais[ano].M += totalAlunos;
+                                        } else if (periodo === "T") {
+                                            totais[ano].T += totalAlunos;
+                                        } else if (periodo === "N") {
+                                            totais[ano].N += totalAlunos;
+                                        }
+
+                                        // Protocolo é independente do período, mas é somado ao ano correto
+                                        totais[ano].PT += totalProtocolo;
+
+                                        // Após cada fetch individual, atualizo os elementos da tabela
+                                        document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
+                                        document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
+                                        document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
+                                        document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
+                                    });
+                            }
+                            
                         });
                     });
             });
