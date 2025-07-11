@@ -128,7 +128,7 @@ class EstatisticaController extends Controller
            $bolseiros = $alunos->filter(function ($aluno) {
                return $aluno->is_scholar == 1;
            });
-   
+           log::info($alunos);
            return response()->json([
                'total' => $alunos->count(),
                'protocolo' => $bolseiros->count(),
