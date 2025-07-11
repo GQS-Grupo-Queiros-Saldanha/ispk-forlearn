@@ -158,7 +158,7 @@
                             // Extraio o período da turma a partir do 4.º carácter (posição 3)
                             const periodo = codigo.charAt(3);
                             // Faço fetch dos dados estatísticos desta turma específica
-                            fetch(`/pt/estatisticaget/student/${turmacod}/${ano}`)
+                            fetch(`/pt/estatisticaget/student/${turma.id}/${ano}`)
                                 .then(res => res.json())
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
