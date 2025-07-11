@@ -142,87 +142,102 @@
                     .then(res => res.json())
                     .then(response => {
                         const turmas = response.turma || [];
-
-                        // Percorro cada turma devolvida
-                        turmas.forEach(turma => {
-                            const codigo = turma.display_name;
-
-                            // Verifico se o código da turma tem pelo menos 4 caracteres
-                            if (codigo.length < 4) return;
-
-                            // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
-
-                            // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
-                            if (![1, 2, 3, 4, 5].includes(ano)) return;
-
-                            // Extraio o período da turma a partir do 4.º carácter (posição 3)
-                            const periodo = codigo.charAt(3);
-                            if (ano == 2) {
+                        if (ano == 2) {
                                 const codlista = [
-                                    { id: "46", periodo: "M" },
-                                    { id: "47", periodo: "T" }
+                                    {curso: "EC" id: "46", periodo: "M" }, { id: "47", periodo: "T" },
                                 ];
+                                    // Percorro cada turma devolvida
+                                    turmas.forEach(turma => {
+                                        const codigo = turma.display_name;
 
-                                codlista.forEach(item => {
-                                const codturma = item.id;
-                                const periodo = item.periodo;
+                                        // Verifico se o código da turma tem pelo menos 4 caracteres
+                                        if (codigo.length < 4) return;
 
-                                fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
-                                    .then(res => res.json())
-                                    .then(json => {
-                                        const totalAlunos = json.total ?? 0;
-                                        const totalProtocolo = json.protocolo ?? 0;
-                                        console.log(`codturma: ${codturma}`, json);
+                                        // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
 
-                                        if (periodo === "M") {
-                                            totais[ano].M += totalAlunos;
-                                        } else if (periodo === "T") {
-                                            totais[ano].T += totalAlunos;
-                                        } else if (periodo === "N") {
-                                            totais[ano].N += totalAlunos;
-                                        }
+                                        // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
+                                        if (![1, 2, 3, 4, 5].includes(ano)) return;
 
-                                        totais[ano].PT += totalProtocolo;
+                                        // Extraio o período da turma a partir do 4.º carácter (posição 3)
+                                        const periodo = codigo.charAt(3);
 
-                                        document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
-                                        document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
-                                        document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
-                                        document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                                      
+                                        codlista.forEach(item => {
+                                            const codturma = item.id;
+                                            const periodo = item.periodo;
+
+                                            fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
+                                                .then(res => res.json())
+                                                .then(json => {
+                                                    const totalAlunos = json.total ?? 0;
+                                                    const totalProtocolo = json.protocolo ?? 0;
+                                                    console.log(`codturma: ${codturma}`, json);
+
+                                                    if (periodo === "M") {
+                                                        totais[ano].M += totalAlunos;
+                                                    } else if (periodo === "T") {
+                                                        totais[ano].T += totalAlunos;
+                                                    } else if (periodo === "N") {
+                                                        totais[ano].N += totalAlunos;
+                                                    }
+
+                                                    totais[ano].PT += totalProtocolo;
+
+                                                    document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
+                                                    document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
+                                                    document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
+                                                    document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
+                                                
+                                                });
+
+                                        });
                                     });
+                                    }
+                                    
+                                else{
+                                    // Percorro cada turma devolvida
+                                    turmas.forEach(turma => {
+                                        const codigo = turma.display_name;
 
-                                });
-                            }
-                            else{
-                                codturma = turma.id;
-                                // Faço fetch dos dados estatísticos desta turma específica
-                                fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
-                                    .then(res => res.json())
-                                    .then(json => {
-                                        const totalAlunos = json.total ?? 0;
-                                        const totalProtocolo = json.protocolo ?? 0;
-                                        console.log(turma.id);
-                                        // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
-                                        if (periodo === "M") {
-                                            totais[ano].M += totalAlunos;
-                                        } else if (periodo === "T") {
-                                            totais[ano].T += totalAlunos;
-                                        } else if (periodo === "N") {
-                                            totais[ano].N += totalAlunos;
-                                        }
+                                        // Verifico se o código da turma tem pelo menos 4 caracteres
+                                        if (codigo.length < 4) return;
 
-                                        // Protocolo é independente do período, mas é somado ao ano correto
-                                        totais[ano].PT += totalProtocolo;
+                                        // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
 
-                                        // Após cada fetch individual, atualizo os elementos da tabela
-                                        document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
-                                        document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
-                                        document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
-                                        document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                                    });
-                            }
-                            
-                        });
+                                        // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
+                                        if (![1, 2, 3, 4, 5].includes(ano)) return;
+
+                                        // Extraio o período da turma a partir do 4.º carácter (posição 3)
+                                        const periodo = codigo.charAt(3);
+
+                                            codturma = turma.id;
+                                            // Faço fetch dos dados estatísticos desta turma específica
+                                            fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
+                                                .then(res => res.json())
+                                                .then(json => {
+                                                    const totalAlunos = json.total ?? 0;
+                                                    const totalProtocolo = json.protocolo ?? 0;
+                                                    //console.log(turma.id);
+                                                    // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
+                                                    if (periodo === "M") {
+                                                        totais[ano].M += totalAlunos;
+                                                    } else if (periodo === "T") {
+                                                        totais[ano].T += totalAlunos;
+                                                    } else if (periodo === "N") {
+                                                        totais[ano].N += totalAlunos;
+                                                    }
+
+                                                    // Protocolo é independente do período, mas é somado ao ano correto
+                                                    totais[ano].PT += totalProtocolo;
+
+                                                    // Após cada fetch individual, atualizo os elementos da tabela
+                                                    document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
+                                                    document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
+                                                    document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
+                                                    document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
+                                                });
+                                            });
+                                }
+                                
                     });
             });
         }
