@@ -113,7 +113,6 @@ class EstatisticaController extends Controller
                     ->where('sh.scholarship_entity_id', '=', 10);
             })
             ->leftJoin('scholarship_entity as se', 'se.id', '=', 'sh.scholarship_entity_id')
-            ->whereNotNull('se.company') 
             ->select([
                 'u0.id as user_id',
                 'u_p.value as student_name',
@@ -128,7 +127,7 @@ class EstatisticaController extends Controller
    
            // Separar os bolseiros
            $bolseiros = $alunos->filter(function ($aluno) {
-               return $aluno->is_scholar == 1;
+               return $aluno->is_scholar == 1 && $aluno->entidade !== null;
            });
            log::info($alunos);
            return response()->json([
