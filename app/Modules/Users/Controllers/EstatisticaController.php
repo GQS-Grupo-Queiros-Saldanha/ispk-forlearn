@@ -99,30 +99,32 @@ class EstatisticaController extends Controller
            }
    
            $alunos = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
-               ->where('matriculations.lective_year', $lectiveYearSelected->id)
-               ->where('matriculations.course_year', $courseYear)
-               ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
-               ->where('mc.class_id', $classId)
-               ->leftJoin('user_parameters as u_p', function ($join) {
-                   $join->on('u0.id', '=', 'u_p.users_id')
-                       ->where('u_p.parameters_id', 1); // Nome do aluno
-               })
-               ->leftJoin('scholarship_holder as sh', function ($join) {
-                   $join->on('u0.id', '=', 'sh.user_id')
-                        ->where('sh.are_scholarship_holder', 1)
-                        ->where('sh.scholarship_entity_id', '=', 10);
-               })
-               ->leftJoin('scholarship_entity as se', 'se.id', '=', 'sh.scholarship_entity_id')
-               ->select([
-                   'u0.id as user_id',
-                   'u_p.value as student_name',
-                   'sh.are_scholarship_holder as is_scholar',
-                   'se.company as entidade',
-                   'se.type as categoria'
-               ])
-               ->groupBy('u0.id', 'u_p.value', 'sh.are_scholarship_holder', 'se.company', 'se.type')
-               ->orderBy('u_p.value', 'asc')
-               ->get();
+            ->where('matriculations.lective_year', $lectiveYearSelected->id)
+            ->where('matriculations.course_year', $courseYear)
+            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+            ->where('mc.class_id', $classId)
+            ->leftJoin('user_parameters as u_p', function ($join) {
+                $join->on('u0.id', '=', 'u_p.users_id')
+                    ->where('u_p.parameters_id', 1); // Nome do aluno
+            })
+            ->leftJoin('scholarship_holder as sh', function ($join) {
+                $join->on('u0.id', '=', 'sh.user_id')
+                    ->where('sh.are_scholarship_holder', 1)
+                    ->where('sh.scholarship_entity_id', '=', 10);
+            })
+            ->leftJoin('scholarship_entity as se', 'se.id', '=', 'sh.scholarship_entity_id')
+            ->whereNotNull('se.company') 
+            ->select([
+                'u0.id as user_id',
+                'u_p.value as student_name',
+                'sh.are_scholarship_holder as is_scholar',
+                'se.company as entidade',
+                'se.type as categoria'
+            ])
+            ->groupBy('u0.id', 'u_p.value', 'sh.are_scholarship_holder', 'se.company', 'se.type')
+            ->orderBy('u_p.value', 'asc')
+            ->get();
+
    
            // Separar os bolseiros
            $bolseiros = $alunos->filter(function ($aluno) {
