@@ -158,31 +158,39 @@
                             // Extraio o período da turma a partir do 4.º carácter (posição 3)
                             const periodo = codigo.charAt(3);
                             if (ano == 2) {
-                                const codlista = ["46", "47"];
+                                const codlista = [
+                                    { id: "46", periodo: "M" },
+                                    { id: "47", periodo: "T" }
+                                ];
 
-                                codlista.forEach(codturma => {
-                                    fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
-                                        .then(res => res.json())
-                                        .then(json => {
-                                            const totalAlunos = json.total ?? 0;
-                                            const totalProtocolo = json.protocolo ?? 0;
-                                            console.log(`codturma: ${codturma}`, json);
+                                codlista.forEach(item => {
+                                const codturma = item.id;
+                                const periodo = item.periodo;
 
-                                            if (periodo === "M") {
-                                                totais[ano].M += totalAlunos;
-                                            } else if (periodo === "T") {
-                                                totais[ano].T += totalAlunos;
-                                            } else if (periodo === "N") {
-                                                totais[ano].N += totalAlunos;
-                                            }
+                                fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
+                                    .then(res => res.json())
+                                    .then(json => {
+                                        const totalAlunos = json.total ?? 0;
+                                        const totalProtocolo = json.protocolo ?? 0;
+                                        console.log(`codturma: ${codturma}`, json);
 
-                                            totais[ano].PT += totalProtocolo;
+                                        if (periodo === "M") {
+                                            totais[ano].M += totalAlunos;
+                                        } else if (periodo === "T") {
+                                            totais[ano].T += totalAlunos;
+                                        } else if (periodo === "N") {
+                                            totais[ano].N += totalAlunos;
+                                        }
 
-                                            document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
-                                            document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
-                                            document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
-                                            document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                                        });
+                                        totais[ano].PT += totalProtocolo;
+
+                                        document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
+                                        document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
+                                        document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
+                                        document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
+                                      
+                                    });
+
                                 });
                             }
                             else{
