@@ -97,7 +97,7 @@ class EstatisticaController extends Controller
            if (!$lectiveYearSelected) {
                return response()->json(['erro' => 'Ano lectivo não encontrado.'], 404);
            }
-   
+          
            $alunos = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->where('matriculations.lective_year', $lectiveYearSelected->id)
             ->where('matriculations.course_year', $courseYear)
