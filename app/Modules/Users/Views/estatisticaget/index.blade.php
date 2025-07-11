@@ -124,7 +124,7 @@
         // Carrego todos os cursos que vieram do backend via Blade
         const courses = @json($courses);
 
-        for(let a = 1; a <= 5; a++) { 
+        for(let a = 1; a <= 2; a++) { 
             const ano = a;
             // Agora, para cada curso, vou iniciar a recolha de dados
             courses.forEach(course => {
@@ -180,7 +180,7 @@
                                     document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
                                     document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
-                                    document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT + 6;
+                                    document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
                                 });
                         });
                     });
