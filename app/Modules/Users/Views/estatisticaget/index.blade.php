@@ -116,95 +116,77 @@
 @section('scripts-new')
 @section('scripts-new')
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
-    const lectiveSelector = document.getElementById('lective_year');
-    const lectiveYear = lectiveSelector.value;
-    const courses = @json($courses);
+    document.addEventListener('DOMContentLoaded', function () {
+        // Primeiro, obtenho o valor do ano lectivo seleccionado
+        const lectiveSelector = document.getElementById('lective_year');
+        const lectiveYear = lectiveSelector.value;
 
-    for (let ano = 1; ano <= 5; ano++) {
-        // Inicializa totais fora do fetch para manter escopo correto
-        const totais = {
-            1: { M: 0, T: 0, N: 0, PT: 0 },
-            2: { M: 0, T: 0, N: 0, PT: 0 },
-            3: { M: 0, T: 0, N: 0, PT: 0 },
-            4: { M: 0, T: 0, N: 0, PT: 0 },
-            5: { M: 0, T: 0, N: 0, PT: 0 },
-        };
+        // Carrego todos os cursos que vieram do backend via Blade
+        const courses = @json($courses);
 
-        courses.forEach(course => {
-            fetch(`/pt/grades/teacher_disciplines/${course.id}/${lectiveYear}`)
-                .then(res => res.json())
-                .then(response => {
-                    const turmas = response.turma || [];
+        for(let a = 1; a <= 5; a++) { 
+            const ano = a;
+            // Agora, para cada curso, vou iniciar a recolha de dados
+            courses.forEach(course => {
+                // Crio um mapa para armazenar os totais de cada ano e período (manhã, tarde, noite e protocolo)
+                const totais = {
+                    1: { M: 0, T: 0, N: 0, PT: 0 },
+                    2: { M: 0, T: 0, N: 0, PT: 0 },
+                    3: { M: 0, T: 0, N: 0, PT: 0 },
+                    4: { M: 0, T: 0, N: 0, PT: 0 },
+                    5: { M: 0, T: 0, N: 0, PT: 0 },
+                };
 
-                    turmas.forEach(turma => {
-                        const codigo = turma.display_name;
-                        if (codigo.length < 4) return;
+                // Faço fetch das turmas associadas ao curso e ano lectivo
+                fetch(`/pt/grades/teacher_disciplines/${course.id}/${lectiveYear}`)
+                    .then(res => res.json())
+                    .then(response => {
+                        const turmas = response.turma || [];
 
-                        // Ano extraído do código (posição 2)
-                        // Se quiseres usar o ano do código, podes extrair aqui
-                        // mas tu já tens 'ano' no ciclo, verifica se coincidem
-                        if (![1, 2, 3, 4, 5].includes(ano)) return;
+                        // Percorro cada turma devolvida
+                        turmas.forEach(turma => {
+                            const codigo = turma.display_name;
 
-                        const periodo = codigo.charAt(3);
-                        let lista = [];
+                            // Verifico se o código da turma tem pelo menos 4 caracteres
+                            if (codigo.length < 4) return;
 
-                        if (ano === 2) lista = ["46", "47"];
-                        else if (ano === 3) lista = ["48", "49"];
-                        else if (ano === 4) lista = ["50", "50"];
-                        else if (ano === 5) lista = ["52", "53"];
+                            // Extraio o ano do curso a partir do 3.º carácter (posição 2 do array)
 
-                        if (lista.length > 0) {
-                            // Fazer fetch para cada turmacod na lista e esperar todos completarem
-                            Promise.all(lista.map(turmacod =>
-                                fetch(`/pt/estatisticaget/student/${turmacod}/${ano}`)
-                                    .then(resp => resp.json())
-                            )).then(results => {
-                                results.forEach(json => {
-                                    const totalAlunos = json.total ?? 0;
-                                    const totalProtocolo = json.protocolo ?? 0;
+                            // Verifico se o ano está dentro do intervalo permitido (1.º ao 5.º)
+                            if (![1, 2, 3, 4, 5].includes(ano)) return;
 
-                                    if (periodo === "M") totais[ano].M += totalAlunos;
-                                    else if (periodo === "T") totais[ano].T += totalAlunos;
-                                    else if (periodo === "N") totais[ano].N += totalAlunos;
-
-                                    totais[ano].PT += totalProtocolo;
-                                });
-
-                                // Atualiza a tabela depois de somar todos
-                                document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
-                                document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
-                                document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
-                                document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                            }).catch(console.error);
-                        } else {
-                            // Usa turma.id directamente quando não há lista
-                            const turmacod = turma.id;
-
+                            // Extraio o período da turma a partir do 4.º carácter (posição 3)
+                            const periodo = codigo.charAt(3);
+                            // Faço fetch dos dados estatísticos desta turma específica
                             fetch(`/pt/estatisticaget/student/${turmacod}/${ano}`)
                                 .then(res => res.json())
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
+                                    console.log(turma.id);
+                                    // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
+                                    if (periodo === "M") {
+                                        totais[ano].M += totalAlunos;
+                                    } else if (periodo === "T") {
+                                        totais[ano].T += totalAlunos;
+                                    } else if (periodo === "N") {
+                                        totais[ano].N += totalAlunos;
+                                    }
 
-                                    if (periodo === "M") totais[ano].M += totalAlunos;
-                                    else if (periodo === "T") totais[ano].T += totalAlunos;
-                                    else if (periodo === "N") totais[ano].N += totalAlunos;
-
+                                    // Protocolo é independente do período, mas é somado ao ano correto
                                     totais[ano].PT += totalProtocolo;
 
+                                    // Após cada fetch individual, atualizo os elementos da tabela
                                     document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
                                     document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                                }).catch(console.error);
-                        }
+                                });
+                        });
                     });
-                }).catch(console.error);
             });
         }
     });
-
 </script>
 @endsection
 
