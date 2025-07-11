@@ -110,7 +110,7 @@ class EstatisticaController extends Controller
             ->leftJoin('scholarship_holder as sh', function ($join) {
                 $join->on('u0.id', '=', 'sh.user_id')
                     ->where('sh.are_scholarship_holder', 1)
-                    ->where('sh.scholarship_entity_id', '=', 10);
+                    ->where('sh.scholarship_entity_id', '=', 17);
             })
             ->leftJoin('scholarship_entity as se', 'se.id', '=', 'sh.scholarship_entity_id')
             ->select([
