@@ -180,7 +180,7 @@
                                     document.getElementById(`manha_${course.id}_${ano}`).textContent = totais[ano].M;
                                     document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
-                                    document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT + 6;
                                 });
                         });
                     });
