@@ -109,8 +109,7 @@
                         <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
                         <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
                         <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="total_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-
+                        <td id="total_{{$c->id}}_{{ $ano }}">-</td>
                     @endfor
                 </tr>
             @endforeach
@@ -138,9 +137,6 @@
             document.getElementById(`tarde_${courseId}_${ano}`).textContent = 0;
             document.getElementById(`noite_${courseId}_${ano}`).textContent = 0;
             document.getElementById(`protocolo_${courseId}_${ano}`).textContent = 0;
-            document.getElementById(`total_${courseId}_${ano}`).textContent = total;
-
-
         });
     }
 
@@ -211,9 +207,6 @@
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
-                                    const total = json.alunos ?? 0;
-                                    console.log(total);
-                                    
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -225,8 +218,6 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
-                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
-
                                 });
                         });
 
@@ -268,8 +259,6 @@
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
-                                    const total = json.alunos ?? 0;
-                                    console.log(total);
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -281,8 +270,6 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
-                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
-
                                 });
                         });
 
@@ -324,8 +311,6 @@
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
-                                    const total = json.alunos ?? 0;
-                                    console.log(total);
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -337,8 +322,6 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
-                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
-
                                 });
                         });
 
@@ -378,8 +361,6 @@
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
-                                    const total = json.alunos ?? 0;
-                                    console.log(total);
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -391,8 +372,6 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
-                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
-
                                 });
                         });
 
@@ -420,8 +399,6 @@
                                     .then(json => {
                                         const totalAlunos = json.total ?? 0;
                                         const totalProtocolo = json.protocolo ?? 0;
-                                        const total = json.alunos ?? 0;
-                                        console.log(total);
                                         //console.log(turma.id);
                                         // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
                                         if (periodo === "M") {
@@ -440,8 +417,6 @@
                                         document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
                                         document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
                                         document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                                        document.getElementById(`total_${courseId}_${ano}`).textContent = total;
-
                                     });
                                 });
                         }
