@@ -174,7 +174,16 @@
                             { curso: "EH", id: "50", periodo: "M" },
                             { curso: "EH", id: "51", periodo: "T" },
                             { curso: "EI", id: "15", periodo: "M" },
-                            { curso: "EI", id: "20", periodo: "T" }
+                            { curso: "EI", id: "20", periodo: "T" },
+                            { curso: "EM", id: "7", periodo: "M" },
+                            { curso: "EM", id: "12", periodo: "T" },
+                            { curso: "EP", id: "29", periodo: "M" },
+                            { curso: "EP", id: "31", periodo: "T" },
+                            { curso: "EQ", id: "37", periodo: "M" },
+                            { curso: "EQ", id: "38", periodo: "T" }
+
+
+
                         ];
 
                         codlista.forEach(item => {
