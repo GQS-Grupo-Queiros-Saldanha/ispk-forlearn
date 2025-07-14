@@ -65,31 +65,35 @@
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">Protocolo</th>
+                    <th class="text-center">Prot.</th>
+                    <th class="text-center">Total</th>
                     
                     <!-- 2ano -->
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">Protocolo</th>
+                    <th class="text-center">Prot.</th>
+                    <th class="text-center">Total</th>
                     
                     <!-- 3ano -->
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">Protocolo</th>
+                    <th class="text-center">Prot.</th>
+                    <th class="text-center">Total</th>
                     
                     <!-- 4ano -->
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Protocolo</th>
+                   <th class="text-center">Prot.</th>
+                    <th class="text-center">Total</th>
                     
                     <!-- 5ano -->
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">Protocolo</th>
+                    <th class="text-center">Prot.</th>
+                    <th class="text-center">Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -101,10 +105,11 @@
                 <tr>
                     <td class="fw-semibold bg-light">{{ $codTurma }}</td>
                     @for ($ano = 1; $ano <= 5; $ano++)
-                        <td id="manha_{{ $c->id }}_{{ $ano }}">-</td>
-                        <td id="tarde_{{ $c->id }}_{{ $ano }}">-</td>
-                        <td id="noite_{{ $c->id }}_{{ $ano }}">-</td>
-                        <td id="protocolo_{{ $c->id }}_{{ $ano }}">-</td>
+                        <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="total_{{$c->id}}_{{ $ano }}" class="text-center">-</td>
                     @endfor
                 </tr>
             @endforeach
@@ -132,6 +137,7 @@
             document.getElementById(`tarde_${courseId}_${ano}`).textContent = 0;
             document.getElementById(`noite_${courseId}_${ano}`).textContent = 0;
             document.getElementById(`protocolo_${courseId}_${ano}`).textContent = 0;
+            document.getElementById(`total_${courseId}_${ano}`).textContent = 0;
         });
     }
 
@@ -202,6 +208,8 @@
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
+                                    const total = json.alunos ?? 0;
+                                    
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -213,6 +221,7 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
                                 });
                         });
 
@@ -254,6 +263,7 @@
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
+                                    const total = json.alunos ?? 0;
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -265,6 +275,7 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
                                 });
                         });
 
@@ -306,6 +317,7 @@
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
+                                    const total = json.alunos ?? 0;
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -317,6 +329,7 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
                                 });
                         });
 
@@ -338,8 +351,6 @@
                             { curso: "EQ", id: "42", periodo: "M" },
                             { curso: "EQ", id: "0", periodo: "T" }
 
-
-
                         ];
 
                         codlista.forEach(item => {
@@ -358,6 +369,7 @@
                                 .then(json => {
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
+                                    const total = json.alunos ?? 0;
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -369,6 +381,7 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
                                 });
                         });
 
@@ -396,6 +409,7 @@
                                     .then(json => {
                                         const totalAlunos = json.total ?? 0;
                                         const totalProtocolo = json.protocolo ?? 0;
+                                        const total = json.alunos ?? 0;
                                         //console.log(turma.id);
                                         // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
                                         if (periodo === "M") {
