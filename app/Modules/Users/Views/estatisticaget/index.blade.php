@@ -141,7 +141,7 @@
     // Totais por curso e ano
     const totaisPorCurso = {};
 
-    for (let a = 1; a <= 3; a++) {
+    for (let a = 1; a <= 4; a++) {
         const ano = a;
 
         courses.forEach(course => {
@@ -233,6 +233,58 @@
                             { curso: "EP", id: "32", periodo: "T" },
                             { curso: "EQ", id: "39", periodo: "M" },
                             { curso: "EQ", id: "40", periodo: "T" }
+
+
+
+                        ];
+
+                        codlista.forEach(item => {
+                            // Verifica se o item é do curso atual
+                            if (item.curso !== courseCode) return;
+
+                            const codturma = item.id;
+                            const periodo = item.periodo;
+                            const chaveRequisicao = `${codturma}_${ano}_${courseId}`;
+
+                            if (requisicoesFeitas.has(chaveRequisicao)) return;
+                            requisicoesFeitas.add(chaveRequisicao);
+
+                            fetch(`/pt/estatisticaget/student/${codturma}/${ano}`)
+                                .then(res => res.json())
+                                .then(json => {
+                                    const totalAlunos = json.total ?? 0;
+                                    const totalProtocolo = json.protocolo ?? 0;
+
+                                    if (periodo === "M") totais[ano].M += totalAlunos;
+                                    else if (periodo === "T") totais[ano].T += totalAlunos;
+                                    else if (periodo === "N") totais[ano].N += totalAlunos;
+
+                                    totais[ano].PT += totalProtocolo;
+
+                                    document.getElementById(`manha_${courseId}_${ano}`).textContent = totais[ano].M;
+                                    document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
+                                    document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
+                                    document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                });
+                        });
+
+                    }
+                    else if (ano === 4) {
+                        const codlista = [
+                            { curso: "EC", id: "50", periodo: "M" },
+                            { curso: "EC", id: "51", periodo: "T" },
+                            { curso: "EG", id: "0", periodo: "M" },
+                            { curso: "EG", id: "0", periodo: "T" },
+                            { curso: "EH", id: "0", periodo: "M" },
+                            { curso: "EH", id: "0", periodo: "T" },
+                            { curso: "EI", id: "17", periodo: "M" },
+                            { curso: "EI", id: "0", periodo: "T" },
+                            { curso: "EM", id: "9", periodo: "M" },
+                            { curso: "EM", id: "0", periodo: "T" },
+                            { curso: "EP", id: "1", periodo: "M" },
+                            { curso: "EP", id: "0", periodo: "T" },
+                            { curso: "EQ", id: "41", periodo: "M" },
+                            { curso: "EQ", id: "0", periodo: "T" }
 
 
 
