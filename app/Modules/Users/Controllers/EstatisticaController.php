@@ -134,12 +134,12 @@ class EstatisticaController extends Controller
             $semBolsa = $alunos->reject(function ($aluno) {
                 return $aluno->is_scholar == 1 && $aluno->entidade !== null;
             });
-            $total = $semBolsa->count() + $bolseiros->count();
-           log::info($total);
+
+           //log::info($bolseiros);
            return response()->json([
                'total' => $semBolsa->count(),
                'protocolo' => $bolseiros->count(),
-               'alunos' => $total
+               'alunos' => $alunos->count()
            ]);
    
        } catch (Exception | Throwable $e) {

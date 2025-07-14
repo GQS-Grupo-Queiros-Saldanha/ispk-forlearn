@@ -399,9 +399,9 @@
                                     .then(json => {
                                         const totalAlunos = json.total ?? 0;
                                         const totalProtocolo = json.protocolo ?? 0;
-                                        const total = json.alunos;
+                                        const total = totalAlunos + totalProtocolo;
+                                        
                                         console.log(total)
-                                        //console.log(turma.id);
                                         // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
                                         if (periodo === "M") {
                                             totais[ano].M += totalAlunos;
