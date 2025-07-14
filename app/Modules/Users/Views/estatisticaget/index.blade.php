@@ -65,37 +65,38 @@
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">PT</th>
+                    <th class="text-center">Protocolo</th>
                     
                     <!-- 2ano -->
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">PT</th>
+                    <th class="text-center">Protocolo</th>
                     
                     <!-- 3ano -->
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">PT</th>
+                    <th class="text-center">Protocolo</th>
                     
                     <!-- 4ano -->
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">PT</th>
+                    <th class="text-center">Protocolo</th>
                     
                     <!-- 5ano -->
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
                     <th class="text-center">N</th>
-                    <th class="text-center">PT</th>
+                    <th class="text-center">Protocolo</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($courses as $c)
                 @php
                     $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
+                    $codTurma = ;
                 @endphp
                 <tr>
                     <td class="fw-semibold bg-light">{{ $sigla }}</td>
@@ -154,8 +155,10 @@
 
                     if (ano === 2) {
                         const codlista = [
-                            { curso: "EC", id: "46", periodo: "M" },
-                            { curso: "EC", id: "47", periodo: "T" }
+                            { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
+                            { curso: "EG", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
+                            { curso: "EH", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
+                            { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
                         ];
 
                         codlista.forEach(item => {
