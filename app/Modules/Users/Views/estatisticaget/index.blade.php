@@ -188,10 +188,10 @@
                                     totais[ano].PT += totalProtocolo;
 
                                     // Atualiza a interface
-                                    document.getElementById(`manha_${courseId}_${ano}`).textContent = totais[ano].M;
-                                    document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
-                                    document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
-                                    document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`manha_${courseId}_${ano}`).textContent = 0;
+                                    document.getElementById(`tarde_${courseId}_${ano}`).textContent = 0;
+                                    document.getElementById(`noite_${courseId}_${ano}`).textContent = 0;
+                                    document.getElementById(`protocolo_${courseId}_${ano}`).textContent = 0;
                                 });
                         });
                     }              
