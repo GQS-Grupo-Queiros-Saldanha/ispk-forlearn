@@ -45,7 +45,6 @@ class EstatisticaController extends Controller
 { 
    public function index(){
     $data = $this->api();
-    log::info($data);
     return view('Users::estatisticaget.index')->with($data);
    }
 

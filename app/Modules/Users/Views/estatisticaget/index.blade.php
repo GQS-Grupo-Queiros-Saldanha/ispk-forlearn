@@ -96,10 +96,10 @@
                 @foreach ($courses as $c)
                 @php
                     $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
-                    $codTurma = ;
+                    $codTurma = $c->cod;
                 @endphp
                 <tr>
-                    <td class="fw-semibold bg-light">{{ $sigla }}</td>
+                    <td class="fw-semibold bg-light">{{ $codTurma }}</td>
                     @for ($ano = 1; $ano <= 5; $ano++)
                         <td id="manha_{{ $c->id }}_{{ $ano }}">-</td>
                         <td id="tarde_{{ $c->id }}_{{ $ano }}">-</td>
@@ -156,8 +156,8 @@
                     if (ano === 2) {
                         const codlista = [
                             { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
-                            { curso: "EG", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
-                            { curso: "EH", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
+                            { curso: "EG", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" },
+                            { curso: "EH", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" },
                             { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
                         ];
 
