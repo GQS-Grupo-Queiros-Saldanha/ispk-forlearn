@@ -162,7 +162,7 @@
                         ];
 
                         codlista.forEach(item => {
-                            const codturma = item.id ?? item.id : 00;
+                            const codturma = item.id;
                             const periodo = item.periodo;
 
                             const chaveRequisicao = `${codturma}_${ano}_${courseId}`;
