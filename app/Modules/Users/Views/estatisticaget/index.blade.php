@@ -117,16 +117,28 @@
 @section('scripts-new')
 @section('scripts-new')
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function () {
     const lectiveSelector = document.getElementById('lective_year');
     const lectiveYear = lectiveSelector.value;
 
     const courses = @json($courses);
 
-    // Mapa para evitar requisições duplicadas: chave = `${codturma}_${ano}`
+    // Inicializa todas as células da tabela com 0
+    for (let ano = 1; ano <= 5; ano++) {
+        courses.forEach(course => {
+            const courseId = course.id;
+
+            document.getElementById(`manha_${courseId}_${ano}`).textContent = 0;
+            document.getElementById(`tarde_${courseId}_${ano}`).textContent = 0;
+            document.getElementById(`noite_${courseId}_${ano}`).textContent = 0;
+            document.getElementById(`protocolo_${courseId}_${ano}`).textContent = 0;
+        });
+    }
+
+    // Mapa para evitar fetch duplicado
     const requisicoesFeitas = new Set();
 
-    // Mapa global de totais por curso e ano
+    // Totais por curso e ano
     const totaisPorCurso = {};
 
     for (let a = 1; a <= 2; a++) {
@@ -134,8 +146,8 @@
 
         courses.forEach(course => {
             const courseId = course.id;
+            const courseCode = course.code; // este é o que vem de $c->code
 
-            // Inicializa o mapa totais apenas uma vez por curso
             if (!totaisPorCurso[courseId]) {
                 totaisPorCurso[courseId] = {
                     1: { M: 0, T: 0, N: 0, PT: 0 },
@@ -155,19 +167,24 @@
 
                     if (ano === 2) {
                         const codlista = [
-                            { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" },
-                            { curso: "EG", id: "0", periodo: "M" },{ curso: "EC", id: "0", periodo: "T" },
-                            { curso: "EH", id: "0", periodo: "M" },{ curso: "EC", id: "0", periodo: "T" },
-                            { curso: "EI", id: "15", periodo: "M" },{ curso: "EI", id: "20", periodo: "T" }
+                            { curso: "EC", id: "46", periodo: "M" },
+                            { curso: "EC", id: "47", periodo: "T" },
+                            { curso: "EG", id: "48", periodo: "M" },
+                            { curso: "EG", id: "49", periodo: "T" },
+                            { curso: "EH", id: "50", periodo: "M" },
+                            { curso: "EH", id: "51", periodo: "T" },
+                            { curso: "EI", id: "15", periodo: "M" },
+                            { curso: "EI", id: "20", periodo: "T" }
                         ];
 
                         codlista.forEach(item => {
+                            // Verifica se o item é do curso atual
+                            if (item.curso !== courseCode) return;
+
                             const codturma = item.id;
                             const periodo = item.periodo;
-
                             const chaveRequisicao = `${codturma}_${ano}_${courseId}`;
 
-                            // Só faz o fetch se ainda não tiver sido feito
                             if (requisicoesFeitas.has(chaveRequisicao)) return;
                             requisicoesFeitas.add(chaveRequisicao);
 
@@ -177,23 +194,19 @@
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
 
-                                    if (periodo === "M") {
-                                        totais[ano].M += totalAlunos;
-                                    } else if (periodo === "T") {
-                                        totais[ano].T += totalAlunos;
-                                    } else if (periodo === "N") {
-                                        totais[ano].N += totalAlunos;
-                                    }
+                                    if (periodo === "M") totais[ano].M += totalAlunos;
+                                    else if (periodo === "T") totais[ano].T += totalAlunos;
+                                    else if (periodo === "N") totais[ano].N += totalAlunos;
 
                                     totais[ano].PT += totalProtocolo;
 
-                                    // Atualiza a interface
-                                    document.getElementById(`manha_${courseId}_${ano}`).textContent = 0;
-                                    document.getElementById(`tarde_${courseId}_${ano}`).textContent = 0;
-                                    document.getElementById(`noite_${courseId}_${ano}`).textContent = 0;
-                                    document.getElementById(`protocolo_${courseId}_${ano}`).textContent = 0;
+                                    document.getElementById(`manha_${courseId}_${ano}`).textContent = totais[ano].M;
+                                    document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
+                                    document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
+                                    document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
                                 });
                         });
+
                     }              
                     else{
                         // Percorro cada turma devolvida
