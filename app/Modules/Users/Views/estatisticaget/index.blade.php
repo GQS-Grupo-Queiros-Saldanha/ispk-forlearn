@@ -399,6 +399,8 @@
                                     .then(json => {
                                         const totalAlunos = json.total ?? 0;
                                         const totalProtocolo = json.protocolo ?? 0;
+                                        const total = json.alunos;
+                                        console.log
                                         //console.log(turma.id);
                                         // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
                                         if (periodo === "M") {
@@ -417,6 +419,7 @@
                                         document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
                                         document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
                                         document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
+                                        document.getElementById(`total_${course.id}_${ano}`).textContent = total;
                                     });
                                 });
                         }
