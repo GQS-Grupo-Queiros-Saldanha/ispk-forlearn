@@ -209,6 +209,7 @@
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
                                     const total = json.alunos ?? 0;
+                                    console.log(total);
                                     
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
@@ -264,6 +265,7 @@
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
                                     const total = json.alunos ?? 0;
+                                    console.log(total);
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -318,6 +320,7 @@
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
                                     const total = json.alunos ?? 0;
+                                    console.log(total);
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -370,6 +373,7 @@
                                     const totalAlunos = json.total ?? 0;
                                     const totalProtocolo = json.protocolo ?? 0;
                                     const total = json.alunos ?? 0;
+                                    console.log(total);
 
                                     if (periodo === "M") totais[ano].M += totalAlunos;
                                     else if (periodo === "T") totais[ano].T += totalAlunos;
@@ -410,6 +414,7 @@
                                         const totalAlunos = json.total ?? 0;
                                         const totalProtocolo = json.protocolo ?? 0;
                                         const total = json.alunos ?? 0;
+                                        console.log(total);
                                         //console.log(turma.id);
                                         // Verifico o período (M: manhã, T: tarde, N: noite) e somo ao total do ano correspondente
                                         if (periodo === "M") {
