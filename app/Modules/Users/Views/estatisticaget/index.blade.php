@@ -218,6 +218,7 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`total_${course.id}_${ano}`).textContent = totais[ano].M + totais[ano].T + totais[ano].N + totais[ano].PT;
                                 });
                         });
 
@@ -270,6 +271,7 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`total_${course.id}_${ano}`).textContent = totais[ano].M + totais[ano].T + totais[ano].N + totais[ano].PT;
                                 });
                         });
 
@@ -322,6 +324,7 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`total_${course.id}_${ano}`).textContent = totais[ano].M + totais[ano].T + totais[ano].N + totais[ano].PT;
                                 });
                         });
 
@@ -372,6 +375,7 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
+                                    document.getElementById(`total_${course.id}_${ano}`).textContent = totais[ano].M + totais[ano].T + totais[ano].N + totais[ano].PT;
                                 });
                         });
 
@@ -419,8 +423,8 @@
                                         document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
                                         document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
                                         document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                                        document.getElementById(`total_${course.id}_${ano}`).textContent = 
-    totais[ano].M + totais[ano].T + totais[ano].N + totais[ano].PT;
+                                        document.getElementById(`total_${course.id}_${ano}`).textContent = totais[ano].M + totais[ano].T + totais[ano].N + totais[ano].PT;
+                                        
 
                                     });
                                 });
