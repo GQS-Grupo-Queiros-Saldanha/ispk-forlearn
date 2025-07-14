@@ -231,8 +231,8 @@
                             { curso: "EM", id: "13", periodo: "T" },
                             { curso: "EP", id: "2", periodo: "M" },
                             { curso: "EP", id: "32", periodo: "T" },
-                            { curso: "EQ", id: "37", periodo: "M" },
-                            { curso: "EQ", id: "38", periodo: "T" }
+                            { curso: "EQ", id: "39", periodo: "M" },
+                            { curso: "EQ", id: "40", periodo: "T" }
 
 
 
