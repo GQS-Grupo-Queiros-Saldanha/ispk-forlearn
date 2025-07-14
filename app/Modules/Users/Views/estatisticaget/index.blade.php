@@ -109,7 +109,8 @@
                         <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
                         <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
                         <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="total" class="text-center">-</td>
+                        <td id="total_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+
                     @endfor
                 </tr>
             @endforeach
@@ -137,7 +138,9 @@
             document.getElementById(`tarde_${courseId}_${ano}`).textContent = 0;
             document.getElementById(`noite_${courseId}_${ano}`).textContent = 0;
             document.getElementById(`protocolo_${courseId}_${ano}`).textContent = 0;
-            document.getElementById(`total`).textContent = 0;
+            document.getElementById(`total_${courseId}_${ano}`).textContent = total;
+
+
         });
     }
 
@@ -222,7 +225,8 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
-                                    document.getElementById(`total`).textContent = total;
+                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
+
                                 });
                         });
 
@@ -277,7 +281,8 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
-                                    document.getElementById(`total`).textContent = total;
+                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
+
                                 });
                         });
 
@@ -332,7 +337,8 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
-                                    document.getElementById(`total`).textContent = total;
+                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
+
                                 });
                         });
 
@@ -385,7 +391,8 @@
                                     document.getElementById(`tarde_${courseId}_${ano}`).textContent = totais[ano].T;
                                     document.getElementById(`noite_${courseId}_${ano}`).textContent = totais[ano].N;
                                     document.getElementById(`protocolo_${courseId}_${ano}`).textContent = totais[ano].PT;
-                                    document.getElementById(`total`).textContent = total;
+                                    document.getElementById(`total_${courseId}_${ano}`).textContent = total;
+
                                 });
                         });
 
@@ -433,7 +440,8 @@
                                         document.getElementById(`tarde_${course.id}_${ano}`).textContent = totais[ano].T;
                                         document.getElementById(`noite_${course.id}_${ano}`).textContent = totais[ano].N;
                                         document.getElementById(`protocolo_${course.id}_${ano}`).textContent = totais[ano].PT;
-                                        document.getElementById(`total`).textContent = total;
+                                        document.getElementById(`total_${courseId}_${ano}`).textContent = total;
+
                                     });
                                 });
                         }
