@@ -156,13 +156,13 @@
                     if (ano === 2) {
                         const codlista = [
                             { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" },
-                            { curso: "EG", id: "", periodo: "M" },{ curso: "EC", id: "", periodo: "T" },
-                            { curso: "EH", id: "", periodo: "M" },{ curso: "EC", id: "", periodo: "T" },
+                            { curso: "EG", id: "0", periodo: "M" },{ curso: "EC", id: "0", periodo: "T" },
+                            { curso: "EH", id: "0", periodo: "M" },{ curso: "EC", id: "0", periodo: "T" },
                             { curso: "EI", id: "15", periodo: "M" },{ curso: "EI", id: "20", periodo: "T" }
                         ];
 
                         codlista.forEach(item => {
-                            const codturma = item.id;
+                            const codturma = item.id ?? item.id : 00;
                             const periodo = item.periodo;
 
                             const chaveRequisicao = `${codturma}_${ano}_${courseId}`;
