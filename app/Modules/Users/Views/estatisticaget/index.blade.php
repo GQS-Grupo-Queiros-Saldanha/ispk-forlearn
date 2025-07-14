@@ -155,10 +155,10 @@
 
                     if (ano === 2) {
                         const codlista = [
-                            { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
+                            { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" },
                             { curso: "EG", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" },
                             { curso: "EH", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" },
-                            { curso: "EC", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
+                            { curso: "EI", id: "46", periodo: "M" },{ curso: "EC", id: "47", periodo: "T" }
                         ];
 
                         codlista.forEach(item => {
