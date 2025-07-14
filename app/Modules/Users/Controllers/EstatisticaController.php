@@ -130,9 +130,14 @@ class EstatisticaController extends Controller
            $bolseiros = $alunos->filter(function ($aluno) {
                return $aluno->is_scholar == 1 && $aluno->entidade !== null;
            });
+           // Alunos sem bolsa
+            $semBolsa = $alunos->reject(function ($aluno) {
+                return $aluno->is_scholar == 1 && $aluno->entidade !== null;
+            });
+
            log::info($bolseiros);
            return response()->json([
-               'total' => $alunos->count(),
+               'total' => $semBolsa->count(),
                'protocolo' => $bolseiros->count(),
                'alunos' => $alunos
            ]);
@@ -143,7 +148,4 @@ class EstatisticaController extends Controller
        }
    }
    
-
-   
-
 }
