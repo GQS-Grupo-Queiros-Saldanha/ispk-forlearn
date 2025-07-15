@@ -151,10 +151,23 @@ class EstatisticaController extends Controller
    public function gerarPDF(){
         try {
             $institution = Institution::latest()->first();
+
             $cod = '43';
             $ano = '1';
 
+            $mapeamento = [
+                'EC' => [
+                    1 => [['id' => 43, 'periodo' => 'M'], ['id' => 44, 'periodo' => 'T'], ['id' => 45, 'periodo' => 'N']],
+                    2 => [['id' => 46, 'periodo' => 'M'], ['id' => 47, 'periodo' => 'T']],
+                    3 => [['id' => 48, 'periodo' => 'M'], ['id' => 49, 'periodo' => 'T']],
+                    4 => [['id' => 50, 'periodo' => 'M'], ['id' => 51, 'periodo' => 'T']],
+                    5 => [['id' => 52, 'periodo' => 'M'], ['id' => 53, 'periodo' => 'T']],
+                ],
+                
+            ];
+
             $data = $this->api();
+
             $student = $this->student($cod, $ano);
 
             /*Renderização dos dados*/
@@ -163,7 +176,7 @@ class EstatisticaController extends Controller
                 'student'=> $student,
                 'institution' => $institution, 
             ];
-            dd($dados);
+            //dd($dados);
 
             /*Gera O pdf*/
             $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $dados);
