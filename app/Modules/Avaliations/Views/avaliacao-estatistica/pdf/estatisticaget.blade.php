@@ -138,7 +138,47 @@
 @section('content')
 <main>
     @include('Reports::pdf_model.pdf_header')
-   
+    <table class="table table-bordered table-hover table-sm mb-0">
+        <thead class="table-light">
+            <tr>
+                <th rowspan="2" class="align-middle text-center bg-light">Curso</th>
+                <th colspan="5" class="text-center">1.º Ano</th>
+                <th colspan="5" class="text-center">2.º Ano</th>
+                <th colspan="5" class="text-center">3.º Ano</th>
+                <th colspan="4" class="text-center">4.º Ano</th>
+                <th colspan="5" class="text-center">5.º Ano</th>
+            </tr>
+            <tr>
+                <!-- Cabeçalhos por ano -->
+                @for ($ano = 1; $ano <= 5; $ano++)
+                    <th class="text-center">M</th>
+                    <th class="text-center">T</th>
+                    @if (!($ano === 4)) {{-- 4.º ano não tem noite --}}
+                        <th class="text-center">N</th>
+                    @endif
+                    <th class="text-center">Prot.</th>
+                    <th class="text-center">Total</th>
+                @endfor
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($courses as $c)
+                @php
+                    $codTurma = $c->code;
+                @endphp
+                <tr>
+                    <td class="fw-semibold bg-light">{{ $codTurma }}</td>
+                    @for ($ano = 1; $ano <= 5; $ano++)
+                        <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="total_{{$c->id}}_{{ $ano }}">-</td>
+                    @endfor
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
     
     <div class="report-footer">
         Relatório gerado em {{ date('d/m/Y H:i') }} | Sistema Learn

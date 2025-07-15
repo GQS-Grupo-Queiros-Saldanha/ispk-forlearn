@@ -156,13 +156,15 @@ class EstatisticaController extends Controller
 
             $data = $this->api();
             $student = $this->student($cod, $ano);
-
+            
+            /*Renderização dos dados*/
             $dados = [
                 'data' => $data,
                 'student'=> $student,
                 'institution' => $institution, 
             ];
-            
+
+            /*Gera O pdf*/
             $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $dados);
             $pdf->setOption('margin-top', '2mm');
             $pdf->setOption('margin-left', '2mm');
