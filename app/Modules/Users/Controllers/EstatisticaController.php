@@ -160,6 +160,7 @@ class EstatisticaController extends Controller
             $dados = [
                 'data' => $data,
                 'student'=> $student,
+                'institution' => $institution, 
             ];
             
             $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $dados);
