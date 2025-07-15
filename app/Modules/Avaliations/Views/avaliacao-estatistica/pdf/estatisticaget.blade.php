@@ -8,127 +8,112 @@
 @include('Reports::pdf_model.forLEARN_header')
 
 <style>
-    /* Estilos Gerais */
+    /* Fonte e Cores Gerais */
     body {
         font-family: 'Arial', sans-serif;
-        color: #333;
-        /*line-height: 1.4;*/
+        color: #2c3e50;
     }
-    
-    /* Layout da Tabela */
-    .ranking-table {
-        width: 100%;
-        /*border-collapse: collapse;*/
-        margin: 15px 0;
-        box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-    }
-    
-    .ranking-table th, 
-    .ranking-table td {
-        padding: 10px 8px;
-        text-align: left;
-        /*border-bottom: 1px solid #e0e0e0*/
-    }
-    
-    .ranking-table th {
-        background-color: #2c3e50;
-        color: white;
-        font-weight: 500;
-        font-size: 11px;
-        text-transform: uppercase;
-        /*letter-spacing: 0.5px;*/
-    }
-    
-    .ranking-table tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-    
-    .ranking-table tr:hover {
-        background-color: #f1f1f1;
-    }
-    
+
     /* Cabeçalho do Relatório */
     .report-header {
         text-align: center;
-        /*margin-bottom: 20px;*/
         padding-bottom: 15px;
-        border-bottom: 2px solid #2c3e50;
+        border-bottom: 2px solid #007bff;
     }
-    
+
     .report-title {
         font-size: 18px;
         font-weight: 600;
-        color: #2c3e50;
-        /*margin-bottom: 5px;*/
+        color: #007bff;
         text-transform: uppercase;
     }
-    
+
     .report-subtitle {
         font-size: 14px;
-        color: #7f8c8d;
-       /* margin-bottom: 10px;*/
+        color: #6c757d;
     }
-    
-    /* Destaques para os melhores */
+
+    /* Tabela Principal */
+    .ranking-table, .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        font-size: 11px;
+    }
+
+    .ranking-table th, 
+    .ranking-table td,
+    .table th,
+    .table td {
+        padding: 8px 6px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+    }
+
+    /* Cabeçalho da Tabela */
+    .ranking-table th,
+    .table thead th {
+        background-color: #007bff;
+        color: #ffffff;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .table-light th {
+        background-color: #cce5ff !important;
+        color: #003366;
+    }
+
+    /* Linhas Alternadas */
+    .ranking-table tr:nth-child(even),
+    .table tbody tr:nth-child(even) {
+        background-color: #f1f8ff;
+    }
+
+    /* Destaques para melhores posições (se aplicável) */
     .top-1 {
-        background-color: #ffeaa7 !important;
+        background-color: #d1ecf1 !important;
         font-weight: 600;
     }
-    
+
     .top-2 {
-        background-color: #fdcb6e !important;
+        background-color: #bee5eb !important;
     }
-    
+
     .top-3 {
-        background-color: #fab1a0 !important;
+        background-color: #abdde5 !important;
     }
-    
-    /* Medalhas para os primeiros lugares */
-    .rank-cell {
-        position: relative;
-        font-weight: bold;
-    }
-    
-    .rank-1::before {
-        content: "🥇";
-        margin-right: 5px;
-    }
-    
-    .rank-2::before {
-        content: "🥈";
-        margin-right: 5px;
-    }
-    
-    .rank-3::before {
-        content: "🥉";
-        margin-right: 5px;
-    }
-    
-    /* Notas */
+
+    /* Células de nota */
     .grade-cell {
         font-family: 'Courier New', monospace;
         font-weight: bold;
         text-align: right;
-        padding-right: 15px !important;
+        padding-right: 12px !important;
     }
-    
+
+    /* Coluna de Curso */
+    .fw-semibold.bg-light {
+        background-color: #e3f2fd !important;
+        font-weight: bold;
+        color: #003366;
+    }
+
     /* Rodapé */
     .report-footer {
-       /* margin-top: 20px;*/
-        padding-top: 10px;
-        border-top: 1px solid #e0e0e0;
+        padding-top: 12px;
+        border-top: 1px solid #ced4da;
         font-size: 10px;
-        color: #7f8c8d;
+        color: #6c757d;
         text-align: right;
     }
 
-    
-    /* Responsividade */
+    /* Impressão */
     @media print {
         .ranking-table {
             page-break-inside: avoid;
         }
-        
         body {
             padding: 1cm;
         }
