@@ -56,57 +56,33 @@
 @endsection
 
 @section('body')
-    <div class="table-responsive border rounded">
-        <table class="table table-bordered table-hover table-sm mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th rowspan="2" class="align-middle text-center bg-light">Curso</th>
-                    <th colspan="4" class="text-center">1º Ano</th>
-                    <th colspan="4" class="text-center">2º Ano</th>
-                    <th colspan="4" class="text-center">3º Ano</th>
-                    <th colspan="4" class="text-center">4º Ano</th>
-                    <th colspan="4" class="text-center">5º Ano</th>
-                </tr>
-                <tr>
-                    <!-- 1ano -->
+<div class="table-responsive border rounded">
+    <table class="table table-bordered table-hover table-sm mb-0">
+        <thead class="table-light">
+            <tr>
+                <th rowspan="2" class="align-middle text-center bg-light">Curso</th>
+                <th colspan="5" class="text-center">1.º Ano</th>
+                <th colspan="5" class="text-center">2.º Ano</th>
+                <th colspan="5" class="text-center">3.º Ano</th>
+                <th colspan="4" class="text-center">4.º Ano</th>
+                <th colspan="5" class="text-center">5.º Ano</th>
+            </tr>
+            <tr>
+                <!-- Cabeçalhos por ano -->
+                @for ($ano = 1; $ano <= 5; $ano++)
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
-                    <th class="text-center">N</th>
+                    @if (!($ano === 4)) {{-- 4.º ano não tem noite --}}
+                        <th class="text-center">N</th>
+                    @endif
                     <th class="text-center">Prot.</th>
                     <th class="text-center">Total</th>
-                    
-                    <!-- 2ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
-                    
-                    <!-- 3ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
-                    
-                    <!-- 4ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                   <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
-                    
-                    <!-- 5ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($courses as $c)
+                @endfor
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($courses as $c)
                 @php
-                    $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
                     $codTurma = $c->code;
                 @endphp
                 <tr>
@@ -120,10 +96,9 @@
                     @endfor
                 </tr>
             @endforeach
-
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
+</div>
 @endsection
 
 @section('scripts-new')
