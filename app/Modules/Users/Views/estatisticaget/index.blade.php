@@ -46,6 +46,13 @@
             </select>
         </div>
     </div>
+    <div class="d-flax">
+        <button class="btn btn-success">
+            <i class="bi bi-fill"></i>
+            Gerar PDF
+        </button>
+
+    </div>
 @endsection
 
 @section('body')
