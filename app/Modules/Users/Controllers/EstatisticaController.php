@@ -156,10 +156,10 @@ class EstatisticaController extends Controller
 
             $data = $this->api();
             $student = $this->student($cod, $ano);
-            
+
             /*Renderização dos dados*/
             $dados = [
-                'data' => $data,
+                'courses' => $data,
                 'student'=> $student,
                 'institution' => $institution, 
             ];
