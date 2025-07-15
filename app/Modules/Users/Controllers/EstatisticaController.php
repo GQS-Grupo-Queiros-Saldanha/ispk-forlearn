@@ -162,7 +162,7 @@ class EstatisticaController extends Controller
                 'student'=> $student,
             ];
             
-            $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget");
+            $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $dados);
             $pdf->setOption('margin-top', '2mm');
             $pdf->setOption('margin-left', '2mm');
             $pdf->setOption('margin-bottom', '13mm');
@@ -172,7 +172,6 @@ class EstatisticaController extends Controller
             $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
             $pdf->setOption('footer-html', $footer_html);
 
-            $codigoTurmaSanitizado = preg_replace('/[^A-Z0-9_-]/i', '_', $codigoTurma);
             $filename = 'Dados_Estatistica_Geral.pdf';
             
             return response($pdf->output(), 200)

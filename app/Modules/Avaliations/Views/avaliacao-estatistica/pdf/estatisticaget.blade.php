@@ -1,70 +1,147 @@
 @extends('layouts.print')
 
-@section('page-title', 'Estatística de pagamento')
-@section('breadcrumb')
-    <li class="breadcrumb-item"><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">Estatística de pagamento</li>
-@endsection
+@php
+    $doc_name = 'Dados Estatisticos Geral';
+    $discipline_code = '';
+@endphp
 
-@section('styles-new')
-    @parent
-    <style>
-        .table-responsive { border-radius: 0.25rem;}
-        .table thead th {white-space: nowrap; vertical-align: middle;}
-        .table tbody td { vertical-align: middle;}
-    </style>
-@endsection
+@include('Reports::pdf_model.forLEARN_header')
 
-@section('selects')
-    <form method="GET" action="{{ route('estatistica.pagamento') }}">
-        <div class="mb-3">
-            <label for="lective_year" class="form-label">Ano lectivo</label>
-            <select name="lective_year" id="lective_year" class="form-select form-select-sm" onchange="this.form.submit()">
-                @foreach ($lectiveYears as $lectiveYear)
-                    <option value="{{ $lectiveYear->id }}" @if ($lectiveYearSelected == $lectiveYear->id) selected @endif>
-                        {{ $lectiveYear->currentTranslation->display_name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-    </form>
-@endsection
+<style>
+    /* Estilos Gerais */
+    body {
+        font-family: 'Arial', sans-serif;
+        color: #333;
+        /*line-height: 1.4;*/
+    }
+    
+    /* Layout da Tabela */
+    .ranking-table {
+        width: 100%;
+        /*border-collapse: collapse;*/
+        margin: 15px 0;
+        box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+    }
+    
+    .ranking-table th, 
+    .ranking-table td {
+        padding: 10px 8px;
+        text-align: left;
+        /*border-bottom: 1px solid #e0e0e0*/
+    }
+    
+    .ranking-table th {
+        background-color: #2c3e50;
+        color: white;
+        font-weight: 500;
+        font-size: 11px;
+        text-transform: uppercase;
+        /*letter-spacing: 0.5px;*/
+    }
+    
+    .ranking-table tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    
+    .ranking-table tr:hover {
+        background-color: #f1f1f1;
+    }
+    
+    /* Cabeçalho do Relatório */
+    .report-header {
+        text-align: center;
+        /*margin-bottom: 20px;*/
+        padding-bottom: 15px;
+        border-bottom: 2px solid #2c3e50;
+    }
+    
+    .report-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        /*margin-bottom: 5px;*/
+        text-transform: uppercase;
+    }
+    
+    .report-subtitle {
+        font-size: 14px;
+        color: #7f8c8d;
+       /* margin-bottom: 10px;*/
+    }
+    
+    /* Destaques para os melhores */
+    .top-1 {
+        background-color: #ffeaa7 !important;
+        font-weight: 600;
+    }
+    
+    .top-2 {
+        background-color: #fdcb6e !important;
+    }
+    
+    .top-3 {
+        background-color: #fab1a0 !important;
+    }
+    
+    /* Medalhas para os primeiros lugares */
+    .rank-cell {
+        position: relative;
+        font-weight: bold;
+    }
+    
+    .rank-1::before {
+        content: "🥇";
+        margin-right: 5px;
+    }
+    
+    .rank-2::before {
+        content: "🥈";
+        margin-right: 5px;
+    }
+    
+    .rank-3::before {
+        content: "🥉";
+        margin-right: 5px;
+    }
+    
+    /* Notas */
+    .grade-cell {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        text-align: right;
+        padding-right: 15px !important;
+    }
+    
+    /* Rodapé */
+    .report-footer {
+       /* margin-top: 20px;*/
+        padding-top: 10px;
+        border-top: 1px solid #e0e0e0;
+        font-size: 10px;
+        color: #7f8c8d;
+        text-align: right;
+    }
+
+    
+    /* Responsividade */
+    @media print {
+        .ranking-table {
+            page-break-inside: avoid;
+        }
+        
+        body {
+            padding: 1cm;
+        }
+    }
+</style>
 
 @section('content')
-    <div class="table-responsive border rounded">
-        <table class="table table-bordered table-hover table-sm mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th rowspan="2" class="align-middle text-center bg-light">Curso</th>
-                    @for ($ano = 1; $ano <= 5; $ano++)
-                        <th colspan="5" class="text-center">{{ $ano }}º Ano</th>
-                    @endfor
-                </tr>
-                <tr>
-                    @for ($i = 1; $i <= 5; $i++)
-                        <th class="text-center">M</th>
-                        <th class="text-center">T</th>
-                        <th class="text-center">N</th>
-                        <th class="text-center">Prot.</th>
-                        <th class="text-center">Total</th>
-                    @endfor
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($courses as $c)
-                    <tr>
-                        <td class="fw-semibold bg-light">{{ $c->code }}</td>
-                        @for ($ano = 1; $ano <= 5; $ano++)
-                            <td class="text-center">{{ $estatisticas[$c->id][$ano]['M'] }}</td>
-                            <td class="text-center">{{ $estatisticas[$c->id][$ano]['T'] }}</td>
-                            <td class="text-center">{{ $estatisticas[$c->id][$ano]['N'] }}</td>
-                            <td class="text-center">{{ $estatisticas[$c->id][$ano]['PT'] }}</td>
-                            <td class="text-center">{{ $estatisticas[$c->id][$ano]['total'] }}</td>
-                        @endfor
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+<main>
+    @include('Reports::pdf_model.pdf_header')
+   
+    
+    <div class="report-footer">
+        Relatório gerado em {{ date('d/m/Y H:i') }} | Sistema Learn
     </div>
+</main>
 @endsection
-
