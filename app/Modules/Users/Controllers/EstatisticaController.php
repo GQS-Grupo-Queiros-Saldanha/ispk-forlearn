@@ -150,8 +150,9 @@ class EstatisticaController extends Controller
        }
    }
    public function gerarPDF(){
+    return "ola";
     
-        try {
+        /*try {
             $institution = Institution::latest()->first(); 
 
             $data = $this->api();
@@ -182,7 +183,7 @@ class EstatisticaController extends Controller
         }catch (Exception | Throwable $e) {
             logError($e);
             return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
-        }
+        }*/
 
    }
    
