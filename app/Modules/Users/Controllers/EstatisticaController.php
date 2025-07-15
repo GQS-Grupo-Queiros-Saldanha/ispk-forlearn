@@ -208,8 +208,14 @@ class EstatisticaController extends Controller
         // Exemplo de lista de cursos com códigos (deves substituir pela tua fonte real)
         $courses = [
             (object)['id' => 1, 'code' => 'EC', 'currentTranslation' => (object)['display_name' => 'Curso EC']],
-            // outros cursos...
+            (object)['id' => 2, 'code' => 'EG', 'currentTranslation' => (object)['display_name' => 'Curso EG']],
+            (object)['id' => 3, 'code' => 'EH', 'currentTranslation' => (object)['display_name' => 'Curso EH']],
+            (object)['id' => 4, 'code' => 'EI', 'currentTranslation' => (object)['display_name' => 'Curso EI']],
+            (object)['id' => 5, 'code' => 'EM', 'currentTranslation' => (object)['display_name' => 'Curso EM']],
+            (object)['id' => 6, 'code' => 'EP', 'currentTranslation' => (object)['display_name' => 'Curso EP']],
+            (object)['id' => 7, 'code' => 'EQ', 'currentTranslation' => (object)['display_name' => 'Curso EQ']],
         ];
+        
 
         $estatisticas = [];
 
