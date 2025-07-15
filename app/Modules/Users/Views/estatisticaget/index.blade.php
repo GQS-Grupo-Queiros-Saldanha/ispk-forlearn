@@ -50,7 +50,7 @@
         <button class="btn btn-success" id="btnPdf">
             <i class="bi bi-file-earmark-pdf"></i>
             Gerar PDF
-        </button>
+        </button>        
 
     </div>
 @endsection
@@ -130,6 +130,13 @@
 @section('scripts-new')
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    
+    /*Acção do Botão de PDF*/
+    const btn = document.getElementById('btnPdf');
+    btn.addEventListener('click', function() {
+        window.location.href = "/pt/estatisticaget/pdf/";
+    });
+
     const lectiveSelector = document.getElementById('lective_year');
     const lectiveYear = lectiveSelector.value;
 
@@ -441,10 +448,7 @@
             });
         }
     });
-    Btn = document.getElementById('btnPdf');
-    Btn.addEventListener('click', function(){
-        window.location.href = "/pt/estatisticaget/pdf/";
-    });
+   
 
 </script>
 @endsection
