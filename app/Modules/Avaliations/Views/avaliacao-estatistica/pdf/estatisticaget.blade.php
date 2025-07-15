@@ -9,11 +9,12 @@
 
 <style>
     /* Estilos Gerais Modernizados */
+    
     body {
         font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         color: #2d3748;
         line-height: 1.5;
-        background-color: #030b14;
+        background-color: #f8fafc;
     }
     
     /* Layout da Tabela Moderno */
@@ -27,12 +28,7 @@
         border-radius: 8px;
     }
     
-    .table th, 
-    .table td {
-        padding: 12px 10px;
-        text-align: center;
-        border: 1px solid #e2e8f0;
-    }
+   
     
     .table th {
         background-color: #4f46e5;
