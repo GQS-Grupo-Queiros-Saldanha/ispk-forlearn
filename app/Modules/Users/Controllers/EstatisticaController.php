@@ -158,7 +158,7 @@ class EstatisticaController extends Controller
             $dados = [
                 'data' => $data,
                 'student'=> $student,
-            ] 
+            ];
             
             $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget");
             $pdf->setOption('margin-top', '2mm');
