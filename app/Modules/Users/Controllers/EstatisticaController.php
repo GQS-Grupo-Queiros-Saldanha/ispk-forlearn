@@ -160,7 +160,49 @@ class EstatisticaController extends Controller
                 4 => [['id' => 50, 'periodo' => 'M'], ['id' => 51, 'periodo' => 'T']],
                 5 => [['id' => 52, 'periodo' => 'M'], ['id' => 53, 'periodo' => 'T']],
             ],
-            // Podes adicionar mais cursos aqui...
+            'EG' => [
+                1 => [['id' => 23, 'periodo' => 'M'], ['id' => 24, 'periodo' => 'T'], ['id' => 25, 'periodo' => 'N']],
+
+            ],
+            'EH' => [
+                1 => [['id' => 5, 'periodo' => 'M'], ['id' => 26, 'periodo' => 'T'], ['id' => 27, 'periodo' => 'N']],
+                2 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+                3 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+                4 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+                5 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']]
+
+            ],
+            'EI' => [
+                1 => [['id' => 3, 'periodo' => 'M'], ['id' => 19, 'periodo' => 'T'], ['id' => 22, 'periodo' => 'N']],
+                2 => [['id' => 15, 'periodo' => 'M'], ['id' => 20, 'periodo' => 'T']],
+                3 => [['id' => 16, 'periodo' => 'M'], ['id' => 21, 'periodo' => 'T']],
+                4 => [['id' => 17, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+                5 => [['id' => 18, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+            ],
+            'EM' => [
+                1 => [['id' => 6, 'periodo' => 'M'], ['id' => 11, 'periodo' => 'T'], ['id' => 14, 'periodo' => 'N']],
+                2 => [['id' => 7, 'periodo' => 'M'], ['id' => 12, 'periodo' => 'T']],
+                3 => [['id' => 8, 'periodo' => 'M'], ['id' => 13, 'periodo' => 'T']],
+                4 => [['id' => 9, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+                5 => [['id' => 10, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+            ],
+            'EP' => [
+                1 => [['id' => 28, 'periodo' => 'M'], ['id' => 30, 'periodo' => 'T'], ['id' => 33, 'periodo' => 'N']],
+                2 => [['id' => 29, 'periodo' => 'M'], ['id' => 31, 'periodo' => 'T']],
+                3 => [['id' => 2, 'periodo' => 'M'], ['id' => 32, 'periodo' => 'T']],
+                4 => [['id' => 1, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+                5 => [['id' => 4, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']]
+
+            ],
+            'EQ' => [
+                1 => [['id' => 34, 'periodo' => 'M'], ['id' => 35, 'periodo' => 'T'], ['id' => 36, 'periodo' => 'N']],
+                2 => [['id' => 37, 'periodo' => 'M'], ['id' => 38, 'periodo' => 'T']],
+                3 => [['id' => 39, 'periodo' => 'M'], ['id' => 40, 'periodo' => 'T']],
+                4 => [['id' => 41, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
+                5 => [['id' => 42, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']]
+
+            ],
+            
         ];
 
         // Exemplo de lista de cursos com códigos (deves substituir pela tua fonte real)
