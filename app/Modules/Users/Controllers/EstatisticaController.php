@@ -173,7 +173,7 @@ class EstatisticaController extends Controller
             /*Renderização dos dados*/
             $dados = [
                 'courses' => $data['courses'],
-                'student'=> $student,
+                'student'=> $student['data'],
                 'institution' => $institution, 
             ];
             //dd($dados);
