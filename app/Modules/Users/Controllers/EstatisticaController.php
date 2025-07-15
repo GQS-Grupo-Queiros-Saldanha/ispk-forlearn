@@ -149,7 +149,7 @@ class EstatisticaController extends Controller
            return response()->json(['erro' => $e->getMessage()], 500);
        }
    }
-   public function gerarPDF(Request $request){
+   public function gerarPDF(){
     
         try {
             $institution = Institution::latest()->first(); 
