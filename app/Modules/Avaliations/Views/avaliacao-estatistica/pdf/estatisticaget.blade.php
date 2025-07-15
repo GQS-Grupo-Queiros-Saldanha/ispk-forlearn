@@ -149,11 +149,10 @@
                 <th colspan="5" class="text-center">5.º Ano</th>
             </tr>
             <tr>
-                <!-- Cabeçalhos por ano -->
                 @for ($ano = 1; $ano <= 5; $ano++)
                     <th class="text-center">M</th>
                     <th class="text-center">T</th>
-                    @if (!($ano === 4)) {{-- 4.º ano não tem noite --}}
+                    @if (!($ano === 4))
                         <th class="text-center">N</th>
                     @endif
                     <th class="text-center">Prot.</th>
@@ -169,17 +168,28 @@
                 <tr>
                     <td class="fw-semibold bg-light">{{ $codTurma }}</td>
                     @for ($ano = 1; $ano <= 5; $ano++)
-                        <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">{{ $student['protocolo'] }}</td>
-                        <td id="total_{{$c->id}}_{{ $ano }}">{{ $student['alunos'] }}</td>
+                        <td class="text-center">
+                            {{ $estatisticas[$codTurma][$ano]['M'] ?? 0 }}
+                        </td>
+                        <td class="text-center">
+                            {{ $estatisticas[$codTurma][$ano]['T'] ?? 0 }}
+                        </td>
+                        @if (!($ano === 4))
+                            <td class="text-center">
+                                {{ $estatisticas[$codTurma][$ano]['N'] ?? 0 }}
+                            </td>
+                        @endif
+                        <td class="text-center">
+                            {{ $estatisticas[$codTurma][$ano]['PT'] ?? 0 }}
+                        </td>
+                        <td class="text-center">
+                            {{ $estatisticas[$codTurma][$ano]['TOTAL'] ?? 0 }}
+                        </td>
                     @endfor
                 </tr>
             @endforeach
         </tbody>
     </table>
-    
     <div class="report-footer">
         Relatório gerado em {{ date('d/m/Y H:i') }} | Sistema Learn
     </div>

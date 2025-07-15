@@ -148,58 +148,86 @@ class EstatisticaController extends Controller
            return response()->json(['erro' => $e->getMessage()], 500);
        }
    }
-   public function gerarPDF(){
-        try {
-            $institution = Institution::latest()->first();
+   public function gerarPDF() {
+    try {
+        $institution = Institution::latest()->first();
 
-            $cod = '43';
-            $ano = '1';
+        $mapeamento = [
+            'EC' => [
+                1 => [['id' => 43, 'periodo' => 'M'], ['id' => 44, 'periodo' => 'T'], ['id' => 45, 'periodo' => 'N']],
+                2 => [['id' => 46, 'periodo' => 'M'], ['id' => 47, 'periodo' => 'T']],
+                3 => [['id' => 48, 'periodo' => 'M'], ['id' => 49, 'periodo' => 'T']],
+                4 => [['id' => 50, 'periodo' => 'M'], ['id' => 51, 'periodo' => 'T']],
+                5 => [['id' => 52, 'periodo' => 'M'], ['id' => 53, 'periodo' => 'T']],
+            ],
+            // Podes adicionar mais cursos aqui...
+        ];
 
-            $mapeamento = [
-                'EC' => [
-                    1 => [['id' => 43, 'periodo' => 'M'], ['id' => 44, 'periodo' => 'T'], ['id' => 45, 'periodo' => 'N']],
-                    2 => [['id' => 46, 'periodo' => 'M'], ['id' => 47, 'periodo' => 'T']],
-                    3 => [['id' => 48, 'periodo' => 'M'], ['id' => 49, 'periodo' => 'T']],
-                    4 => [['id' => 50, 'periodo' => 'M'], ['id' => 51, 'periodo' => 'T']],
-                    5 => [['id' => 52, 'periodo' => 'M'], ['id' => 53, 'periodo' => 'T']],
-                ],
-                
-            ];
+        // Exemplo de lista de cursos com códigos (deves substituir pela tua fonte real)
+        $courses = [
+            (object)['id' => 1, 'code' => 'EC', 'currentTranslation' => (object)['display_name' => 'Curso EC']],
+            // outros cursos...
+        ];
 
-            $data = $this->api();
-            $student = $this->student($cod, $ano);
-            $studentData = json_decode($student->getContent(), true); 
+        $estatisticas = [];
 
-            /*Renderização dos dados*/
-            $dados = [
-                'courses' => $data['courses'],
-                'student'=> $studentData,
-                'institution' => $institution, 
-            ];
-            //dd($dados);
+        foreach ($courses as $course) {
+            $code = $course->code;
+            $estatisticas[$code] = [];
 
-            /*Gera O pdf*/
-            $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $dados);
-            $pdf->setOption('margin-top', '2mm');
-            $pdf->setOption('margin-left', '2mm');
-            $pdf->setOption('margin-bottom', '13mm');
-            $pdf->setOption('margin-right', '2mm');
-            $pdf->setPaper('a4', 'landscape');
+            for ($ano = 1; $ano <= 5; $ano++) {
+                $estatisticas[$code][$ano] = ['M' => 0, 'T' => 0, 'N' => 0, 'PT' => 0, 'TOTAL' => 0];
 
-            $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-            $pdf->setOption('footer-html', $footer_html);
+                if (isset($mapeamento[$code][$ano])) {
+                    foreach ($mapeamento[$code][$ano] as $turma) {
+                        $idTurma = $turma['id'];
+                        $periodo = $turma['periodo'];
 
-            $filename = 'Dados_Estatistica_Geral.pdf';
-            
-            return response($pdf->output(), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
+                        $student = $this->student($idTurma, $ano);
+                        $studentData = json_decode($student->getContent(), true);
 
-        }catch (Exception | Throwable $e) {
+                        $totalAlunos = $studentData['total'] ?? 0;
+                        $protocolo = $studentData['protocolo'] ?? 0;
+
+                        // Somar totais conforme o período
+                        if ($periodo === 'M') $estatisticas[$code][$ano]['M'] += $totalAlunos;
+                        if ($periodo === 'T') $estatisticas[$code][$ano]['T'] += $totalAlunos;
+                        if ($periodo === 'N') $estatisticas[$code][$ano]['N'] += $totalAlunos;
+
+                        $estatisticas[$code][$ano]['PT'] += $protocolo;
+                        $estatisticas[$code][$ano]['TOTAL'] += $totalAlunos + $protocolo;
+                    }
+                }
+            }
+        }
+
+        $dados = [
+            'courses' => $courses,
+            'estatisticas' => $estatisticas,
+            'institution' => $institution,
+        ];
+
+        $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $dados);
+        $pdf->setOption('margin-top', '2mm');
+        $pdf->setOption('margin-left', '2mm');
+        $pdf->setOption('margin-bottom', '13mm');
+        $pdf->setOption('margin-right', '2mm');
+        $pdf->setPaper('a4', 'landscape');
+
+        $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+        $pdf->setOption('footer-html', $footer_html);
+
+        $filename = 'Dados_Estatistica_Geral.pdf';
+
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
+
+        } catch (Exception | Throwable $e) {
             logError($e);
             return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
+    }
 
-   }
    
 }
