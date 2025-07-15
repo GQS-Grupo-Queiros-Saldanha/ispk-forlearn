@@ -47,7 +47,7 @@
         </div>
     </div>
     <div class="d-flax">
-        <button class="btn btn-success">
+        <button class="btn btn-success" id="btnPdf">
             <i class="bi bi-file-earmark-pdf"></i>
             Gerar PDF
         </button>
@@ -441,6 +441,11 @@
             });
         }
     });
+    Btn = document.getElementById('btnPdf');
+    Btn.addEventListener('click', function(){
+        window.location.href = "/pt/estatisticaget/pdf/";
+    });
+
 </script>
 @endsection
 

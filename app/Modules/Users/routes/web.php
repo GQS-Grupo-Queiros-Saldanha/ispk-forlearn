@@ -28,6 +28,7 @@ Route::group(
         
         Route::get('/estatisticaget', [EstatisticaController::class, 'index']);
         Route::get('/estatisticaget/student/{turma}/{ano}', [EstatisticaController::class, 'student']);
+        Route::get('/estatisticaget/pdf/', [EstatisticaController::class, 'gerarPDF']);
         
         // Route::get('users/testeParametro', 'UsersController@updateParametro');
         // Route::get('users/testeParametro', 'UsersController@updateUsuario');

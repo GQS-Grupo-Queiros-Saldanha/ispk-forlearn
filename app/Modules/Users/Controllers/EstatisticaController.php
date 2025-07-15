@@ -38,8 +38,10 @@ use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Log;
 
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use PDF;
 use App\Model\Institution;
+use App\Modules\GA\Models\Student;
 
 class EstatisticaController extends Controller
 { 
@@ -146,6 +148,42 @@ class EstatisticaController extends Controller
            logError($e);
            return response()->json(['erro' => $e->getMessage()], 500);
        }
+   }
+   public function gerarPDF(Request $request){
+    
+        try {
+            $institution = Institution::latest()->first(); 
+
+            $data = $this->api();
+            $student = $this->student($classId, $coursYear);
+
+            $dados = [
+                'data' => $data,
+                'student'=> $student,
+            ] 
+            
+            $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $data);
+            $pdf->setOption('margin-top', '2mm');
+            $pdf->setOption('margin-left', '2mm');
+            $pdf->setOption('margin-bottom', '13mm');
+            $pdf->setOption('margin-right', '2mm');
+            $pdf->setPaper('a4', 'landscape');
+
+            $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+            $pdf->setOption('footer-html', $footer_html);
+
+            $codigoTurmaSanitizado = preg_replace('/[^A-Z0-9_-]/i', '_', $codigoTurma);
+            $filename = 'Dados_Estatistica_Geral.pdf';
+            
+            return response($pdf->output(), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
+
+        }catch (Exception | Throwable $e) {
+            logError($e);
+            return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+        }
+
    }
    
 }
