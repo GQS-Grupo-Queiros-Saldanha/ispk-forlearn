@@ -157,10 +157,5 @@
             @endforeach
         </tbody>
     </table>
-    
-
-    <div class="report-footer">
-        Relatório gerado em {{ date('d/m/Y H:i') }} | Sistema Learn
-    </div>
 </main>
 @endsection
