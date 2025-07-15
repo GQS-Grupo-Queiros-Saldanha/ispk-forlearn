@@ -38,7 +38,6 @@ use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Log;
 
-use Barryvdh\Snappy\Facades\SnappyPdf;
 use PDF;
 use App\Model\Institution;
 use App\Modules\GA\Models\Student;
