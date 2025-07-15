@@ -167,13 +167,13 @@ class EstatisticaController extends Controller
             ];
 
             $data = $this->api();
-
             $student = $this->student($cod, $ano);
+            $studentData = json_decode($student->getContent(), true); 
 
             /*Renderização dos dados*/
             $dados = [
                 'courses' => $data['courses'],
-                'student'=> $student['data'],
+                'student'=> $studentData,
                 'institution' => $institution, 
             ];
             //dd($dados);
