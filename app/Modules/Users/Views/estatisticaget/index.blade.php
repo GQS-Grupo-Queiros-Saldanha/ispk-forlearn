@@ -119,7 +119,6 @@
     </style>
 @endsection
 
-
 @section('selects')
     <div class="mb-3">
         <label for="lective_year" class="form-label">Ano lectivo</label>
@@ -154,7 +153,6 @@
             <i class="bi bi-file-earmark-pdf"></i>
             Gerar PDF
         </button>        
-
     </div>
 @endsection
 
@@ -233,6 +231,7 @@
         </table>
     </div>
 @endsection
+
 @section('scripts-new')
 @section('scripts-new')
 <script>
