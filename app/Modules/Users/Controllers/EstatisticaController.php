@@ -150,10 +150,12 @@ class EstatisticaController extends Controller
    }
    public function gerarPDF(){
         try {
-            $institution = Institution::latest()->first(); 
+            $institution = Institution::latest()->first();
+            $cod = '49';
+            $ano = '1';
 
             $data = $this->api();
-            $student = $this->student($classId, $coursYear);
+            $student = $this->student($cod, $ano);
 
             $dados = [
                 'data' => $data,
