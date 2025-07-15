@@ -105,21 +105,21 @@
             </thead>
             <tbody>
                 @foreach ($courses as $c)
-                    @php
-                        $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
-                        $codTurma = $c->code;
-                    @endphp
-                    <tr>
-                        <td class="fw-semibold bg-light">{{ $codTurma }}</td>
-                        @for ($ano = 1; $ano <= 5; $ano++)
-                            <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                            <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                            <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                            <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                            <td id="total_{{$c->id}}_{{ $ano }}">-</td>
-                        @endfor
-                    </tr>
-                @endforeach
+                @php
+                    $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
+                    $codTurma = $c->code;
+                @endphp
+                <tr>
+                    <td class="fw-semibold bg-light">{{ $codTurma }}</td>
+                    @for ($ano = 1; $ano <= 5; $ano++)
+                        <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                        <td id="total_{{$c->id}}_{{ $ano }}">-</td>
+                    @endfor
+                </tr>
+            @endforeach
 
             </tbody>
         </table>
