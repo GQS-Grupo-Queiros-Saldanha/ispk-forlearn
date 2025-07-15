@@ -91,7 +91,7 @@
     }
     
     /* Células de Destaque */
-    .bg-light {
+    .bg-light-tb {
         background-color: #f1f5f9 !important;
         font-weight: 600;
         color: #1e293b;
@@ -140,7 +140,7 @@
             print-color-adjust: exact;
         }
         
-        .bg-light {
+        .bg-light-tb {
             background-color: #f1f5f9 !important;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -173,7 +173,7 @@
     <table class="table table-bordered table-hover table-sm mb-0">
         <thead class="table-light">
             <tr>
-                <th rowspan="2" class="align-middle text-center bg-light">Curso</th>
+                <th rowspan="2" class="align-middle text-center bg-light-tb">Curso</th>
                 <th colspan="5" class="text-center">1.º Ano</th>
                 <th colspan="5" class="text-center">2.º Ano</th>
                 <th colspan="5" class="text-center">3.º Ano</th>
@@ -198,7 +198,7 @@
                     $codTurma = $c->code;
                 @endphp
                 <tr>
-                    <td class="fw-semibold bg-light">{{ $codTurma }}</td>
+                    <td class="fw-semibold bg-light-tb">{{ $codTurma }}</td>
                     @for ($ano = 1; $ano <= 5; $ano++)
                         <td class="text-center">
                             {{ $estatisticas[$codTurma][$ano]['M'] ?? 0 }}
