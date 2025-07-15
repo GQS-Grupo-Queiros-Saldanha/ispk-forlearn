@@ -11,11 +11,114 @@
 @section('styles-new')
     @parent
     <style>
-        .table-responsive { border-radius: 0.25rem;}
-        .table thead th {white-space: nowrap; vertical-align: middle; }
-        .table tbody td { vertical-align: middle;}
+        .table-responsive {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .table {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            white-space: nowrap;
+            vertical-align: middle;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .table tbody td {
+            vertical-align: middle;
+            font-size: 0.9rem;
+            padding: 0.75rem;
+        }
+        
+        /* Cabeçalho principal */
+        .table thead tr:first-child {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+        }
+        
+        /* Subcabeçalho */
+        .table thead tr:nth-child(2) {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        /* Estilo para as células de total */
+        .table tbody td[class*="total_"] {
+            font-weight: 600;
+            background-color: #e0f2fe;
+        }
+        
+        /* Cores diferentes para cada ano */
+        .table thead tr:nth-child(2) th:nth-child(2),
+        .table thead tr:nth-child(2) th:nth-child(7),
+        .table thead tr:nth-child(2) th:nth-child(12),
+        .table thead tr:nth-child(2) th:nth-child(17),
+        .table thead tr:nth-child(2) th:nth-child(22) {
+            background-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Cores alternadas para linhas */
+        .table tbody tr:nth-child(odd) {
+            background-color: #f8fafc;
+        }
+        
+        .table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+        
+        /* Destaque para o nome do curso */
+        .table tbody td.fw-semibold {
+            background-color: #eff6ff !important;
+            color: #1e40af;
+            font-weight: 700 !important;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        /* Hover effect */
+        .table-hover tbody tr:hover {
+            background-color: #f0f9ff;
+        }
+        
+        /* Botão PDF */
+        #btnPdf {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        #btnPdf:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.3);
+        }
+        
+        /* Selects */
+        .form-select {
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .table-responsive {
+                border: 1px solid #e5e7eb;
+            }
+        }
     </style>
 @endsection
+
 
 @section('selects')
     <div class="mb-3">
@@ -60,47 +163,47 @@
         <table class="table table-bordered table-hover table-sm mb-0">
             <thead class="table-light">
                 <tr>
-                    <th rowspan="2" class="align-middle text-center bg-light">Curso</th>
-                    <th colspan="4" class="text-center">1º Ano</th>
-                    <th colspan="4" class="text-center">2º Ano</th>
-                    <th colspan="4" class="text-center">3º Ano</th>
-                    <th colspan="4" class="text-center">4º Ano</th>
-                    <th colspan="4" class="text-center">5º Ano</th>
+                    <th rowspan="2" class="align-middle text-center bg-gradient-primary text-white">Curso</th>
+                    <th colspan="5" class="text-center bg-blue-50">1º Ano</th>
+                    <th colspan="5" class="text-center bg-blue-100">2º Ano</th>
+                    <th colspan="5" class="text-center bg-blue-150">3º Ano</th>
+                    <th colspan="4" class="text-center bg-blue-200">4º Ano</th>
+                    <th colspan="5" class="text-center bg-blue-250">5º Ano</th>
                 </tr>
                 <tr>
                     <!-- 1ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
+                    <th class="text-center bg-blue-50">M</th>
+                    <th class="text-center bg-blue-50">T</th>
+                    <th class="text-center bg-blue-50">N</th>
+                    <th class="text-center bg-blue-50">Prot.</th>
+                    <th class="text-center bg-blue-50">Total</th>
                     
                     <!-- 2ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
+                    <th class="text-center bg-blue-100">M</th>
+                    <th class="text-center bg-blue-100">T</th>
+                    <th class="text-center bg-blue-100">N</th>
+                    <th class="text-center bg-blue-100">Prot.</th>
+                    <th class="text-center bg-blue-100">Total</th>
                     
                     <!-- 3ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
+                    <th class="text-center bg-blue-150">M</th>
+                    <th class="text-center bg-blue-150">T</th>
+                    <th class="text-center bg-blue-150">N</th>
+                    <th class="text-center bg-blue-150">Prot.</th>
+                    <th class="text-center bg-blue-150">Total</th>
                     
                     <!-- 4ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                   <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
+                    <th class="text-center bg-blue-200">M</th>
+                    <th class="text-center bg-blue-200">T</th>
+                    <th class="text-center bg-blue-200">Prot.</th>
+                    <th class="text-center bg-blue-200">Total</th>
                     
                     <!-- 5ano -->
-                    <th class="text-center">M</th>
-                    <th class="text-center">T</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Prot.</th>
-                    <th class="text-center">Total</th>
+                    <th class="text-center bg-blue-250">M</th>
+                    <th class="text-center bg-blue-250">T</th>
+                    <th class="text-center bg-blue-250">N</th>
+                    <th class="text-center bg-blue-250">Prot.</th>
+                    <th class="text-center bg-blue-250">Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -108,24 +211,28 @@
                 @php
                     $sigla = strtoupper(substr($c->currentTranslation->display_name, 0, 1) . substr(strstr($c->currentTranslation->display_name, ' '), 1, 1));
                     $codTurma = $c->code;
+                    // Gerar uma cor baseada no código do curso para consistência
+                    $colorHash = crc32($codTurma);
+                    $r = ($colorHash & 0xFF0000) >> 16;
+                    $g = ($colorHash & 0x00FF00) >> 8;
+                    $b = $colorHash & 0x0000FF;
+                    $baseColor = sprintf("rgba(%d, %d, %d, 0.1)", min($r + 100, 255), min($g + 100, 255), min($b + 150, 255));
                 @endphp
-                <tr>
-                    <td class="fw-semibold bg-light">{{ $codTurma }}</td>
+                <tr style="--course-color: {{ $baseColor }};">
+                    <td class="fw-semibold" style="background-color: var(--course-color); border-left: 4px solid #3b82f6;">{{ $codTurma }}</td>
                     @for ($ano = 1; $ano <= 5; $ano++)
-                        <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="total_{{$c->id}}_{{ $ano }}">-</td>
+                        <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center" style="background-color: rgba(147, 197, 253, 0.2);">-</td>
+                        <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center" style="background-color: rgba(147, 197, 253, 0.3);">-</td>
+                        <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center" style="background-color: rgba(147, 197, 253, 0.4);">-</td>
+                        <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center" style="background-color: rgba(147, 197, 253, 0.5);">-</td>
+                        <td id="total_{{ $c->id }}_{{ $ano }}" style="background-color: rgba(59, 130, 246, 0.1); font-weight: 600;">-</td>
                     @endfor
                 </tr>
-            @endforeach
-
+                @endforeach
             </tbody>
         </table>
     </div>
 @endsection
-
 @section('scripts-new')
 @section('scripts-new')
 <script>
