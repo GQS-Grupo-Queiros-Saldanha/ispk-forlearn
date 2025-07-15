@@ -155,7 +155,7 @@ class EstatisticaController extends Controller
             $institution = Institution::latest()->first(); 
 
             $data = $this->api();
-            $student = $this->student($classId, $coursYear);
+            $student = 'ola';//$this->student($classId, $coursYear);
 
             $dados = [
                 'data' => $data,
