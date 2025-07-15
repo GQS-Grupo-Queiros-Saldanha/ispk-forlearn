@@ -9,24 +9,11 @@
 
 <style>
     /* Estilos Gerais Modernizados */
-    /* Corrige o problema do quadrado branco */
-    .pdf-header-container {
-        background-color: transparent !important;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Remove qualquer fundo branco do cabeçalho */
-    @include('Reports::pdf_model.forLEARN_header'),
-    @include('Reports::pdf_model.pdf_header') {
-        background-color: transparent !important;
-        box-shadow: none !important;
-    }
     body {
         font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         color: #2d3748;
         line-height: 1.5;
-        background-color: #f8fafc;
+        background-color: #030b14;
     }
     
     /* Layout da Tabela Moderno */
