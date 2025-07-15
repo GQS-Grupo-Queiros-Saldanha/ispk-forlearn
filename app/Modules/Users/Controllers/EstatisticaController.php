@@ -155,14 +155,14 @@ class EstatisticaController extends Controller
             $institution = Institution::latest()->first(); 
 
             $data = $this->api();
-            $student = 'ola';//$this->student($classId, $coursYear);
+            $student = $this->student($classId, $coursYear);
 
             $dados = [
                 'data' => $data,
                 'student'=> $student,
             ] 
             
-            $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $data);
+            $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget");
             $pdf->setOption('margin-top', '2mm');
             $pdf->setOption('margin-left', '2mm');
             $pdf->setOption('margin-bottom', '13mm');
