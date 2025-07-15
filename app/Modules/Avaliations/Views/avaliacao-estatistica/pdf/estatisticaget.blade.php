@@ -169,11 +169,13 @@
                 <tr>
                     <td class="fw-semibold bg-light">{{ $codTurma }}</td>
                     @for ($ano = 1; $ano <= 5; $ano++)
-                        <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
-                        <td id="total_{{$c->id}}_{{ $ano }}">-</td>
+                        @foreach ($student as $std)
+                            <td id="manha_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                            <td id="tarde_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                            <td id="noite_{{ $c->id }}_{{ $ano }}" class="text-center">-</td>
+                            <td id="protocolo_{{ $c->id }}_{{ $ano }}" class="text-center">{{$std->protocolo}}</td>
+                            <td id="total_{{$c->id}}_{{ $ano }}">{{$std->alunos}}</td>
+                        @endforeach
                     @endfor
                 </tr>
             @endforeach

@@ -151,7 +151,7 @@ class EstatisticaController extends Controller
    public function gerarPDF(){
         try {
             $institution = Institution::latest()->first();
-            $cod = '49';
+            $cod = '43';
             $ano = '1';
 
             $data = $this->api();
@@ -163,7 +163,7 @@ class EstatisticaController extends Controller
                 'student'=> $student,
                 'institution' => $institution, 
             ];
-            //dd($dados);
+            log::info($dados);
 
             /*Gera O pdf*/
             $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaget", $dados);
