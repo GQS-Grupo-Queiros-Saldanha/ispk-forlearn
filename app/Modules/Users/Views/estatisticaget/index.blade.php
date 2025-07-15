@@ -48,7 +48,7 @@
     </div>
     <div class="d-flax">
         <button class="btn btn-success">
-            <i class="bi bi-fill"></i>
+            <i class="bi bi-file-earmark-pdf"></i>
             Gerar PDF
         </button>
 
