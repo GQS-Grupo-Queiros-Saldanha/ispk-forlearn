@@ -11,15 +11,10 @@
 @section('styles-new')
     @parent
     <style>
-        .table-responsive { border-radius: 0.25rem; box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.05); }
-        .table thead th { white-space: nowrap; vertical-align: middle; background-color: #e9f1fb; font-weight: 600; color: #084298; }
-        .table tbody td { vertical-align: middle; font-size: 0.85rem; }
-        .table td, .table th { padding: 0.5rem; }
-        .table-hover tbody tr:hover { background-color: #f0f8ff; }
-        .table-bordered th, .table-bordered td { border: 1px solid #cfe2ff; }
-        .table .bg-light { background-color: #f1f8ff !important; font-weight: 600; color: #084298; }
+        .table-responsive { border-radius: 0.25rem;}
+        .table thead th {white-space: nowrap; vertical-align: middle; }
+        .table tbody td { vertical-align: middle;}
     </style>
-    
 @endsection
 
 @section('selects')
