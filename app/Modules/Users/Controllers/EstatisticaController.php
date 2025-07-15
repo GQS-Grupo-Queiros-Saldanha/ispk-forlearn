@@ -169,7 +169,7 @@ class EstatisticaController extends Controller
                 2 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
                 3 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
                 4 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
-                5 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']]
+                5 => [['id' => 0, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
 
             ],
             'EI' => [
@@ -191,7 +191,7 @@ class EstatisticaController extends Controller
                 2 => [['id' => 29, 'periodo' => 'M'], ['id' => 31, 'periodo' => 'T']],
                 3 => [['id' => 2, 'periodo' => 'M'], ['id' => 32, 'periodo' => 'T']],
                 4 => [['id' => 1, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
-                5 => [['id' => 4, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']]
+                5 => [['id' => 4, 'periodo' => 'M'], ['id' => 0, 'periodo' => 'T']],
 
             ],
             'EQ' => [
