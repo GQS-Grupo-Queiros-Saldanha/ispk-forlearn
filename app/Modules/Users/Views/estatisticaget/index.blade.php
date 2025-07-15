@@ -12,13 +12,14 @@
     @parent
     <style>
         .table-responsive { border-radius: 0.25rem; box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.05); }
-        .table thead th { white-space: nowrap; vertical-align: middle; background-color: #f8f9fa; font-weight: 600; font-size: 0.875rem; }
+        .table thead th { white-space: nowrap; vertical-align: middle; background-color: #e9f1fb; font-weight: 600; color: #084298; }
         .table tbody td { vertical-align: middle; font-size: 0.85rem; }
         .table td, .table th { padding: 0.5rem; }
-        .table-hover tbody tr:hover { background-color: #f1f1f1; }
-        .table-bordered th, .table-bordered td { border: 1px solid #dee2e6; }
-        .table .bg-light { background-color: #f1f3f5 !important; }
+        .table-hover tbody tr:hover { background-color: #f0f8ff; }
+        .table-bordered th, .table-bordered td { border: 1px solid #cfe2ff; }
+        .table .bg-light { background-color: #f1f8ff !important; font-weight: 600; color: #084298; }
     </style>
+    
 @endsection
 
 @section('selects')
