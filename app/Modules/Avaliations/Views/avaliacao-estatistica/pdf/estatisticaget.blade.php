@@ -8,7 +8,7 @@
 @include('Reports::pdf_model.forLEARN_header')
 
 <style>
-    /* Fonte e Cores Gerais */
+    /* Estilos Gerais */
     body {
         font-family: 'Arial', sans-serif;
         color: #2c3e50;
@@ -18,13 +18,13 @@
     .report-header {
         text-align: center;
         padding-bottom: 15px;
-        border-bottom: 2px solid #007bff;
+        border-bottom: 2px solid #1565c0;
     }
 
     .report-title {
         font-size: 18px;
         font-weight: 600;
-        color: #007bff;
+        color: #1565c0;
         text-transform: uppercase;
     }
 
@@ -33,71 +33,51 @@
         color: #6c757d;
     }
 
-    /* Tabela Principal */
-    .ranking-table, .table {
+    /* Tabela principal identificada por ID */
+    #tabela-estatisticas {
         width: 100%;
         border-collapse: collapse;
         margin-top: 15px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         font-size: 11px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
-    .ranking-table th, 
-    .ranking-table td,
-    .table th,
-    .table td {
+    #tabela-estatisticas th,
+    #tabela-estatisticas td {
         padding: 8px 6px;
         text-align: center;
-        border: 1px solid #dee2e6;
+        border: 1px solid #d0d7de;
     }
 
-    /* Cabeçalho da Tabela */
-    .ranking-table th,
-    .table thead th {
-        background-color: #007bff;
+    #tabela-estatisticas thead th {
+        background-color: #1976d2;
         color: #ffffff;
         font-weight: bold;
         text-transform: uppercase;
     }
 
-    .table-light th {
-        background-color: #cce5ff !important;
-        color: #003366;
+    #tabela-estatisticas thead tr:first-child th {
+        background-color: #bbdefb;
+        color: #0d47a1;
     }
 
-    /* Linhas Alternadas */
-    .ranking-table tr:nth-child(even),
-    .table tbody tr:nth-child(even) {
-        background-color: #f1f8ff;
+    #tabela-estatisticas tbody tr:nth-child(even) {
+        background-color: #f4faff;
     }
 
-    /* Destaques para melhores posições (se aplicável) */
-    .top-1 {
-        background-color: #d1ecf1 !important;
-        font-weight: 600;
+    /* Curso */
+    #tabela-estatisticas td.bg-light {
+        background-color: #e3f2fd !important;
+        font-weight: bold;
+        color: #0d47a1;
     }
 
-    .top-2 {
-        background-color: #bee5eb !important;
-    }
-
-    .top-3 {
-        background-color: #abdde5 !important;
-    }
-
-    /* Células de nota */
+    /* Células de nota (se necessário) */
     .grade-cell {
         font-family: 'Courier New', monospace;
         font-weight: bold;
         text-align: right;
         padding-right: 12px !important;
-    }
-
-    /* Coluna de Curso */
-    .fw-semibold.bg-light {
-        background-color: #e3f2fd !important;
-        font-weight: bold;
-        color: #003366;
     }
 
     /* Rodapé */
@@ -111,19 +91,21 @@
 
     /* Impressão */
     @media print {
-        .ranking-table {
+        #tabela-estatisticas {
             page-break-inside: avoid;
         }
+
         body {
             padding: 1cm;
         }
     }
 </style>
 
+
 @section('content')
 <main>
     @include('Reports::pdf_model.pdf_header')
-    <table class="table table-bordered table-hover table-sm mb-0">
+    <table class="table table-bordered table-hover table-sm mb-0"  id="tabela-estatisticas">
         <thead class="table-light">
             <tr>
                 <th rowspan="2" class="align-middle text-center bg-light">Curso</th>
