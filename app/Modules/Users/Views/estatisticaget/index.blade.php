@@ -52,7 +52,6 @@
             Gerar PDF
         </button>
 
-
     </div>
 @endsection
 
@@ -131,8 +130,7 @@
 @section('scripts-new')
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    
-    /*Acção do Botão de PDF*/
+    /*Acção do Botão de*/
     const btn = document.getElementById('btnPdf');
     btn.addEventListener('click', function() {
         window.location.href = "/pt/estatisticaget/pdf/";
