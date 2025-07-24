@@ -387,7 +387,7 @@ $doc_name = "Pauta de ".$disciplina;
 
 
 
-                    <td style="font-size: 10pt; "><br>Coordenador do curso:<br><br> ________________________________________________________________________ <br>José André Simba Poba.<br><br><br>
+                    <td style="font-size: 10pt; "><br>Coordenador do curso:<br><br> ________________________________________________________________________ <br>{{$coordenador->fullname}}<br><br><br>
 
                 </tr>
 
