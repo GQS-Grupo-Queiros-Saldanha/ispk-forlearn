@@ -182,6 +182,13 @@ class mainController extends Controller
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
             ->first();
 
+        if (!$lective) {
+            // O que fazer se não houver ano lectivo activo?
+            // Por exemplo, podes abortar:
+            abort(404, 'Ano lectivo actual não encontrado.');
+        }
+
+
         $recibo = DB::table('transactions as tr')
             ->join('transaction_receipts as trans', 'tr.id', '=', 'trans.transaction_id')
             ->leftJoin('users', 'tr.created_by', 'users.id')
