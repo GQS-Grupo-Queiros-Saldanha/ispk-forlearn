@@ -175,39 +175,56 @@ class mainController extends Controller
         }
     }
 
-    public function get_payment_staff($lective_year = null)
-    {
-        $currentData = Carbon::now();
-        $lective = DB::table('lective_years')
-            ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
+    public function get_payment_staff($lective_year = null){
+        // Obter data actual
+        $dataActual = Carbon::now();
+
+        // Buscar o ano lectivo actual (caso não seja fornecido)
+        $anoLectivo = DB::table('lective_years')
+            ->whereRaw('"' . $dataActual . '" BETWEEN `start_date` AND `end_date`')
             ->first();
 
-        $recibo = DB::table('transactions as tr')
+        if (!$anoLectivo) {
+            return response()->json(['erro' => 'Ano lectivo não encontrado.'], 404);
+        }
+
+        // Buscar recibos de transacções filtradas
+        $recibos = DB::table('transactions as tr')
             ->join('transaction_receipts as trans', 'tr.id', '=', 'trans.transaction_id')
-            ->leftJoin('users', 'tr.created_by', 'users.id')
+            ->leftJoin('users', 'tr.created_by', '=', 'users.id')
             ->leftJoin('transaction_article_requests as tar', 'tr.id', '=', 'tar.transaction_id')
-            ->join('article_requests as art', function ($join) {
-                $join->on('art.id', '=', 'tar.article_request_id');
+            ->join('article_requests as art', 'art.id', '=', 'tar.article_request_id')
+            ->leftJoin('user_parameters as estudante', function ($join) {
+                $join->on('art.user_id', '=', 'estudante.users_id')
+                    ->where('estudante.parameters_id', 1);
             })
-            ->leftJoin('user_parameters as u_p', function ($join) {
-                $join->on('art.user_id', '=', 'u_p.users_id')
-                    ->where('u_p.parameters_id', 1);
-            })
-            ->leftJoin('user_parameters as u_m', function ($join) {
-                $join->on('art.user_id', '=', 'u_m.users_id')
-                    ->where('u_m.parameters_id', 19);
+            ->leftJoin('user_parameters as matricula', function ($join) {
+                $join->on('art.user_id', '=', 'matricula.users_id')
+                    ->where('matricula.parameters_id', 19);
             })
             ->join('transaction_info as tinfo', 'tr.id', '=', 'tinfo.transaction_id')
             ->join('banks as ban', 'tinfo.bank_id', '=', 'ban.id')
-            ->where('ban.id', '!=', '59')
-            ->orderBy('code', 'asc')
-            ->select(['tr.id as id_transacion', 'trans.id', 'trans.code', 'trans.path', 'users.name', 'trans.created_at', 'tr.value as valor', 'art.user_id', 'u_p.value as estudante', 'u_m.value as matricula'])
-            // ->select(['trans.created_at', 'tr.value as valor'])
-            ->where('tr.data_from', "!=", "Estorno")
-            ->WhereDate('trans.created_at', '>=', $lective->start_date)
-            ->WhereDate('trans.created_at', '<=', $lective->end_date)
+            ->where('ban.id', '!=', 59)
+            ->where('tr.data_from', '!=', 'Estorno')
+            ->whereDate('trans.created_at', '>=', $anoLectivo->start_date)
+            ->whereDate('trans.created_at', '<=', $anoLectivo->end_date)
+            ->orderBy('trans.code', 'asc')
             ->distinct('trans.path')
+            ->select([
+                'tr.id as id_transacao',
+                'trans.id as id_recibo',
+                'trans.code as codigo_recibo',
+                'trans.path',
+                'users.name as criado_por',
+                'trans.created_at as data',
+                'tr.value as valor',
+                'art.user_id',
+                'estudante.value as estudante',
+                'matricula.value as matricula'
+            ])
             ->get();
+
+
 
 
         $hoje = Carbon::now();
