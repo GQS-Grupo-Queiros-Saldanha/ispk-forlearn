@@ -682,7 +682,7 @@ class AvaliacaoController extends Controller
                 'menu_activo' => $_GET['menu_avalicao'],
                 'dadosAvaliacao' => $nomeAvaliacao
             ];
-            dd($data);
+          
             return view('Avaliations::calendario-prova.calendario')->with($data);
         } catch (Exception | Throwable $e) {
             Log::error($e);
