@@ -2822,7 +2822,7 @@ class RequerimentoController extends Controller
 
             DB::beginTransaction();
             //codev dos emolumentos
-            $codev = "trabalho_fim_curso";
+            $codev = "tfc_inscricao";
             //dd($request->anoLectivo);
             //Emolumento com base no ano lectivo
             $emolumento = EmolumentCodevLective($codev, $request->anoLectivo);
