@@ -651,8 +651,6 @@ class mainController extends Controller
         }
         $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
 
-        dd($lectiveYearSelected, $student);
-
         return $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
             ->leftJoin('users as u2', 'u2.id', '=', 'matriculations.updated_by')
