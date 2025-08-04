@@ -2325,7 +2325,7 @@ class RequerimentoController extends Controller
             if($codev == "defesa_acta"){
 
                 $codev2 = "pre_defesa_acta";
-                dd($request->anoLectivo);
+                //dd($request->anoLectivo);
                 $emolumento_defesa = EmolumentCodevLective($codev2, $request->anoLectivo);
 
             if ($emolumento_defesa->isEmpty()) {
@@ -2824,7 +2824,7 @@ class RequerimentoController extends Controller
             DB::beginTransaction();
             //codev dos emolumentos
             $codev = "tfc_inscricao";
-
+            dd($request->anoLectivo);
             //Emolumento com base no ano lectivo
             $emolumento = EmolumentCodevLective($codev, $request->anoLectivo);
 
