@@ -106,7 +106,7 @@ class mainController extends Controller
                 $config = DB::table('avalicao_config')->where('lective_year',$lective->id)->first();
                 $student = auth()->user()->id;
                 $matriculations = $this->get_matriculation_student($student);
-               
+                dd($matriculations);
                 $melhoria_notas = get_melhoria_notas($student, $lective->id, 0);
                 $d = $this->schedule();
 
@@ -641,23 +641,16 @@ class mainController extends Controller
     public static function get_matriculation_student($lective_year = null, $student = null)
     {
 
-
         $currentData = Carbon::now();
         $lectiveYearSelected = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
             ->first();
 
-        if (isset($lective_year)) {
-            $lectiveYearSelected = $lective_year;
-        } else {
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 9;
-        }
-        if (isset($student)) {
-        } else {
+        if (!isset($student)) {
             $student = auth()->user()->id;
         }
-
         $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
+
         dd($lectiveYearSelected, $student);
 
         return $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
