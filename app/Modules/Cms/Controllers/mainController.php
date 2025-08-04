@@ -131,6 +131,7 @@ class mainController extends Controller
                 ];
             }
             else {
+                dd($matriculations);
                 $data = [
                     "notification" => $this->get_notification(),
                     "articles" => $this->get_payments(),
