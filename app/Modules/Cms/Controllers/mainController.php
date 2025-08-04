@@ -81,10 +81,15 @@ class mainController extends Controller
     public function student()
     {
         try {
-            $currentData = Carbon::now();
-            $lective = DB::table('lective_years')
-                ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
-                ->first();
+                $currentData = Carbon::now();
+                $lective = DB::table('lective_years')
+                    ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
+                    ->first();
+
+                if (!$lective) {
+                    Log::error('Nenhum lective_year encontrado para a data ' . $currentData);
+                    abort(404, 'Ano lectivo não encontrado');
+                }
 
                 $institution = Institution::latest()->first();
                 $logotipo = $_SERVER['HTTP_HOST'] . "/storage/" . $institution->logotipo;
@@ -653,6 +658,7 @@ class mainController extends Controller
         }
 
         $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
+        dd($lectiveYearSelected, $student);
 
         return $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
