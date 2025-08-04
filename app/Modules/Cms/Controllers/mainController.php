@@ -99,10 +99,10 @@ class mainController extends Controller
                 }
 
                 $config = DB::table('avalicao_config')->where('lective_year',$lective->id)->first();
-                 $student = auth()->user()->id;
+                $student = auth()->user()->id;
                 $matriculations = $this->get_matriculation_student($student);
                 $melhoria_notas = get_melhoria_notas($student, $lective->id, 0);
-               $d = $this->schedule();
+                $d = $this->schedule();
 
                if(is_array($d)){
 
@@ -643,7 +643,7 @@ class mainController extends Controller
         if (isset($lective_year)) {
             $lectiveYearSelected = $lective_year;
         } else {
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 9;
         }
         if (isset($student)) {
         } else {
