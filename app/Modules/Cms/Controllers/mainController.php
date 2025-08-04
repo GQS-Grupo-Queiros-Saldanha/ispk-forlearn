@@ -640,12 +640,11 @@ class mainController extends Controller
         $currentData = Carbon::now();
         $lectiveYearSelected = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
-            ->first();
-        dd($lectiveYearSelected);
+            ->first
         if (isset($lective_year)) {
             $lectiveYearSelected = $lective_year;
         } else {
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 9;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
         }
         if (isset($student)) {
         } else {
