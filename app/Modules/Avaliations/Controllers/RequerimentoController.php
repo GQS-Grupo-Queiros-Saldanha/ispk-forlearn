@@ -2820,14 +2820,13 @@ class RequerimentoController extends Controller
 
         try {
 
-
             DB::beginTransaction();
             //codev dos emolumentos
-            $codev = "tfc_inscricao";
-            dd($request->anoLectivo);
+            $codev = "trabalho_fim_curso";
+            //dd($request->anoLectivo);
             //Emolumento com base no ano lectivo
             $emolumento = EmolumentCodevLective($codev, $request->anoLectivo);
-
+            dd($emolumento);
             if ($emolumento->isEmpty()) {
                 Toastr::warning(__('A forLEARN não encontrou um emolumento de trabalho de fim de curso (inscrição) configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
                 return redirect()->back();
