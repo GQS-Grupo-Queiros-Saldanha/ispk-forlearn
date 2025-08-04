@@ -101,6 +101,7 @@ class mainController extends Controller
                 $config = DB::table('avalicao_config')->where('lective_year',$lective->id)->first();
                 $matriculations = $this->get_matriculation_student();
                 $student = auth()->user()->id;
+                dd($student);
                 $melhoria_notas = get_melhoria_notas($student, $lective->id, 0);
                $d = $this->schedule();
 
@@ -131,7 +132,7 @@ class mainController extends Controller
                 ];
             }
             else {
-                dd($matriculations);
+              
                 $data = [
                     "notification" => $this->get_notification(),
                     "articles" => $this->get_payments(),
