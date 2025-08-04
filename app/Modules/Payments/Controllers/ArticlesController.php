@@ -51,7 +51,7 @@ class ArticlesController extends Controller{
                             ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
                             ->first();
 
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 12;
 
             return view("Payments::articles.index", compact('lectiveYears', 'lectiveYearSelected'));
         } catch (Exception | Throwable $e) {
@@ -60,7 +60,7 @@ class ArticlesController extends Controller{
         }
     }
 
-  public function ajax(){
+    public function ajax(){
         try {
             $currentData = Carbon::now();
             $anoLectivo=DB::table('lective_years')

@@ -66,7 +66,7 @@
         @break
 
         @case('edit')
-            {!! Form::model($user, ['route' => ['users.update', $user->id], 'method' => 'put', 'files' => true]) !!}
+            {!! Form::model($user, ['route' => ['users.update', $user->id], 'method' => 'post', 'files' => true]) !!}
         @break
     @endswitch
     @if ($errors->any())

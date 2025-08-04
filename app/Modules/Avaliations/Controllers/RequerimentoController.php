@@ -2325,7 +2325,7 @@ class RequerimentoController extends Controller
             if($codev == "defesa_acta"){
 
                 $codev2 = "pre_defesa_acta";
-
+                dd($request->anoLectivo);
                 $emolumento_defesa = EmolumentCodevLective($codev2, $request->anoLectivo);
 
             if ($emolumento_defesa->isEmpty()) {
