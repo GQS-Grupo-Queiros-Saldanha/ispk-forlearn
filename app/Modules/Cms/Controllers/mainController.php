@@ -716,7 +716,7 @@ class mainController extends Controller
             ->where('art_requests.deleted_at', null)
             ->groupBy('u_p.value')
             ->where('matriculations.user_id', $student)
-            ->where('matriculations.lective_year', $lectiveYearSelected->id)
+            ->where('matriculations.lective_year', 9)//$lectiveYearSelected->id
 
             ->distinct('id')
             ->first();
