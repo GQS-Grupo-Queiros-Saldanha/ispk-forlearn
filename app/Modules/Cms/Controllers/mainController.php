@@ -725,7 +725,7 @@ class mainController extends Controller
     {
 
         $confirm = EmolumentCodevLective("confirm", $lectiveYearSelected)->first();
-        dd($confirm);
+        //dd($confirm);
         $Prematricula = EmolumentCodevLective("p_matricula", $lectiveYearSelected)->first();
         $emolumentos = [];
 
