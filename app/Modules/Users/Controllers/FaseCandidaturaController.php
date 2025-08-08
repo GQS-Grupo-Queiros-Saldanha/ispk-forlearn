@@ -161,7 +161,7 @@ class FaseCandidaturaController extends Controller
     public function update(Request $request)
     { 
         try {
-            dd($request);
+          
             $currentData = Carbon::now();
             $data_start = strtotime($request->data_start);
             $data_end = strtotime($request->data_end);
