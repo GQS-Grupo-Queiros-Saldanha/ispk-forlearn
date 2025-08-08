@@ -88,7 +88,7 @@ class CandidatesController extends Controller
       $lectiveYearSelected = DB::table('lective_years')
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
-      $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+      $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
       $lectiveCandidateNext = DB::table('lective_candidate')
         ->whereRaw('"' . $currentData . '" between `data_inicio` and `data_fim`')
