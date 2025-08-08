@@ -312,7 +312,7 @@ class CandidatesController extends Controller
 
       $currentData = Carbon::now();
       $faseNext = FaseCandidaturaUtil::faseActual();
-      dd($faseNext)
+      dd($faseNext);
 
       if (!isset($faseNext->id)) {
         Toastr::warning("Atenção ! não foi possivível prosseguir com a candidatura porque esta data [" . ($currentData->format('d-m-Y')) . "] actual não pertence em nenhum intervalo de fases.", __('toastr.warning'));
