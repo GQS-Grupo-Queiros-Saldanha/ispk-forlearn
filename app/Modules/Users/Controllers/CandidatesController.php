@@ -74,6 +74,7 @@ class CandidatesController extends Controller
       ];
 
       if ($user->hasAnyRole(['candidado-a-estudante'])) {
+        dd($data)
         return redirect()->route('candidates.show', $userId)->with($data);
       }
 
@@ -89,7 +90,7 @@ class CandidatesController extends Controller
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
       $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
-
+        dd($lectiveYearSelected, $courses, $user);
       $lectiveCandidateNext = DB::table('lective_candidate')
         ->whereRaw('"' . $currentData . '" between `data_inicio` and `data_fim`')
         ->first();
