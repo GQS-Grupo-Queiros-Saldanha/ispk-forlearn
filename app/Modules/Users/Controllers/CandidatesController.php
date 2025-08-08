@@ -74,7 +74,7 @@ class CandidatesController extends Controller
       ];
 
       if ($user->hasAnyRole(['candidado-a-estudante'])) {
-        dd($data)
+        dd($data);
         return redirect()->route('candidates.show', $userId)->with($data);
       }
 
