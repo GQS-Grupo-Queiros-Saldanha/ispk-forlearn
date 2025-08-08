@@ -127,7 +127,6 @@ class DeclarationController extends Controller
     {
 
 
-
         switch ($request->type_document) {
             case '1':
                 $config = ConfigDocumentation::where('document_type', $request->type_document)->firstOrFail();

@@ -57,6 +57,7 @@ class FaseCandidaturaController extends Controller
         $this->candidateUtil->actualizarDatasCalendariosPassaram();
         $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
         $lectiveYearSelected = FaseCandidaturaController::calculateLective(Carbon::now());
+        dd($lectiveYearSelected);
         $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
         $lectiveYearCandidatura = DB::table('lective_candidate')->where('id_years', $lectiveYearSelected)->first();
         return  view("Users::candidate.fase_candidatura.index", compact('lectiveYears', 'lectiveYearSelected', 'lectiveYearCandidatura'));
