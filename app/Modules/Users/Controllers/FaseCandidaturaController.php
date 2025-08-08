@@ -161,6 +161,7 @@ class FaseCandidaturaController extends Controller
     public function update(Request $request)
     { 
         try {
+            dd($request);
             $currentData = Carbon::now();
             $data_start = strtotime($request->data_start);
             $data_end = strtotime($request->data_end);
@@ -177,7 +178,7 @@ class FaseCandidaturaController extends Controller
                 ->first();
            
             if (!isset($calendarioProva->id)){
-                dd($calendarioProva);
+                
                 Toastr::warning(_('Não foi criado o calendário de candidatura este ano'), __('toastr.warning'));
                 return redirect()->route('fase-candidatura');
             }
