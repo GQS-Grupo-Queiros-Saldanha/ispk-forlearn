@@ -270,7 +270,7 @@ class CandidatesController extends Controller
         ->where('id_years', $lectiveYear->id)
         ->where('fase', 1)
         ->first();
-      dd($lectiveCandidate);
+      //dd($lectiveCandidate);
 
       $model = $this->candidateUtil->modelQuery($lectiveYear)
         ->where('uca.year', $lectiveYear->id)
