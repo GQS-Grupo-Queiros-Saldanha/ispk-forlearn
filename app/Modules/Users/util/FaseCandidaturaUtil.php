@@ -23,9 +23,12 @@ class FaseCandidaturaUtil
         return $db->status == 0;
     }
 
-    public static function faseActual(){
-        $currentData = Carbon::now();
-        return DB::table('lective_candidate')->whereRaw('"'.$currentData.'" between `data_inicio` and `data_fim`')->first();
+    public static function faseActual() {
+        $currentDate = Carbon::now()->format('Y-m-d'); // Apenas data (sem hora)
+        return DB::table('lective_candidate_calendarie')
+            ->where('data_inicio', '<=', $currentDate)
+            ->where('data_fim', '>=', $currentDate)
+            ->first();
     }
 
     public static function userCandidate($user_id){
