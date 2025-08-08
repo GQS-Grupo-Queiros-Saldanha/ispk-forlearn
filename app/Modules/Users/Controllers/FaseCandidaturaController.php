@@ -83,7 +83,7 @@ class FaseCandidaturaController extends Controller
         dd($id);
         $only=true;
         $this->candidateUtil->actualizarDatasCalendariosPassaram();
-        $lectiveYearCandidatura = DB::table('lective_candidate')->where('lective_calendario', 1)->orderBy('fase','DESC')->first();
+        $lectiveYearCandidatura = DB::table('lective_candidate')->where('lective_calendario', $id)->orderBy('fase','DESC')->first();
         if(!isset($lectiveYearCandidatura->id)){
             Toastr::warning(_('O calendário de candidatura não foi encontrado'), __('toastr.warning'));
             return redirect()->back();
