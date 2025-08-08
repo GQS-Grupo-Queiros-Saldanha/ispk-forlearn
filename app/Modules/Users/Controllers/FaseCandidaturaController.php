@@ -123,7 +123,6 @@ class FaseCandidaturaController extends Controller
                 ->first();
                 
             if (!isset($calendarioProva->id)){
-                dd($calendarioProva);
                 Toastr::warning(_('Não foi criado o calendário de candidatura este ano'), __('toastr.warning'));
                 return redirect()->route('fase-candidatura');
             }
@@ -178,6 +177,7 @@ class FaseCandidaturaController extends Controller
                 ->first();
            
             if (!isset($calendarioProva->id)){
+                dd($calendarioProva);
                 Toastr::warning(_('Não foi criado o calendário de candidatura este ano'), __('toastr.warning'));
                 return redirect()->route('fase-candidatura');
             }
