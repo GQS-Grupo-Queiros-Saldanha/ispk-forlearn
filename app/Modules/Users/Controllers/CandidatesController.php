@@ -276,8 +276,8 @@ class CandidatesController extends Controller
         ->where('uca.year', $lectiveYear->id)
         ->where('uca.year_fase_id', $lectiveCandidate->id)
         ->get();
-
-      dd($lectiveYear->id);
+        
+      dd($model);
 
       $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear);
       dd($cursos);
