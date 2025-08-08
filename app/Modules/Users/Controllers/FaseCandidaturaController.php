@@ -80,6 +80,7 @@ class FaseCandidaturaController extends Controller
 
     public function anolectivoFase($id)
     {   // id of calendar candidate
+        dd($id);
         $only=true;
         $this->candidateUtil->actualizarDatasCalendariosPassaram();
         $lectiveYearCandidatura = DB::table('lective_candidate')->where('lective_calendario', $id)->orderBy('fase','DESC')->first();
