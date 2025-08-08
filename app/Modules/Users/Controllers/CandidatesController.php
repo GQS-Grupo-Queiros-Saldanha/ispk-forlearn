@@ -154,7 +154,7 @@ class CandidatesController extends Controller
     $lectiveYearSelected = DB::table('lective_years')
       ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
       ->first();
-    $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+    $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
     $data = [
       'courses' => $courses->get(),
@@ -245,7 +245,7 @@ class CandidatesController extends Controller
       ->leftJoin('article_requests as ar', 'ar.article_id', '=', "art.id")
       ->where('art.anoLectivo', $year)
       ->whereNull('ar.deleted_at')
-      ->where('art.id', 135)
+      ->where('art.id', 375)
       ->where('ar.user_id', $id)
       ->get();
     return ($emolumentos);
