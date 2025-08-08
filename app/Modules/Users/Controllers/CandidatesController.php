@@ -923,6 +923,7 @@ class CandidatesController extends Controller
         'dd' => $dd,
         'options' => $this->options
       ];
+      dd($data);
 
       $view = 'Users::candidate.candidate_profile';
       if (isset($this->options->transf))
