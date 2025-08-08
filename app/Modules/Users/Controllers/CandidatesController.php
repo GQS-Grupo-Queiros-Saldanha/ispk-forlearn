@@ -245,7 +245,7 @@ class CandidatesController extends Controller
       ->leftJoin('article_requests as ar', 'ar.article_id', '=', "art.id")
       ->where('art.anoLectivo', $year)
       ->whereNull('ar.deleted_at')
-      ->where('art.id', 375)
+      ->where('art.id', 343)
       ->where('ar.user_id', $id)
       ->get();
     return ($emolumentos);
