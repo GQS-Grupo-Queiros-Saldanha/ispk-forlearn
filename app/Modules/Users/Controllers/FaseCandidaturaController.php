@@ -121,6 +121,7 @@ class FaseCandidaturaController extends Controller
                 ->whereNull('deleted_by')
                 ->whereNull('deleted_at')
                 ->first();
+            dd($calendarioProva)
                 
             if (!isset($calendarioProva->id)){
                 Toastr::warning(_('Não foi criado o calendário de candidatura este ano'), __('toastr.warning'));
