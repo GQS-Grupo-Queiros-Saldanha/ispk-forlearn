@@ -199,7 +199,7 @@ class CandidatesController extends Controller
 
       $lectiveCandidate = DB::table('lective_candidate')
         ->where('id_years', $lectiveYear->id)
-        ->where('fase', 1)
+        ->where('fase', 0)
         ->first();
 
       if (!isset($lectiveCandidate->id)) {
