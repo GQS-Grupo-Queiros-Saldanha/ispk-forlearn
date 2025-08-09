@@ -273,7 +273,7 @@ class CandidatesController extends Controller
 
       $model = $this->candidateUtil->modelQuery($lectiveYear)
         ->where('uca.year', $lectiveYear->id)
-        ->where('uca.year_fase_id', $lectiveCandidate->id)
+        ->where('uca.year_fase_id', 3)
         ->get();
 
       log::info($lectiveCandidate->id);  
