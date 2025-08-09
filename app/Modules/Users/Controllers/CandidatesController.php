@@ -271,7 +271,7 @@ class CandidatesController extends Controller
         ->where('fase', 1)
         ->first();
 
-      log::info($lectiveCandidate);
+      log::info($lectiveYear->id);
 
       $model = $this->candidateUtil->modelQuery($lectiveYear)
         ->where('uca.year', $lectiveYear->id)
