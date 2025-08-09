@@ -270,7 +270,7 @@ class CandidatesController extends Controller
         ->where('id_years', $lectiveYear->id)
         ->where('fase', 1)
         ->first();
-      log::info('Lective Candidate: ' . $lectiveCandidate->id);
+      log::info('Lective Candidate: ' . $lectiveCandidate);
       $model = $this->candidateUtil->modelQuery($lectiveYear);
       if ($lectiveCandidate->id == 10) {
         $yearFaseId = 3;
