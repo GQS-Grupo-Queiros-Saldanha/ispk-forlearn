@@ -11,7 +11,8 @@ use App\Helpers\LanguageHelper;
 use Carbon\Carbon;
 use DataTables;
 use DB;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CandidatesUtil
 {
