@@ -11,8 +11,7 @@ use App\Helpers\LanguageHelper;
 use Carbon\Carbon;
 use DataTables;
 use DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+
 
 class CandidatesUtil
 {
@@ -74,9 +73,6 @@ class CandidatesUtil
       ])
       ->orderBy('ar.id', 'desc');
     if ($id_fase != null) {
-      if($id_fase == 10){
-        $sql = $sql->where('uca.year_fase_id', 3);
-      }
       $sql = $sql->where('uca.year_fase_id', $id_fase);
     }
 
@@ -175,7 +171,7 @@ class CandidatesUtil
 
   public function modelQuery($lectiveYear, $id_fase = null)
   {
-    
+
     $users = User::query()
       ->whereHas('roles', function ($q) {
         $q->whereIn('id', [15, 6]);
@@ -259,9 +255,6 @@ class CandidatesUtil
       ->distinct('full_name.value');
 
     if ($id_fase != null) {
-      if($id_fase == 10){
-        $users = $users->where('uca.year_fase_id', 3);
-      }
       $users = $users->where('uca.year_fase_id', $id_fase);
     }
 
