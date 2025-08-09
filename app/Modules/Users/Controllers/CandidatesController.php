@@ -277,9 +277,10 @@ class CandidatesController extends Controller
         ->where('uca.year_fase_id', $lectiveCandidate->id)
         ->get();
         
-      //dd($model);
+      dd($model);
 
       $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear);
+      //dd($cursos);
 
 
       return Datatables::of($model)
