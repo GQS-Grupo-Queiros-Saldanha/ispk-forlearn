@@ -270,7 +270,6 @@ class CandidatesController extends Controller
         ->where('id_years', $lectiveYear->id)
         ->where('fase', 1)
         ->first();
-      //dd($lectiveCandidate);
 
       $model = $this->candidateUtil->modelQuery($lectiveYear);
       if ($lectiveCandidate->id == 10) {
@@ -284,11 +283,7 @@ class CandidatesController extends Controller
         ->where('uca.year_fase_id', $yearFaseId)
         ->get();
 
-      log::info('fase actual', $yearFaseId);
-      log::info('dados dos candidatos', $model);
-
       $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear);
-      //dd($cursos);
 
 
       return Datatables::of($model)
