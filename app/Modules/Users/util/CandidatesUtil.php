@@ -255,7 +255,7 @@ class CandidatesUtil
       ->distinct('full_name.value');
 
     if ($id_fase != null) {
-      dd('Fase ID: ' . $id_fase);
+      log::info('Fase ID: ' . $id_fase);
       $users = $users->where('uca.year_fase_id', $id_fase);
     }
 
