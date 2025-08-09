@@ -63,6 +63,9 @@ class CandidatesController extends Controller
   {
     try {
       $this->actualizarDatasCalendariosPassaram();
+      $affectedRows = DB::table('user_candidate')
+                  ->where('year_fase_id', 3)
+                  ->update(['year_fase_id' => 10]);
 
       DB::update('UPDATE lective_years SET is_termina= 1 WHERE end_date < CURDATE()');
       //se o usuario for candidato a estudante, redirecionar para o perfil
