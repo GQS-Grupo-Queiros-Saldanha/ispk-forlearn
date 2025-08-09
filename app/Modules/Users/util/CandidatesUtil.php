@@ -175,7 +175,7 @@ class CandidatesUtil
 
   public function modelQuery($lectiveYear, $id_fase = null)
   {
-    log::info('dados do modelQuery'. $lectiveYear);
+    
     $users = User::query()
       ->whereHas('roles', function ($q) {
         $q->whereIn('id', [15, 6]);
