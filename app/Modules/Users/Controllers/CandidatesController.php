@@ -132,6 +132,11 @@ class CandidatesController extends Controller
 
   public function listaCandidate()
   {
+    
+    $affectedRows = DB::table('user_candidate')
+                  ->where('year_fase_id', 3)
+                  ->update(['year_fase_id' => 10]);
+        
     //se o usuario for candidato a estudante, redirecionar para o perfil
     $userId = auth()->user()->id;
     $user = User::whereId($userId)->first();
