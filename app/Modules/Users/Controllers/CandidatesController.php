@@ -277,8 +277,8 @@ class CandidatesController extends Controller
         ->where('uca.year_fase_id', $lectiveCandidate->id)
         ->get();
 
-      //log::info('id do calendario actual', $lectiveYear->id);
-      lof::info('fase actual', $lectiveCandidate->id);
+      log::info('id do calendario actual', $lectiveYear->id);
+      log::info('fase actual', $lectiveCandidate->id);
       log::info('dados dos candidatos', $model);
 
       $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear);
