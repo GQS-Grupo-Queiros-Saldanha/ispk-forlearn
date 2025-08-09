@@ -255,7 +255,7 @@ class CandidatesUtil
       ->distinct('full_name.value');
 
     if ($id_fase != null) {
-      $users = $users->where('uca.year_fase_id', $id_fase);
+      $users = $users->where('uca.year_fase_id', 3);
     }
 
     return $users;
