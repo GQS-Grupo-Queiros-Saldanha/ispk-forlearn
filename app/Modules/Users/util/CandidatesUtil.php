@@ -74,6 +74,9 @@ class CandidatesUtil
       ])
       ->orderBy('ar.id', 'desc');
     if ($id_fase != null) {
+      if($id_fase == 10){
+        $sql = $sql->where('uca.year_fase_id', 3);
+      }
       $sql = $sql->where('uca.year_fase_id', $id_fase);
     }
 
@@ -256,7 +259,9 @@ class CandidatesUtil
       ->distinct('full_name.value');
 
     if ($id_fase != null) {
-      log::info('Fase ID: ' . $id_fase);
+      if($id_fase == 10){
+        $users = $users->where('uca.year_fase_id', 3);
+      }
       $users = $users->where('uca.year_fase_id', $id_fase);
     }
 
