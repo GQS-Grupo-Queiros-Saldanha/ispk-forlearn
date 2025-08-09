@@ -265,6 +265,7 @@ class CandidatesController extends Controller
     try {
 
       $lectiveYear = LectiveYear::where('id', $lectiveYear)->first();
+      log::info('dados do ano'. $lectiveYear );
 
       $lectiveCandidate = DB::table('lective_candidate')
         ->where('id_years', $lectiveYear->id)
