@@ -280,7 +280,6 @@ class CandidatesController extends Controller
       //dd($model);
 
       $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear);
-      dd($cursos);
 
 
       return Datatables::of($model)
