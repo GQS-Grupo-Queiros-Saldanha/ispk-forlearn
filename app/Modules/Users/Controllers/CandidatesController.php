@@ -337,7 +337,7 @@ class CandidatesController extends Controller
         ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
         ->first();
 
-      $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+      $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
       return view('Users::candidate.candidate', compact('lectiveYears', 'lectiveYearSelected'))->with($data);
     } catch (Exception | Throwable $e) {
@@ -435,6 +435,7 @@ class CandidatesController extends Controller
         }
 
         $dataCandidate = ['user_id' => $user->id, 'year_fase_id' => $faseNext->id, 'year' => $faseNext->id_years];
+        dd($user->id, $faseNext->id, $faseNext->id_years);
 
         $userCandidate = UserCandidate::where($dataCandidate)->orderBy('id', 'DESC')->first();
         if (!isset($userCandidate->id)) {
