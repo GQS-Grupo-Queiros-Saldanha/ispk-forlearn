@@ -443,7 +443,7 @@ class CandidatesController extends Controller
         }
 
         $dataCandidate = ['user_id' => $user->id, 'year_fase_id' => $faseNext->id, 'year' => $faseNext->id_years];
-        dd($user->id, $faseNext->id, $faseNext->id_years);
+        //dd($user->id, $faseNext->id, $faseNext->id_years);
 
         $userCandidate = UserCandidate::where($dataCandidate)->orderBy('id', 'DESC')->first();
         if (!isset($userCandidate->id)) {
