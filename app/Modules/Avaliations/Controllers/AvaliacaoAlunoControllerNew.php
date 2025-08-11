@@ -5899,7 +5899,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function GetStudentDisciplineAcademicPathRepair(Request $request)
     {
-        log::info('request',$request);
+        log::info('request'.$request);
         $studentInfo = DB::table('matriculations')
 
             ->join('users', 'matriculations.user_id', '=', 'users.id')
