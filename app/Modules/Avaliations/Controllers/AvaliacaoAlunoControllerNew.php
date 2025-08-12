@@ -149,7 +149,7 @@ class AvaliacaoAlunoControllerNew extends Controller
     {
 
         //Bem no final de lançar as notas alguém tem que fechar elas.
-
+        log::info('request'.$request);
         try {
 
             $description = $request->description;
@@ -178,8 +178,6 @@ class AvaliacaoAlunoControllerNew extends Controller
             $turma_geral = DB::table('classes')
                 ->where('id', $request->turma)
                 ->first();
-
-
 
 
             $disciplina_notification = DB::table('disciplines as disc')
@@ -5899,7 +5897,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function GetStudentDisciplineAcademicPathRepair(Request $request)
     {
-        log::info('request'.$request);
+       
         $studentInfo = DB::table('matriculations')
 
             ->join('users', 'matriculations.user_id', '=', 'users.id')
