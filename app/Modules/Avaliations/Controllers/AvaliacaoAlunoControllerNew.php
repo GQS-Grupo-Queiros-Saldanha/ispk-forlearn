@@ -148,25 +148,26 @@ class AvaliacaoAlunoControllerNew extends Controller
     public function store(Request $request)
     {
         
-        if($request->notas != null ){
-            $notas = $request->notas;       // array de notas
-            $alunos = $request->studantes;  // array de IDs de alunos
-            $disciplinaStr = $request->disciplina; // string "todos,5,206"
+        // Garantir que recebemos arrays
+        $notas = is_array($request->notas) ? $request->notas : explode(',', $request->notas);
+        $alunos = is_array($request->studantes) ? $request->studantes : explode(',', $request->studantes);
 
-            // Extrair o último valor da string de disciplina
-            $disciplinasArray = explode(',', $disciplinaStr);
-            $disciplinaId = end($disciplinasArray); // 206
+        // Extrair o último elemento da string "todos,5,206"
+        $disciplinasArray = explode(',', $request->disciplina);
+        $disciplinaId = end($disciplinasArray);
 
-            // Percorrer todos os alunos e notas
-            foreach ($alunos as $index => $alunoId) {
-                $nota = $notas[$index];
+        // Prevenir erro se os arrays tiverem tamanhos diferentes
+        if (count($alunos) !== count($notas)) {
+            return response()->json(['error' => 'Número de alunos e notas não corresponde'], 422);
+        }
 
-                DB::table('new_old_grades')
-                    ->where('user_id', $alunoId)
-                    ->where('discipline_id', $disciplinaId)
-                    ->update(['grade' => $nota]);
-            }
+        foreach ($alunos as $index => $alunoId) {
+            $nota = $notas[$index];
 
+            DB::table('new_old_grades')
+                ->where('user_id', $alunoId)
+                ->where('discipline_id', $disciplinaId)
+                ->update(['grade' => $nota]);
         }
         
         //Bem no final de lançar as notas alguém tem que fechar elas.
