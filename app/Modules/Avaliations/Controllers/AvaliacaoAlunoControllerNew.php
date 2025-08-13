@@ -147,7 +147,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function store(Request $request)
     {
-
+        dd($equest);
         //Bem no final de lançar as notas alguém tem que fechar elas.
         try {
 
@@ -1843,7 +1843,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                 ];
             });
-            dd($studantes);
+
     }
 
 
