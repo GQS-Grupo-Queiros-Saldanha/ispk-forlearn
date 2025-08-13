@@ -1843,6 +1843,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                 ];
             });
+            dd($studantes);
     }
 
 
