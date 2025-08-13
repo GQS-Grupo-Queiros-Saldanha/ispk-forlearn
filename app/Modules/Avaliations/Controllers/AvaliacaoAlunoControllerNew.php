@@ -148,24 +148,27 @@ class AvaliacaoAlunoControllerNew extends Controller
     public function store(Request $request)
     {
         
-        $notas = $request->notas;       // array de notas
-        $alunos = $request->studantes;  // array de IDs de alunos
-        $disciplinaStr = $request->disciplina; // string "todos,5,206"
+        if($request->notas != null ){
+            $notas = $request->notas;       // array de notas
+            $alunos = $request->studantes;  // array de IDs de alunos
+            $disciplinaStr = $request->disciplina; // string "todos,5,206"
 
-        // Extrair o último valor da string de disciplina
-        $disciplinasArray = explode(',', $disciplinaStr);
-        $disciplinaId = end($disciplinasArray); // 206
+            // Extrair o último valor da string de disciplina
+            $disciplinasArray = explode(',', $disciplinaStr);
+            $disciplinaId = end($disciplinasArray); // 206
 
-        // Percorrer todos os alunos e notas
-        foreach ($alunos as $index => $alunoId) {
-            $nota = $notas[$index];
+            // Percorrer todos os alunos e notas
+            foreach ($alunos as $index => $alunoId) {
+                $nota = $notas[$index];
 
-            DB::table('new_old_grades')
-                ->where('user_id', $alunoId)
-                ->where('discipline_id', $disciplinaId)
-                ->update(['grade' => $nota]);
+                DB::table('new_old_grades')
+                    ->where('user_id', $alunoId)
+                    ->where('discipline_id', $disciplinaId)
+                    ->update(['grade' => $nota]);
+            }
+
         }
-
+        
         //Bem no final de lançar as notas alguém tem que fechar elas.
         try {
 
