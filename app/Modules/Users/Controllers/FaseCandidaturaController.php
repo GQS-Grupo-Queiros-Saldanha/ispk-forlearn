@@ -64,8 +64,8 @@ class FaseCandidaturaController extends Controller
 
     private function insertLectiveCandidate($lective_year,$data_start,$data_end, $fase, $lective_calendario = null){
         $auth = Auth::user()->id;
-      
-        DB::table('lective_candidate')->insert(['id_years' => $lective_year],
+
+        DB::table('lective_candidate')->updateOrInsert(['id_years' => $lective_year, 'fase' => $fase],
             [
              'data_inicio' => $data_start, 
              'data_fim' => $data_end,
@@ -78,16 +78,20 @@ class FaseCandidaturaController extends Controller
     }
 
     public function anolectivoFase($id)
-    {   
+    {   // id of calendar candidate
+        
         $only=true;
         $this->candidateUtil->actualizarDatasCalendariosPassaram();
-        $lectiveYears = LectiveYear::with(['currentTranslation'])->find($id)->get();
-        $lectiveYearSelected = $id;
-        $lectiveYearCandidatura = DB::table('lective_candidate')->where('id_years', $lectiveYearSelected)->orderBy('fase','DESC')->first();
+        $lectiveYearCandidatura = DB::table('lective_candidate')->where('lective_calendario', $id)->orderBy('fase','DESC')->first();
         if(!isset($lectiveYearCandidatura->id)){
-            $lectiveYearCandidatura = (object)[ "fase" => 0, "data_fim" => $lectiveYears[0]->start_date, "first" => true  ];
+            Toastr::warning(_('O calendário de candidatura não foi encontrado'), __('toastr.warning'));
+            return redirect()->back();
         }
-        return  view("Users::candidate.fase_candidatura.index", compact('lectiveYears', 'lectiveYearSelected', 'lectiveYearCandidatura','only'));
+        $lectiveYears = LectiveYear::with(['currentTranslation'])->find($lectiveYearCandidatura->id_years)->get();
+        //if(!isset($lectiveYearCandidatura->id)) $lectiveYearCandidatura = (object)[ "fase" => 0, "data_fim" => $lectiveYears[0]->start_date, "first" => true  ];
+        $lectiveYearSelected = $lectiveYearCandidatura->id_years;
+
+        return view("Users::candidate.fase_candidatura.index", compact('lectiveYears', 'lectiveYearSelected', 'lectiveYearCandidatura','only'));
     }
 
     public function users($id)
@@ -157,6 +161,7 @@ class FaseCandidaturaController extends Controller
     public function update(Request $request)
     { 
         try {
+          
             $currentData = Carbon::now();
             $data_start = strtotime($request->data_start);
             $data_end = strtotime($request->data_end);
@@ -173,6 +178,7 @@ class FaseCandidaturaController extends Controller
                 ->first();
            
             if (!isset($calendarioProva->id)){
+                
                 Toastr::warning(_('Não foi criado o calendário de candidatura este ano'), __('toastr.warning'));
                 return redirect()->route('fase-candidatura');
             }
@@ -190,6 +196,8 @@ class FaseCandidaturaController extends Controller
                 Toastr::warning(_('A data de termino informada não pertence ao intervalo de datas do calendário de candidaturas '.$calendario_data), __('toastr.warning'));
                 return redirect()->route('fase-candidatura');
             }            
+            
+            #dd("update", $calendarioProva, $request->all(), $calendario_start >= $data_end, $data_end <=  $calendario_end);
             
             $auth = Auth::user()->id;
             DB::update('UPDATE lective_candidate SET id_years=?, data_inicio=?, data_fim=?, fase=?, updated_by=?  WHERE id = ?', [
@@ -242,9 +250,9 @@ class FaseCandidaturaController extends Controller
     }
 
 
-    public function ajax_list_lective( $anoLEctive)
+    public function ajax_list_lective_2( $anoLEctive)
     {
-
+        
         $fazes_candidate = DB::table('lective_candidate as lc')
             ->join('lective_years as ly', 'ly.id', '=', 'lc.id_years')
             ->where('lc.id_years', $anoLEctive)
@@ -252,7 +260,21 @@ class FaseCandidaturaController extends Controller
             ->select('lc.id','lc.data_inicio', 'lc.data_fim', 'lc.is_termina', 'lc.fase', 'ly.start_date', 'ly.end_date')
             ->get();
 
-        return response()->json( $fazes_candidate);
+        return response()->json($fazes_candidate);
+    }
+
+
+    public function ajax_list_lective( $anoLEctive)
+    {
+        
+        $fazes_candidate = DB::table('lective_candidate as lc')
+            ->join('lective_years as ly', 'ly.id', '=', 'lc.id_years')
+            ->where('lc.id_years', $anoLEctive)
+            ->orderBy('lc.fase', 'ASC')
+            ->select('lc.id','lc.data_inicio', 'lc.data_fim', 'lc.is_termina', 'lc.fase', 'ly.start_date', 'ly.end_date')
+            ->get();
+
+        return response()->json($fazes_candidate,200, [], JSON_UNESCAPED_UNICODE);
     }
 
 
@@ -271,30 +293,31 @@ class FaseCandidaturaController extends Controller
 
 
 
-   public function ajax_list_users($id){
+   public function ajax_list_users($id)
+    {
         try {
-
-        $lectiveCandidate = DB::table('lective_candidate')->find($id);
-        $lectiveYear = LectiveYear::where('id', $lectiveCandidate->id_years)->first();
+            
+            $lectiveCandidate = DB::table('lective_candidate')->find($id);
+            $lectiveYear = LectiveYear::where('id', $lectiveCandidate->id_years)->first();
+            
+            $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear,$lectiveCandidate);
+            $model = $this->candidateUtil->modelQueryGet($lectiveYear,$id);
         
-        $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear,$lectiveCandidate);
-        $model = $this->candidateUtil->modelQueryGet($lectiveYear,$id);
-        
-        $faseNext = FaseCandidaturaUtil::faseActual();
+            $faseNext = FaseCandidaturaUtil::faseActual();
 
-        return $this->candidateUtil->addColumnCheckBox($model) 
-            ->addColumn('actions', function ($item) use ($faseNext) {
-                return view('Users::candidate.fase_candidatura.datatables.actions_users',compact('faseNext'))->with('item', $item);
-            })
-            ->addColumn('states', function ($state) use ($cursos) {
-                return view('Users::candidate.datatables.states', compact('cursos', 'state'));
-            })
-            ->addColumn('cursos', function ($cadidate) use ($cursos, $lectiveCandidate) {
-                return view('Users::candidate.fase_candidatura.datatables.courses_states', compact('cursos', 'cadidate', 'lectiveCandidate'));
-            })
-            ->rawColumns(['actions', 'states', 'cursos','foto','diploma','bi_doc'])
-            ->addIndexColumn()  
-            ->toJson(); 
+            return $this->candidateUtil->addColumnCheckBox($model) 
+                ->addColumn('actions', function ($item) use ($faseNext) {
+                    return view('Users::candidate.fase_candidatura.datatables.actions_users',compact('faseNext'))->with('item', $item);
+                })
+                ->addColumn('states', function ($state) use ($cursos) {
+                    return view('Users::candidate.datatables.states', compact('cursos', 'state'));
+                })
+                ->addColumn('cursos', function ($cadidate) use ($cursos, $lectiveCandidate) {
+                    return view('Users::candidate.fase_candidatura.datatables.courses_states', compact('cursos', 'cadidate', 'lectiveCandidate'));
+                })
+                ->rawColumns(['actions', 'states', 'cursos','foto','diploma','bi_doc'])
+                ->addIndexColumn()  
+                ->toJson(); 
 
         } catch (Exception | Throwable $e) {
             Log::error($e);
@@ -385,6 +408,14 @@ class FaseCandidaturaController extends Controller
 
 
 
+
+
+
+
+
+
+
+
     private static function calculateLective($data){
         return DB::table('lective_years')->whereRaw('"' . $data. '" between `start_date` and `end_date`')->first();
     }
@@ -399,6 +430,10 @@ class FaseCandidaturaController extends Controller
 
 
     public function getCourseTurma($id){
+        // $course = Course::with([
+        //     'currentTranslation'
+        // ])->find($id);
+
         $turmas = DB::table('classes')->where('courses_id',$id)->where('year',1)->get();
 
         return response()->json($turmas);
