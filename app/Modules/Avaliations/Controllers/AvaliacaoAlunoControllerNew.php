@@ -149,7 +149,6 @@ class AvaliacaoAlunoControllerNew extends Controller
     {
 
         //Bem no final de lançar as notas alguém tem que fechar elas.
-        log::info('request'.$request);
         try {
 
             $description = $request->description;

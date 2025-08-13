@@ -11,15 +11,6 @@
     <li class="breadcrumb-item active" aria-current="page">Candidaturas</li>
 @endsection
 @section('buttons')
-    @if (auth()->user()->hasAnyRole(['superadmin', 'staff_forlearn', 'staff_candidaturas','staff_candidaturas_chefe', 'presidente-geral', 'vice-presidente-area-academica', 'vice-presidente-area-cientifica']))
-        @isset($lectiveYearSelectedStausCandadatura->is_termina)
-            <div class="d-none" hidden id="btnTerminado">{{ $lectiveYearSelectedStausCandadatura->is_termina }}</div>
-        @else
-            <div class="d-none" hidden id="btnTerminado">0</div>
-        @endisset
-    @else
-        <div class="d-none" hidden id="btnTerminado">1</div>
-    @endif
     <div class="d-none" hidden>
         <a href="{{ route('candidates.create') }}" class="btn btn-primary mb-3" id="candidates-create"></a>
     </div>
@@ -43,6 +34,40 @@
             style="width: 100% !important;">
         </select>
     </div>
+@endsection
+@section('body')
+    <table id="users-table" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fase</th>
+                <th>Candidato</th>
+                <th>@lang('Users::users.name') do candidato</th>
+                <th>@lang('Users::users.email')</th>
+                <th>Curso</th>
+                <th>Pagamento</th>
+                <th>Matriculado</th>
+                <th>BI</th>
+                <th>Fotografia</th>
+                <th>Certificado</th>             
+                <th>@lang('common.created_by')</th>
+                <th>@lang('common.updated_by')</th>
+                <th>@lang('common.created_at')</th>
+                <th>@lang('common.updated_at')</th>
+                <th>ACÇÕES POSSÍVEIS</th>
+            </tr>
+        </thead>
+    </table>
+@endsection
+@section('models')
+    @include('layouts.backoffice.modal_confirm')
+    @include('Users::candidate.modal.modal_gerar_pdf')
+    @include('Users::candidate.modal.modal_escolher_curso')
+    @include('Users::candidate.modal.modal_users_historico')
+    @include('Users::candidate.modal.modal_fase_transferencia')
+    @isset($lectiveCandidateNext->id)
+        <div id="fase" hidden>{{ $lectiveCandidateNext->id }}</div>
+    @endisset
 @endsection
 @section('body')
     <table id="users-table" class="table table-striped table-hover">
