@@ -147,18 +147,16 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function store(Request $request)
     {
-        dd($request);
-        // Garantir que recebemos arrays
-        $notas = is_array($request->notas) ? $request->notas : explode(',', $request->notas);
-        $alunos = is_array($request->studantes) ? $request->studantes : explode(',', $request->studantes);
+      
+        $alunos = $request->estudantes ?? [];
+        $notas = $request->notas ?? [];
 
-        // Extrair o último elemento da string "todos,5,206"
+        // Extrair apenas o último número da string "todos,5,206"
         $disciplinasArray = explode(',', $request->disciplina);
         $disciplinaId = end($disciplinasArray);
 
-        // Prevenir erro se os arrays tiverem tamanhos diferentes
-        if (count($alunos) !== count($notas)) {
-            return response()->json(['error' => 'Número de alunos e notas não corresponde'], 422);
+        if (!is_array($alunos) || !is_array($notas) || count($alunos) !== count($notas)) {
+            return response()->json(['error' => 'Dados inválidos.'], 422);
         }
 
         foreach ($alunos as $index => $alunoId) {
