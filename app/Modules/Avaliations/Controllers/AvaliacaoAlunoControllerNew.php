@@ -147,7 +147,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function store(Request $request)
     {
-        
+        dd($request);
         // Garantir que recebemos arrays
         $notas = is_array($request->notas) ? $request->notas : explode(',', $request->notas);
         $alunos = is_array($request->studantes) ? $request->studantes : explode(',', $request->studantes);
