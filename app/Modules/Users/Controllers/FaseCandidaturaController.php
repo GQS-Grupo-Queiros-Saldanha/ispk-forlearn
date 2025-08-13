@@ -293,38 +293,36 @@ class FaseCandidaturaController extends Controller
 
 
 
-   public function ajax_list_users($id)
-    {
+      public function ajax_list_users($id){
         try {
-            
-            $lectiveCandidate = DB::table('lective_candidate')->find($id);
-            $lectiveYear = LectiveYear::where('id', $lectiveCandidate->id_years)->first();
-            
-            $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear,$lectiveCandidate);
-            $model = $this->candidateUtil->modelQueryGet($lectiveYear,$id);
-        
-            $faseNext = FaseCandidaturaUtil::faseActual();
 
-            return $this->candidateUtil->addColumnCheckBox($model) 
-                ->addColumn('actions', function ($item) use ($faseNext) {
-                    return view('Users::candidate.fase_candidatura.datatables.actions_users',compact('faseNext'))->with('item', $item);
-                })
-                ->addColumn('states', function ($state) use ($cursos) {
-                    return view('Users::candidate.datatables.states', compact('cursos', 'state'));
-                })
-                ->addColumn('cursos', function ($cadidate) use ($cursos, $lectiveCandidate) {
-                    return view('Users::candidate.fase_candidatura.datatables.courses_states', compact('cursos', 'cadidate', 'lectiveCandidate'));
-                })
-                ->rawColumns(['actions', 'states', 'cursos','foto','diploma','bi_doc'])
-                ->addIndexColumn()  
-                ->toJson(); 
+        $lectiveCandidate = DB::table('lective_candidate')->find($id);
+        $lectiveYear = LectiveYear::where('id', $lectiveCandidate->id_years)->first();
+        
+        $cursos = $this->candidateUtil->cursoQueryGet($lectiveYear,$lectiveCandidate);
+        $model = $this->candidateUtil->modelQueryGet($lectiveYear,$id);
+        
+        $faseNext = FaseCandidaturaUtil::faseActual();
+
+        return $this->candidateUtil->addColumnCheckBox($model) 
+            ->addColumn('actions', function ($item) use ($faseNext) {
+                return view('Users::candidate.fase_candidatura.datatables.actions_users',compact('faseNext'))->with('item', $item);
+            })
+            ->addColumn('states', function ($state) use ($cursos) {
+                return view('Users::candidate.datatables.states', compact('cursos', 'state'));
+            })
+            ->addColumn('cursos', function ($cadidate) use ($cursos, $lectiveCandidate) {
+                return view('Users::candidate.fase_candidatura.datatables.courses_states', compact('cursos', 'cadidate', 'lectiveCandidate'));
+            })
+            ->rawColumns(['actions', 'states', 'cursos','foto','diploma','bi_doc'])
+            ->addIndexColumn()  
+            ->toJson(); 
 
         } catch (Exception | Throwable $e) {
             Log::error($e);
             return response()->json($e->getMessage(), 500);
         }
     }
-    
     
     
     //novo codigo sedrac
