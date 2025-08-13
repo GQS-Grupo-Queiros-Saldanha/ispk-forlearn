@@ -147,7 +147,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function store(Request $request)
     {
-        dd($equest);
+        dd($request);
         //Bem no final de lançar as notas alguém tem que fechar elas.
         try {
 
