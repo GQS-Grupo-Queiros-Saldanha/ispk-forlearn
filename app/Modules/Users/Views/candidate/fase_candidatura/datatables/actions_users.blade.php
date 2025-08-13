@@ -19,11 +19,11 @@
     @icon('fas fa-file-pdf')
 </button>
 
-@if(isset($faseNext->fase))
-    <button class="btn btn-sm btn-success btn-up-transicao" faseNext="{{$faseNext->fase}}" user="{{$item->id}}" fase="{{$item->id_fase}}">
-        @icon('fas fa-arrow-up')
-    </button>
-@endif
+
+<button class="btn btn-sm btn-success btn-up-transicao" faseNext="{{$faseNext->fase}}" user="{{$item->id}}" fase="{{$item->id_fase}}">
+    @icon('fas fa-arrow-up')
+</button>
+
 
 @if($existInHistorico)
     <button class="btn btn-sm btn-info  btn-historico" url="{{route('transferencia.historico',$item->id)}}">
