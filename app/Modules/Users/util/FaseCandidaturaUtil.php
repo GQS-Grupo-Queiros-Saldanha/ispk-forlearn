@@ -61,24 +61,23 @@ class FaseCandidaturaUtil
     public static function existUserInFaseNext($user_id, $fase_id): bool
     {
         $matricula = DB::table('matriculations')->where('user_id', $user_id)->first();
-        if (isset($matricula->id)) return true;
-        $currentData = Carbon::now();
+        if (!isset($matricula->id)) return false;
 
+        $currentData = Carbon::now();
         $faseActual = DB::table('lective_candidate')->find($fase_id);
-        $faseLast = DB::table('lective_candidate')
-                        ->where('id_years',$faseActual->id_years)
-                        ->orderBy('id','DESC')
-                        ->first();
+
+        $faseLast = DB::table('lective_candidate')->where('id_years',$faseActual->id_years)->orderBy('id','DESC')->first();
 
         /* se é a última fase */
         //if($faseActual->id == $faseLast->id) return true;
        
         $faseNext = FaseCandidaturaUtil::faseActual();
-
         if (!isset($faseNext->id)) return false;
-
+    
         $userCandidate = DB::table('user_candidate')->where('user_id', $user_id)->where('year_fase_id', $faseNext->id)->first();
-        return isset($userCandidate->user_id);
+        if (!isset($userCandidate->user_id)) return false;
+             
+        return $userCandidate->user_id;
     }
 
     public static function verifyUserCandidaturaAnoPassado($id): bool
