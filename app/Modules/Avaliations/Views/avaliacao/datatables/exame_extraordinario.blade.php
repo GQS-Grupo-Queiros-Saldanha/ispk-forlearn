@@ -12,23 +12,22 @@ $coordenador = '';
 $prof = '';
 
 @endphp
-
+{{ dd($dados) }}
 @foreach ($dados as $item)
-@if ($item->id_turma == $allDiscipline->id_turma &&
-$item->id_disciplina == $allDiscipline->id_disciplina_no_plano)
-@if ($item->pauta_tipo == 'Pauta Exame Extraordinário')
-@php
-$link = link_storage($item->pauta_link);
-$total_final = 1;
-$publicado = $item->nome_usuario;
-$pulicadoA = $item->data_publicacao;
-$actualizado = $item->atualizacao_usuario;
-$actualizadoA = $item->data_atualizacao;
-@endphp
-@else
-@endif
-@else
-@endif
+    @if ($item->id_turma == $allDiscipline->id_turma && $item->id_disciplina == $allDiscipline->id_disciplina_no_plano)
+        @if ($item->pauta_tipo == 'Pauta Exame Extraordinário')
+            @php
+                $link = link_storage($item->pauta_link);
+                $total_final = 1;
+                $publicado = $item->nome_usuario;
+                $pulicadoA = $item->data_publicacao;
+                $actualizado = $item->atualizacao_usuario;
+                $actualizadoA = $item->data_atualizacao;
+            @endphp
+                @else
+            @endif
+        @else
+    @endif
 @endforeach
 
 {{-- Verificar se o coordenador logado é coordenador das disciplina em questão --}}
@@ -43,23 +42,22 @@ $actualizadoA = $item->data_atualizacao;
 {{-- Verificar se o professor logado é o professor da Disciplina --}}
 
 @foreach ($professor as $item)
-@if ($item->disciplina == $allDiscipline->id_disciplina_no_plano)
-@php $prof="existe" @endphp
-@endif
+    @if ($item->disciplina == $allDiscipline->id_disciplina_no_plano)
+        @php $prof="existe" @endphp
+    @endif
 @endforeach
 
 
 @if ($total_final == 1)
-@if (auth()->user()->hasAnyRole(['teacher', 'superadmin', 'coordenador-curso', 'Chefe_do_gabinete_de_termos','staff_matriculas']))
-@if ($prof=="existe" || $coordenador == 'existe' ||
-auth()->user()->hasAnyRole(['superadmin', 'Chefe_do_gabinete_de_termos','staff_matriculas']))
-<a tabindex="0" data-bs-toggle="tooltip" data-html="true"
-    title="Publicada por: {{ $publicado }} &#013;&#010;Publicada a: {{ $pulicadoA }} &#013;&#010;Actualizada por: {{ $actualizado }}&#013;&#010;Actualizada a: {{ $actualizadoA }}"
-    target="_blank" href="{{ route('viewFile.exame_extraordinario', ['filename' => $link]) }}" class="btn " style="line-height: 1.3;padding: 0px;">
-    <i class="fas fa-file-pdf"></i>
-</a>
-@else
-@endif
+    @if (auth()->user()->hasAnyRole(['teacher', 'superadmin', 'coordenador-curso', 'Chefe_do_gabinete_de_termos','staff_matriculas']))
+        @if ($prof=="existe" || $coordenador == 'existe' || auth()->user()->hasAnyRole(['superadmin', 'Chefe_do_gabinete_de_termos','staff_matriculas']))
+            <a tabindex="0" data-bs-toggle="tooltip" data-html="true"
+                title="Publicada por: {{ $publicado }} &#013;&#010;Publicada a: {{ $pulicadoA }} &#013;&#010;Actualizada por: {{ $actualizado }}&#013;&#010;Actualizada a: {{ $actualizadoA }}"
+                target="_blank" href="{{ route('viewFile.exame_extraordinario', ['filename' => $link]) }}" class="btn " style="line-height: 1.3;padding: 0px;">
+                <i class="fas fa-file-pdf"></i>
+            </a>
+        @else
+    @endif
 @endif
 <i class="fa fa-check-circle p-1 texto-verde " aria-hidden="true"></i>
 <bdo style="font-size: 1px;">P</bdo>
