@@ -1027,7 +1027,6 @@ class AvaliacaoController extends Controller
                     return view('Avaliations::avaliacao.datatables.exame_especial', compact('dados', 'allDiscipline', 'coordinator_course', 'professor'));
                 })
                 ->addColumn('exame_extraordinario', function ($allDiscipline) use ($dados, $coordinator_course, $professor) {
-                    dd($dados);
                     return view('Avaliations::avaliacao.datatables.exame_extraordinario', compact('dados', 'allDiscipline', 'coordinator_course', 'professor'));
                 })
                 ->addColumn('seminario', function ($allDiscipline) use ($dados, $coordinator_course, $professor) {
@@ -1053,6 +1052,7 @@ class AvaliacaoController extends Controller
     }
 
     private function dados_pauta($lective_year = null,$pauta_id = null){
+        dd($lective_year, $pauta_id);
 
         $dados = DB::table('pauta_path as pauta')
         ->when(isset($pauta_id),function($q)use($pauta_id){
