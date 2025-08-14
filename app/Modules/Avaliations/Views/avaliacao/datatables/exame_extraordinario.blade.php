@@ -12,7 +12,7 @@ $coordenador = '';
 $prof = '';
 
 @endphp
-{{ dd($dados) }}
+
 @foreach ($dados as $item)
     @if ($item->id_turma == $allDiscipline->id_turma && $item->id_disciplina == $allDiscipline->id_disciplina_no_plano)
         @if ($item->pauta_tipo == 'Pauta Exame Extraordinário')
