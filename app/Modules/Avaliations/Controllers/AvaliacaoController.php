@@ -1051,11 +1051,9 @@ class AvaliacaoController extends Controller
         }
     }
 
-    private function dados_pauta($lective_year = null,$pauta_id = null){
-        dd($lective_year, $pauta_id);
+    private function dados_pauta($lective_year = null, $pauta_id = null){
 
-        $dados = DB::table('pauta_path as pauta')
-        ->when(isset($pauta_id),function($q)use($pauta_id){
+        $dados = DB::table('pauta_path as pauta')->when(isset($pauta_id),function($q)use($pauta_id){
             $q->where('pauta.id_publicar_pauta',$pauta_id);
         })
         ->join('publicar_pauta as publicar', 'publicar.id', '=', 'pauta.id_publicar_pauta')
