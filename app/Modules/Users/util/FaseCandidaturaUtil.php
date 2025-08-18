@@ -16,11 +16,10 @@ class FaseCandidaturaUtil
 {
 
     public static function negativeInFase($user_id, $fase_id){
-        $db = DB::table('exame_candidates_status')->where([
-            'user_id' => $user_id, 'fase_id' => $fase_id
-        ])->first();
+        $db = DB::table('exame_candidates_status')->where(['user_id' => $user_id, 'fase_id' => $fase_id])->first();
         if(!isset($db->id)) return true;
-        return $db->status == 0;
+        //$db->status == 0;
+        return false
     }
 
     public static function faseActual(){
