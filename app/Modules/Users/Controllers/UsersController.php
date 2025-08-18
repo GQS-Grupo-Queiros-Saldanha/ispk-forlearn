@@ -2302,7 +2302,7 @@ public function getcursoIndex()
 
     public function getValidationNewNumberBI($valorBi)
     {   try{
-          
+            
             $status = $this->verifyInStaffStudentByBi($valorBi);
             //dd($status);
             if(isset($status->id_user)) 

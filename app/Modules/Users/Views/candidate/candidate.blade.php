@@ -353,7 +353,7 @@
                         cache: false,
                         dataType: 'json',
                         success: function(dataResult) {
-
+                        // BI já existe (usuário comum) - BLOQUEIA
                             if (dataResult.status == 2) {
                                 $("#confirmpassword").prop('hidden', true);
                                 $("#id_number").removeClass('is-valid');
@@ -362,7 +362,7 @@
                                 status_sit = dataResult.status;
                                 nomeLongo = "";
                             } else {
-
+                                // É STAFF - Permite continuar
                                 if (dataResult.status == 1) {
                                     $('#modal-staff').modal('show');
                                     $('#name').val(dataResult.object.nome_curto).prop(
@@ -390,7 +390,7 @@
                                 }
 
                                 status_sit = dataResult.status;
-
+                                // BI disponível - PERMITE CADASTRO
                                 if (dataResult.status == 3) {
                                     $('#full_name').prop('readonly', false);
                                     nomeLongo = "";
