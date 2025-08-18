@@ -26,6 +26,7 @@ class FaseCandidaturaUtil
     public static function faseActual(){
         $currentData = Carbon::now();
         $fase = DB::table('lective_candidate')->whereRaw('"'.$currentData.'" between `data_inicio` and `data_fim`')->first();
+       
         return $fase;
     }
 
