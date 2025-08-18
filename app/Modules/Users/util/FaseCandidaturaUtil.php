@@ -19,7 +19,7 @@ class FaseCandidaturaUtil
         $db = DB::table('exame_candidates_status')->where(['user_id' => $user_id, 'fase_id' => $fase_id])->first();
         if(!isset($db->id)) return true;
         //$db->status == 0;
-        return false
+        return false;
     }
 
     public static function faseActual(){
