@@ -19,7 +19,7 @@
     @icon('fas fa-file-pdf')
 </button>
 
-@if($negativeInFase && isset($faseNext->fase))
+@if(!$existInNextFase && isset($faseNext->fase))
     <button class="btn btn-sm btn-success btn-up-transicao" faseNext="{{$faseNext->fase}}" user="{{$item->id}}" fase="{{$item->id_fase}}">
         @icon('fas fa-arrow-up')
     </button>
