@@ -2304,7 +2304,7 @@ public function getcursoIndex()
     {   try{
           
             $status = $this->verifyInStaffStudentByBi($valorBi);
-            dd($status);
+            //dd($status);
             if(isset($status->id_user)) 
                 return response()->json($this->getUserStaffBi($status->id_user));
             
