@@ -11,7 +11,7 @@
     <li class="breadcrumb-item"><a href="{{ route('requerimento.index') }}">Requerimentos</a></li>
 
     <li class="breadcrumb-item active" aria-current="page">
-        Trabalho de fim de curso
+         Revisão de Prova
     </li>
 @endsection
 @section('selects')
