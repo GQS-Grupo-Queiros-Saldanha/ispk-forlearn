@@ -72,17 +72,6 @@ class RequerimentoController extends Controller
     {
         try {
 
-            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();//dat corrente
-            $currentData = Carbon::now();// data actul
-            $lectiveYearSelected = DB::table('lective_years')
-                ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')->first();
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
-
-            $data = [
-                'lectiveYearSelected' => $lectiveYearSelected,
-                'lectiveYears' => $lectiveYears
-            ];
-
             return view('Avaliations::requerimento.solicitacao_revisao_prova')->with($data);
         } catch (Exception | Throwable $e) {
             Log::error($e);
