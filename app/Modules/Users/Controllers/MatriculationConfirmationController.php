@@ -60,11 +60,8 @@ class MatriculationConfirmationController extends Controller
         try {
             
                
-               $lective_year->translations->where('active',1)->first();
-            
-           
-
-                
+            $lective_year->translations->where('active',1)->first();
+ 
             $data = [
                      'action' => 'create',
                      'lective_year'=>$lective_year,
@@ -73,8 +70,7 @@ class MatriculationConfirmationController extends Controller
                   ];
                   
             // return $data['users'];
-
-        return view('Users::confirmations-matriculations.confirmation')->with($data);
+            return view('Users::confirmations-matriculations.confirmation')->with($data);
       
         } catch (Exception | Throwable $e) {
             return $e;
@@ -1087,10 +1083,12 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
                   
                   $emolumento=['p_matricula','confirm'];
                   $emolumentoFolha=['folha_de_prova'];
+                  $emolumentoFolha2=['folha_de_prova2'];
 
                 
-                  $emolumento_confirmacao  = EmolumentCodeV($emolumento[$index],$lectiveYearSelected[0]->id);
-                  $emolumento_folha_de_prova = EmolumentCodeV($emolumentoFolha,$lectiveYearSelected[0]->id);
+                  $emolumento_confirmacao  = EmolumentCodeV($emolumento[$index],$lectiveYearSelected[0]->id); //adicionar emolumento de confirmação da matricula
+                  $emolumento_folha_de_prova = EmolumentCodeV($emolumentoFolha,$lectiveYearSelected[0]->id); //adiconar emolumento folha de prova 1 semestre
+                  $emolumento_folha_de_prova2 = EmolumentCodeV($emolumentoFolha2,$lectiveYearSelected[0]->id); // adicionar emolumento folha de prova 2 semestre
                
                if($emolumento_confirmacao->isEmpty()){
 
@@ -1099,13 +1097,19 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
                 }
                if($emolumento_folha_de_prova->isEmpty()){
 
-                    Toastr::warning(__('A forLEARN não encontrou um emolumento [Folha de prova configurado no ano lectivo selecionado].'), __('toastr.warning'));
+                    Toastr::warning(__('A forLEARN não encontrou um emolumento [Folha de prova 1º(Semestre) configurado no ano lectivo selecionado].'), __('toastr.warning'));
+                    return redirect()->route('matriculations.index');
+                }
+                if($emolumento_folha_de_prova2->isEmpty()){
+
+                    Toastr::warning(__('A forLEARN não encontrou um emolumento [Folha de prova 2º(Semestre) configurado no ano lectivo selecionado].'), __('toastr.warning'));
                     return redirect()->route('matriculations.index');
                 }
 
 
                 $r1       = createAutomaticArticleRequest($user->id, $emolumento_confirmacao[0]->id_emolumento, null, null);
                 $reqFolha = createAutomaticArticleRequest($user->id, $emolumento_folha_de_prova[0]->id_emolumento, null, null);
+                $reqFolha2 = createAutomaticArticleRequest($user->id, $emolumento_folha_de_prova2[0]->id_emolumento, null, null);
 
     
                 if (!$r1) {
@@ -1303,7 +1307,8 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
              $r3 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoFirst, 10);
              $r4 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoFirst, 11);
              $r5 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoFirst, 12);
-             $r6 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoEnd, 01);
+             $r6 = 
+             ($user->id, $articlePropinaId, $anoEnd, 01);
              $r7 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoEnd, 02);
              $r8 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoEnd, 03);
              $r9 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoEnd, 04);
