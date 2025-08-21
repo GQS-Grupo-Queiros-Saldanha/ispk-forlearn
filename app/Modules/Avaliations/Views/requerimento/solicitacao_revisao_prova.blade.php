@@ -90,6 +90,7 @@
 @section('scripts')
     @parent
     <script>
+        /*
         anoLectivo = $("#lectiveY")
         anoLectivo.val($("#lective_year").val());
         console.log('ano:' + anoLectivo.val());
@@ -136,6 +137,6 @@
 
             });
 
-        });
+        });*/
     </script>
 @endsection
