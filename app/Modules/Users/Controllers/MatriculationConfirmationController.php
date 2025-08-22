@@ -1307,8 +1307,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
              $r3 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoFirst, 10);
              $r4 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoFirst, 11);
              $r5 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoFirst, 12);
-             $r6 = 
-             ($user->id, $articlePropinaId, $anoEnd, 01);
+             $r6 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoEnd, 01);
              $r7 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoEnd, 02);
              $r8 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoEnd, 03);
              $r9 = createAutomaticArticleRequest($user->id, $articlePropinaId, $anoEnd, 04);
