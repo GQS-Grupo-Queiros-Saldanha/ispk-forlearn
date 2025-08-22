@@ -152,7 +152,10 @@ class RequerimentoController extends Controller
             ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
             ->where('art.anoLectivo', $lective_year)
             ->where('cd.code', $code)
+            ->select('art.id', 'art.base_value')
             ->first();
+
+        dd($emolumento);
         if(!$emolumento) {
             Toastr::warning(__('A forLEARN não encontrou um emolumento de 00 configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
             return redirect()->back();
