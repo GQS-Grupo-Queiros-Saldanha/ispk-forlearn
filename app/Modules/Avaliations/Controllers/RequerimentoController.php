@@ -150,12 +150,12 @@ class RequerimentoController extends Controller
     public function RequererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){ 
         
         $emolumento = DB::table('articles as art') 
-        ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id') 
-        ->where('art.anoLectivo', $lective_year) ->where('cd.code', $code) 
-        ->select('art.id', 'art.base_value') 
-        ->first();
+            ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id') 
+            ->where('art.anoLectivo', $lective_year) ->where('cd.code', $code) 
+            ->select('art.id', 'art.base_value') 
+            ->first();
         
-        $insercao = DB::table('article_requests')->insertGetId([
+        $insercao = DB::table('article_requests')->insert([
             'user_id' => $user_id,
             'article_id' => $emolumento->id,
             'base_value' => $emolumento->base_value,
@@ -175,7 +175,7 @@ class RequerimentoController extends Controller
             
             $article_request_id = $this->RequererEmolumento($user_id, $lective_year); 
             
-            if (!$article_request_id) { 
+            if ($article_request_id == null) { 
                 Toastr::error(__('Não foi possível criar o emolumento de cartão de estudante, por favor tente novamente'), __('toastr.error')); 
                 return null; 
             }
