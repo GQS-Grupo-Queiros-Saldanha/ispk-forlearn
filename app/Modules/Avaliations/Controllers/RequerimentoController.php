@@ -148,14 +148,14 @@ class RequerimentoController extends Controller
     }
 
     public function RequererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){
-        $emolumento = DB::table('code_developer as cd')
-            ->join('articles as art', 'cd.id', '=', 'art.id_code_dev') // faz o join primeiro
-            ->where('cd.code', $code)                                  // depois aplica o filtro pelo código
-            ->where('art.anoLectivo', $lective_year)                    // e pelo ano letivo
+        $emolumento = DB::table('articles as art')
+            ->where('art.anoLectivo', $lective_year)    
+            ->join('code_developer as cd', 'art.code', '=', 'cd.code')        
+            ->whereColumn('art.id_code_dev', '=', 'cd.id')
             ->first();
 
         if(!$emolumento) {
-            Toastr::warning(__('A forLEARN não encontrou um emolumento Revisão de Prova configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
+            Toastr::warning(__('A forLEARN não encontrou um emolumento de 00 configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
             return redirect()->back();
         }
         // Insere a nova solicitação
@@ -195,6 +195,17 @@ class RequerimentoController extends Controller
             $discipline_id = request()->input('discipline_id');
             $lective_year = request()->input('anoLectivo');
           
+
+            //Emolumento com base no ano lectivo
+            //$emolumento = EmolumentCodevLective($codev, $lective_year);
+            $codev = "cartao_estudante";
+
+
+            /*if (!$emolumento || count($emolumento) === 0) {
+                    Toastr::warning(__('A forLEARN não encontrou um emolumento de cartão de estudante configurado no ano lectivo selecionado.'), __('toastr.warning'));
+                    return redirect()->back();
+                }
+*/
             //inserir o emolumento
             $article_request_id = $this->RequererEmolumento($user_id);
 
@@ -202,6 +213,7 @@ class RequerimentoController extends Controller
                 Toastr::error(__(' Não foi possivel criar o emolumento de cartão de estudante, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
             }
+
             return response()->json(['success' => 'Solicitação de revisão de prova enviada com sucesso.']);
             
         } catch (Exception | Throwable $e) {
