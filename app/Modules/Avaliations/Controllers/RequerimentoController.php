@@ -189,33 +189,35 @@ class RequerimentoController extends Controller
             'updated_at' => now(),
         ]);
 
-        return response()->json(['success' => 'Solicitação de revisão de prova enviada com sucesso.']);
-
+        return $insercaoId;
 
     }
 
-    public function solicitacao_revisao_prova_store(){
-        
+    public function solicitacao_revisao_prova_store() {
         try {
             $user_id = request()->input('student_id');
             $discipline_id = request()->input('discipline_id');
             $lective_year = request()->input('anoLectivo');
-  
-            //inserir o emolumento
-            $article_request_id = $this->RequererEmolumento($user_id);
+
+            $article_request_id = $this->RequererEmolumento($user_id, $lective_year);
 
             if (!$article_request_id) {
-                Toastr::error(__(' Não foi possivel criar o emolumento de cartão de estudante, por favor tente novamente'), __('toastr.error'));
+                Toastr::error(__('Não foi possível criar o emolumento de cartão de estudante, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
             }
+
+            // prepara os dados necessários para a view
+            $data = ['article_request_id' => $article_request_id, 'discipline_id' => $discipline_id];
 
             return view('Avaliations::requerimento.solicitacao_revisao_prova')->with($data);
 
         } catch (Exception | Throwable $e) {
             Log::error($e);
-            return response()->json(['error' => 'Falha ao enviar a solicitação de revisão de prova.'], 500);
+            Toastr::error(__('Falha ao enviar a solicitação de revisão de prova.'), __('toastr.error'));
+            return redirect()->back();
         }
     }
+
     /*Esta zona é para a solicitação de revisão de Prova!*/
 
     public function merito()
