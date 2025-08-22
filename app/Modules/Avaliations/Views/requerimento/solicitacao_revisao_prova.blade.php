@@ -100,9 +100,10 @@
 
             console.log('Curso selecionado: ' + course_id);
             
-            // Requisição AJAX para buscar estudantes finalistas
+           // Requisição AJAX para buscar estudantes finalistas
             const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
             let url = `${baseUrl}/${course_id}`;
+
             fetch(url)
                 .then(response => {
                     if (!response.ok) {
@@ -113,15 +114,28 @@
                 .then(dados => {
                     console.log(dados);
                     const studentSelect = $("#students");
-                    studentSelect.empty();
+                    studentSelect.empty(); // Limpa opções antigas
+
+                    // Adiciona uma opção vazia no início
+                    studentSelect.append(`<option value=""></option>`);
 
                     dados.forEach(student => {
-                        studentSelect.append(`<option value="${student.id}">${student.nome} #${student.numero} (${student.email})</option>`);
+                        const nome = student.nome ?? 'Sem nome';
+                        const numero = student.numero ?? 'Sem número';
+                        const email = student.email ?? 'Sem email';
+
+                        studentSelect.append(
+                            `<option value="${student.id}">${nome} #${numero} (${email})</option>`
+                        );
                     });
+
+                    // Atualiza o selectpicker do Bootstrap
+                    studentSelect.selectpicker('refresh');
                 })
                 .catch(erro => {
                     console.error('Erro no fetch:', erro);
                 });
+
 
 
         });
