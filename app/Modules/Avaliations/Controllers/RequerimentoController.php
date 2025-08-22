@@ -127,7 +127,7 @@ class RequerimentoController extends Controller
             // Query principal para obter estudantes
             $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
                 ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'u0.id')
-                ->where('uc.courses_id', $curso)
+                ->where('uc.courses_id', $course_id)
                 ->where('matriculations.lective_year', $lectiveYearSelected->id)
                 ->select([
                     'u0.id',
@@ -137,7 +137,7 @@ class RequerimentoController extends Controller
                 ])
                 ->get();
 
-                return response()->json($students);
+            return response()->json($students);
 
 
         } catch (Exception | Throwable $e) {
