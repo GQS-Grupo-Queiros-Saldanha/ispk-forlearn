@@ -71,8 +71,19 @@ class RequerimentoController extends Controller
     public function solicitacao_revisao_prova()
     {
         try {
-
+            
+            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
+            $currentData = Carbon::now();
+            $lectiveYearSelected = DB::table('lective_years')->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')->first();
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
+            $courses = Course::with(['currentTranslation'])->get();
+            $data = [
+                'lectiveYearSelected' => $lectiveYearSelected,
+                'lectiveYears' => $lectiveYears,
+                'courses' => $courses
+            ];
             return view('Avaliations::requerimento.solicitacao_revisao_prova')->with($data);
+
         } catch (Exception | Throwable $e) {
             Log::error($e);
             return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);

@@ -1,36 +1,95 @@
 @extends('layouts.generic_index_new', ['breadcrumb_super' => true])
 
 
-@section('title', __('Trabalho de fim de curso'))
+@section('title', __('Marcação de Revisão de Prova'))
 
 
 @section('page-title')
-    @lang('Trabalho de fim de curso')
+    @lang('Marcação de Revisão de Prova')
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('requerimento.index') }}">Requerimentos</a></li>
 
     <li class="breadcrumb-item active" aria-current="page">
-         Revisão de Prova
+        Marcação
     </li>
 @endsection
 @section('selects')
     <div class="mb-2 mt-3">
         <label for="lective_year">Selecione o ano lectivo</label>
 
-        <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm">
-           
+        <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm"
+            style="width: 100%; !important">
+            @foreach ($lectiveYears as $lectiveYear)
+                @if ($lectiveYearSelected == $lectiveYear->id)
+                    <option value="{{ $lectiveYear->id }}" selected>
+                        {{ $lectiveYear->currentTranslation->display_name }}
+                    </option>
+                @else
+                    <option value="{{ $lectiveYear->id }}">
+                        {{ $lectiveYear->currentTranslation->display_name }}
+                    </option>
+                @endif
+            @endforeach
         </select>
     </div>
 @endsection
 
 @section('body')
-   
+    {!! Form::open(['route' => ['student_tfc_store']]) !!}
+
+
+    <div class="row">
+        <div class="col">
+
+
+
+            <div class="card">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group col">
+                            <label>Selecionar curso</label>
+                            <select name="course_id" id="courses" class="selectpicker form-control form-control-sm">
+                                <option value="" selected></option>
+                                @foreach ($courses as $course)
+                                    <option value="{{ $course->id }}">
+                                        {{ $course->currentTranslation->display_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group col">
+                            <label>Estudante</label>
+                            {{ Form::bsLiveSelectEmpty('students', [], null, ['id' => 'students', 'class' => 'form-control']) }}
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="lectiveY" value="" name="anoLectivo">
+
+
+            </div>
+            <hr>
+            <div class="float-right">
+                <button type="submit" class="btn btn-success mb-3">
+                    <i class="fas fa-plus-circle"></i>
+                    Requerer
+                </button>
+
+
+            </div>
+        </div>
+
+    </div>
+    {!! Form::close() !!}
+
 @endsection
 @section('scripts')
     @parent
     <script>
-        /*
         anoLectivo = $("#lectiveY")
         anoLectivo.val($("#lective_year").val());
         console.log('ano:' + anoLectivo.val());
@@ -77,6 +136,6 @@
 
             });
 
-        });*/
+        });
     </script>
 @endsection
