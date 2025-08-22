@@ -120,7 +120,7 @@
                     studentSelect.append(`<option value=""></option>`);
 
                     dados.forEach(student => {
-                        const nome = student.nome ?? 'Sem nome';
+                        const nome = student.name ?? 'Sem nome';
                         const numero = student.numero ?? 'Sem número';
                         const email = student.email ?? 'Sem email';
 
