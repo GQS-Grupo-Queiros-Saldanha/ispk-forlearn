@@ -206,7 +206,7 @@ class RequerimentoController extends Controller
 
             if (!$article_request_id) {
                 Toastr::error(__('Não foi possível criar o emolumento de cartão de estudante, por favor tente novamente'), __('toastr.error'));
-                return redirect()->back();
+                return null;
             }
 
             // prepara os dados necessários para a view
