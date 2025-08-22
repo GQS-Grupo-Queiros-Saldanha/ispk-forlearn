@@ -154,8 +154,17 @@ class RequerimentoController extends Controller
         ->where('art.anoLectivo', $lective_year) ->where('cd.code', $code) 
         ->select('art.id', 'art.base_value') 
         ->first();
+        
+        $insercaoId = DB::table('article_requests')->insertGetId([
+            'user_id' => $user_id,
+            'article_id' => $emolumento->id,
+            'base_value' => $emolumento->base_value,
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
          
-        return $emolumento;
+        return $insercaoId;
     } 
 
     public function solicitacao_revisao_prova_store() { 
