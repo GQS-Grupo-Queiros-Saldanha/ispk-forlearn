@@ -420,7 +420,7 @@ Route::group(
                 Route::post('requerimento_student_schedule/store', 'RequerimentoController@student_schedule_store')->name('student_schedule_store');
                 //Solicitação de Revisão de Prova
                 Route::get('/requerimento/solicitacao_revisao_prova', [RequerimentoController::class, 'solicitacao_revisao_prova'])->name('requerimento.solicitacao_revisao_prova');
-                Route::get('/requerimento/getEstudante/{course_id}', [RequerimentoController::class, 'getEstudante'])->name('requerimento.getEstudante');
+                Route::get('/requerimento/getEstudante/{course_id}', [RequerimentoController::class, 'getEstudante']);
                 //TFC
                 Route::get('requerimento/create_student_tfc', 'RequerimentoController@createStudentTfc')->name("create_student_tfc");
                 Route::post('requerimento_student_tfc/store', 'RequerimentoController@student_tfc_store')->name('student_tfc_store');

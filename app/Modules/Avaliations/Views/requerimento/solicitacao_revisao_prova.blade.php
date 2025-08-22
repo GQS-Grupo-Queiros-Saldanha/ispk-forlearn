@@ -102,7 +102,7 @@
             // Requisição AJAX para buscar estudantes finalistas
             let url = `${baseUrl}${course_id}`;
             
-            fetch('https://ispk.forlearn.ao/pt/avaliations/requerimento/getEstudante/1')
+            fetch('/requerimento/getEstudante/' + course_id)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Erro na resposta da rede');
