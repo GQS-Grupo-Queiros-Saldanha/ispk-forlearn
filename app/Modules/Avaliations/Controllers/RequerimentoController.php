@@ -95,12 +95,31 @@ class RequerimentoController extends Controller
             
             $students = DB::table('user_courses')
                 ->where('courses_id', $course_id)
+                // Pega os estudantes que estão matriculados no curso
                 ->join('users', 'users.id', '=', 'user_courses.users_id')
-                ->join('user_parameters', function ($join) {
-                    $join->on('user_parameters.users_id', '=', 'users.id')
-                        ->whereIn('user_parameters.parameters_id', [1, 19, 312]);/* pega o email, o numero do estudante, o nome completo*/
+                ->leftJoin('user_parameters as nome', function ($join) {
+                    $join->on('nome.users_id', '=', 'users.id')
+                        ->where('nome.parameters_id', '=', 1);
                 })
+                //Numero do Estudante
+                ->leftJoin('user_parameters as numero', function ($join) {
+                    $join->on('numero.users_id', '=', 'users.id')
+                        ->where('numero.parameters_id', '=', 19);
+                })
+                //Email do Estudane
+                ->leftJoin('user_parameters as email', function ($join) {
+                    $join->on('email.users_id', '=', 'users.id')
+                        ->where('email.parameters_id', '=', 312);
+                })
+                ->select(
+                    'users.id',
+                    'nome.value as nome',
+                    'numero.value as numero',
+                    'email.value as email'
+                )
                 ->get();
+
+
 
             return response()->json($students);
 
