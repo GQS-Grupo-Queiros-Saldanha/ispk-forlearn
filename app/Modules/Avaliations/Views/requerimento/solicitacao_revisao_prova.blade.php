@@ -112,8 +112,7 @@
                     const studentSelect = $("#students");
                     studentSelect.empty(); // Limpa as opções existentes
                     foreach (dados as student) {
-                        const optionText = `${student.nome} - ${student.numero} - ${student.email}`;
-                        studentSelect.append('<option value="${studente.id}"></option>'); // Adiciona uma opção vazia no início
+                        studentSelect.append('<option value="${studente.id}">${student.nome} #${student.numero} (${student.email})</option>'); // Adiciona uma opção vazia no início
                     }
                     
                 })
