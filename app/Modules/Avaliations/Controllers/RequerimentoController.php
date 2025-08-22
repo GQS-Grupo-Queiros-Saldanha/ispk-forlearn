@@ -168,7 +168,7 @@ class RequerimentoController extends Controller
             'status' => 'pending',
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ]);/*
 
         $transactionId = DB::table('transactions')->insertGetId([
             'type' => 'debit',
@@ -188,7 +188,7 @@ class RequerimentoController extends Controller
             'value' => $emolumento->base_value,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ]);/*
 
         return $insercaoId;
 
