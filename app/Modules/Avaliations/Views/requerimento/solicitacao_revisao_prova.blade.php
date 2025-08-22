@@ -99,7 +99,7 @@
             console.log('Curso selecionado: ' + course_id);
             
             // Requisição AJAX para buscar estudantes finalistas
-            let url=`/requerimento/getEstudante/course_id=${course_id}`;
+            let url=`/pt/requerimento/getEstudante/course_id=${course_id}`;
             fetch(url)
                 .then(response => {
                     if (!response.ok) {
@@ -109,6 +109,13 @@
                 })
                 .then(dados => {
                     console.log(dados);
+                    const studentSelect = $("#students");
+                    studentSelect.empty(); // Limpa as opções existentes
+                    foreach (dados as student) {
+                        const optionText = `${student.nome} - ${student.numero} - ${student.email}`;
+                        studentSelect.append('<option value="${studente.id}"></option>'); // Adiciona uma opção vazia no início
+                    }
+                    
                 })
                 .catch(erro => {
                     console.error('Ocorreu um erro:', erro);
