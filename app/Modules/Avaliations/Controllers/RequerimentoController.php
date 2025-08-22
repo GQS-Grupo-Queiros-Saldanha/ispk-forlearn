@@ -89,6 +89,27 @@ class RequerimentoController extends Controller
             return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
+    //Trabalhando aqui
+    public function getEstudante($course_id){
+        try {
+            
+            $students = DB::table('user_courses')
+                ->where('courses_id', $course_id) // Filtra pelo ID do curso
+                ->join('users', 'users.id', '=', 'user_courses.id_users')
+                ->join('user_parameters', function ($join) {
+                    $join->on('user_parameters.users_id', '=', 'users.id')
+                        ->where('user_parameters.parameters_id', '=', 1); // Nome do estudante
+                        ->where('user_parameters.parameters_id', '=', 19); // Número do estudante
+                        ->where('user_parameters.parameters_id', '=', 312); // Email do estudante
+                    })->get();  
+
+            return response()->json($students);
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return response()->json(['error' => 'Failed to fetch students'], 500);
+        }
+
+    }
     /*Esta zona é para a solicitação de revisão de Prova!*/
 
     public function merito()
@@ -2136,7 +2157,7 @@ class RequerimentoController extends Controller
 
         return view("Avaliations::requerimento.defesa")->with($data);
     }
-
+    //referencia para pegar os estudantes finalistas
     public function get_finalists(Request $request, $course_id, $lective_year)
     {
         

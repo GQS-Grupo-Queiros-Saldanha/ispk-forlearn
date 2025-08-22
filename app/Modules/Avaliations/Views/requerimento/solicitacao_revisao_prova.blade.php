@@ -30,7 +30,7 @@
 @endsection
 
 @section('body')
-    {!! Form::open(['route' => ['student_tfc_store']]) !!}
+    {!! Form::open(['route' => ['']]) !!}
     <div class="row">
         <div class="col">
             <div class="card">
@@ -52,7 +52,10 @@
                     <div class="col-6">
                         <div class="form-group col">
                             <label>Estudante</label>
-                            {{ Form::bsLiveSelectEmpty('students', [], null, ['id' => 'students', 'class' => 'form-control']) }}
+                            <select name="student_id" id="students" class="selectpicker form-control form-control-sm" disabled>
+                                <option value="" selected></option>
+                                <!--Colocado pelo JS-->
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -96,46 +99,21 @@
             console.log('Curso selecionado: ' + course_id);
             
             // Requisição AJAX para buscar estudantes finalistas
-            $.ajax({
-                url: "/avaliations/requerimento/getFinalists/" + course_id + "/" + 
-                      lective_year_matriculation + "?type=finalists",
-                type: "GET",
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                cache: false,
-                dataType: 'json',
-                
-                // Sucesso na requisição
-                success: function(result) {
-                    console.log('Estudantes carregados: ' + result.length);
-                    
-                    $("#students").prop('disabled', true);
-                    $("#students").empty();
-                    
-                    // Adiciona opção vazia
-                    $("#students").append('<option selected value=""></option>');
-                    
-                    // Preenche o dropdown com os estudantes
-                    $.each(result, function(index, row) {
-                        $("#students").append(
-                            '<option value="' + row.user_id + '">' + 
-                            row.name + " #" + row.student_number + 
-                            " (" + row.email + ")" + '</option>'
-                        );
-                    });
-                    
-                    // Habilita e atualiza o dropdown
-                    $("#students").prop('disabled', false);
-                    $("#students").selectpicker('refresh');
-                },
-                
-                // Erro na requisição
-                error: function(xhr, status, error) {
-                    console.error('Erro ao carregar estudantes: ' + error);
-                    alert('Ocorreu um erro ao carregar os estudantes. Por favor, tente novamente.');
-                }
-            });
+            let url=`getEstudante/course_id=${course_id}`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                    throw new Error('Erro na resposta da rede');
+                    }
+                    return response.json(); // converte a resposta para JSON
+                })
+                .then(dados => {
+                    console.log(dados);
+                })
+                .catch(erro => {
+                    console.error('Ocorreu um erro:', erro);
+                });
+
         });
     </script>
 @endsection
