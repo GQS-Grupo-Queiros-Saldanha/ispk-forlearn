@@ -81,6 +81,7 @@
     <script>
         // Inicialização das variáveis
         const anoLectivo = $("#lectiveY");
+        const baseUrl = "{{ route('requerimento.getEstudante', ['course_id' => '']) }}";
         anoLectivo.val($("#lective_year").val());
         
         console.log('Ano lectivo selecionado: ' + anoLectivo.val());
@@ -99,7 +100,7 @@
             console.log('Curso selecionado: ' + course_id);
             
             // Requisição AJAX para buscar estudantes finalistas
-            let url = `${window.location.origin}/avaliations/requerimento/getEstudante/${course_id}`;
+            let url = `${baseUrl}${course_id}`;
             fetch(url)
                 .then(response => {
                     if (!response.ok) {
