@@ -874,7 +874,7 @@ class CandidatesController extends Controller
     }
   }
 
-  private function relatoriosPDFGlobal($user, $action)
+  private function relatoriosPDFGlobal2($user, $action)
   {
     try {
       $parameter_groups = ParameterGroup::with([
@@ -1707,9 +1707,8 @@ class CandidatesController extends Controller
       $emolumentos[] = $Prematricula->id_emolumento;
     }
     return $emolumentos;
-
-
   }
+  
   public function relatoriosPDFGlobal($anoletivo)
   {
     try {
