@@ -148,14 +148,16 @@ class RequerimentoController extends Controller
     }
 
     public function RequererEmolumento($user_id, $lective_year = 11, $code = "cartao_estudante",){
+        
         $emolumento = DB::table('articles as art')
-            ->join('code_developer as cd', 'art.code', '=', 'cd.code')
+            ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
             ->where('art.anoLectivo', $lective_year)
-            ->whereColumn('art.id_code_dev', '=', 'cd.id')
+            ->where('cd.code', $code)
+            ->select('art.id', 'art.base_value')
             ->first();
 
         if(!$emolumento) {
-            Toastr::warning(__('A forLEARN não encontrou um emolumento de cartão de estudante configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
+            Toastr::warning(__('A forLEARN não encontrou um emolumento configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
             return redirect()->back();
         }
         // Insere a nova solicitação
@@ -178,7 +180,7 @@ class RequerimentoController extends Controller
         ]);
 
         // Insere a nova solicitação
-       $insercao_transacao = DB::table('transaction_article_requests')->insert([
+        $insercao_transacao = DB::table('transaction_article_requests')->insert([
             'article_request_id' => $insercao->id,
             'transaction_id' => $transaction->id,
             'value' => $emolumento->base_value,
@@ -199,7 +201,7 @@ class RequerimentoController extends Controller
 
             if (!$article_request_id) {
                 Toastr::error(__(' Não foi possivel criar o emolumento de cartão de estudante, por favor tente novamente'), __('toastr.error'));
-                return redirect()->back();
+                return "bug";
             }
    
             Toastr::success(__('O pedido com sucesso.'), __('toastr.success'));
