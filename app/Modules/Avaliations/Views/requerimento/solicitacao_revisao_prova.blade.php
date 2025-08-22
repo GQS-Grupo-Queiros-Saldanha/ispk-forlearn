@@ -96,11 +96,13 @@
         $("#courses").change(function() {
             const course_id = $(this).val();
             const lective_year_matriculation = $("#lective_year").val();
+            console.log("Evento disparado. ID do curso:", course_id);
 
             console.log('Curso selecionado: ' + course_id);
             
             // Requisição AJAX para buscar estudantes finalistas
-            let url = `/pt/avaliations/requerimento/getEstudante/${course_id}`;
+            const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+            let url = `${baseUrl}/${course_id}`;
             fetch(url)
                 .then(response => {
                     if (!response.ok) {
@@ -121,9 +123,6 @@
                     console.error('Erro no fetch:', erro);
                 });
 
-                .catch(erro => {
-                    console.error('Ocorreu um erro:', erro);
-                });
 
         });
     </script>
