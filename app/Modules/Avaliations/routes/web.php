@@ -1,5 +1,9 @@
 <?php
 
+
+
+use App\Modules\Avaliations\Controllers\RequerimentoController;
+
 Route::group(
     [
         'module' => 'Avaliations',
