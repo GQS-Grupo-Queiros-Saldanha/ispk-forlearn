@@ -181,13 +181,16 @@ class RequerimentoController extends Controller
         ]);
 
         // Insere a nova solicitação
-       $insercao_transacao = DB::table('transaction_article_requests')->insert([
-            'article_request_id' => $insercao->id,
-            'transaction_id' => $transaction->id,
+        $insercao_transacao = DB::table('transaction_article_requests')->insert([
+            'article_request_id' => $insercaoId,
+            'transaction_id' => $transactionId,
             'value' => $emolumento->base_value,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        return response()->json(['success' => 'Solicitação de revisão de prova enviada com sucesso.']);
+
 
     }
 
@@ -197,18 +200,7 @@ class RequerimentoController extends Controller
             $user_id = request()->input('student_id');
             $discipline_id = request()->input('discipline_id');
             $lective_year = request()->input('anoLectivo');
-          
-
-            //Emolumento com base no ano lectivo
-            //$emolumento = EmolumentCodevLective($codev, $lective_year);
-            $codev = "cartao_estudante";
-
-
-            /*if (!$emolumento || count($emolumento) === 0) {
-                    Toastr::warning(__('A forLEARN não encontrou um emolumento de cartão de estudante configurado no ano lectivo selecionado.'), __('toastr.warning'));
-                    return redirect()->back();
-                }
-*/
+  
             //inserir o emolumento
             $article_request_id = $this->RequererEmolumento($user_id);
 
@@ -217,8 +209,8 @@ class RequerimentoController extends Controller
                 return redirect()->back();
             }
 
-            return response()->json(['success' => 'Solicitação de revisão de prova enviada com sucesso.']);
-            
+            return view('Avaliations::requerimento.solicitacao_revisao_prova')->with($data);
+
         } catch (Exception | Throwable $e) {
             Log::error($e);
             return response()->json(['error' => 'Falha ao enviar a solicitação de revisão de prova.'], 500);
