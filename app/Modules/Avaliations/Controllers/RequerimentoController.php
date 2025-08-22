@@ -155,10 +155,6 @@ class RequerimentoController extends Controller
             ->where('art.anoLectivo', $lective_year)
             ->first();
 
-        return $emolumento;
-    }
-
-
         if(!$emolumento) {
             Toastr::warning(__('A forLEARN não encontrou um emolumento Revisão de Prova configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
             return redirect()->back();
