@@ -100,9 +100,8 @@
             console.log('Curso selecionado: ' + course_id);
             
             // Requisição AJAX para buscar estudantes finalistas
-            let url = `${baseUrl}${course_id}`;
-            
-            fetch('/requerimento/getEstudante/' + course_id)
+            let url = `/pt/avaliations/requerimento/getEstudante/${course_id}`;
+            fetch(url)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Erro na resposta da rede');
