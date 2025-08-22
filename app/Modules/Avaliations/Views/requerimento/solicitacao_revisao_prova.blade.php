@@ -53,7 +53,17 @@
                         <div class="form-group col">
                             <label>Estudante</label>
                             <select name="student_id" id="students" class="selectpicker form-control form-control-sm">
-                                <option value="" selected></option>
+                                <option value="" selected>Selecione o Curso</option>
+                                <!--Colocado pelo JS-->
+                            </select>
+                        </div>
+                    </div>
+                    <!--Disciplinas-->
+                    <div class="col-6">
+                        <div class="form-group col">
+                            <label>Disciplinas</label>
+                            <select name="student_id" id="students" class="selectpicker form-control form-control-sm">
+                                <option value="" selected>Seleciona a disciplina</option>
                                 <!--Colocado pelo JS-->
                             </select>
                         </div>
