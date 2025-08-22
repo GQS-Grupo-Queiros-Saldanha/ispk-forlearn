@@ -160,10 +160,8 @@ class RequerimentoController extends Controller
             Toastr::warning(__('A forLEARN não encontrou um emolumento de 00 configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
             return redirect()->back();
         }
-        
-        dd($user_id, $emolumento->id, $emolumento->base_value);
         // Insere a nova solicitação
-        $insercao = DB::table('article_requests')->insert([
+       $insercaoId = DB::table('article_requests')->insertGetId([
             'user_id' => $user_id,
             'article_id' => $emolumento->id,
             'base_value' => $emolumento->base_value,
@@ -172,7 +170,7 @@ class RequerimentoController extends Controller
             'updated_at' => now(),
         ]);
 
-        $transaction = DB::table('transactions')->insert([
+        $transactionId = DB::table('transactions')->insertGetId([
             'type' => 'debit',
             'value' => $emolumento->base_value,
             'notes' => 'Débito inicial do valor base',
