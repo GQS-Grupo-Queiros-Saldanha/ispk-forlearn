@@ -161,7 +161,7 @@ class RequerimentoController extends Controller
             return redirect()->back();
         }
         // Insere a nova solicitação
-        $insercao = DB::table('article_requests')->insert([
+       $insercaoId = DB::table('article_requests')->insertGetId([
             'user_id' => $user_id,
             'article_id' => $emolumento->id,
             'base_value' => $emolumento->base_value,
@@ -169,7 +169,8 @@ class RequerimentoController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        $transaction = DB::table('transactions')->insert([
+
+        $transactionId = DB::table('transactions')->insertGetId([
             'type' => 'debit',
             'value' => $emolumento->base_value,
             'notes' => 'Débito inicial do valor base',
@@ -179,10 +180,10 @@ class RequerimentoController extends Controller
             'updated_at' => now(),
         ]);
 
-        // Insere a nova solicitação
-       $insercao_transacao = DB::table('transaction_article_requests')->insert([
-            'article_request_id' => $insercao->id,
-            'transaction_id' => $transaction->id,
+
+        $insercao_transacao = DB::table('transaction_article_requests')->insert([
+            'article_request_id' => $insercaoId,
+            'transaction_id' => $transactionId,
             'value' => $emolumento->base_value,
             'created_at' => now(),
             'updated_at' => now(),
