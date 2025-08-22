@@ -201,10 +201,11 @@ class RequerimentoController extends Controller
             $codev = "cartao_estudante";
 
 
-            if ($emolumento->isEmpty()) {
-                Toastr::warning(__('A forLEARN não encontrou um emolumento de cartão de estudante configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
-                return redirect()->back();
-            }
+            /*if (!$emolumento || count($emolumento) === 0) {
+                    Toastr::warning(__('A forLEARN não encontrou um emolumento de cartão de estudante configurado no ano lectivo selecionado.'), __('toastr.warning'));
+                    return redirect()->back();
+                }
+*/
             //inserir o emolumento
             $article_request_id = $this->RequererEmolumento($user_id);
 
