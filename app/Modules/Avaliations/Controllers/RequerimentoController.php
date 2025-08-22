@@ -90,7 +90,7 @@ class RequerimentoController extends Controller
         }
     }
     //Trabalhando aqui
-    public function getEstudante($course_id, $lective_year = 11){
+    public function getEstudante($course_id, $lective_year){
         try {
             
             $students = DB::table('user_courses')

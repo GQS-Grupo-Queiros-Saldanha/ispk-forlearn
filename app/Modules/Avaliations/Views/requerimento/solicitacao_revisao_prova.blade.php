@@ -102,7 +102,7 @@
             
            // Requisição AJAX para buscar estudantes finalistas
             const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
-            let url = `${baseUrl}/${course_id}`;
+            let url = `${baseUrl}/${course_id}/${anoLectivo.val()}`;
 
             fetch(url)
                 .then(response => {
