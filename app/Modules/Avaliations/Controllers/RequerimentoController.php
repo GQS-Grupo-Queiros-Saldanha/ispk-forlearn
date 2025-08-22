@@ -198,7 +198,7 @@ class RequerimentoController extends Controller
             $justification = request()->input('justification');
 
             //Emolumento com base no ano lectivo
-            $emolumento = EmolumentCodevLective($codev, $lective_year);
+            //$emolumento = EmolumentCodevLective($codev, $lective_year);
             $codev = "cartao_estudante";
 
 
