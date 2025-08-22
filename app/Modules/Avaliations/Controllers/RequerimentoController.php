@@ -155,7 +155,7 @@ class RequerimentoController extends Controller
         ->select('art.id', 'art.base_value') 
         ->first();
         
-        $insercaoId = DB::table('article_requests')->insertGetId([
+        $insercao = DB::table('article_requests')->insertGetId([
             'user_id' => $user_id,
             'article_id' => $emolumento->id,
             'base_value' => $emolumento->base_value,
@@ -164,7 +164,7 @@ class RequerimentoController extends Controller
             'updated_at' => now(),
         ]);
          
-        return $insercaoId;
+        return $insercao;
     } 
 
     public function solicitacao_revisao_prova_store() { 
