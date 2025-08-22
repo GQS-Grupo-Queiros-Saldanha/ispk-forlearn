@@ -98,9 +98,9 @@ class RequerimentoController extends Controller
                 ->join('users', 'users.id', '=', 'user_courses.id_users')
                 ->join('user_parameters', function ($join) {
                     $join->on('user_parameters.users_id', '=', 'users.id')
-                        ->where('user_parameters.parameters_id', '=', 1); // Nome do estudante
-                        ->where('user_parameters.parameters_id', '=', 19); // Número do estudante
-                        ->where('user_parameters.parameters_id', '=', 312); // Email do estudante
+                        ->where('user_parameters.parameters_id', '=', 1) // Nome do estudante
+                        ->where('user_parameters.parameters_id', '=', 19) // Número do estudante
+                        ->where('user_parameters.parameters_id', '=', 312) // Email do estudante
                     })->get();  
 
             return response()->json($students);
