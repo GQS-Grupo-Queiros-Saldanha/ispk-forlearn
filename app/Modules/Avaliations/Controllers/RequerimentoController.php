@@ -148,10 +148,10 @@ class RequerimentoController extends Controller
     }
 
     public function RequererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){
-        $emolumento = DB::table('articles as art')
-            ->join('code_developer as cd', 'art.code', '=', 'cd.code')
+        $emolumento = DB::table('code_developer as cd')
+            ->where('cd.code', $code)
+            ->join('articles as art', 'cd.id', '=', 'art.id_code_dev')
             ->where('art.anoLectivo', $lective_year)
-            ->whereColumn('art.id_code_dev', '=', 'cd.id')
             ->first();
 
         if(!$emolumento) {
