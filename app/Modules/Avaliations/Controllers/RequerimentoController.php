@@ -179,7 +179,7 @@ class RequerimentoController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
+        dd($transactionId, $insercaoId);
         // Insere a nova solicitação
         $insercao_transacao = DB::table('transaction_article_requests')->insert([
             'article_request_id' => $insercaoId,
