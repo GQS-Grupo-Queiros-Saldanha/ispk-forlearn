@@ -191,11 +191,10 @@ class RequerimentoController extends Controller
     public function solicitacao_revisao_prova_store(){
         
         try {
-            // return request()->all();
             $user_id = request()->input('student_id');
             $discipline_id = request()->input('discipline_id');
             $lective_year = request()->input('anoLectivo');
-            $justification = request()->input('justification');
+          
 
             //Emolumento com base no ano lectivo
             //$emolumento = EmolumentCodevLective($codev, $lective_year);
