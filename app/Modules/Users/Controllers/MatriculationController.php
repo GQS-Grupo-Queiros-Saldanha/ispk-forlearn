@@ -916,7 +916,7 @@ class MatriculationController extends Controller
             $lectiveYearSelected = DB::table('lective_years')
                             ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
                             ->first();
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
             return view('Users::matriculations.index', compact('lectiveYears', 'lectiveYearSelected'));
         } catch (Exception | Throwable $e) {
