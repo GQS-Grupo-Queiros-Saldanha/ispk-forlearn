@@ -146,23 +146,23 @@ class RequerimentoController extends Controller
         }
 
     }
+    
     public function RequererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){ 
         
         $emolumento = DB::table('articles as art') 
         ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id') 
         ->where('art.anoLectivo', $lective_year) ->where('cd.code', $code) 
         ->select('art.id', 'art.base_value') 
-        ->first(); 
+        ->first();
+         
         return $emolumento;
-
-
     } 
 
     public function solicitacao_revisao_prova_store() { 
         
         try { 
             $user_id = request()->input('student_id'); $discipline_id = request()->input('discipline_id');
-            $lective_year = request()->input('anoLectivo');
+            $lective_year = request()->input('lective_year');
             
             $article_request_id = $this->RequererEmolumento($user_id, $lective_year); 
             
@@ -176,7 +176,8 @@ class RequerimentoController extends Controller
 
         } catch (Exception | Throwable $e) { 
             Log::error($e); Toastr::error(__('Falha ao enviar a solicitação de revisão de prova.'), __('toastr.error'));
-            return redirect()->back(); } }
+            return redirect()->back(); 
+        }}
 
 
     /*Esta zona é para a solicitação de revisão de Prova!*/
