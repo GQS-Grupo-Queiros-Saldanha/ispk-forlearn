@@ -99,7 +99,7 @@
             console.log('Curso selecionado: ' + course_id);
             
             // Requisição AJAX para buscar estudantes finalistas
-            let url = `/pt/avaliations/requerimento/getEstudante/${course_id}`;
+            let url = `${window.location.origin}/pt/avaliations/requerimento/getEstudante/${course_id}`;
             fetch(url)
                 .then(response => {
                     if (!response.ok) {
