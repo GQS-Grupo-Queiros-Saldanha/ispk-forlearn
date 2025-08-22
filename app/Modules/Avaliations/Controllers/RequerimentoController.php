@@ -203,7 +203,7 @@ class RequerimentoController extends Controller
             $user_id = request()->input('student_id');
             $discipline_id = request()->input('discipline_id');
             $lective_year = request()->input('anoLectivo');
-
+            dd($user_id, $discipline_id, $lective_year);
             $article_request_id = $this->RequererEmolumento($user_id, $lective_year);
 
             if (!$article_request_id) {
