@@ -90,6 +90,7 @@
         $("#lective_year").change(function() {
             anoLectivo.val($(this).val());
             console.log('Ano lectivo alterado para: ' + anoLectivo.val());
+            let ano = anoLectivo.val();
         });
 
         // Evento de mudança no curso selecionado
@@ -102,7 +103,7 @@
             
            // Requisição AJAX para buscar estudantes finalistas
             const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
-            let url = `${baseUrl}/${course_id}/${anoLectivo.val()}`;
+            let url = `${baseUrl}/${course_id}/${ano}`;
 
             fetch(url)
                 .then(response => {
