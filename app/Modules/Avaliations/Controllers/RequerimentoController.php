@@ -137,7 +137,7 @@ class RequerimentoController extends Controller
                 ])
                 ->get();
 
-            return response()->json($students);
+            return response()->json($model);
 
 
         } catch (Exception | Throwable $e) {
