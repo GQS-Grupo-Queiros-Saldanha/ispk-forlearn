@@ -30,7 +30,7 @@
 @endsection
 
 @section('body')
-    {!! Form::open(['route' => ['']]) !!}
+    
     <div class="row">
         <div class="col">
             <div class="card">
@@ -73,7 +73,7 @@
             </div>
         </div>
     </div>
-    {!! Form::close() !!}
+  
 @endsection
 
 @section('scripts')
