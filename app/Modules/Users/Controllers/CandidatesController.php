@@ -874,7 +874,7 @@ class CandidatesController extends Controller
     }
   }
 
-  private function fetch($user, $action)
+  private function relatoriosPDFGlobal($user, $action)
   {
     try {
       $parameter_groups = ParameterGroup::with([

@@ -147,7 +147,7 @@ class RequerimentoController extends Controller
 
     }
 
-    public function RequererEmolumento($user_id, $lective_year = 11, $code = "cartao_estudante"){
+    public function RequererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){
         $emolumento = DB::table('articles as art')
             ->join('code_developer as cd', 'art.code', '=', 'cd.code')
             ->where('art.anoLectivo', $lective_year)
@@ -155,7 +155,7 @@ class RequerimentoController extends Controller
             ->first();
 
         if(!$emolumento) {
-            Toastr::warning(__('A forLEARN não encontrou um emolumento de cartão de estudante configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
+            Toastr::warning(__('A forLEARN não encontrou um emolumento Revisão de Prova configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
             return redirect()->back();
         }
         // Insere a nova solicitação
