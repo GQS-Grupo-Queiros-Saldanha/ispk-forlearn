@@ -52,7 +52,7 @@
                     <div class="col-6">
                         <div class="form-group col">
                             <label>Estudante</label>
-                            <select name="student_id" id="students" class="selectpicker form-control form-control-sm" disabled>
+                            <select name="student_id" id="students" class="selectpicker form-control form-control-sm">
                                 <option value="" selected></option>
                                 <!--Colocado pelo JS-->
                             </select>
@@ -101,6 +101,7 @@
             
             // Requisição AJAX para buscar estudantes finalistas
             let url = `${baseUrl}${course_id}`;
+            
             fetch('https://ispk.forlearn.ao/pt/avaliations/requerimento/getEstudante/1')
                 .then(response => {
                     if (!response.ok) {
