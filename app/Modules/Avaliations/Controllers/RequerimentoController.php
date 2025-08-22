@@ -149,10 +149,11 @@ class RequerimentoController extends Controller
 
     public function RequererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){
         $emolumento = DB::table('articles as art')
-            ->where('art.anoLectivo', $lective_year)    
-            ->join('code_developer as cd', 'cd.code', $code)        
-            ->whereColumn('art.id_code_dev', '=', 'cd.id')
+            ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
+            ->where('art.anoLectivo', $lective_year)
+            ->where('cd.code', $code)
             ->first();
+
         dd($emolumento);
         if(!$emolumento) {
             Toastr::warning(__('A forLEARN não encontrou um emolumento de 00 configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
