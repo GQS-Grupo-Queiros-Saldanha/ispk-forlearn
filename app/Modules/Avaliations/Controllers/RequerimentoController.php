@@ -146,49 +146,123 @@ class RequerimentoController extends Controller
         }
 
     }
-    
-    public function RequererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){ 
-        
-        $emolumento = DB::table('articles as art') 
-            ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id') 
-            ->where('art.anoLectivo', $lective_year) ->where('cd.code', $code) 
-            ->select('art.id', 'art.base_value') 
-            ->first();
-        
-        $insercao = DB::table('article_requests')->insert([
-            'user_id' => $user_id,
-            'article_id' => $emolumento->id,
-            'base_value' => $emolumento->base_value,
-            'status' => 'pending',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-         
-        return $insercao;
-    } 
 
-    public function solicitacao_revisao_prova_store() { 
-        
-        try { 
+    /**
+     * Processa o requerimento de emolumento para revisão de prova
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function solicitacao_revisao_prova_store(Request $request)
+    {
+        try {
             // Validar os dados recebidos
-            $user_id = request()->input('student_id');
-            $lective_year = request()->input('lective_year');
-            
-            $article_request_id = $this->RequererEmolumento($user_id, $lective_year); 
-            
-            if ($article_request_id == null) { 
-                Toastr::error(__('Não foi possível criar o emolumento de cartão de estudante, por favor tente novamente'), __('toastr.error')); 
-                return null; 
+            $validated = $request->validate([
+                'student_id' => 'required|integer|exists:users,id',
+                'lective_year' => 'required|integer|min:2000|max:' . (date('Y') + 1)
+            ]);
+
+            $user_id = $validated['student_id'];
+            $lective_year = $validated['lective_year'];
+
+            // Verificar se já existe uma solicitação pendente para o mesmo usuário
+            $existingRequest = DB::table('article_requests as ar')
+                ->join('articles as art', 'ar.article_id', '=', 'art.id')
+                ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
+                ->where('ar.user_id', $user_id)
+                ->where('cd.code', 'revisao_prova')
+                ->where('art.anoLectivo', $lective_year)
+                ->where('ar.status', 'pending')
+                ->exists();
+
+            if ($existingRequest) {
+                Toastr::warning(__('Já existe uma solicitação de revisão de prova pendente para este ano letivo.'), __('toastr.warning'));
+                return redirect()->back();
             }
 
-            $data = ['usuario' => $user_id]; 
-            return view('Avaliations::requerimento.solicitacao_revisao_prova')->with($data); 
+            $articleRequest = $this->requererEmolumento($user_id, $lective_year);
 
-        } catch (Exception | Throwable $e) { 
-            Log::error($e); Toastr::error(__('Falha ao enviar a solicitação de revisão de prova.'), __('toastr.error'));
-            return redirect()->back(); 
-        }}
+            if (!$articleRequest) {
+                Toastr::error(__('Não foi possível criar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
+                return redirect()->back();
+            }
 
+            Toastr::success(__('Solicitação de revisão de prova enviada com sucesso!'), __('toastr.success'));
+            
+            return view('Avaliations::requerimento.solicitacao_revisao_prova', [
+                'usuario' => $user_id,
+                'solicitacao_id' => $articleRequest->id
+            ]);
+
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (Exception $e) {
+            Log::error('Falha ao processar solicitação de revisão de prova: ' . $e->getMessage(), [
+                'user_id' => $request->input('student_id'),
+                'lective_year' => $request->input('lective_year'),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            Toastr::error(__('Falha ao enviar a solicitação de revisão de prova.'), __('toastr.error'));
+            return redirect()->back();
+        }
+    }
+
+    /**
+     * Cria um requerimento de emolumento
+     * 
+     * @param int $user_id
+     * @param int $lective_year
+     * @param string $code
+     * @return object|null
+     */
+    private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
+    {
+        try {
+            DB::beginTransaction();
+
+            $emolumento = DB::table('articles as art')
+                ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
+                ->where('art.anoLectivo', $lective_year)
+                ->where('cd.code', $code)
+                ->where('art.active', true) // Adicionar verificação de artigo ativo
+                ->select('art.id', 'art.base_value')
+                ->first();
+
+            if (!$emolumento) {
+                Log::warning('Emolumento não encontrado', [
+                    'lective_year' => $lective_year,
+                    'code' => $code
+                ]);
+                DB::rollBack();
+                return null;
+            }
+
+            $articleRequestId = DB::table('article_requests')->insertGetId([
+                'user_id' => $user_id,
+                'article_id' => $emolumento->id,
+                'base_value' => $emolumento->base_value,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $articleRequest = DB::table('article_requests')
+                ->where('id', $articleRequestId)
+                ->first();
+
+            DB::commit();
+
+            return $articleRequest;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Erro ao criar emolumento: ' . $e->getMessage(), [
+                'user_id' => $user_id,
+                'lective_year' => $lective_year
+            ]);
+            return null;
+        }
+    }
 
     /*Esta zona é para a solicitação de revisão de Prova!*/
 
