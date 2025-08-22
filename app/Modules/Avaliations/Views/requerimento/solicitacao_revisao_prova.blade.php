@@ -30,59 +30,58 @@
 @endsection
 
 @section('body')
-    
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group col">
-                            <label>Selecionar curso</label>
-                            <select name="course_id" id="courses" class="selectpicker form-control form-control-sm">
-                                <option value="" selected></option>
-                                @foreach ($courses as $course)
-                                    <option value="{{ $course->id }}">
-                                        {{ $course->currentTranslation->display_name }}
-                                    </option>
-                                @endforeach
-                            </select>
+    <form action="{{ route('requerimento.solicitacao_revisao_prova_store') }}" method="POST">
+        @csrf
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group col">
+                                <label>Selecionar curso</label>
+                                <select name="course_id" id="courses" class="selectpicker form-control form-control-sm">
+                                    <option value="" selected>Selecione o Curso</option>
+                                    @foreach ($courses as $course)
+                                        <option value="{{ $course->id }}">
+                                            {{ $course->currentTranslation->display_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group col">
+                                <label>Estudante</label>
+                                <select name="student_id" id="students" class="selectpicker form-control form-control-sm">
+                                    <option value="" selected>Selecione o Estudante</option>
+                                    <!--Colocado pelo JS-->
+                                </select>
+                            </div>
+                        </div>
+                        <!--Disciplinas-->
+                        <div class="col-6">
+                            <div class="form-group col">
+                                <label>Disciplinas</label>
+                                <select name="disciplina_id" id="students" class="selectpicker form-control form-control-sm">
+                                    <option value="" selected>Seleciona a disciplina</option>
+                                    <!--Colocado pelo JS-->
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-6">
-                        <div class="form-group col">
-                            <label>Estudante</label>
-                            <select name="student_id" id="students" class="selectpicker form-control form-control-sm">
-                                <option value="" selected>Selecione o Curso</option>
-                                <!--Colocado pelo JS-->
-                            </select>
-                        </div>
-                    </div>
-                    <!--Disciplinas-->
-                    <div class="col-6">
-                        <div class="form-group col">
-                            <label>Disciplinas</label>
-                            <select name="student_id" id="students" class="selectpicker form-control form-control-sm">
-                                <option value="" selected>Seleciona a disciplina</option>
-                                <!--Colocado pelo JS-->
-                            </select>
-                        </div>
-                    </div>
+                    <input type="hidden" id="lectiveY" value="{{ $lectiveYear->id }}" name="anoLectivo">
                 </div>
-
-                <input type="hidden" id="lectiveY" value="" name="anoLectivo">
-            </div>
-            
-            <hr>
-            
-            <div class="float-right">
-                <button type="submit" class="btn btn-success mb-3">
-                    <i class="fas fa-plus-circle"></i>
-                    Requerer
-                </button>
+                <hr>
+                <div class="float-right">
+                    <button type="submit" class="btn btn-success mb-3">
+                        <i class="fas fa-plus-circle"></i>Requerer
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
   
 @endsection
 
