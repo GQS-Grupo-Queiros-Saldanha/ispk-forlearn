@@ -94,14 +94,13 @@ class RequerimentoController extends Controller
         try {
             
             $students = DB::table('user_courses')
-                ->where('courses_id', $course_id) // Filtra pelo ID do curso
+                ->where('courses_id', $course_id)
                 ->join('users', 'users.id', '=', 'user_courses.id_users')
                 ->join('user_parameters', function ($join) {
                     $join->on('user_parameters.users_id', '=', 'users.id')
-                        ->where('user_parameters.parameters_id', '=', 1) // Nome do estudante
-                        ->where('user_parameters.parameters_id', '=', 19) // Número do estudante
-                        ->where('user_parameters.parameters_id', '=', 312) // Email do estudante
-                    })->get();  
+                        ->whereIn('user_parameters.parameters_id', [1, 19, 312]);/* pega o email, o numero do estudante, o nome completo*/
+                })
+                ->get();
 
             return response()->json($students);
         } catch (Exception | Throwable $e) {
