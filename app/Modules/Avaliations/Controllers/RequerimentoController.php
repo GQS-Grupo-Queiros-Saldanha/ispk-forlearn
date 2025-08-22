@@ -170,7 +170,8 @@ class RequerimentoController extends Controller
     public function solicitacao_revisao_prova_store() { 
         
         try { 
-            $user_id = request()->input('student_id'); $discipline_id = request()->input('discipline_id');
+            // Validar os dados recebidos
+            $user_id = request()->input('student_id');
             $lective_year = request()->input('lective_year');
             
             $article_request_id = $this->RequererEmolumento($user_id, $lective_year); 
@@ -180,7 +181,7 @@ class RequerimentoController extends Controller
                 return null; 
             }
 
-            $data = ['article_request_id' => $article_request_id]; 
+            $data = ['usuario' => $user_id]; 
             return view('Avaliations::requerimento.solicitacao_revisao_prova')->with($data); 
 
         } catch (Exception | Throwable $e) { 
