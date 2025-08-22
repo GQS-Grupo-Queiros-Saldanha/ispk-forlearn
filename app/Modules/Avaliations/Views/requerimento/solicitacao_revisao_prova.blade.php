@@ -81,7 +81,7 @@
     <script>
         // Inicialização das variáveis
         const anoLectivo = $("#lectiveY");
-        const baseUrl = "{{ route('requerimento.getEstudante', ['course_id' => '']) }}";
+    const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}"; 
         anoLectivo.val($("#lective_year").val());
         
         console.log('Ano lectivo selecionado: ' + anoLectivo.val());
