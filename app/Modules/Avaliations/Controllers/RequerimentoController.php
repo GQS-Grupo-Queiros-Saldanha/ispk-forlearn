@@ -161,7 +161,7 @@ class RequerimentoController extends Controller
             return redirect()->back();
         }
         
-        dd($emolumento->id);
+        dd($user_id, $emolumento->id, $emolumento->base_value);
         // Insere a nova solicitação
         $insercao = DB::table('article_requests')->insert([
             'user_id' => $user_id,
