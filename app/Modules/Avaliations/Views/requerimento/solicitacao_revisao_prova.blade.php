@@ -99,23 +99,27 @@
             console.log('Curso selecionado: ' + course_id);
             
             // Requisição AJAX para buscar estudantes finalistas
-            let url=`https://ispk.forlearn.ao/pt/avaliations/requerimento/getEstudante/${course_id}`;
+            let url = `/pt/avaliations/requerimento/getEstudante/${course_id}`;
             fetch(url)
                 .then(response => {
                     if (!response.ok) {
-                    throw new Error('Erro na resposta da rede');
+                        throw new Error('Erro na resposta da rede');
                     }
-                    return response.json(); // converte a resposta para JSON
+                    return response.json();
                 })
                 .then(dados => {
                     console.log(dados);
                     const studentSelect = $("#students");
-                    studentSelect.empty(); // Limpa as opções existentes
-                    foreach (dados as student) {
-                        studentSelect.append('<option value="${studente.id}">${student.nome} #${student.numero} (${student.email})</option>'); // Adiciona uma opção vazia no início
-                    }
-                    
+                    studentSelect.empty();
+
+                    dados.forEach(student => {
+                        studentSelect.append(`<option value="${student.id}">${student.nome} #${student.numero} (${student.email})</option>`);
+                    });
                 })
+                .catch(erro => {
+                    console.error('Erro no fetch:', erro);
+                });
+
                 .catch(erro => {
                     console.error('Ocorreu um erro:', erro);
                 });
