@@ -90,44 +90,55 @@
         $("#lective_year").change(function() {
             anoLectivo.val($(this).val());
             console.log('Ano lectivo alterado para: ' + anoLectivo.val());
-            let ano = anoLectivo.val();
         });
 
         // Evento de mudança no curso selecionado
-       $("#courses").change(function() {
-        const course_id = $(this).val();
-        const lective_year_matriculation = $("#lective_year").val(); // pega diretamente do select
-        console.log("Curso selecionado:", course_id);
-        console.log("Ano lectivo:", lective_year_matriculation);
+        $("#courses").change(function() {
+            const course_id = $(this).val();
+            const lective_year_matriculation = $("#lective_year").val();
+            console.log("Evento disparado. ID do curso:", course_id);
 
-        if (!course_id || !lective_year_matriculation) return; // evita requisição se algum estiver vazio
+            console.log('Curso selecionado: ' + course_id);
+            
+           // Requisição AJAX para buscar estudantes finalistas
+            const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+            ano = document.getElementById('lective_year').value;
+            let url = `${baseUrl}/${course_id}/${ano}`;
 
-        const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
-        let url = `${baseUrl}/${course_id}/${lective_year_matriculation}`; // usa o ano correto
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta da rede');
+                    }
+                    return response.json();
+                })
+                .then(dados => {
+                    console.log(dados);
+                    const studentSelect = $("#students");
+                    studentSelect.empty(); // Limpa opções antigas
 
-        fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('Erro na resposta da rede');
-                return response.json();
-            })
-            .then(dados => {
-                const studentSelect = $("#students");
-                studentSelect.empty();
-                studentSelect.append(`<option value=""></option>`);
+                    // Adiciona uma opção vazia no início
+                    studentSelect.append(`<option value=""></option>`);
 
-                dados.forEach(student => {
-                    const nome = student.name ?? 'Sem nome';
-                    const numero = student.numero ?? 'Sem número';
-                    const email = student.email ?? 'Sem email';
-                    studentSelect.append(
-                        `<option value="${student.id}">${nome} #${numero} (${email})</option>`
-                    );
+                    dados.forEach(student => {
+                        const nome = student.name ?? 'Sem nome';
+                        const numero = student.numero ?? 'Sem número';
+                        const email = student.email ?? 'Sem email';
+
+                        studentSelect.append(
+                            `<option value="${student.id}">${nome} #${numero} (${email})</option>`
+                        );
+                    });
+
+                    // Atualiza o selectpicker do Bootstrap
+                    studentSelect.selectpicker('refresh');
+                })
+                .catch(erro => {
+                    console.error('Erro no fetch:', erro);
                 });
 
-                studentSelect.selectpicker('refresh');
-            })
-            .catch(erro => console.error('Erro no fetch:', erro));
-    });
 
+
+        });
     </script>
 @endsection
