@@ -158,7 +158,7 @@ class RequerimentoController extends Controller
       
         if(!$emolumento) {
             Toastr::warning(__('A forLEARN não encontrou um emolumento de 00 configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
-            return redirect()->back();
+            return null;
         }
         // Insere a nova solicitação
        $insercaoId = DB::table('article_requests')->insertGetId([
@@ -180,6 +180,7 @@ class RequerimentoController extends Controller
             'updated_at' => now(),
         ]);
         dd($transactionId, $insercaoId);
+
         // Insere a nova solicitação
         $insercao_transacao = DB::table('transaction_article_requests')->insert([
             'article_request_id' => $insercaoId,
@@ -195,6 +196,7 @@ class RequerimentoController extends Controller
 
     public function solicitacao_revisao_prova_store() {
         try {
+
             $user_id = request()->input('student_id');
             $discipline_id = request()->input('discipline_id');
             $lective_year = request()->input('anoLectivo');
