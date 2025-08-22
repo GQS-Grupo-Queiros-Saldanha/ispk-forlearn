@@ -51,7 +51,7 @@ class RequerimentoController extends Controller
             $lectiveYearSelected = DB::table('lective_years')
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
             $institution = Institution::latest()->first();
 
@@ -95,7 +95,7 @@ class RequerimentoController extends Controller
             
             $students = DB::table('user_courses')
                 ->where('courses_id', $course_id)
-                ->join('users', 'users.id', '=', 'user_courses.id_users')
+                ->join('users', 'users.id', '=', 'user_courses.users_id')
                 ->join('user_parameters', function ($join) {
                     $join->on('user_parameters.users_id', '=', 'users.id')
                         ->whereIn('user_parameters.parameters_id', [1, 19, 312]);/* pega o email, o numero do estudante, o nome completo*/
@@ -103,6 +103,7 @@ class RequerimentoController extends Controller
                 ->get();
 
             return response()->json($students);
+
         } catch (Exception | Throwable $e) {
             Log::error($e);
             return response()->json(['error' => 'Failed to fetch students'], 500);
@@ -122,7 +123,7 @@ class RequerimentoController extends Controller
             $lectiveYearSelected = DB::table('lective_years')
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
             // Listar todos os cargos
 
@@ -191,7 +192,7 @@ class RequerimentoController extends Controller
                 ->orderBy('traducao.display_name')
                 ->select(['articles.id as id_article', 'traducao.display_name as nome', 'articles.id_code_dev', 'articles.base_value as money'])
                 ->get();
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
 
             $data = [
@@ -239,7 +240,7 @@ class RequerimentoController extends Controller
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
 
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
 
             $data = [
@@ -276,7 +277,7 @@ class RequerimentoController extends Controller
             $lectiveYearSelected = DB::table('lective_years')
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
             $article_dados = DB::table('articles_documents')->get();
 
             $data = [
@@ -373,7 +374,7 @@ class RequerimentoController extends Controller
                 return ["id" => $item->id, "ano" => $item->currentTranslation->display_name];
             });
 
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
             return $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
@@ -426,7 +427,7 @@ class RequerimentoController extends Controller
             $lective = DB::table('lective_years')
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
-            $lective = $lective->id ?? 6;
+            $lective = $lective->id ?? 11;
 
 
 
@@ -796,7 +797,7 @@ class RequerimentoController extends Controller
                 // ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->where("id", $dados[0])
                 ->first();
-            $lective = $lective->id ?? 6;
+            $lective = $lective->id ?? 11;
 
 
 
@@ -1017,7 +1018,7 @@ class RequerimentoController extends Controller
         $lective = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
             ->first();
-        $lective = $lective->id ?? 6;
+        $lective = $lective->id ?? 11;
 
 
         $lectiveYearSelected = LectiveYear::whereId($ano)->first();
