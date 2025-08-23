@@ -158,30 +158,7 @@ class RequerimentoController extends Controller
                 ->select('art.id', 'art.base_value')
                 ->first();
 
-            if (!$emolumento) {
-                Log::warning('Emolumento não encontrado', ['lective_year' => $lective_year, 'code' => $code]);
-                DB::rollBack();
-                return null;
-            }
-
-            // Inserir e obter ID
-            $articleRequestId = DB::table('article_requests')->insertGetId([
-                'user_id' => $user_id,
-                'article_id' => $emolumento->id,
-                'base_value' => $emolumento->base_value,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            if (!$articleRequestId) {
-                Log::warning('Falha ao criar Article Request', ['user_id' => $user_id, 'article_id' => $emolumento->id]);
-                DB::rollBack();
-                return null;
-            }
-
-            DB::commit();
-            return "ok";
+            dd($emolumento);
 
         } catch (\Exception $e) {
             DB::rollBack();
