@@ -163,7 +163,7 @@ class RequerimentoController extends Controller
                 DB::rollBack();
                 return null;
             }
-
+            dd($emolumento);
             DB::table('article_requests')->insert([
                 'user_id' => $user_id,
                 'article_id' => $emolumento->id,
@@ -172,7 +172,7 @@ class RequerimentoController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            
+
             if($articleRequestId == null){
                 Log::warning('Falha ao criar Article Request', ['user_id' => $user_id, 'article_id' => $emolumento->id]);
                 DB::rollBack();
