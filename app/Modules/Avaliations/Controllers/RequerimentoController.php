@@ -196,6 +196,8 @@ class RequerimentoController extends Controller
         try {
             
             // Validar os dados recebidos
+            $user_id = request()->input('student_id');
+            $lective_year = request()->input('lective_year');
 
             $articleRequest = $this->requererEmolumento($user_id, $lective_year);
 
