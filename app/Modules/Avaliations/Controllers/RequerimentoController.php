@@ -150,7 +150,7 @@ class RequerimentoController extends Controller
     {
         try {
             
-            /*
+    
             $emolumento = DB::table('articles as art')
                 ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
                 ->where('art.anoLectivo', $lective_year)
@@ -160,10 +160,7 @@ class RequerimentoController extends Controller
                 ->first();
 
             if (!$emolumento) {
-                Log::warning('Emolumento não encontrado', [
-                    'lective_year' => $lective_year,
-                    'code' => $code
-                ]);
+                Log::warning('Emolumento não encontrado', ['lective_year' => $lective_year, 'code' => $code]);
                 DB::rollBack();
                 return null;
             }
@@ -181,9 +178,8 @@ class RequerimentoController extends Controller
                 ->where('id', $articleRequestId)
                 ->first();
 
-            DB::commit();*/
 
-            return "ola";
+            return $articleRequest;
 
         } catch (Exception $e) {
             DB::rollBack();
