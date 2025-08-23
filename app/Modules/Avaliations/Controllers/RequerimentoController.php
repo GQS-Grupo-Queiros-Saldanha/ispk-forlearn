@@ -68,8 +68,7 @@ class RequerimentoController extends Controller
         }
     }
     /*Esta zona é para a solicitação de revisão de Prova!*/
-    public function solicitacao_revisao_prova()
-    {
+    public function solicitacao_revisao_prova(){
         try {
             
             $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
@@ -191,57 +190,24 @@ class RequerimentoController extends Controller
             Log::error('Erro ao criar emolumento: ' . $e->getMessage(), []);
         }
     }
-    
-    public function solicitacao_revisao_prova_store(Request $request)
+
+    public function solicitacao_revisao_prova_store()
     {
         try {
+            
             // Validar os dados recebidos
-            $validated = $request->validate([
-                'student_id' => 'required|integer|exists:users,id',
-                'lective_year' => 'required|integer|min:2000|max:' . (date('Y') + 1)
-            ]);
-
-            $user_id = $validated['student_id'];
-            $lective_year = $validated['lective_year'];
-
-            // Verificar se já existe uma solicitação pendente para o mesmo usuário
-            $existingRequest = DB::table('article_requests as ar')
-                ->join('articles as art', 'ar.article_id', '=', 'art.id')
-                ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
-                ->where('ar.user_id', $user_id)
-                ->where('cd.code', 'revisao_prova')
-                ->where('art.anoLectivo', $lective_year)
-                ->where('ar.status', 'pending')
-                ->exists();
-
-            if ($existingRequest) {
-                Toastr::warning(__('Já existe uma solicitação de revisão de prova pendente para este ano letivo.'), __('toastr.warning'));
-                return redirect()->back();
-            }
 
             $articleRequest = $this->requererEmolumento($user_id, $lective_year);
 
-            if (!$articleRequest) {
-                Toastr::error(__('Não foi possível criar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
+            if ($articleRequest == null) {
+                Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
             }
 
             Toastr::success(__('Solicitação de revisão de prova enviada com sucesso!'), __('toastr.success'));
-            
-            return view('Avaliations::requerimento.solicitacao_revisao_prova', [
-                'usuario' => $user_id,
-                'solicitacao_id' => $articleRequest->id
-            ]);
+            return view('Avaliations::requerimento.solicitacao_revisao_prova', ['mensagem'=> $mensagem ]);
 
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        } catch (Exception $e) {
-            Log::error('Falha ao processar solicitação de revisão de prova: ' . $e->getMessage(), [
-                'user_id' => $request->input('student_id'),
-                'lective_year' => $request->input('lective_year'),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
+        }catch (Exception $e) {   
             Toastr::error(__('Falha ao enviar a solicitação de revisão de prova.'), __('toastr.error'));
             return redirect()->back();
         }
