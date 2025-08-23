@@ -157,7 +157,7 @@ class RequerimentoController extends Controller
             ->select('art.id', 'art.base_value')
             ->first();
 
-        dd($emolumento);
+        return $emolumento;
 
 
     }
