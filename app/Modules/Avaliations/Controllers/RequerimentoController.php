@@ -148,23 +148,18 @@ class RequerimentoController extends Controller
 
     private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
     {
-        DB::beginTransaction();
-        try {
-            $emolumento = DB::table('articles as art')
-                ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
-                ->where('art.anoLectivo', $lective_year)
-                ->where('cd.code', $code)
-                ->where('art.active', true)
-                ->select('art.id', 'art.base_value')
-                ->first();
+        // Pega o emolumeto
+        $emolumento = DB::table('articles as art')
+            ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
+            ->where('art.anoLectivo', $lective_year)
+            ->where('cd.code', $code)
+            ->where('art.active', true)
+            ->select('art.id', 'art.base_value')
+            ->first();
 
-            dd($emolumento);
+        dd($emolumento);
 
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Erro ao criar emolumento: ' . $e->getMessage(), ['stack' => $e->getTraceAsString()]);
-            return null;
-        }
+
     }
 
     public function solicitacao_revisao_prova_store()
