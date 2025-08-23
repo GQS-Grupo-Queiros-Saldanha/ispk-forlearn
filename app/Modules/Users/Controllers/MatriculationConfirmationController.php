@@ -1853,183 +1853,177 @@ public function colocar_emolumento($id_user){
 
 
 
-//Formulario de Rotina
-public function formulario_rotina(){
-    //aNO LECTIVO
-    $currentData = Carbon::now();
-    $lectiveYearSelected = DB::table('lective_years')
-    ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-    ->first();
-  //PEGAR OS CURSOS PARA SELECT//
-  $cursos=DB::table('courses as cti')
-   ->leftJoin('courses_translations as cta', function ($join) {
-                $join->on('cta.courses_id', '=', 'cti.id');
-                $join->on('cta.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('cta.active', '=', DB::raw(true));
-            })
-   ->select(['cti.code','cti.id','cta.display_name'])
-   ->whereNull('cti.deleted_at')
-   ->get();
-  //PEGAR OS EMOLUMENTOS PARA PROPINAS ANO RECENTE//
-  $anoRecente = Article::join('users as u1', 'u1.id', '=', 'articles.created_by')
-   ->leftJoin('users as u2', 'u2.id', '=', 'articles.updated_by')
-   ->leftJoin('users as u3', 'u3.id', '=', 'articles.deleted_by')
-   ->leftJoin('article_translations as at', function ($join) {
-       $join->on('at.article_id', '=', 'articles.id');
-       $join->on('at.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-       $join->on('at.active', '=', DB::raw(true));
-   })
-   ->select([
-       'articles.*',
-       'u1.name as created_by',
-       'u2.name as updated_by',
-       'u3.name as deleted_by',
-       'at.display_name',
-   ])
-   ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-   ->orderBy('at.display_name','asc')
-   ->get()  
-   ->map(function($item){
-    $propina=explode(" -",$item->display_name);
-    if ($propina[0]=="Propina") {
-      return $item;
-    }  else{
-
-    }
-});
-
-
-
-
-   //Ano Passado 
-   $lectiveYearSelectedP = DB::table('lective_years')
-   ->where('id',6)
-   ->first();
-
-  $anoPassado = Article::join('users as u1', 'u1.id', '=', 'articles.created_by')
-   ->leftJoin('users as u2', 'u2.id', '=', 'articles.updated_by')
-   ->leftJoin('users as u3', 'u3.id', '=', 'articles.deleted_by')
-   ->leftJoin('article_translations as at', function ($join) {
-       $join->on('at.article_id', '=', 'articles.id');
-       $join->on('at.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-       $join->on('at.active', '=', DB::raw(true));
-   })
-   ->select([
-       'articles.*',
-       'u1.name as created_by',
-       'u2.name as updated_by',
-       'u3.name as deleted_by',
-       'at.display_name',
-   ])
-   ->whereBetween('articles.created_at', [$lectiveYearSelectedP->start_date, $lectiveYearSelectedP->end_date])
-   ->orderBy('at.display_name','asc')
-   ->get()
+    //Formulario de Rotina
+    public function formulario_rotina(){
+        //aNO LECTIVO
+        $currentData = Carbon::now();
+        $lectiveYearSelected = DB::table('lective_years')
+        ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
+        ->first();
+    //PEGAR OS CURSOS PARA SELECT//
+    $cursos=DB::table('courses as cti')
+    ->leftJoin('courses_translations as cta', function ($join) {
+                    $join->on('cta.courses_id', '=', 'cti.id');
+                    $join->on('cta.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('cta.active', '=', DB::raw(true));
+                })
+    ->select(['cti.code','cti.id','cta.display_name'])
+    ->whereNull('cti.deleted_at')
+    ->get();
+    //PEGAR OS EMOLUMENTOS PARA PROPINAS ANO RECENTE//
+    $anoRecente = Article::join('users as u1', 'u1.id', '=', 'articles.created_by')
+    ->leftJoin('users as u2', 'u2.id', '=', 'articles.updated_by')
+    ->leftJoin('users as u3', 'u3.id', '=', 'articles.deleted_by')
+    ->leftJoin('article_translations as at', function ($join) {
+        $join->on('at.article_id', '=', 'articles.id');
+        $join->on('at.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+        $join->on('at.active', '=', DB::raw(true));
+    })
+    ->select([
+        'articles.*',
+        'u1.name as created_by',
+        'u2.name as updated_by',
+        'u3.name as deleted_by',
+        'at.display_name',
+    ])
+    ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+    ->orderBy('at.display_name','asc')
+    ->get()  
     ->map(function($item){
         $propina=explode(" -",$item->display_name);
         if ($propina[0]=="Propina") {
-            return $item;
+        return $item;
+        }  else{
+
         }
-        else{
-
-         
-        }
-
-        });
-
-       $old_emu=collect($anoPassado);
-       $New_emu=collect($anoRecente);
-
-
-    return view("Users::confirmations-matriculations.Rotina_form",compact('cursos','New_emu','old_emu'));
-    
-}
-
-
-
-
-public function actualizar_emulumento(Request $request){
- 
-
-
-     //Separar o ID do valor
-     $id_no_emolumento=explode(",",$request->emulumento_novo);
-     $id_emol= $id_no_emolumento[0];
-     $valor_novo= $id_no_emolumento[1];
-
-     //Ano lectivo
-    $currentData = Carbon::now();
-    $lectiveYearSelected = DB::table('lective_years')
-     ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-     ->first();
-
- //Pegars os matriculados no respetivo curso no primeiro aano no 
- //ano Lective 21/22
-$matriculado_user=DB::table('users as u_m')
-    ->join('matriculations as mt','mt.user_id','u_m.id')
-    ->join('user_courses as cm','cm.users_id','u_m.id')
-    ->leftJoin('courses_translations as cta', function ($join) {
-        $join->on('cta.courses_id', '=', 'cm.courses_id');
-        $join->on('cta.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-        $join->on('cta.active', '=', DB::raw(true));
-    })
-    ->select(['u_m.id','u_m.name','mt.code','mt.course_year','cta.display_name'])
-    ->whereNull('mt.deleted_at')
-   
-    ->where('mt.course_year',1)
-    ->where('cm.courses_id',$request->id_curso)
-    ->whereBetween('mt.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])  
-    ->get();
-
-//Pegar todos ID dos matriculados na consulta anterior 
-//e passar no loop .  
-$id_matriculado=[];
-foreach($matriculado_user as $item){
-   $id_matriculado[]=$item->id ;
-}   
-// Pegar os dados das transições dos matriculados apenas referente aos meses:
-  $Pegar_dados_transacao=DB::table('article_requests as ART')
-    ->join('transaction_article_requests as TRS','TRS.article_request_id','ART.id')
-    ->join('users as u_t','u_t.id','ART.user_id')
-    ->select(['u_t.name','ART.*', 'TRS.transaction_id as id_transicao','TRS.value','TRS.article_request_id as id_article_request'])
-    ->whereIn('ART.user_id' ,$id_matriculado)
-    ->where('ART.article_id',$request->emulumento_antigo)
-    ->whereNotNull('ART.month')
-    ->get();
-
-if (!$Pegar_dados_transacao->isEmpty()) { 
-
-    foreach($Pegar_dados_transacao as $item){         
-    DB::transaction(function  () use($id_emol,$valor_novo,$item,$currentData) { 
-            //Actualizar os emulomentos   
-            $transacao=DB::table('article_requests as ART')
-            ->where('ART.id',$item->id)
-            ->whereNotNull('ART.month')
-            ->update(['base_value' =>$valor_novo ,'article_id'=>$id_emol,'updated_at'=> $currentData]);
-            // Actualizao trazacao article
-            $transacao_article=DB::table('transaction_article_requests as TRC')
-            ->where('TRC.article_request_id', $item->id)
-            ->update(['value' =>$valor_novo]);
     });
 
+
+
+
+    //Ano Passado 
+    $lectiveYearSelectedP = DB::table('lective_years')
+    ->where('id',6)
+    ->first();
+
+    $anoPassado = Article::join('users as u1', 'u1.id', '=', 'articles.created_by')
+    ->leftJoin('users as u2', 'u2.id', '=', 'articles.updated_by')
+    ->leftJoin('users as u3', 'u3.id', '=', 'articles.deleted_by')
+    ->leftJoin('article_translations as at', function ($join) {
+        $join->on('at.article_id', '=', 'articles.id');
+        $join->on('at.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+        $join->on('at.active', '=', DB::raw(true));
+    })
+    ->select([
+        'articles.*',
+        'u1.name as created_by',
+        'u2.name as updated_by',
+        'u3.name as deleted_by',
+        'at.display_name',
+    ])
+    ->whereBetween('articles.created_at', [$lectiveYearSelectedP->start_date, $lectiveYearSelectedP->end_date])
+    ->orderBy('at.display_name','asc')
+    ->get()
+        ->map(function($item){
+            $propina=explode(" -",$item->display_name);
+            if ($propina[0]=="Propina") {
+                return $item;
+            }
+            else{
+
+            
+            }
+
+            });
+
+        $old_emu=collect($anoPassado);
+        $New_emu=collect($anoRecente);
+
+
+        return view("Users::confirmations-matriculations.Rotina_form",compact('cursos','New_emu','old_emu'));
+        
     }
-             return "Sucesso ao actualizar os emolumentos"; 
-
-    }
-
-    else{
-
-             return "AVISO: O Emolumento selecionado não faz referencia ao curso Ou Não existe nenhum emolumento para ser actualizado ."; 
-
-      }
-
-// Toastr::success(__('Emolumentos actualizados com sucesso.'), __('toastr.success'));
-// return redirect()->route('formulario_rotina');
-
-
-}
 
 
 
+
+    public function actualizar_emulumento(Request $request){
+    
+
+
+        //Separar o ID do valor
+        $id_no_emolumento=explode(",",$request->emulumento_novo);
+        $id_emol= $id_no_emolumento[0];
+        $valor_novo= $id_no_emolumento[1];
+
+        //Ano lectivo
+        $currentData = Carbon::now();
+        $lectiveYearSelected = DB::table('lective_years')
+        ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
+        ->first();
+
+        //Pegars os matriculados no respetivo curso no primeiro aano no 
+        //ano Lective 21/22
+        $matriculado_user=DB::table('users as u_m')
+            ->join('matriculations as mt','mt.user_id','u_m.id')
+            ->join('user_courses as cm','cm.users_id','u_m.id')
+            ->leftJoin('courses_translations as cta', function ($join) {
+                $join->on('cta.courses_id', '=', 'cm.courses_id');
+                $join->on('cta.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                $join->on('cta.active', '=', DB::raw(true));
+            })
+            ->select(['u_m.id','u_m.name','mt.code','mt.course_year','cta.display_name'])
+            ->whereNull('mt.deleted_at')
+        
+            ->where('mt.course_year',1)
+            ->where('cm.courses_id',$request->id_curso)
+            ->whereBetween('mt.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])  
+            ->get();
+
+        //Pegar todos ID dos matriculados na consulta anterior 
+        //e passar no loop .  
+        $id_matriculado=[];
+        foreach($matriculado_user as $item){
+        $id_matriculado[]=$item->id ;
+        }   
+        // Pegar os dados das transições dos matriculados apenas referente aos meses:
+        $Pegar_dados_transacao=DB::table('article_requests as ART')
+            ->join('transaction_article_requests as TRS','TRS.article_request_id','ART.id')
+            ->join('users as u_t','u_t.id','ART.user_id')
+            ->select(['u_t.name','ART.*', 'TRS.transaction_id as id_transicao','TRS.value','TRS.article_request_id as id_article_request'])
+            ->whereIn('ART.user_id' ,$id_matriculado)
+            ->where('ART.article_id',$request->emulumento_antigo)
+            ->whereNotNull('ART.month')
+            ->get();
+
+        if (!$Pegar_dados_transacao->isEmpty()) { 
+
+            foreach($Pegar_dados_transacao as $item){         
+            DB::transaction(function  () use($id_emol,$valor_novo,$item,$currentData) { 
+                    //Actualizar os emulomentos   
+                    $transacao=DB::table('article_requests as ART')
+                    ->where('ART.id',$item->id)
+                    ->whereNotNull('ART.month')
+                    ->update(['base_value' =>$valor_novo ,'article_id'=>$id_emol,'updated_at'=> $currentData]);
+                    // Actualizao trazacao article
+                    $transacao_article=DB::table('transaction_article_requests as TRC')
+                    ->where('TRC.article_request_id', $item->id)
+                    ->update(['value' =>$valor_novo]);
+            });
+
+            }
+                    return "Sucesso ao actualizar os emolumentos"; 
+
+            }
+
+            else{
+
+                    return "AVISO: O Emolumento selecionado não faz referencia ao curso Ou Não existe nenhum emolumento para ser actualizado ."; 
+
+        }
+
+    // Toastr::success(__('Emolumentos actualizados com sucesso.'), __('toastr.success'));
+    // return redirect()->route('formulario_rotina');
 
 
 
