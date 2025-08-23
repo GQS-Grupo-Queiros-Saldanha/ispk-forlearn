@@ -147,11 +147,51 @@ class RequerimentoController extends Controller
 
     }
 
-    /**
-     * Processa o requerimento de emolumento para revisão de prova
-     * 
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
-     */
+    private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
+    {
+        try {
+            
+            /*
+            $emolumento = DB::table('articles as art')
+                ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
+                ->where('art.anoLectivo', $lective_year)
+                ->where('cd.code', $code)
+                ->where('art.active', true) // Adicionar verificação de artigo ativo
+                ->select('art.id', 'art.base_value')
+                ->first();
+
+            if (!$emolumento) {
+                Log::warning('Emolumento não encontrado', [
+                    'lective_year' => $lective_year,
+                    'code' => $code
+                ]);
+                DB::rollBack();
+                return null;
+            }
+
+            $articleRequestId = DB::table('article_requests')->insertGetId([
+                'user_id' => $user_id,
+                'article_id' => $emolumento->id,
+                'base_value' => $emolumento->base_value,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $articleRequest = DB::table('article_requests')
+                ->where('id', $articleRequestId)
+                ->first();
+
+            DB::commit();*/
+
+            return "ola";
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Erro ao criar emolumento: ' . $e->getMessage(), []);
+        }
+    }
+    
     public function solicitacao_revisao_prova_store(Request $request)
     {
         try {
@@ -207,62 +247,6 @@ class RequerimentoController extends Controller
         }
     }
 
-    /**
-     * Cria um requerimento de emolumento
-     * 
-     * @param int $user_id
-     * @param int $lective_year
-     * @param string $code
-     * @return object|null
-     */
-    private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
-    {
-        try {
-            DB::beginTransaction();
-
-            $emolumento = DB::table('articles as art')
-                ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
-                ->where('art.anoLectivo', $lective_year)
-                ->where('cd.code', $code)
-                ->where('art.active', true) // Adicionar verificação de artigo ativo
-                ->select('art.id', 'art.base_value')
-                ->first();
-
-            if (!$emolumento) {
-                Log::warning('Emolumento não encontrado', [
-                    'lective_year' => $lective_year,
-                    'code' => $code
-                ]);
-                DB::rollBack();
-                return null;
-            }
-
-            $articleRequestId = DB::table('article_requests')->insertGetId([
-                'user_id' => $user_id,
-                'article_id' => $emolumento->id,
-                'base_value' => $emolumento->base_value,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            $articleRequest = DB::table('article_requests')
-                ->where('id', $articleRequestId)
-                ->first();
-
-            DB::commit();
-
-            return $articleRequest;
-
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error('Erro ao criar emolumento: ' . $e->getMessage(), [
-                'user_id' => $user_id,
-                'lective_year' => $lective_year
-            ]);
-            return null;
-        }
-    }
 
     /*Esta zona é para a solicitação de revisão de Prova!*/
 
