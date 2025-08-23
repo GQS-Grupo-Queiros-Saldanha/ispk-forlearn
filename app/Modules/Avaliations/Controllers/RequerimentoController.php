@@ -172,7 +172,7 @@ class RequerimentoController extends Controller
 
             $articleRequest = $this->requererEmolumento($user_id, $lective_year);
 
-            if ($articleRequest == null) {
+            if (!$articleRequest) {
                 Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
             }
