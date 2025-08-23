@@ -146,8 +146,7 @@ class RequerimentoController extends Controller
 
     }
 
-    private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
-    {
+    private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){
         try {
             
     
@@ -165,7 +164,7 @@ class RequerimentoController extends Controller
                 return null;
             }
 
-            $articleRequestId = DB::table('article_requests')->insertGetId([
+            $articleRequestId = DB::table('article_requests')->insert([
                 'user_id' => $user_id,
                 'article_id' => $emolumento->id,
                 'base_value' => $emolumento->base_value,
@@ -173,13 +172,13 @@ class RequerimentoController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+            if($articleRequestId == null){
+                Log::warning('Falha ao criar Article Request', ['user_id' => $user_id, 'article_id' => $emolumento->id]);
+                DB::rollBack();
+                return null;
+            }
 
-            $articleRequest = DB::table('article_requests')
-                ->where('id', $articleRequestId)
-                ->first();
-
-
-            return $articleRequest;
+            return "ok";
 
         } catch (Exception $e) {
             DB::rollBack();
