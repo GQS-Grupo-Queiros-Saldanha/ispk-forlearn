@@ -146,15 +146,15 @@ class RequerimentoController extends Controller
 
     }
 
-    private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova"){
+    private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
+    {
+        DB::beginTransaction();
         try {
-            
-    
             $emolumento = DB::table('articles as art')
                 ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
                 ->where('art.anoLectivo', $lective_year)
                 ->where('cd.code', $code)
-                ->where('art.active', true) // Adicionar verificação de artigo ativo
+                ->where('art.active', true)
                 ->select('art.id', 'art.base_value')
                 ->first();
 
@@ -163,8 +163,9 @@ class RequerimentoController extends Controller
                 DB::rollBack();
                 return null;
             }
-            dd($emolumento);
-            DB::table('article_requests')->insert([
+
+            // Inserir e obter ID
+            $articleRequestId = DB::table('article_requests')->insertGetId([
                 'user_id' => $user_id,
                 'article_id' => $emolumento->id,
                 'base_value' => $emolumento->base_value,
@@ -173,17 +174,19 @@ class RequerimentoController extends Controller
                 'updated_at' => now(),
             ]);
 
-            if($articleRequestId == null){
+            if (!$articleRequestId) {
                 Log::warning('Falha ao criar Article Request', ['user_id' => $user_id, 'article_id' => $emolumento->id]);
                 DB::rollBack();
                 return null;
             }
 
+            DB::commit();
             return "ok";
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Erro ao criar emolumento: ' . $e->getMessage(), []);
+            Log::error('Erro ao criar emolumento: ' . $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+            return null;
         }
     }
 
