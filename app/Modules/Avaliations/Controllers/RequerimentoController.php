@@ -170,8 +170,15 @@ class RequerimentoController extends Controller
             $user_id = request()->input('student_id');
             $lective_year = request()->input('lective_year');
 
-            $articleRequest = $this->requererEmolumento($user_id, $lective_year);
-
+            $articleRequest = DB::table('article_requests')->inser([ 
+                'user_id' => $user_id, 
+                'article_id' => 358, 
+                'base_value' => 8000, 
+                'status' => 'pending', 
+                'created_at' => now(), 
+                'updated_at' => now(), 
+            ]); 
+            
             if (!$articleRequest) {
                 Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
