@@ -2032,7 +2032,7 @@ public function colocar_emolumento($id_user){
 
 
 
-
+    }
     public function testeAlunos(){
 
         $currentData = Carbon::now();
