@@ -146,7 +146,7 @@ class RequerimentoController extends Controller
 
     }
 
-    private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
+    /*private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
     {
         // Pega o emolumeto
         $emolumento = DB::table('articles as art')
@@ -160,7 +160,7 @@ class RequerimentoController extends Controller
         return $emolumento;
 
 
-    }
+    }*/
 
     public function solicitacao_revisao_prova_store()
     {
@@ -172,8 +172,8 @@ class RequerimentoController extends Controller
 
             $articleRequest = DB::table('article_requests')->inser([ 
                 'user_id' => $user_id, 
-                'article_id' => 358, 
-                'base_value' => 8000, 
+                'article_id' => '358', 
+                'base_value' => '8000', 
                 'status' => 'pending', 
                 'created_at' => now(), 
                 'updated_at' => now(), 
