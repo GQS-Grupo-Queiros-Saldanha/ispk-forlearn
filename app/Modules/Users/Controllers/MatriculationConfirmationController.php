@@ -2035,74 +2035,56 @@ public function colocar_emolumento($id_user){
 
 
 
+    public function testeAlunos(){
 
+        $currentData = Carbon::now();
+        $lectiveYearSelected = DB::table('lective_years')
+        ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
+        ->first();
+        $lectiveYearSelected = $lectiveYearSelected ?? DB::table('lective_years')
+        ->where('lective_years.id', 6)
+        ->first();
 
+        $Id_Matriculados_confirmados = User::whereHas('roles', function ($q) {
+            $q->whereIn('id', [6]);
+            })
+            ->whereHas('courses')
+            ->whereHas('matriculation')
+            // ->doesntHave('matriculation')
+            ->with(['parameters' => function ($q) {
+            $q->whereIn('code', ['nome', 'n_mecanografico']);
+            }])
+            ->join('matriculations as u_cand' ,'u_cand.user_id','=','users.id')
+            ->whereBetween('u_cand.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+            //->whereBetween('users.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+            // ->leftJoin("matriculations as mt", 'user.id','=','mt.user_id')
+            ->where('u_cand.course_year','!=',1)
+            ->select(['u_cand.*','users.*'])
+            ->get() 
+            ->map(function ($user) {
+                return ['id' => $user->id];
+            });
+        
+    //  $Id_Matriculados_confirmados;
 
+    $users = User::whereHas('roles', function ($q) {
+            $q->whereIn('id', [6]);
+        })
+            ->whereHas('courses')
+            ->whereHas('matriculation')
+            // ->doesntHave('matriculation')
+            ->with(['parameters' => function ($q) {
+            $q->whereIn('code', ['nome', 'n_mecanografico']);
+            }])
+            ->whereNotin('users.id',$Id_Matriculados_confirmados)
+            ->select(['users.*'])
+            ->get()
+            ->map(function ($user) {
+                $displayName = $this->formatUserName($user);
+                return ['id' => $user->id, 'Ano'=>$user->course_year, 'display_name' => $displayName];
+            });
 
-
-
-
-
-
-
-
-
-public function testeAlunos(){
-
-    $currentData = Carbon::now();
-    $lectiveYearSelected = DB::table('lective_years')
-    ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-    ->first();
-    $lectiveYearSelected = $lectiveYearSelected ?? DB::table('lective_years')
-    ->where('lective_years.id', 6)
-    ->first();
-
- $Id_Matriculados_confirmados = User::whereHas('roles', function ($q) {
-        $q->whereIn('id', [6]);
-    })
-        ->whereHas('courses')
-        ->whereHas('matriculation')
-        // ->doesntHave('matriculation')
-        ->with(['parameters' => function ($q) {
-         $q->whereIn('code', ['nome', 'n_mecanografico']);
-        }])
-        ->join('matriculations as u_cand' ,'u_cand.user_id','=','users.id')
-        ->whereBetween('u_cand.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-        //->whereBetween('users.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-        // ->leftJoin("matriculations as mt", 'user.id','=','mt.user_id')
-        ->where('u_cand.course_year','!=',1)
-        ->select(['u_cand.*','users.*'])
-        ->get() 
-          ->map(function ($user) {
-            return ['id' => $user->id];
-        });
-       
-//  $Id_Matriculados_confirmados;
-
- $users = User::whereHas('roles', function ($q) {
-        $q->whereIn('id', [6]);
-    })
-        ->whereHas('courses')
-        ->whereHas('matriculation')
-        // ->doesntHave('matriculation')
-        ->with(['parameters' => function ($q) {
-         $q->whereIn('code', ['nome', 'n_mecanografico']);
-        }])
-        ->whereNotin('users.id',$Id_Matriculados_confirmados)
-        ->select(['users.*'])
-        ->get()
-        ->map(function ($user) {
-            $displayName = $this->formatUserName($user);
-            return ['id' => $user->id, 'Ano'=>$user->course_year, 'display_name' => $displayName];
-        });
-
-
-
-
-
-
-
-}
+    }
 
 
 
