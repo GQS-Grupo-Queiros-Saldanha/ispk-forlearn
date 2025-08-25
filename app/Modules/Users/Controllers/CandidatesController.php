@@ -842,6 +842,87 @@ class CandidatesController extends Controller
    * @param User $user
    * @return Response
    */
+
+    private function fetch($user, $action)
+    {
+        try {
+          
+            $parameter_groups = ParameterGroup::with([
+                'currentTranslation',
+                'roles',
+                'parameters' => function ($q) {
+                    $q->with([
+                        'currentTranslation',
+                        'roles',
+                        'options' => function ($q) {
+                            $q->with([
+                                'currentTranslation',
+                                'relatedParametersRecursive'
+                            ]);
+                        }
+                    ]);
+                }
+            ])->orderBy('order')->get();
+          
+            // Find
+            $user = $user->whereId($user->id)->with(
+                [
+                    /*'parameters.parameter.options',*/
+                    'roles' => function ($q) {
+                        $q->with([
+                            'currentTranslation'
+                        ]);
+                    },
+                    'parameters' => function ($q) {
+                        $q->with([
+                            'currentTranslation',
+                            'groups',
+                        ]);
+                    },
+                    'courses',
+                    'disciplines',
+                    'candidate'
+                ]
+            )->firstOrFail();
+
+            $dd = UserParameter::where('users_id', $user->id)->get();
+
+            // Set relation keys
+            /*$user->setRelation('parameters', $user->parameters->groupBy('parameters_id'));*/
+
+            $courses = Course::with([
+                'currentTranslation'
+            ])
+                //where('id','!=',22)
+                ->get();
+
+            $data = [
+                'action' => $action,
+                'user' => $user,
+                'parameter_groups' => $parameter_groups,
+                'courses' => $courses,
+                'disciplines' => disciplinesSelectForCandidates(),
+                'dd' => $dd,
+                'options' => $this->options
+            ];
+
+            $view = 'Users::candidate.candidate_profile';
+            if (isset($this->options->transf))
+                $view = 'Users::candidate.candidate_transferencia';
+            
+            return view($view)->with($data);
+        } catch (ModelNotFoundException $e) {
+            Toastr::error(__('Users::users.not_found_message'), __('toastr.error'));
+            Log::error($e);
+            return redirect()->back() ?? abort(500);
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return abort(500);
+        }
+    }
+
+
+
   public function destroy($id)
   {
     try {
