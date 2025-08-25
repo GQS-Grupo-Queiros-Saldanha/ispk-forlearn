@@ -1948,8 +1948,6 @@ public function colocar_emolumento($id_user){
 
 
     public function actualizar_emulumento(Request $request){
-    
-
 
         //Separar o ID do valor
         $id_no_emolumento=explode(",",$request->emulumento_novo);
@@ -2042,7 +2040,7 @@ public function colocar_emolumento($id_user){
         ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
         ->first();
         $lectiveYearSelected = $lectiveYearSelected ?? DB::table('lective_years')
-        ->where('lective_years.id', 6)
+        ->where('lective_years.id', 11)
         ->first();
 
         $Id_Matriculados_confirmados = User::whereHas('roles', function ($q) {
@@ -2065,9 +2063,8 @@ public function colocar_emolumento($id_user){
                 return ['id' => $user->id];
             });
         
-    //  $Id_Matriculados_confirmados;
-
-    $users = User::whereHas('roles', function ($q) {
+        //  $Id_Matriculados_confirmados;
+        $users = User::whereHas('roles', function ($q) {
             $q->whereIn('id', [6]);
         })
             ->whereHas('courses')
@@ -2082,7 +2079,7 @@ public function colocar_emolumento($id_user){
             ->map(function ($user) {
                 $displayName = $this->formatUserName($user);
                 return ['id' => $user->id, 'Ano'=>$user->course_year, 'display_name' => $displayName];
-            });
+        });
 
     }
 
