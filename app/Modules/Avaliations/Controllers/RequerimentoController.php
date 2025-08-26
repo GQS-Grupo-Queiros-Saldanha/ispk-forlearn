@@ -146,22 +146,6 @@ class RequerimentoController extends Controller
 
     }
 
-    /*private function requererEmolumento($user_id, $lective_year = 11, $code = "revisao_prova")
-    {
-        // Pega o emolumeto
-        $emolumento = DB::table('articles as art')
-            ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
-            ->where('art.anoLectivo', $lective_year)
-            ->where('cd.code', $code)
-            ->where('art.active', true)
-            ->select('art.id', 'art.base_value')
-            ->first();
-
-        return $emolumento;
-
-
-    }*/
-
     public function solicitacao_revisao_prova_store()
     {
         try {
@@ -170,19 +154,27 @@ class RequerimentoController extends Controller
             $user_id = request()->input('student_id');
             $lective_year = request()->input('lective_year');
 
-            $articleRequest = DB::table('article_requests')->inser([ 
+            /*$articleRequest = DB::table('article_requests')->inser([ 
                 'user_id' => $user_id, 
                 'article_id' => '358', 
                 'base_value' => '8000', 
                 'status' => 'pending', 
                 'created_at' => now(), 
                 'updated_at' => now(), 
-            ]); 
-            
-            if (!$articleRequest) {
+            ]);*/ 
+            $emolumento = DB::table('articles as art')
+                ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
+                ->where('art.anoLectivo', $lective_year)
+                ->where('cd.code', $code)
+                ->where('art.active', true)
+                ->select('art.id', 'art.base_value')
+                ->first();
+                
+            if (!$emolumento) {
                 Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
             }
+            dd($emolumento);
 
             Toastr::success(__('Solicitação de revisão de prova enviada com sucesso!'), __('toastr.success'));
             return view('Avaliations::requerimento.solicitacao_revisao_prova', ['mensagem'=> $mensagem ]);

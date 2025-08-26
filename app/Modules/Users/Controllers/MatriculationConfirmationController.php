@@ -2023,16 +2023,8 @@ public function colocar_emolumento($id_user){
     // Toastr::success(__('Emolumentos actualizados com sucesso.'), __('toastr.success'));
     // return redirect()->route('formulario_rotina');
 
-
-
-
-
-
-
-
-
-
     }
+
     public function testeAlunos(){
 
         $currentData = Carbon::now();
