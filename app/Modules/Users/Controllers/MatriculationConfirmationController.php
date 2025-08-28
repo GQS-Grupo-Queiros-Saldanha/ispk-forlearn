@@ -875,14 +875,8 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
           }
           
-
-
           // Validação de impedimento de confirmação de estudantes com cursos bloqueiados.
           // $user_student = User::with(['course'])->whereId($request->user)->first();
-         
-
-        
-          
 
             DB::beginTransaction();
 

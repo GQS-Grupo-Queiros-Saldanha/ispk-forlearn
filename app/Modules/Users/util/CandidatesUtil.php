@@ -76,7 +76,7 @@ class CandidatesUtil
       $sql = $sql->where('uca.year_fase_id', $id_fase);
     }
 
-
+    dd($sql);
     return $sql;
   }
 
