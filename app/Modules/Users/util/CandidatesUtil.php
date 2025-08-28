@@ -38,6 +38,7 @@ class CandidatesUtil
 
   public function modelQueryTwoCourse($lectiveYear, $id_fase)
   {
+    dd($lectiveYear, $id_fase);
     $sql = DB::table('articles as art')
       ->leftjoin('article_requests as ar', 'art.id', '=', 'ar.article_id')
       ->join('disciplines as disciplina', 'disciplina.id', '=', 'ar.discipline_id')

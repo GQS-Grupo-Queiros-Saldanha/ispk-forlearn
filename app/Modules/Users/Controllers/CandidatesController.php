@@ -1086,7 +1086,7 @@ class CandidatesController extends Controller
       // return $all_emolumentos;
 
       $twoCourse = [];
-      dd($cursos);
+      
       //dd($cursos->pluck('state', 'usuario_id'));
       foreach ($cursos as $item) {
         if ($item->state == 'total') {
