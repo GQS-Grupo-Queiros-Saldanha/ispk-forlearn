@@ -1108,14 +1108,8 @@ class CandidatesController extends Controller
       foreach ($model as $candidates) {
         array_push($array_candidates, $candidates->id);
       }
-
-
-
-
-
       // return $all_emolumentos;
       // return $model;
-
       $lectiveYears = LectiveYear::with(['currentTranslation'])
         ->where('id', $anoletivo)
         ->select('*')
@@ -1169,7 +1163,6 @@ class CandidatesController extends Controller
         ->orderBy('ar.id', 'desc')
         ->get();
 
-
       $last_cand = DB::table('user_candidate')
         ->where("code", "like", "%CE%")
         ->where("year_fase_id", $request->fase)
@@ -1203,10 +1196,7 @@ class CandidatesController extends Controller
         return $item;
       });
 
-
-
       $candidatos = collect($emolumentos_vagas)->groupBy("course")->map(function ($curso) use ($lectiveYear) {
-
 
         $estatisticas = [
 
@@ -1337,8 +1327,6 @@ class CandidatesController extends Controller
                 ->select(['g.value as nota', 'dt.display_name as disciplina', 'd.percentage as percentagem'])
                 ->get();
 
-
-
               if (isset($grades[0]->nota, $grades[1]->nota)) {
                 $resultado = round(($grades[0]->nota * ($grades[0]->percentagem / 100)) + ($grades[1]->nota * ($grades[1]->percentagem / 100)));
               } else if (isset($grades[0]->nota) && !isset($grades[1]->nota)) {
@@ -1363,8 +1351,6 @@ class CandidatesController extends Controller
                 ->where('matriculations.lective_year', $lectiveYear->id)
                 ->distinct()
                 ->get();
-
-
 
 
               if ($item->turno == 11) {
@@ -1457,7 +1443,6 @@ class CandidatesController extends Controller
                 if ($item->sexo == 'F')
                   $estatisticas["tarde"]['candidaturas']['f'] += 1;
 
-
                 // exames
                 if (!$grades->isEmpty()) {
                   $estatisticas["tarde"]['exames']['total'] += 1;
@@ -1479,7 +1464,6 @@ class CandidatesController extends Controller
                     if ($item->sexo == 'F')
                       $estatisticas["tarde"]['admitidos']['f'] += 1;
 
-
                     // matriculados
                     if (!$matriculado->isEmpty()) {
 
@@ -1492,7 +1476,6 @@ class CandidatesController extends Controller
                       if ($item->sexo == 'F')
                         $estatisticas["tarde"]['matriculados']['f'] += 1;
                     }
-
 
                   }
                   //reprovados
@@ -1607,6 +1590,7 @@ class CandidatesController extends Controller
 
         return $estatisticas;
       });
+      dd($candidatos);
 
 
 
