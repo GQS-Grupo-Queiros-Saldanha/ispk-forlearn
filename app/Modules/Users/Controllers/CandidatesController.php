@@ -1068,7 +1068,7 @@ class CandidatesController extends Controller
 
   public function relatoriosPDF($anoletivo, Request $request)
   {
-    dd($anoletivo, $request->all());
+    //dd($anoletivo, $request->all());
     try {
       if (isset($anoletivo)) {
         $lectiveYear = DB::table('lective_years')
@@ -1183,7 +1183,6 @@ class CandidatesController extends Controller
       }
 
       // Se for a nova fase
-
 
       $last_cand = DB::table('user_candidate')
         ->where("code", "like", "%CE%")
