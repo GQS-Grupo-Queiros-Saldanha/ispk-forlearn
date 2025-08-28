@@ -38,7 +38,7 @@ class CandidatesUtil
 
   public function modelQueryTwoCourse($lectiveYear, $id_fase)
   {
-   
+   dd($lectiveYear);
     $sql = DB::table('articles as art')
       ->leftjoin('article_requests as ar', 'art.id', '=', 'ar.article_id')
       ->join('disciplines as disciplina', 'disciplina.id', '=', 'ar.discipline_id')
@@ -59,6 +59,8 @@ class CandidatesUtil
       ->whereNull('curso.deleted_at')
       ->whereNull('usuario.deleted_at')
       ->where('ar.discipline_id', "!=", null)
+      ->whereBetween('art.created_at', [$lectiveYear->start_date, $lectiveYear->end_date])
+      ->whereBetween('ar.created_at', [$lectiveYear->start_date, $lectiveYear->end_date])
       ->select([
         "art.id as articles",
         "ar.id as articles_req",
