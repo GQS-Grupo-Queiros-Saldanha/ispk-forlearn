@@ -1176,7 +1176,6 @@ class CandidatesController extends Controller
       }
 
       // Se for a nova fase
-
       $last_cand = DB::table('user_candidate')
         ->where("code", "like", "%CE%")
         ->where("year_fase_id", $request->fase)
