@@ -1068,6 +1068,7 @@ class CandidatesController extends Controller
 
   public function relatoriosPDF($anoletivo, Request $request)
   {
+    dd($anoLectivo, $request->all());
     try {
       if (isset($anoletivo)) {
         $lectiveYear = DB::table('lective_years')
