@@ -1102,7 +1102,7 @@ class CandidatesController extends Controller
       });
       $twoCourseUsers = count($twoCourseUsers);
 
-      dd($twoCourse)
+      dd($twoCourse);
       $array_candidates = array();
 
       foreach ($model as $candidates) {
