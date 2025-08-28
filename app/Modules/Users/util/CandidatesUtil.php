@@ -59,8 +59,6 @@ class CandidatesUtil
       ->whereNull('curso.deleted_at')
       ->whereNull('usuario.deleted_at')
       ->where('ar.discipline_id', "!=", null)
-      ->whereBetween('art.created_at', [$lectiveYear->start_date, $lectiveYear->end_date])
-      ->whereBetween('ar.created_at', [$lectiveYear->start_date, $lectiveYear->end_date])
       ->select([
         "art.id as articles",
         "ar.id as articles_req",
