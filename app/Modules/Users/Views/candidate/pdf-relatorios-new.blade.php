@@ -2067,7 +2067,6 @@
                  $candidatos_global_ausente_m_f + $candidatos_global_ausente_n_f + $candidatos_global_ausente_t_f
                 }}</td>
                 </tr>
-
                 <tr>
                   <td class="text-right bg-reprovados" style="font-size: 12px;">Reprovados</td>
                   <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_m_reprovados_global }}</td>
@@ -2110,7 +2109,6 @@
                  $candidatos_global_reprovado_m_f + $candidatos_global_reprovado_n_f + $candidatos_global_reprovado_t_f
                 }}</td>
                 </tr>
-
                 <tr>
                   <td class="text-left bg-admitidos" style="font-size: 15px;">Admitidos</td>
                   <td class="text-center bg-admitidos" style="font-size: 15px;">{{ $p_m_admitidos_global }}</td>
@@ -2153,8 +2151,6 @@
                  $candidatos_global_admitido_m_f + $candidatos_global_admitido_n_f + $candidatos_global_admitido_t_f
                 }}</td>
                 </tr>
-
-
                 <tr>
                   <td class="text-center bg-matriculados text-uppercase font-weight-bold" style="font-size: 15px;">
                     Matriculados</td>
@@ -2202,7 +2198,6 @@
                 <tr style="height:30px !important">
                   <td class="bg-white"></td>
                 </tr>
-
                 <tr>
                   <td class="bg-white"></td>
                 </tr>

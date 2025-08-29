@@ -1064,6 +1064,29 @@ class CandidatesController extends Controller
     return view("Users::candidate.relatorios")->with($data);
   }
 
+  //Nova função de rcandidatos
+  private function incrementarEstatistica(&$estatisticas, $turno, $tipo, $sexo)
+  {
+      $turnosMap = [
+          11 => 'manha',
+          12 => 'tarde',
+          13 => 'noite'
+      ];
+
+      if (!isset($turnosMap[$turno])) return;
+
+      $turnoKey = $turnosMap[$turno];
+
+      // Incrementa total
+      $estatisticas[$turnoKey][$tipo]['total'] += 1;
+
+      // Incrementa por sexo
+      if ($sexo == 'M') {
+          $estatisticas[$turnoKey][$tipo]['m'] += 1;
+      } elseif ($sexo == 'F') {
+          $estatisticas[$turnoKey][$tipo]['f'] += 1;
+      }
+  }
 
   //trabalhando aqui agora
   public function relatoriosPDF($anoletivo, Request $request)
@@ -1406,14 +1429,7 @@ class CandidatesController extends Controller
                   }
                   //reprovados
                   else {
-                    $estatisticas["manha"]['reprovados']['total'] += 1;
-
-                    if ($item->sexo == 'M')
-
-                      $estatisticas["manha"]['reprovados']['m'] += 1;
-
-                    if ($item->sexo == 'F')
-                      $estatisticas["manha"]['reprovados']['f'] += 1;
+                    $this->incrementarEstatistica($estatisticas, $item->turno, 'reprovados', $item->sexo);
                   }
                 }
 
@@ -1589,10 +1605,6 @@ class CandidatesController extends Controller
 
         return $estatisticas;
       });
-    
-
-
-
 
       $emolumentos = ["total" => 0, "pending" => 0, "total_money" => 0, "espera_money" => 0];
 
@@ -1708,7 +1720,7 @@ class CandidatesController extends Controller
       $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
       $date_generated = date("Y/m/d");
 
-      dd([
+      /*dd([
         'vagas' => $vagas,
         'cordenador' => $cordenador,
         'lectiveFase' => $lectiveFase,
@@ -1727,7 +1739,7 @@ class CandidatesController extends Controller
         'staff' => $staff,
         'datas_inscricao' => $datas_inscricao,
         'emolumentos' => $emolumentos
-      ]);
+      ]);*/
 
       $pdf = PDF::loadView(
         "Users::candidate.pdf-relatorios-new",
@@ -2152,13 +2164,8 @@ class CandidatesController extends Controller
                   }
                   //reprovados
                   else {
-                    $estatisticas["manha"]['reprovados']['total'] += 1;
+                      $this->incrementarEstatistica($estatisticas, $item->turno, 'reprovados', $item->sexo);
 
-                    if ($item->sexo == 'M')
-                      $estatisticas["manha"]['reprovados']['m'] += 1;
-
-                    if ($item->sexo == 'F')
-                      $estatisticas["manha"]['reprovados']['f'] += 1;
                   }
                 }
 
