@@ -2070,14 +2070,18 @@
 
                 <tr>
                   <td class="text-right bg-reprovados" style="font-size: 12px;">Reprovados</td>
-                  <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_m_reprovados_global }}</td>
+                  <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_m_reprovados_global ?? 0 }}</td>
                   <td class="text-center bg-reprovados font-weight-bold">
-                    {{ $candidatos_global_reprovado_m }}
+                      {{ $candidatos_global_reprovado_m ?? 0 }}
                   </td>
-                  <td class="text-center bg-sexo">{{ $candidatos_global_reprovado_m_m }}
+                  <td class="text-center bg-sexo">
+                      {{ $candidatos_global_reprovado_m_m ?? 0 }}
                   </td>
-                  <td class="text-center bg-sexo">{{ $candidatos_global_reprovado_m_f }}
+                  <td class="text-center bg-sexo">
+                      {{ $candidatos_global_reprovado_m_f ?? 0 }}
                   </td>
+              </tr>
+
 
                   <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_t_reprovados_global }}</td>
                   <td class="text-center bg-reprovados font-weight-bold">
