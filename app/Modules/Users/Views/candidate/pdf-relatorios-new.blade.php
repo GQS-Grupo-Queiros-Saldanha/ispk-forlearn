@@ -697,9 +697,9 @@
                 {{ $item_vagas->noite + $item_vagas->tarde + $item_vagas->manha != 0 ? $item_vagas->noite + $item_vagas->tarde + $item_vagas->manha : '-' }}
                 </td>
                 @php 
-            $total = $candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'] +
-          $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'] +
-          $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0;
+            $total = ($candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'] ?? 0) +
+          ($candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'] ?? 0)+
+          ($candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0);
 
           @endphp
                 <td class="text-center bg-total t-color">
