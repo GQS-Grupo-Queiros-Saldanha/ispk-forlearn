@@ -1982,41 +1982,41 @@
                     </td>
 
                     <td class="text-left bg-exames">Exames</td>
-                    <td class="text-center bg-exames" style="font-size: 15px;">{{ $p_m_exames_global }}</td>
+                    <td class="text-center bg-exames" style="font-size: 15px;">{{ $p_m_exames_global ?? 0 }}</td>
                     <td class="text-center bg-exames font-weight-bold">
-                      {{ $candidatos_global_exame_m }}
+                      {{ $candidatos_global_exame_m ?? 0 }}
                     </td>
                     <td class="text-center bg-sexo">{{ $candidatos_global_exame_m_m }}
                     </td>
-                    <td class="text-center bg-sexo">{{ $candidatos_global_exame_m_f }}
+                    <td class="text-center bg-sexo">{{ $candidatos_global_exame_m_f ?? 0 }}
                     </td>
 
-                    <td class="text-center bg-exames" style="font-size: 15px;">{{ $p_t_exames_global }}</td>
+                    <td class="text-center bg-exames" style="font-size: 15px;">{{ $p_t_exames_global ?? 0 }}</td>
                     <td class="text-center bg-exames font-weight-bold">
-                      {{ $candidatos_global_exame_t }}
+                      {{ $candidatos_global_exame_t ?? 0  }}
                     </td>
-                    <td class="text-center bg-sexo">{{ $candidatos_global_exame_t_m }}
+                    <td class="text-center bg-sexo">{{ $candidatos_global_exame_t_m ?? 0 }}
                     </td>
-                    <td class="text-center bg-sexo">{{ $candidatos_global_exame_t_f }}
+                    <td class="text-center bg-sexo">{{ $candidatos_global_exame_t_f ?? 0 }}
                     </td>
 
-                    <td class="text-center bg-exames" style="font-size: 15px;">{{ $p_n_exames_global }}</td>
+                    <td class="text-center bg-exames" style="font-size: 15px;">{{ $p_n_exames_global ?? 0 }}</td>
                     <td class="text-center bg-exames font-weight-bold">
-                      {{ $candidatos_global_exame_n }}
+                      {{ $candidatos_global_exame_n?? 0 }}
                     </td>
-                    <td class="text-center bg-sexo">{{  $candidatos_global_exame_n_m }}
+                    <td class="text-center bg-sexo">{{  $candidatos_global_exame_n_m ?? 0 }}
                     </td>
-                    <td class="text-center bg-sexo">{{  $candidatos_global_exame_n_f}}
+                    <td class="text-center bg-sexo">{{  $candidatos_global_exame_n_fb ?? 0 }}
                     </td>
 
-                    <td class="text-center bg-exames" style="font-size: 15px;">{{ $p_total_exames_global }} </td>
+                    <td class="text-center bg-exames" style="font-size: 15px;">{{ $p_total_exames_global ?? 0 }} </td>
 
 
                     <td class="text-center bg-exames font-weight-bold">
-                      {{  $candidatos_global_exame_n + $candidatos_global_exame_m + $candidatos_global_exame_t}}
+                      {{  $candidatos_global_exame_n + $candidatos_global_exame_m + $candidatos_global_exame_t ?? 0 }}
                     </td>
                     <td class="text-center bg-sexo">{{ 
-                $candidatos_global_exame_m_m + $candidatos_global_exame_n_m + $candidatos_global_exame_t_m
+                $candidatos_global_exame_m_m + $candidatos_global_exame_n_m + $candidatos_global_exame_t_m ?? 0 
                 }}</td>
                     <td class="text-center bg-sexo">{{ 
                  $candidatos_global_exame_m_f + $candidatos_global_exame_n_f + $candidatos_global_exame_t_f
@@ -2061,10 +2061,10 @@
                     {{  $candidatos_global_ausente_n + $candidatos_global_ausente_m + $candidatos_global_ausente_t}}
                   </td>
                   <td class="text-center bg-sexo">{{ 
-                $candidatos_global_ausente_m_m + $candidatos_global_ausente_n_m + $candidatos_global_ausente_t_m
+                $candidatos_global_ausente_m_m + $candidatos_global_ausente_n_m + $candidatos_global_ausente_t_m ?? 0 
                 }}</td>
                   <td class="text-center bg-sexo">{{ 
-                 $candidatos_global_ausente_m_f + $candidatos_global_ausente_n_f + $candidatos_global_ausente_t_f
+                 $candidatos_global_ausente_m_f + $candidatos_global_ausente_n_f + $candidatos_global_ausente_t_f ?? 0 
                 }}</td>
                 </tr>
 
@@ -2083,35 +2083,35 @@
               </tr>
 
 
-                  <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_t_reprovados_global }}</td>
+                  <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_t_reprovados_global ?? 0 }}</td>
                   <td class="text-center bg-reprovados font-weight-bold">
                     {{ $candidatos_global_reprovado_t }}
                   </td>
-                  <td class="text-center bg-sexo">{{ $candidatos_global_reprovado_t_m }}
+                  <td class="text-center bg-sexo">{{ $candidatos_global_reprovado_t_m ?? 0}}
                   </td>
-                  <td class="text-center bg-sexo">{{ $candidatos_global_reprovado_t_f }}
+                  <td class="text-center bg-sexo">{{ $candidatos_global_reprovado_t_f ?? 0 }}
                   </td>
 
-                  <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_n_reprovados_global }}</td>
+                  <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_n_reprovados_global ?? 0 }}</td>
                   <td class="text-center bg-reprovados font-weight-bold">
                     {{ $candidatos_global_reprovado_n }}
                   </td>
-                  <td class="text-center bg-sexo">{{  $candidatos_global_reprovado_n_m }}
+                  <td class="text-center bg-sexo">{{  $candidatos_global_reprovado_n_m ?? 0 }}
                   </td>
-                  <td class="text-center bg-sexo">{{  $candidatos_global_reprovado_n_f}}
+                  <td class="text-center bg-sexo">{{  $candidatos_global_reprovado_n_f ?? 0 }}
                   </td>
 
-                  <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_total_reprovados_global }} </td>
+                  <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_total_reprovados_global ?? 0 }} </td>
 
 
                   <td class="text-center bg-reprovados font-weight-bold">
-                    {{  $candidatos_global_reprovado_n + $candidatos_global_reprovado_m + $candidatos_global_reprovado_t}}
+                    {{  $candidatos_global_reprovado_n + $candidatos_global_reprovado_m + $candidatos_global_reprovado_t ?? 0 }}
                   </td>
                   <td class="text-center bg-sexo">{{ 
-                $candidatos_global_reprovado_m_m + $candidatos_global_reprovado_n_m + $candidatos_global_reprovado_t_m
+                $candidatos_global_reprovado_m_m + $candidatos_global_reprovado_n_m + $candidatos_global_reprovado_t_m ?? 0 
                 }}</td>
                   <td class="text-center bg-sexo">{{ 
-                 $candidatos_global_reprovado_m_f + $candidatos_global_reprovado_n_f + $candidatos_global_reprovado_t_f
+                 $candidatos_global_reprovado_m_f + $candidatos_global_reprovado_n_f + $candidatos_global_reprovado_t_f ?? 0 
                 }}</td>
                 </tr>
 
@@ -2151,10 +2151,10 @@
                     {{  $candidatos_global_admitido_n + $candidatos_global_admitido_m + $candidatos_global_admitido_t}}
                   </td>
                   <td class="text-center bg-sexo">{{ 
-                $candidatos_global_admitido_m_m + $candidatos_global_admitido_n_m + $candidatos_global_admitido_t_m
+                $candidatos_global_admitido_m_m + $candidatos_global_admitido_n_m + $candidatos_global_admitido_t_m ?? 0 
                 }}</td>
                   <td class="text-center bg-sexo">{{ 
-                 $candidatos_global_admitido_m_f + $candidatos_global_admitido_n_f + $candidatos_global_admitido_t_f
+                 $candidatos_global_admitido_m_f + $candidatos_global_admitido_n_f + $candidatos_global_admitido_t_f ?? 0 
                 }}</td>
                 </tr>
 
@@ -2197,10 +2197,10 @@
                     {{  $candidatos_global_matriculado_n + $candidatos_global_matriculado_m + $candidatos_global_matriculado_t}}
                   </td>
                   <td class="text-center bg-sexo">{{ 
-                $candidatos_global_matriculado_m_m + $candidatos_global_matriculado_n_m + $candidatos_global_matriculado_t_m
+                $candidatos_global_matriculado_m_m + $candidatos_global_matriculado_n_m + $candidatos_global_matriculado_t_m ?? 0 
                 }}</td>
                   <td class="text-center bg-sexo">{{ 
-                 $candidatos_global_matriculado_m_f + $candidatos_global_matriculado_n_f + $candidatos_global_matriculado_t_f
+                 $candidatos_global_matriculado_m_f + $candidatos_global_matriculado_n_f + $candidatos_global_matriculado_t_f ?? 0 
                 }}</td>
                 </tr>
                 <tr style="height:30px !important">
