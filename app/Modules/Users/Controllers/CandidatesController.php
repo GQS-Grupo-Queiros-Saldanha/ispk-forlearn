@@ -1932,7 +1932,7 @@ class CandidatesController extends Controller
           $last_cand = DB::table('user_candidate')
               ->where("code", "like", "%CE%")
               ->where("year", $lectiveYear->id)
-              ->orderBy("code", "desc')
+              ->orderBy("code", "desc")
               ->count();
 
           $todos_candidatos = $last_cand;
