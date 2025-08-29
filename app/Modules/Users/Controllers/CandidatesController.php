@@ -1084,10 +1084,7 @@ class CandidatesController extends Controller
       $all_emolumentos = $this->candidateUtil->cursoQueryGet($lectiveYear, $lectiveCandidate->id);
       $model = $this->candidateUtil->modelQueryGet($lectiveYear, $request->fase);
       // return $all_emolumentos;
-      if($cursos->isEmpty()){
-        Toastr::warning("A forLEARN não detectou candidatos a estudantes nesta fase", 'Nenhum candidato');
-        return redirect()->back();
-      }
+  
       $twoCourse = [];
       
       //dd($cursos->pluck('state', 'usuario_id'));
