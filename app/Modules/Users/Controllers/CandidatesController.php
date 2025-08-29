@@ -1065,10 +1065,10 @@ class CandidatesController extends Controller
   }
 
 
-
+//trabalhando aqui agora
   public function relatoriosPDF($anoletivo, Request $request)
   {
-    //dd($anoletivo, $request->all());
+    dd($anoletivo, $request->all());
     try {
       if (isset($anoletivo)) {
         $lectiveYear = DB::table('lective_years')
@@ -1772,7 +1772,7 @@ class CandidatesController extends Controller
     }
     return $emolumentos;
   }
-  //trabalhando aqui agora
+  
   public function relatoriosPDFGlobal($anoletivo)
   {
       try {
