@@ -122,7 +122,7 @@
                                 $user->courses->first()->currentTranslation->display_name : 'N/A')
                                 <td style="font-size: 11px">{{ $curso }}</td>
                                 <?php 
-                                    $turma = $user->matriculation ?
+                                    $turma = $user->matriculation ? //pega a turma da variavel user
                                         $user->matriculation->classes->pluck('display_name')->implode(', ') :
                                         null;
 

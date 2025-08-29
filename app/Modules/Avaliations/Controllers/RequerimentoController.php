@@ -44,10 +44,8 @@ class RequerimentoController extends Controller
     {
         try {
 
-            $lectiveYears = LectiveYear::with(['currentTranslation'])
-                ->get();
-
-            $currentData = Carbon::now();
+            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
+            $currentData = Carbon::now(); //data actual
             $lectiveYearSelected = DB::table('lective_years')
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
@@ -184,7 +182,6 @@ class RequerimentoController extends Controller
             return redirect()->back();
         }
     }
-
 
     /*Esta zona é para a solicitação de revisão de Prova!*/
 
