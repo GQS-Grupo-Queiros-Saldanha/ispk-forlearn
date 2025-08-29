@@ -1093,6 +1093,7 @@ class CandidatesController extends Controller
   {
     //dd($anoletivo, $request->all());
     try {
+      
       if (isset($anoletivo)) {
         $lectiveYear = DB::table('lective_years')
           ->where('id', $anoletivo)
@@ -1378,9 +1379,6 @@ class CandidatesController extends Controller
               if ($item->turno == 11) {
 
 
-
-
-
                 $estatisticas["manha"]['candidaturas']['total'] += 1;
 
                 if ($item->sexo == 'M')
@@ -1606,6 +1604,21 @@ class CandidatesController extends Controller
         return $estatisticas;
       });
 
+      // ===============================================
+      // Garantir que todos os valores existam para a view
+      $candidatos_global_reprovado_m_m = 0;
+      $candidatos_global_reprovado_m_f = 0;
+      $candidatos_global_reprovado_total = 0;
+
+      // Iterar sobre todos os cursos e somar os reprovados
+      foreach ($candidatos as $curso) {
+          foreach (['manha','tarde','noite'] as $turno) {
+              $candidatos_global_reprovado_m_m += $curso[$turno]['reprovados']['m'] ?? 0;
+              $candidatos_global_reprovado_m_f += $curso[$turno]['reprovados']['f'] ?? 0;
+              $candidatos_global_reprovado_total += $curso[$turno]['reprovados']['total'] ?? 0;
+          }
+      }
+      // 
       $emolumentos = ["total" => 0, "pending" => 0, "total_money" => 0, "espera_money" => 0];
 
       foreach ($all_emolumentos as $item) {
@@ -1621,9 +1634,6 @@ class CandidatesController extends Controller
           }
         }
       }
-
-
-
 
       $staff = collect($model)->groupBy("us_created_by")->map(function ($candidato) {
 
@@ -1761,7 +1771,10 @@ class CandidatesController extends Controller
           'todos_candidatos',
           'staff',
           'datas_inscricao',
-          'emolumentos'
+          'emolumentos',
+          'candidatos_global_reprovado_m_m',
+          'candidatos_global_reprovado_m_f',
+          'candidatos_global_reprovado_total'
         )
       );
 
@@ -1790,7 +1803,7 @@ class CandidatesController extends Controller
           'linha' => $e->getLine(),
           'arquivo' => $e->getFile()
       ]);
-}
+    }
 
   }
 
