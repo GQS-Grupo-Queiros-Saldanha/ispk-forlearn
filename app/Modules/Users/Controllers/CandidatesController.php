@@ -1173,10 +1173,7 @@ class CandidatesController extends Controller
         ->orderBy("code", "desc")
         ->first();
 
-      if (!isset($last_cand->code)) {
-        Toastr::warning("A forLEARN não detectou candidatos a estudantes nesta fase", 'Nenhum candidato');
-        return redirect()->back();
-      }
+  
 
       // Se for a nova fase
       $last_cand = DB::table('user_candidate')
