@@ -75,7 +75,7 @@ class CandidatesUtil
     if ($id_fase != null) {
       $sql = $sql->where('uca.year_fase_id', $id_fase);
     }
-    dd($sql->get());
+
     return $sql;
   }
 

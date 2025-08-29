@@ -1084,7 +1084,7 @@ class CandidatesController extends Controller
       $all_emolumentos = $this->candidateUtil->cursoQueryGet($lectiveYear, $lectiveCandidate->id);
       $model = $this->candidateUtil->modelQueryGet($lectiveYear, $request->fase);
       // return $all_emolumentos;
-  
+
       $twoCourse = [];
       
       //dd($cursos->pluck('state', 'usuario_id'));
@@ -1170,7 +1170,10 @@ class CandidatesController extends Controller
         ->orderBy("code", "desc")
         ->first();
 
-  
+      if (!isset($last_cand->code)) {
+        Toastr::warning("A forLEARN não detectou candidatos a estudantes nesta fase", 'Nenhum candidato');
+        return redirect()->back();
+      }
 
       // Se for a nova fase
       $last_cand = DB::table('user_candidate')
