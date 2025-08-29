@@ -1708,6 +1708,27 @@ class CandidatesController extends Controller
       $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
       $date_generated = date("Y/m/d");
 
+      dd([
+        'vagas' => $vagas,
+        'cordenador' => $cordenador,
+        'lectiveFase' => $lectiveFase,
+        'lectiveYears' => $lectiveYears,
+        'institution' => $institution,
+        'titulo_documento' => $titulo_documento,
+        'anoLectivo_documento' => $anoLectivo_documento,
+        'documentoGerado_documento' => $documentoGerado_documento,
+        'documentoCode_documento' => $documentoCode_documento,
+        'date_generated' => $date_generated,
+        'twoCourse' => $twoCourse,
+        'twoCourseUsers' => $twoCourseUsers,
+        'logotipo' => $logotipo,
+        'candidatos' => $candidatos,
+        'todos_candidatos' => $todos_candidatos,
+        'staff' => $staff,
+        'datas_inscricao' => $datas_inscricao,
+        'emolumentos' => $emolumentos
+      ]);
+
       $pdf = PDF::loadView(
         "Users::candidate.pdf-relatorios-new",
         compact(
