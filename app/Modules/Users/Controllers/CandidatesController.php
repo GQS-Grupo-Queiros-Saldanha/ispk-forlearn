@@ -1772,715 +1772,536 @@ class CandidatesController extends Controller
     }
     return $emolumentos;
   }
-  
+  //trabalhando aqui agora
   public function relatoriosPDFGlobal($anoletivo)
   {
-    try {
-      if (isset($anoletivo)) {
-        $lectiveYear = DB::table('lective_years')
-          ->where('id', $anoletivo)
-          ->first();
-      }
-      $lectiveCandidate = DB::table('lective_candidate')
-        ->where('id_years', $lectiveYear->id)
-        ->where('fase', 1)
-        ->first();
-
-      $cursos = $this->candidateUtil->modelQueryTwoCourseGet($lectiveYear, null);
-
-      $all_emolumentos = $this->candidateUtil->cursoQueryGet($lectiveYear, $lectiveCandidate->id);
-      $model = $this->candidateUtil->modelQueryGetGlobal($lectiveYear);
-      // return $all_emolumentos;
-      $twoCourse = [];
-
-      foreach ($cursos as $item) {
-        if ($item->state == 'total') {
-          if (isset($twoCourse[$item->usuario_id])) {
-            $twoCourse[$item->usuario_id]++;
-          } else {
-            $twoCourse[$item->usuario_id] = 1;
+      try {
+          if (isset($anoletivo)) {
+              $lectiveYear = DB::table('lective_years')
+                  ->where('id', $anoletivo)
+                  ->first();
+                  
+              // Debug: Verificar se o ano letivo foi encontrado
+              if(empty($lectiveYear)) {
+                  dd('Ano letivo não encontrado');
+              }
           }
-        }
-      }
+          
+          $lectiveCandidate = DB::table('lective_candidate')
+              ->where('id_years', $lectiveYear->id)
+              ->where('fase', 1)
+              ->first();
+              
+          // Debug: Verificar se o candidato foi encontrado
+          if(empty($lectiveCandidate)) {
+              dd('Candidato não encontrado para o ano letivo');
+          }
 
-      $twoCourseUsers = array_filter($twoCourse, function ($count) {
-        return $count == 2;
-      });
-      $twoCourseUsers = count($twoCourseUsers);
+          $cursos = $this->candidateUtil->modelQueryTwoCourseGet($lectiveYear, null);
+          
+          // Debug: Verificar se os cursos foram encontrados
+          if(empty($cursos)) {
+              dd('Sem dados de cursos');
+          }
 
+          $all_emolumentos = $this->candidateUtil->cursoQueryGet($lectiveYear, $lectiveCandidate->id);
+          
+          // Debug: Verificar se os emolumentos foram encontrados
+          if(empty($all_emolumentos)) {
+              dd('Sem dados de emolumentos');
+          }
+          
+          $model = $this->candidateUtil->modelQueryGetGlobal($lectiveYear);
+          
+          // Debug: Verificar se o modelo foi encontrado
+          if(empty($model)) {
+              dd('Sem dados do modelo');
+          }
+          
+          $twoCourse = [];
 
-      $array_candidates = array();
+          foreach ($cursos as $item) {
+              if ($item->state == 'total') {
+                  if (isset($twoCourse[$item->usuario_id])) {
+                      $twoCourse[$item->usuario_id]++;
+                  } else {
+                      $twoCourse[$item->usuario_id] = 1;
+                  }
+              }
+          }
 
-      foreach ($model as $candidates) {
-        array_push($array_candidates, $candidates->id);
-      }
+          $twoCourseUsers = array_filter($twoCourse, function ($count) {
+              return $count == 2;
+          });
+          $twoCourseUsers = count($twoCourseUsers);
 
+          $array_candidates = array();
 
+          foreach ($model as $candidates) {
+              array_push($array_candidates, $candidates->id);
+          }
 
+          $lectiveYears = LectiveYear::with(['currentTranslation'])
+              ->where('id', $anoletivo)
+              ->select('*')
+              ->get();
+              
+          // Debug: Verificar se os anos letivos foram encontrados
+          if(empty($lectiveYears)) {
+              dd('Sem dados de anos letivos');
+          }
 
-      // return $all_emolumentos;
-      // return $model;
+          $emolumentos_vagas = DB::table('articles as art')
+              ->select([
+                  DB::raw('DISTINCT ar.id as articles_req'),
+                  "art.id as articles",
+                  "ar.discipline_id as discipline",
+                  "curso.id as course",
+                  "ct.display_name as nome_curso",
+                  "ar.user_id as usuario_id",
+                  "ar.status as state",
+                  "ar.base_value as valor",
+                  "usuario.name as usuario",
+                  'user_classes.class_id as turma',
+                  'turmas.id as turma_nova',
+                  'turmas.code as turma',
+                  'turmas.schedule_type_id as turno',
+                  'u_p1.value as sexo',
+                  'curso.departments_id as departamento_id'
+              ])
+              ->join('article_requests as ar', 'art.id', '=', 'ar.article_id')
+              ->join('disciplines as disciplina', 'disciplina.id', '=', 'ar.discipline_id')
+              ->join('courses as curso', 'disciplina.courses_id', '=', 'curso.id')
+              ->join('courses_translations as ct', 'ct.courses_id', '=', 'curso.id')
+              ->join('users as usuario', 'ar.user_id', '=', 'usuario.id')
+              ->join('user_candidate as uca', 'uca.user_id', '=', 'usuario.id')
+              ->join('user_parameters as u_p1', function ($join) {
+                  $join->on('usuario.id', '=', 'u_p1.users_id')
+                      ->where('u_p1.parameters_id', 2);
+              })
+              ->join('user_classes', 'user_classes.user_id', '=', 'ar.user_id')
+              ->join('classes as turmas', 'turmas.id', '=', 'user_classes.class_id')
+              ->where("art.id_code_dev", 6)
+              ->where("ct.active", 1)
+              ->where("ar.status", "total")
+              ->where("uca.year", $anoletivo)
+              ->where('usuario.name', "!=", "")
+              ->whereNull('ar.deleted_at')
+              ->whereNull('disciplina.deleted_at')
+              ->whereNull('ct.deleted_at')
+              ->whereNull('art.deleted_at')
+              ->whereNull('curso.deleted_at')
+              ->whereNull('usuario.deleted_at')
+              ->where('ar.discipline_id', "!=", null)
+              ->whereBetween('ar.created_at', [$lectiveYear->start_date, $lectiveYear->end_date])
+              ->select([
+                  "art.id as articles",
+                  "ar.id as articles_req",
+                  "ar.discipline_id as discipline",
+                  "curso.id as course",
+                  "ct.display_name as nome_curso",
+                  "ar.user_id as usuario_id",
+                  "ar.status as state",
+                  "ar.base_value as valor",
+                  "usuario.name as usuario",
+                  'user_classes.class_id as turma',
+                  'turmas.id as turma_nova',
+                  'turmas.code as turma',
+                  'turmas.schedule_type_id as turno',
+                  'u_p1.value as sexo'
+              ])
+              ->orderBy('ar.id', 'desc')
+              ->get();
+              
+          // Debug: Verificar se os emolumentos/vagas foram encontrados
+          if(empty($emolumentos_vagas)) {
+              dd('Sem dados de emolumentos/vagas');
+          }
 
-      $lectiveYears = LectiveYear::with(['currentTranslation'])
-        ->where('id', $anoletivo)
-        ->select('*')
-        ->get();
+          $last_cand = DB::table('user_candidate')
+              ->where("code", "like", "%CE%")
+              ->where("year", $lectiveYear->id)
+              ->orderBy("code", "desc")
+              ->first();
 
-      $emolumentos_vagas = DB::table('articles as art')
-        ->select([
-          DB::raw('DISTINCT ar.id as articles_req'),
-          "art.id as articles",
-          "ar.discipline_id as discipline",
-          "curso.id as course",
-          "ct.display_name as nome_curso",
-          "ar.user_id as usuario_id",
-          "ar.status as state",
-          "ar.base_value as valor",
-          "usuario.name as usuario",
-          'user_classes.class_id as turma',
-          'turmas.id as turma_nova',
-          'turmas.code as turma',
-          'turmas.schedule_type_id as turno',
-          'u_p1.value as sexo',
-          'curso.departments_id as departamento_id' // Adicionando o ID do departamento
-        ])
-        ->join('article_requests as ar', 'art.id', '=', 'ar.article_id')
-        ->join('disciplines as disciplina', 'disciplina.id', '=', 'ar.discipline_id')
-        ->join('courses as curso', 'disciplina.courses_id', '=', 'curso.id')
-        ->join('courses_translations as ct', 'ct.courses_id', '=', 'curso.id')
-        ->join('users as usuario', 'ar.user_id', '=', 'usuario.id')
-        ->join('user_candidate as uca', 'uca.user_id', '=', 'usuario.id')
-        ->join('user_parameters as u_p1', function ($join) {
-          $join->on('usuario.id', '=', 'u_p1.users_id')
-            ->where('u_p1.parameters_id', 2);
-        })
-        // Alterando para inner join se precisamos garantir que o aluno tem turma
-        ->join('user_classes', 'user_classes.user_id', '=', 'ar.user_id')
-        ->join('classes as turmas', 'turmas.id', '=', 'user_classes.class_id')
-        ->where("art.id_code_dev", 6)
-        ->where("ct.active", 1)
-        ->where("ar.status", "total")
-        ->where("uca.year", $anoletivo)
-        ->where('usuario.name', "!=", "")
-        ->whereNull('ar.deleted_at')
-        ->whereNull('disciplina.deleted_at')
-        ->whereNull('ct.deleted_at')
-        ->whereNull('art.deleted_at')
-        ->whereNull('curso.deleted_at')
-        ->whereNull('usuario.deleted_at')
-        ->where('ar.discipline_id', "!=", null)
-        ->whereBetween('ar.created_at', [$lectiveYear->start_date, $lectiveYear->end_date])
-        ->select([
-          "art.id as articles",
-          "ar.id as articles_req",
-          "ar.discipline_id as discipline",
-          "curso.id as course",
-          "ct.display_name as nome_curso",
-          "ar.user_id as usuario_id",
-          "ar.status as state",
-          "ar.base_value as valor",
-          "usuario.name as usuario",
-          'user_classes.class_id as turma',
-          'turmas.id as turma_nova',
-          'turmas.code as turma',
-          'turmas.schedule_type_id as turno',
-          'u_p1.value as sexo'
-        ])
-        ->orderBy('ar.id', 'desc')
-        ->get();
+          if (!isset($last_cand->code)) {
+              Toastr::warning("A forLEARN não detectou candidatos a estudantes nesta fase", 'Nenhum candidato');
+              return redirect()->back();
+          }
 
+          $last_cand = DB::table('user_candidate')
+              ->where("code", "like", "%CE%")
+              ->where("year", $lectiveYear->id)
+              ->orderBy("code", "desc')
+              ->count();
 
+          $todos_candidatos = $last_cand;
 
-      $last_cand = DB::table('user_candidate')
-        ->where("code", "like", "%CE%")
-        ->where("year", $lectiveYear->id)
-        ->orderBy("code", "desc")
-        ->first();
+          $emolumentos_vagas = collect($emolumentos_vagas)->map(function ($item) {
+              if ($item->sexo == "Feminino" || $item->sexo == 125 || $item->sexo == "feminino" || $item->sexo == "f" || $item->sexo == "F")
+                  $item->sexo = 'F';
 
-      if (!isset($last_cand->code)) {
-        Toastr::warning("A forLEARN não detectou candidatos a estudantes nesta fase", 'Nenhum candidato');
-        return redirect()->back();
-      }
+              if ($item->sexo == "Masculino" || $item->sexo == 124 || $item->sexo == "masculino" || $item->sexo == "m" || $item->sexo == "M")
+                  $item->sexo = 'M';
 
-      // Se for a nova fase
+              return $item;
+          });
 
+          $candidatos = collect($emolumentos_vagas)->groupBy("course")->map(function ($curso) use ($lectiveYear) {
+              $estatisticas = [
+                  "money" => 0,
+                  'manha' => [
+                      'candidaturas' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'exames' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'ausentes' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'reprovados' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'admitidos' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'matriculados' => ['total' => 0, 'm' => 0, 'f' => 0],
+                  ],
+                  'tarde' => [
+                      'candidaturas' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'exames' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'ausentes' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'reprovados' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'admitidos' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'matriculados' => ['total' => 0, 'm' => 0, 'f' => 0],
+                  ],
+                  'noite' => [
+                      'candidaturas' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'exames' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'ausentes' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'reprovados' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'admitidos' => ['total' => 0, 'm' => 0, 'f' => 0],
+                      'matriculados' => ['total' => 0, 'm' => 0, 'f' => 0],
+                  ]
+              ];
 
-      $last_cand = DB::table('user_candidate')
-        ->where("code", "like", "%CE%")
-        ->where("year", $lectiveYear->id)
-        ->orderBy("code", "desc")
-        ->count();
+              $turnos = ["qtd_m" => 0, "qtd_t" => 0, "qtd_n" => 0];
 
-      $todos_candidatos = $last_cand;
+              foreach ($curso as $item) {
+                  if (isset($item->state) && $item->state == "total") {
+                      $estatisticas["money"] = $item->valor;
+                      if (isset($item->turno)) {
+                          $grades = DB::table('grades as g')
+                              ->where('student_id', $item->usuario_id)
+                              ->whereBetween('g.updated_at', [$lectiveYear->start_date, $lectiveYear->end_date])
+                              ->whereNull('g.deleted_by')
+                              ->whereNull('g.deleted_at')
+                              ->join('disciplines as d', 'g.discipline_id', '=', 'd.id')
+                              ->leftJoin('disciplines_translations as dt', function ($join) {
+                                  $join->on('dt.discipline_id', '=', 'd.id');
+                                  $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                                  $join->on('dt.active', '=', DB::raw(true));
+                              })
+                              ->where('d.discipline_profiles_id', 8)
+                              ->select(['g.value as nota', 'dt.display_name as disciplina', 'd.percentage as percentagem'])
+                              ->get();
 
+                          if (isset($grades[0]->nota, $grades[1]->nota)) {
+                              $resultado = round(($grades[0]->nota * ($grades[0]->percentagem / 100)) + ($grades[1]->nota * ($grades[1]->percentagem / 100)));
+                          } else if (isset($grades[0]->nota) && !isset($grades[1]->nota)) {
+                              $resultado = $grades[0]->nota;
+                          } else {
+                              $resultado = round((($grades[0]->nota ?? 0) + ($grades[1]->nota ?? 0)) / 2);
+                          }
 
+                          $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYear->id);
 
-      $emolumentos_vagas = collect($emolumentos_vagas)->map(function ($item) {
-        if ($item->sexo == "Feminino" || $item->sexo == 125 || $item->sexo == "feminino" || $item->sexo == "f" || $item->sexo == "F")
-          $item->sexo = 'F';
+                          $matriculado = DB::table('matriculations')
+                              ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
+                              ->join('article_requests as art_requests', 'art_requests.user_id', '=', 'matriculations.user_id')
+                              ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)
+                              ->where('matriculations.lective_year', $lectiveYear->id)
+                              ->where('art_requests.status', 'total')
+                              ->where('matriculations.user_id', $item->usuario_id)
+                              ->distinct('matriculations.id')
+                              ->get();
 
-        if ($item->sexo == "Masculino" || $item->sexo == 124 || $item->sexo == "masculino" || $item->sexo == "m" || $item->sexo == "M")
-          $item->sexo = 'M';
+                          if ($item->turno == 11) {
+                              $estatisticas["manha"]['candidaturas']['total'] += 1;
+                              if ($item->sexo == 'M') $estatisticas["manha"]['candidaturas']['m'] += 1;
+                              if ($item->sexo == 'F') $estatisticas["manha"]['candidaturas']['f'] += 1;
 
-        return $item;
-      });
+                              if (!$grades->isEmpty()) {
+                                  $estatisticas["manha"]['exames']['total'] += 1;
+                                  if ($item->sexo == 'M') $estatisticas["manha"]['exames']['m'] += 1;
+                                  if ($item->sexo == 'F') $estatisticas["manha"]['exames']['f'] += 1;
 
+                                  if ($resultado >= 10) {
+                                      $estatisticas["manha"]['admitidos']['total'] += 1;
+                                      if ($item->sexo == 'M') $estatisticas["manha"]['admitidos']['m'] += 1;
+                                      if ($item->sexo == 'F') $estatisticas["manha"]['admitidos']['f'] += 1;
 
+                                      if (!$matriculado->isEmpty()) {
+                                          $estatisticas["manha"]['matriculados']['total'] += 1;
+                                          if ($item->sexo == 'M') $estatisticas["manha"]['matriculados']['m'] += 1;
+                                          if ($item->sexo == 'F') $estatisticas["manha"]['matriculados']['f'] += 1;
+                                      }
+                                  } else {
+                                      $estatisticas["manha"]['reprovados']['total'] += 1;
+                                      if ($item->sexo == 'M') $estatisticas["manha"]['reprovados']['m'] += 1;
+                                      if ($item->sexo == 'F') $estatisticas["manha"]['reprovados']['f'] += 1;
+                                  }
+                              } else {
+                                  $estatisticas["manha"]['ausentes']['total'] += 1;
+                                  if ($item->sexo == 'M') $estatisticas["manha"]['ausentes']['m'] += 1;
+                                  if ($item->sexo == 'F') $estatisticas["manha"]['ausentes']['f'] += 1;
+                              }
+                          }
+                          if ($item->turno == 12) {
+                              $estatisticas["tarde"]['candidaturas']['total'] += 1;
+                              if ($item->sexo == 'M') $estatisticas["tarde"]['candidaturas']['m'] += 1;
+                              if ($item->sexo == 'F') $estatisticas["tarde"]['candidaturas']['f'] += 1;
 
-      $candidatos = collect($emolumentos_vagas)->groupBy("course")->map(function ($curso) use ($lectiveYear) {
-        $estatisticas = [
+                              if (!$grades->isEmpty()) {
+                                  $estatisticas["tarde"]['exames']['total'] += 1;
+                                  if ($item->sexo == 'M') $estatisticas["tarde"]['exames']['m'] += 1;
+                                  if ($item->sexo == 'F') $estatisticas["tarde"]['exames']['f'] += 1;
 
-          "money" => 0,
-          'manha' => [
-            'candidaturas' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'exames' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'ausentes' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'reprovados' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'admitidos' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'matriculados' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-          ],
+                                  if ($resultado >= 10) {
+                                      $estatisticas["tarde"]['admitidos']['total'] += 1;
+                                      if ($item->sexo == 'M') $estatisticas["tarde"]['admitidos']['m'] += 1;
+                                      if ($item->sexo == 'F') $estatisticas["tarde"]['admitidos']['f'] += 1;
 
-          'tarde' => [
-            'candidaturas' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'exames' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'ausentes' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'reprovados' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'admitidos' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'matriculados' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-          ],
+                                      if (!$matriculado->isEmpty()) {
+                                          $estatisticas["tarde"]['matriculados']['total'] += 1;
+                                          if ($item->sexo == 'M') $estatisticas["tarde"]['matriculados']['m'] += 1;
+                                          if ($item->sexo == 'F') $estatisticas["tarde"]['matriculados']['f'] += 1;
+                                      }
+                                  } else {
+                                      $estatisticas["tarde"]['reprovados']['total'] += 1;
+                                      if ($item->sexo == 'M') $estatisticas["tarde"]['reprovados']['m'] += 1;
+                                      if ($item->sexo == 'F') $estatisticas["tarde"]['reprovados']['f'] += 1;
+                                  }
+                              } else {
+                                  $estatisticas["tarde"]['ausentes']['total'] += 1;
+                                  if ($item->sexo == 'M') $estatisticas["tarde"]['ausentes']['m'] += 1;
+                                  if ($item->sexo == 'F') $estatisticas["tarde"]['ausentes']['f'] += 1;
+                              }
+                          }
+                          if ($item->turno == 13) {
+                              $estatisticas["noite"]['candidaturas']['total'] += 1;
+                              if ($item->sexo == 'M') $estatisticas["noite"]['candidaturas']['m'] += 1;
+                              if ($item->sexo == 'F') $estatisticas["noite"]['candidaturas']['f'] += 1;
 
-          'noite' => [
-            'candidaturas' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'exames' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'ausentes' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'reprovados' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'admitidos' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-            'matriculados' => [
-              'total' => 0,
-              'm' => 0,
-              'f' => 0
-            ],
-          ]
+                              if (!$grades->isEmpty()) {
+                                  $estatisticas["noite"]['exames']['total'] += 1;
+                                  if ($item->sexo == 'M') $estatisticas["noite"]['exames']['m'] += 1;
+                                  if ($item->sexo == 'F') $estatisticas["noite"]['exames']['f'] += 1;
 
-        ];
+                                  if ($resultado >= 10) {
+                                      $estatisticas["noite"]['admitidos']['total'] += 1;
+                                      if ($item->sexo == 'M') $estatisticas["noite"]['admitidos']['m'] += 1;
+                                      if ($item->sexo == 'F') $estatisticas["noite"]['admitidos']['f'] += 1;
 
-        // m = 6, t = 7, n = 3
-        $turnos = ["qtd_m" => 0, "qtd_t" => 0, "qtd_n" => 0];
-
-        foreach ($curso as $item) {
-
-          if (isset($item->state) && $item->state == "total") {
-
-            $estatisticas["money"] = $item->valor;
-            if (isset($item->turno)) {
-
-              $grades = DB::table('grades as g')
-                ->where('student_id', $item->usuario_id)
-                ->whereBetween('g.updated_at', [$lectiveYear->start_date, $lectiveYear->end_date])
-                ->whereNull('g.deleted_by')
-                ->whereNull('g.deleted_at')
-                ->join('disciplines as d', 'g.discipline_id', '=', 'd.id')
-                ->leftJoin('disciplines_translations as dt', function ($join) {
-                  $join->on('dt.discipline_id', '=', 'd.id');
-                  $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                  $join->on('dt.active', '=', DB::raw(true));
-                })
-                ->where('d.discipline_profiles_id', 8)
-                ->select(['g.value as nota', 'dt.display_name as disciplina', 'd.percentage as percentagem'])
-                ->get();
-
-
-
-              if (isset($grades[0]->nota, $grades[1]->nota)) {
-                $resultado = round(($grades[0]->nota * ($grades[0]->percentagem / 100)) + ($grades[1]->nota * ($grades[1]->percentagem / 100)));
-              } else if (isset($grades[0]->nota) && !isset($grades[1]->nota)) {
-                $resultado = $grades[0]->nota;
-              } else {
-                $resultado = round((($grades[0]->nota ?? 0) + ($grades[1]->nota ?? 0)) / 2);
+                                      if (!$matriculado->isEmpty()) {
+                                          $estatisticas["noite"]['matriculados']['total'] += 1;
+                                          if ($item->sexo == 'M') $estatisticas["noite"]['matriculados']['m'] += 1;
+                                          if ($item->sexo == 'F') $estatisticas["noite"]['matriculados']['f'] += 1;
+                                      }
+                                  } else {
+                                      $estatisticas["noite"]['reprovados']['total'] += 1;
+                                      if ($item->sexo == 'M') $estatisticas["noite"]['reprovados']['m'] += 1;
+                                      if ($item->sexo == 'F') $estatisticas["noite"]['reprovados']['f'] += 1;
+                                  }
+                              } else {
+                                  $estatisticas["noite"]['ausentes']['total'] += 1;
+                                  if ($item->sexo == 'M') $estatisticas["noite"]['ausentes']['m'] += 1;
+                                  if ($item->sexo == 'F') $estatisticas["noite"]['ausentes']['f'] += 1;
+                              }
+                          }
+                      }
+                  }
               }
 
-              $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYear->id);
-
-
-              $matriculado = DB::table('matriculations')
-                ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
-                ->join('article_requests as art_requests', 'art_requests.user_id', '=', 'matriculations.user_id')
-                ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)
-                ->where('matriculations.lective_year', $lectiveYear->id)
-                ->where('art_requests.status', 'total')
-                ->where('matriculations.user_id', $item->usuario_id)
-                ->distinct('matriculations.id')
-                ->get();
-              dd($matriculado);
-              if ($item->turno == 11) {
-                $estatisticas["manha"]['candidaturas']['total'] += 1;
-
-                if ($item->sexo == 'M')
-                  $estatisticas["manha"]['candidaturas']['m'] += 1;
-
-                if ($item->sexo == 'F')
-                  $estatisticas["manha"]['candidaturas']['f'] += 1;
-
-                // exames
-                if (!$grades->isEmpty()) {
-
-                  $estatisticas["manha"]['exames']['total'] += 1;
-
-                  if ($item->sexo == 'M')
-                    $estatisticas["manha"]['exames']['m'] += 1;
-
-                  if ($item->sexo == 'F')
-                    $estatisticas["manha"]['exames']['f'] += 1;
-
-                  //admitidos
-                  if ($resultado >= 10) {
-                    $estatisticas["manha"]['admitidos']['total'] += 1;
-
-                    if ($item->sexo == 'M')
-                      $estatisticas["manha"]['admitidos']['m'] += 1;
-
-                    if ($item->sexo == 'F')
-                      $estatisticas["manha"]['admitidos']['f'] += 1;
-
-
-                    // matriculados
-                    if (!$matriculado->isEmpty()) {
-
-                      $estatisticas["manha"]['matriculados']['total'] += 1;
-
-                      if ($item->sexo == 'M')
-                        $estatisticas["manha"]['matriculados']['m'] += 1;
-
-                      if ($item->sexo == 'F')
-                        $estatisticas["manha"]['matriculados']['f'] += 1;
-                    }
-
-
-                  }
-                  //reprovados
-                  else {
-                    $estatisticas["manha"]['reprovados']['total'] += 1;
-
-                    if ($item->sexo == 'M')
-                      $estatisticas["manha"]['reprovados']['m'] += 1;
-
-                    if ($item->sexo == 'F')
-                      $estatisticas["manha"]['reprovados']['f'] += 1;
-                  }
-                }
-
-                // ausentes
-                else {
-
-                  $estatisticas["manha"]['ausentes']['total'] += 1;
-
-                  if ($item->sexo == 'M')
-                    $estatisticas["manha"]['ausentes']['m'] += 1;
-
-                  if ($item->sexo == 'F')
-                    $estatisticas["manha"]['ausentes']['f'] += 1;
-
-                }
-
-
-              }
-              if ($item->turno == 12) {
-
-                $estatisticas["tarde"]['candidaturas']['total'] += 1;
-
-                if ($item->sexo == 'M')
-                  $estatisticas["tarde"]['candidaturas']['m'] += 1;
-
-                if ($item->sexo == 'F')
-                  $estatisticas["tarde"]['candidaturas']['f'] += 1;
-
-
-                // exames
-                if (!$grades->isEmpty()) {
-                  $estatisticas["tarde"]['exames']['total'] += 1;
-
-                  if ($item->sexo == 'M')
-                    $estatisticas["tarde"]['exames']['m'] += 1;
-
-                  if ($item->sexo == 'F')
-                    $estatisticas["tarde"]['exames']['f'] += 1;
-
-                  //admitidos
-                  if ($resultado >= 10) {
-                    $estatisticas["tarde"]['admitidos']['total'] += 1;
-
-                    if ($item->sexo == 'M')
-
-                      $estatisticas["tarde"]['admitidos']['m'] += 1;
-
-                    if ($item->sexo == 'F')
-                      $estatisticas["tarde"]['admitidos']['f'] += 1;
-
-
-                    // matriculados
-                    if (!$matriculado->isEmpty()) {
-
-                      $estatisticas["tarde"]['matriculados']['total'] += 1;
-
-                      if ($item->sexo == 'M')
-
-                        $estatisticas["tarde"]['matriculados']['m'] += 1;
-
-                      if ($item->sexo == 'F')
-                        $estatisticas["tarde"]['matriculados']['f'] += 1;
-                    }
-
-
-                  }
-                  //reprovados
-                  else {
-                    $estatisticas["tarde"]['reprovados']['total'] += 1;
-
-                    if ($item->sexo == 'M')
-
-                      $estatisticas["tarde"]['reprovados']['m'] += 1;
-
-                    if ($item->sexo == 'F')
-                      $estatisticas["tarde"]['reprovados']['f'] += 1;
-                  }
-                }
-
-
-
-
-                // ausentes
-                else {
-                  $estatisticas["tarde"]['ausentes']['total'] += 1;
-
-                  if ($item->sexo == 'M')
-                    $estatisticas["tarde"]['ausentes']['m'] += 1;
-
-                  if ($item->sexo == 'F')
-                    $estatisticas["tarde"]['ausentes']['f'] += 1;
-
-                }
-              }
-              if ($item->turno == 13) {
-
-                $estatisticas["noite"]['candidaturas']['total'] += 1;
-
-                if ($item->sexo == 'M')
-                  $estatisticas["noite"]['candidaturas']['m'] += 1;
-
-                if ($item->sexo == 'F')
-                  $estatisticas["noite"]['candidaturas']['f'] += 1;
-
-
-                // exames
-                if (!$grades->isEmpty()) {
-                  $estatisticas["noite"]['exames']['total'] += 1;
-
-                  if ($item->sexo == 'M')
-                    $estatisticas["noite"]['exames']['m'] += 1;
-
-                  if ($item->sexo == 'F')
-                    $estatisticas["noite"]['exames']['f'] += 1;
-
-                  //admitidos
-                  if ($resultado >= 10) {
-                    $estatisticas["noite"]['admitidos']['total'] += 1;
-
-                    if ($item->sexo == 'M')
-
-                      $estatisticas["noite"]['admitidos']['m'] += 1;
-
-                    if ($item->sexo == 'F')
-                      $estatisticas["noite"]['admitidos']['f'] += 1;
-
-
-                    // matriculados
-                    if (!$matriculado->isEmpty()) {
-
-                      $estatisticas["noite"]['matriculados']['total'] += 1;
-
-                      if ($item->sexo == 'M')
-
-                        $estatisticas["noite"]['matriculados']['m'] += 1;
-
-                      if ($item->sexo == 'F')
-                        $estatisticas["noite"]['matriculados']['f'] += 1;
-                    }
-
-
-                  }
-                  //reprovados
-                  else {
-                    $estatisticas["noite"]['reprovados']['total'] += 1;
-
-                    if ($item->sexo == 'M')
-
-                      $estatisticas["noite"]['reprovados']['m'] += 1;
-
-                    if ($item->sexo == 'F')
-                      $estatisticas["noite"]['reprovados']['f'] += 1;
-                  }
-                }
-
-
-
-
-                // ausentes
-                else {
-                  $estatisticas["noite"]['ausentes']['total'] += 1;
-
-                  if ($item->sexo == 'M')
-                    $estatisticas["noite"]['ausentes']['m'] += 1;
-
-                  if ($item->sexo == 'F')
-                    $estatisticas["noite"]['ausentes']['f'] += 1;
-
-                }
-              }
-            }
+              return $estatisticas;
+          });
+          
+          // Debug: Verificar se os candidatos foram processados
+          if(empty($candidatos)) {
+              dd('Sem dados de candidatos processados');
           }
-        }
 
-        return $estatisticas;
-      });
+          $emolumentos = ["total" => 0, "pending" => 0, "total_money" => 0, "espera_money" => 0];
 
-
-      $emolumentos = ["total" => 0, "pending" => 0, "total_money" => 0, "espera_money" => 0];
-
-      foreach ($all_emolumentos as $item) {
-
-        if (in_array($item->usuario_id, $array_candidates)) {
-          if ($item->state == "total") {
-            ++$emolumentos["total"];
-            $emolumentos["total_money"] += $item->valor;
+          foreach ($all_emolumentos as $item) {
+              if (in_array($item->usuario_id, $array_candidates)) {
+                  if ($item->state == "total") {
+                      ++$emolumentos["total"];
+                      $emolumentos["total_money"] += $item->valor;
+                  }
+                  if ($item->state == "pending") {
+                      ++$emolumentos["pending"];
+                      $emolumentos["espera_money"] += $item->valor;
+                  }
+              }
           }
-          if ($item->state == "pending") {
-            ++$emolumentos["pending"];
-            $emolumentos["espera_money"] += $item->valor;
+
+          $staff = collect($model)->groupBy("us_created_by")->map(function ($candidato) {
+              $estatisticas = ["inscricao" => 0];
+              $p_total = 0;
+              foreach ($candidato as $item) {
+                  $estatisticas["inscricao"] = ++$p_total;
+              }
+              return $estatisticas;
+          });
+          
+          // Debug: Verificar se o staff foi processado
+          if(empty($staff)) {
+              dd('Sem dados de staff');
           }
-        }
+
+          $datas = collect($model)->groupBy("criado_a")->map(function ($candidato) {
+              $estatisticas = ["inscricao" => 0];
+              $p_total = 0;
+              foreach ($candidato as $item) {
+                  $estatisticas["inscricao"] = ++$p_total;
+              }
+              return $estatisticas;
+          });
+          
+          // Debug: Verificar se as datas foram processadas
+          if(empty($datas)) {
+              dd('Sem dados de datas');
+          }
+
+          $new_datas = [];
+          $dat = 0;
+          foreach ($datas as $key => $item) {
+              $new_datas[] = ["dia" => explode(" ", $key)[0], "candidatos" => $item["inscricao"]];
+          }
+
+          $datas_inscricao = collect($new_datas)->sortBy('dia')->groupBy("dia")->map(function ($dias) {
+              $inscricao = 0;
+              foreach ($dias as $key => $item) {
+                  $inscricao = $inscricao + $item["candidatos"];
+              }
+              return $inscricao;
+          });
+          
+          // Debug: Verificar se as datas de inscrição foram processadas
+          if(empty($datas_inscricao)) {
+              dd('Sem dados de datas de inscrição');
+          }
+
+          $fase = DB::table('lective_candidate as lc')
+              ->where('lc.id_years', $anoletivo)
+              ->where('lc.fase', 1)
+              ->select('lc.id')
+              ->first();
+              
+          // Debug: Verificar se a fase foi encontrada
+          if(empty($fase)) {
+              dd('Fase não encontrada');
+          }
+
+          $vagas = DB::table('anuncio_vagas as vaga')
+              ->join('courses as c', 'c.id', '=', 'vaga.course_id')
+              ->leftjoin('department_translations as dpt', 'dpt.departments_id', '=', 'c.departments_id')
+              ->leftJoin('lective_candidate as lc', 'lc.id', '=', 'vaga.id_fase')
+              ->leftJoin('courses_translations as ct', function ($join) {
+                  $join->on('ct.courses_id', '=', 'c.id');
+                  $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                  $join->on('ct.active', '=', DB::raw(true));
+              })
+              ->where([
+                  ['vaga.lective_year', '=', $anoletivo],
+                  ['vaga.id_fase', '=', $fase->id],
+                  ['vaga.deleted_at', '=', null]
+              ])
+              ->where([
+                  ['dpt.language_id', '=', 1],
+                  ['dpt.active', '=', 1],
+              ])
+              ->select([
+                  'dpt.display_name as departamento',
+                  'c.departments_id as departamento_id',
+                  'ct.display_name',
+                  'ct.courses_id',
+                  'ct.abbreviation',
+                  DB::raw('SUM(vaga.manha) as manha'),
+                  DB::raw('SUM(vaga.tarde) as tarde'),
+                  DB::raw('SUM(vaga.noite) as noite'),
+                  'vaga.lective_year as id_ano_lectivo',
+                  'lc.fase'
+              ])
+              ->groupBy('dpt.display_name', 'c.departments_id', 'ct.display_name', 'ct.courses_id', 'vaga.lective_year')
+              ->orderBy('ct.display_name')
+              ->get();
+              
+          // Debug: Verificar se as vagas foram encontradas
+          if(empty($vagas)) {
+              dd('Sem dados de vagas');
+          }
+
+          $vagas = $vagas->groupBy('departamento');
+
+          $institution = Institution::latest()->first();
+          
+          // Debug: Verificar se a instituição foi encontrada
+          if(empty($institution)) {
+              dd('Instituição não encontrada');
+          }
+
+          $cordenador = DB::table('user_parameters as up')
+              ->join("institutions", "institutions.vice_director_academica", "up.users_id")
+              ->where("up.parameters_id", "1")
+              ->select(["up.value"])
+              ->first();
+
+          $cordenador = isset($cordenador->value) ? ($cordenador->value) : "";
+          $titulo_documento = "Relatório: Candidaturas";
+          $anoLectivo_documento = "Ano ACADÊMICO: ";
+          $documentoGerado_documento = "Documento gerado a";
+          $documentoCode_documento = 5;
+          $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
+          $date_generated = date("Y/m/d");
+          
+          $pdf = PDF::loadView(
+              "Users::candidate.pdf-relatorios-global",
+              compact(
+                  'vagas',
+                  'cordenador',
+                  'lectiveYears',
+                  'institution',
+                  'titulo_documento',
+                  'anoLectivo_documento',
+                  'documentoGerado_documento',
+                  'documentoCode_documento',
+                  'date_generated',
+                  'twoCourse',
+                  'twoCourseUsers',
+                  'logotipo',
+                  'candidatos',
+                  'todos_candidatos',
+                  'staff',
+                  'datas_inscricao',
+                  'emolumentos'
+              )
+          );
+
+          $pdf->setOption('margin-top', '2mm');
+          $pdf->setOption('margin-left', '2mm');
+          $pdf->setOption('margin-bottom', '15mm');
+          $pdf->setOption('margin-right', '2mm');
+          $pdf->setOption('enable-javascript', true);
+          $pdf->setOption('debug-javascript', true);
+          $pdf->setOption('javascript-delay', 1000);
+          $pdf->setOption('enable-smart-shrinking', true);
+          $pdf->setOption('no-stop-slow-scripts', true);
+          $pdf->setPaper('a4', 'portrait');
+
+          $pdf_name = "Relatório_candidaturas_" . $lectiveYears[0]->currentTranslation->display_name . "(" . "Global" . "ª Fase)";
+
+          $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+          $pdf->setOption('footer-html', $footer_html);
+          return $pdf->stream($pdf_name . '.pdf');
+
+      } catch (Exception $e) {
+          dd($e);
       }
-
-
-
-
-      $staff = collect($model)->groupBy("us_created_by")->map(function ($candidato) {
-
-        $estatisticas = ["inscricao" => 0];
-        $p_total = 0;
-        foreach ($candidato as $item) {
-
-          $estatisticas["inscricao"] = ++$p_total;
-        }
-
-        return $estatisticas;
-      });
-
-      $datas = collect($model)->groupBy("criado_a")->map(function ($candidato) {
-        $estatisticas = ["inscricao" => 0];
-        $p_total = 0;
-        foreach ($candidato as $item) {
-
-          $estatisticas["inscricao"] = ++$p_total;
-        }
-
-        return $estatisticas;
-      });
-
-
-      $new_datas = [];
-
-      $dat = 0;
-      foreach ($datas as $key => $item) {
-
-        $new_datas[] = ["dia" => explode(" ", $key)[0], "candidatos" => $item["inscricao"]];
-      }
-
-      $datas_inscricao = collect($new_datas)->sortBy('dia')->groupBy("dia")->map(function ($dias) {
-        $inscricao = 0;
-        foreach ($dias as $key => $item) {
-          $inscricao = $inscricao + $item["candidatos"];
-        }
-        return $inscricao;
-      });
-
-
-
-
-
-      $fase = DB::table('lective_candidate as lc')
-        ->where('lc.id_years', $anoletivo)
-        ->where('lc.fase', 1)
-        ->select('lc.id')
-        ->first();
-
-
-      $vagas = DB::table('anuncio_vagas as vaga')
-        ->join('courses as c', 'c.id', '=', 'vaga.course_id')
-        ->leftjoin('department_translations as dpt', 'dpt.departments_id', '=', 'c.departments_id')
-        ->leftJoin('lective_candidate as lc', 'lc.id', '=', 'vaga.id_fase')
-        ->leftJoin('courses_translations as ct', function ($join) {
-          $join->on('ct.courses_id', '=', 'c.id');
-          $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-          $join->on('ct.active', '=', DB::raw(true));
-        })
-        ->where([
-          ['vaga.lective_year', '=', $anoletivo],
-          ['vaga.id_fase', '=', $fase->id],
-          ['vaga.deleted_at', '=', null]
-        ])
-        ->where([
-          ['dpt.language_id', '=', 1],
-          ['dpt.active', '=', 1],
-        ])
-        ->select([
-          'dpt.display_name as departamento',
-          'c.departments_id as departamento_id',
-          'ct.display_name',
-          'ct.courses_id',
-          'ct.abbreviation',
-          DB::raw('SUM(vaga.manha) as manha'),
-          DB::raw('SUM(vaga.tarde) as tarde'),
-          DB::raw('SUM(vaga.noite) as noite'),
-          'vaga.lective_year as id_ano_lectivo',
-          'lc.fase'
-        ])
-        ->groupBy('dpt.display_name', 'c.departments_id', 'ct.display_name', 'ct.courses_id', 'vaga.lective_year')
-        ->orderBy('ct.display_name')
-        ->get();
-
-      $vagas = $vagas->groupBy('departamento');
-
-      // view("Grades::exame.list_candidate")->with($data);
-      $institution = Institution::latest()->first();
-
-      $cordenador = DB::table('user_parameters as up')
-        ->join("institutions", "institutions.vice_director_academica", "up.users_id")
-        ->where("up.parameters_id", "1")
-        ->select(["up.value"])
-        ->first();
-
-
-      $cordenador = isset($cordenador->value) ? ($cordenador->value) : "";
-      $titulo_documento = "Relatório: Candidaturas";
-      $anoLectivo_documento = "Ano ACADÊMICO: ";
-      $documentoGerado_documento = "Documento gerado a";
-      $documentoCode_documento = 5;
-      $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
-      $date_generated = date("Y/m/d");
-      $pdf = PDF::loadView(
-        "Users::candidate.pdf-relatorios-global",
-        compact(
-          'vagas',
-          'cordenador',
-          'lectiveYears',
-          'institution',
-          'titulo_documento',
-          'anoLectivo_documento',
-          'documentoGerado_documento',
-          'documentoCode_documento',
-          'date_generated',
-          'twoCourse',
-          'twoCourseUsers',
-          'logotipo',
-          'candidatos',
-          'todos_candidatos',
-          'staff',
-          'datas_inscricao',
-          'emolumentos'
-        )
-      );
-
-      $pdf->setOption('margin-top', '2mm');
-      $pdf->setOption('margin-left', '2mm');
-      $pdf->setOption('margin-bottom', '15mm');
-      $pdf->setOption('margin-right', '2mm');
-      $pdf->setOption('enable-javascript', true);
-      $pdf->setOption('debug-javascript', true);
-      $pdf->setOption('javascript-delay', 1000);
-      $pdf->setOption('enable-smart-shrinking', true);
-      $pdf->setOption('no-stop-slow-scripts', true);
-      $pdf->setPaper('a4', 'portrait');
-
-      $pdf_name = "Relatório_candidaturas_" . $lectiveYears[0]->currentTranslation->display_name . "(" . "Global" . "ª Fase)";
-
-      // $footer_html = view()->make('Users::users.partials.pdf_footer', compact('institution'))->render();
-      $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-      $pdf->setOption('footer-html', $footer_html);
-      return $pdf->stream($pdf_name . '.pdf');
-
-    } catch (Exception $e) {
-      dd($e);
-    }
   }
-
+  
   public function generatePDFForCandidate($id, Request $request)
   {
 
