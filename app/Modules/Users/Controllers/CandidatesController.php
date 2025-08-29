@@ -2079,7 +2079,7 @@ class CandidatesController extends Controller
                 ->where('matriculations.user_id', $item->usuario_id)
                 ->distinct('matriculations.id')
                 ->get();
-
+              dd($matriculado)
               if ($item->turno == 11) {
                 $estatisticas["manha"]['candidaturas']['total'] += 1;
 
