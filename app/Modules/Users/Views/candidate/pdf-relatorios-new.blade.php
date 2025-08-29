@@ -661,7 +661,7 @@
                 {{ $item_vagas->manha != 0 ? $item_vagas->manha : '-' }}
                 </td>
                 <td class="text-center bg-total t-color ">
-                {{ $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? "-" }}
+                {{ $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0 ?? "-" }}
                 </td>
                 <td class="text-center bg-sexo t-color ">
                 {{ $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['m'] ?? "-" }}
@@ -699,7 +699,7 @@
                 @php 
             $total = $candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'] +
           $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'] +
-          $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'];
+          $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0;
 
           @endphp
                 <td class="text-center bg-total t-color">
@@ -737,7 +737,7 @@
 
 
         //Vagas
-        $vaga_manha_global += $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'];
+        $vaga_manha_global += $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0;
         $vaga_tarde_global += $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'];
         $vaga_noite_global += $candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'];
 
@@ -750,7 +750,7 @@
 
         //Candidaturas
 
-        $candidatos_m_global += $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'];
+        $candidatos_m_global += $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0;
         $candidatos_t_global += $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'];
         $candidatos_n_global += $candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'];
 
@@ -827,11 +827,11 @@
               @php
         // Total para o número de candidatos
 
-        $m_c += ($candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0);
+        $m_c += ($candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0 ?? 0);
         $money = ($candidatos[$item_vagas->courses_id]['money'] ?? 0);
         $t_c += ($candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'] ?? 0);
         $n_c += ($candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'] ?? 0);
-        $m_p_c += ($candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0);
+        $m_p_c += ($candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0 ?? 0);
         $t_p_c += ($candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'] ?? 0);
         $n_p_c += ($candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'] ?? 0);
 
@@ -869,8 +869,8 @@
 
         // Cálculo de ausentes
         // Cálculo de ausentes
-        $p_m_ausentes = $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] != 0
-        ? round(($candidatos[$item_vagas->courses_id]['manha']['ausentes']['total'] / $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total']) * 100, 0) . '%'
+        $p_m_ausentes = $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0 != 0
+        ? round(($candidatos[$item_vagas->courses_id]['manha']['ausentes']['total'] / $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0) * 100, 0) . '%'
         : '0%';
         $p_t_ausentes = $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'] != 0
         ? round(($candidatos[$item_vagas->courses_id]['tarde']['ausentes']['total'] / $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total']) * 100, 0) . '%'
@@ -884,8 +884,8 @@
         : '0%';
 
         // Cálculo de exames
-        $p_m_exames = $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] != 0
-        ? round(($candidatos[$item_vagas->courses_id]['manha']['exames']['total'] / $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total']) * 100, 0) . '%'
+        $p_m_exames = $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0 != 0
+        ? round(($candidatos[$item_vagas->courses_id]['manha']['exames']['total'] / $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0) * 100, 0) . '%'
         : '0%';
         $p_t_exames = $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'] != 0
         ? round(($candidatos[$item_vagas->courses_id]['tarde']['exames']['total'] / $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total']) * 100, 0) . '%'
@@ -964,7 +964,7 @@
 
 
           //Vagas
-          $vaga_manha_geral += $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'];
+          $vaga_manha_geral += $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0;
           $vaga_tarde_geral += $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'];
           $vaga_noite_geral += $candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'];
 
@@ -977,7 +977,7 @@
 
           //Candidaturas
 
-          $candidatos_m_geral += $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'];
+          $candidatos_m_geral += $candidatos[$item_vagas->courses_id]['manha']['candidaturas']['total'] ?? 0;
           $candidatos_t_geral += $candidatos[$item_vagas->courses_id]['tarde']['candidaturas']['total'];
           $candidatos_n_geral += $candidatos[$item_vagas->courses_id]['noite']['candidaturas']['total'];
 
@@ -2067,6 +2067,7 @@
                  $candidatos_global_ausente_m_f + $candidatos_global_ausente_n_f + $candidatos_global_ausente_t_f
                 }}</td>
                 </tr>
+
                 <tr>
                   <td class="text-right bg-reprovados" style="font-size: 12px;">Reprovados</td>
                   <td class="text-center bg-reprovados" style="font-size: 15px;">{{ $p_m_reprovados_global }}</td>
@@ -2109,6 +2110,7 @@
                  $candidatos_global_reprovado_m_f + $candidatos_global_reprovado_n_f + $candidatos_global_reprovado_t_f
                 }}</td>
                 </tr>
+
                 <tr>
                   <td class="text-left bg-admitidos" style="font-size: 15px;">Admitidos</td>
                   <td class="text-center bg-admitidos" style="font-size: 15px;">{{ $p_m_admitidos_global }}</td>
@@ -2151,6 +2153,8 @@
                  $candidatos_global_admitido_m_f + $candidatos_global_admitido_n_f + $candidatos_global_admitido_t_f
                 }}</td>
                 </tr>
+
+
                 <tr>
                   <td class="text-center bg-matriculados text-uppercase font-weight-bold" style="font-size: 15px;">
                     Matriculados</td>
@@ -2198,6 +2202,7 @@
                 <tr style="height:30px !important">
                   <td class="bg-white"></td>
                 </tr>
+
                 <tr>
                   <td class="bg-white"></td>
                 </tr>
