@@ -1064,36 +1064,12 @@ class CandidatesController extends Controller
     return view("Users::candidate.relatorios")->with($data);
   }
 
-  //Nova função de rcandidatos
-  private function incrementarEstatistica(&$estatisticas, $turno, $tipo, $sexo)
-  {
-      $turnosMap = [
-          11 => 'manha',
-          12 => 'tarde',
-          13 => 'noite'
-      ];
 
-      if (!isset($turnosMap[$turno])) return;
 
-      $turnoKey = $turnosMap[$turno];
-
-      // Incrementa total
-      $estatisticas[$turnoKey][$tipo]['total'] += 1;
-
-      // Incrementa por sexo
-      if ($sexo == 'M') {
-          $estatisticas[$turnoKey][$tipo]['m'] += 1;
-      } elseif ($sexo == 'F') {
-          $estatisticas[$turnoKey][$tipo]['f'] += 1;
-      }
-  }
-
-  //trabalhando aqui agora
   public function relatoriosPDF($anoletivo, Request $request)
   {
-    //dd($anoletivo, $request->all());
+    dd($anoLectivo, $request->all());
     try {
-      
       if (isset($anoletivo)) {
         $lectiveYear = DB::table('lective_years')
           ->where('id', $anoletivo)
@@ -1110,8 +1086,7 @@ class CandidatesController extends Controller
       // return $all_emolumentos;
 
       $twoCourse = [];
-      
-      //dd($cursos->pluck('state', 'usuario_id'));
+
       foreach ($cursos as $item) {
         if ($item->state == 'total') {
           if (isset($twoCourse[$item->usuario_id])) {
@@ -1127,13 +1102,20 @@ class CandidatesController extends Controller
       });
       $twoCourseUsers = count($twoCourseUsers);
 
+
       $array_candidates = array();
 
       foreach ($model as $candidates) {
         array_push($array_candidates, $candidates->id);
       }
+
+
+
+
+
       // return $all_emolumentos;
       // return $model;
+
       $lectiveYears = LectiveYear::with(['currentTranslation'])
         ->where('id', $anoletivo)
         ->select('*')
@@ -1187,6 +1169,7 @@ class CandidatesController extends Controller
         ->orderBy('ar.id', 'desc')
         ->get();
 
+
       $last_cand = DB::table('user_candidate')
         ->where("code", "like", "%CE%")
         ->where("year_fase_id", $request->fase)
@@ -1200,6 +1183,8 @@ class CandidatesController extends Controller
       }
 
       // Se for a nova fase
+
+
       $last_cand = DB::table('user_candidate')
         ->where("code", "like", "%CE%")
         ->where("year_fase_id", $request->fase)
@@ -1219,7 +1204,10 @@ class CandidatesController extends Controller
         return $item;
       });
 
+
+
       $candidatos = collect($emolumentos_vagas)->groupBy("course")->map(function ($curso) use ($lectiveYear) {
+
 
         $estatisticas = [
 
@@ -1350,6 +1338,8 @@ class CandidatesController extends Controller
                 ->select(['g.value as nota', 'dt.display_name as disciplina', 'd.percentage as percentagem'])
                 ->get();
 
+
+
               if (isset($grades[0]->nota, $grades[1]->nota)) {
                 $resultado = round(($grades[0]->nota * ($grades[0]->percentagem / 100)) + ($grades[1]->nota * ($grades[1]->percentagem / 100)));
               } else if (isset($grades[0]->nota) && !isset($grades[1]->nota)) {
@@ -1376,7 +1366,12 @@ class CandidatesController extends Controller
                 ->get();
 
 
+
+
               if ($item->turno == 11) {
+
+
+
 
 
                 $estatisticas["manha"]['candidaturas']['total'] += 1;
@@ -1427,7 +1422,14 @@ class CandidatesController extends Controller
                   }
                   //reprovados
                   else {
-                    $this->incrementarEstatistica($estatisticas, $item->turno, 'reprovados', $item->sexo);
+                    $estatisticas["manha"]['reprovados']['total'] += 1;
+
+                    if ($item->sexo == 'M')
+
+                      $estatisticas["manha"]['reprovados']['m'] += 1;
+
+                    if ($item->sexo == 'F')
+                      $estatisticas["manha"]['reprovados']['f'] += 1;
                   }
                 }
 
@@ -1456,6 +1458,7 @@ class CandidatesController extends Controller
                 if ($item->sexo == 'F')
                   $estatisticas["tarde"]['candidaturas']['f'] += 1;
 
+
                 // exames
                 if (!$grades->isEmpty()) {
                   $estatisticas["tarde"]['exames']['total'] += 1;
@@ -1477,6 +1480,7 @@ class CandidatesController extends Controller
                     if ($item->sexo == 'F')
                       $estatisticas["tarde"]['admitidos']['f'] += 1;
 
+
                     // matriculados
                     if (!$matriculado->isEmpty()) {
 
@@ -1489,6 +1493,7 @@ class CandidatesController extends Controller
                       if ($item->sexo == 'F')
                         $estatisticas["tarde"]['matriculados']['f'] += 1;
                     }
+
 
                   }
                   //reprovados
@@ -1604,21 +1609,9 @@ class CandidatesController extends Controller
         return $estatisticas;
       });
 
-      // ===============================================
-      // Garantir que todos os valores existam para a view
-      $candidatos_global_reprovado_m_m = 0;
-      $candidatos_global_reprovado_m_f = 0;
-      $candidatos_global_reprovado_total = 0;
 
-      // Iterar sobre todos os cursos e somar os reprovados
-      foreach ($candidatos as $curso) {
-          foreach (['manha','tarde','noite'] as $turno) {
-              $candidatos_global_reprovado_m_m += $curso[$turno]['reprovados']['m'] ?? 0;
-              $candidatos_global_reprovado_m_f += $curso[$turno]['reprovados']['f'] ?? 0;
-              $candidatos_global_reprovado_total += $curso[$turno]['reprovados']['total'] ?? 0;
-          }
-      }
-      // 
+
+
       $emolumentos = ["total" => 0, "pending" => 0, "total_money" => 0, "espera_money" => 0];
 
       foreach ($all_emolumentos as $item) {
@@ -1634,6 +1627,9 @@ class CandidatesController extends Controller
           }
         }
       }
+
+
+
 
       $staff = collect($model)->groupBy("us_created_by")->map(function ($candidato) {
 
@@ -1722,6 +1718,7 @@ class CandidatesController extends Controller
         ->select(["up.value"])
         ->first();
 
+
       $cordenador = isset($cordenador->value) ? ($cordenador->value) : "";
       $titulo_documento = "Relatório: Candidaturas";
       $anoLectivo_documento = "Ano ACADÊMICO: ";
@@ -1729,28 +1726,6 @@ class CandidatesController extends Controller
       $documentoCode_documento = 5;
       $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
       $date_generated = date("Y/m/d");
-
-      /*dd([
-        'vagas' => $vagas,
-        'cordenador' => $cordenador,
-        'lectiveFase' => $lectiveFase,
-        'lectiveYears' => $lectiveYears,
-        'institution' => $institution,
-        'titulo_documento' => $titulo_documento,
-        'anoLectivo_documento' => $anoLectivo_documento,
-        'documentoGerado_documento' => $documentoGerado_documento,
-        'documentoCode_documento' => $documentoCode_documento,
-        'date_generated' => $date_generated,
-        'twoCourse' => $twoCourse,
-        'twoCourseUsers' => $twoCourseUsers,
-        'logotipo' => $logotipo,
-        'candidatos' => $candidatos,
-        'todos_candidatos' => $todos_candidatos,
-        'staff' => $staff,
-        'datas_inscricao' => $datas_inscricao,
-        'emolumentos' => $emolumentos
-      ]);*/
-
       $pdf = PDF::loadView(
         "Users::candidate.pdf-relatorios-new",
         compact(
@@ -1771,10 +1746,7 @@ class CandidatesController extends Controller
           'todos_candidatos',
           'staff',
           'datas_inscricao',
-          'emolumentos',
-          'candidatos_global_reprovado_m_m',
-          'candidatos_global_reprovado_m_f',
-          'candidatos_global_reprovado_total'
+          'emolumentos'
         )
       );
 
@@ -1798,13 +1770,9 @@ class CandidatesController extends Controller
       return $pdf->download($pdf_name . '.pdf');
 
     } catch (Exception $e) {
-      dd([
-          'mensagem' => $e->getMessage(),
-          'linha' => $e->getLine(),
-          'arquivo' => $e->getFile()
-      ]);
+      dd($e);
+      ;
     }
-
   }
 
   private function pre_matricula_confirma_emolumento($lectiveYearSelected)
@@ -2177,8 +2145,13 @@ class CandidatesController extends Controller
                   }
                   //reprovados
                   else {
-                      $this->incrementarEstatistica($estatisticas, $item->turno, 'reprovados', $item->sexo);
+                    $estatisticas["manha"]['reprovados']['total'] += 1;
 
+                    if ($item->sexo == 'M')
+                      $estatisticas["manha"]['reprovados']['m'] += 1;
+
+                    if ($item->sexo == 'F')
+                      $estatisticas["manha"]['reprovados']['f'] += 1;
                   }
                 }
 

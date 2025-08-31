@@ -47,7 +47,7 @@ class CandidatesUtil
       ->join('user_candidate as uca', 'uca.user_id', '=', 'usuario.id')
       ->where("art.id_code_dev", 6)
       ->where("ct.active", 1)
-      ->where("uca.year", $lectiveYear->id)//a dados até aqui
+      ->where("uca.year", $lectiveYear->id)
       ->where('usuario.name', "!=", "")
       ->whereNull('ar.deleted_at')
       ->whereNull('ar.deleted_by')
@@ -75,6 +75,7 @@ class CandidatesUtil
     if ($id_fase != null) {
       $sql = $sql->where('uca.year_fase_id', $id_fase);
     }
+
 
     return $sql;
   }
