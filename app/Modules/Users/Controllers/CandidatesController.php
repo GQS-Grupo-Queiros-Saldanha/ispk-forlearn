@@ -2495,7 +2495,11 @@ class CandidatesController extends Controller
       return $pdf->stream($pdf_name . '.pdf');
 
     } catch (Exception $e) {
-      dd($e);
+      dd([
+          'mensagem' => $e->getMessage(),
+          'linha' => $e->getLine(),
+          'arquivo' => $e->getFile()
+      ]);
     }
   }
 
