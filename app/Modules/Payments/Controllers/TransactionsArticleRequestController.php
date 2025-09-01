@@ -766,54 +766,58 @@ class TransactionsArticleRequestController extends Controller
             // return $nextCode."-2";
         }
     }
+    
+    private function AnoArticle($article_id) {
+        return DB::table('articles')
+            ->where('id', $article_id)
+            ->value('anoLectivo'); // devolve diretamente o valor
+    }
 
-    private function generateReceipt($transactionId, $receipt, $credit_balance, $cancelarMulta, $disciplines, $getRegraImplementEmolu, $getRegraImplementada, $cretidoUser, $matricula_finalista, $articleResume, $user = null)
-    {
+
+    private function generateReceipt($transactionId, $receipt, $credit_balance, $cancelarMulta, $disciplines, $getRegraImplementEmolu, $getRegraImplementada, $cretidoUser, $matricula_finalista, $articleResume, $user = null){
+        
         try {
+            // 1. Carregar os IDs dos artigos da transação
+            $articleIds = Transaction::where('id', $transactionId)
+                ->with('article_request')
+                ->firstOrFail()
+                ->article_request
+                ->pluck('article_id')
+                ->toArray();
+
+            // 2. Determinar o ano (podes pegar o primeiro ou criar lógica para vários artigos)
+            $anoActual = $this->AnoArticle($articleIds[0]); // devolve objeto, vê abaixo
+
+            // Se AnoArticle devolve object, podes fazer:
+            $anoActual = $anoActual->anoLectivo ?? null;
+
+            // 3. Carregar a transação com os relacionamentos e filtro pelo ano
             $transaction = Transaction::where('id', $transactionId)
                 ->with([
-                    'article_request' => function ($q) {
+                    'article_request' => function ($q) use ($anoActual) {
                         $q->with([
-                            'user' => function ($q) {
+                            'user' => function ($q) use ($anoActual) {
                                 $q->with([
-                                    'courses' => function ($q) {
-                                        $q->with('currentTranslation');
+                                    'courses' => function ($q) { $q->with('currentTranslation'); },
+                                    'classes' => function ($q) { 
+                                        $q->with(['room' => function ($q) { $q->with('currentTranslation'); }]);
                                     },
-                                    'classes' => function ($q) {
-                                        $q->with([
-                                            'room' => function ($q) {
-                                                $q->with('currentTranslation');
-                                            },
-                                        ]);
-                                    },
-                                    'parameters' => function ($q) {
-                                        $q->where('code', 'n_mecanografico');
-                                    },
-                                    'user_parameters' => function ($q) {
-                                        $q->where('parameters_id', 1);
-                                    },
-                                    'matriculation' => function ($q) {
-                                        $q->with([
-                                            'classes' => function ($q) {
-                                                $q->with([
-                                                    'room' => function ($q) {
-                                                        $q->with('currentTranslation');
-                                                    },
-                                                ]);
-                                            },
-                                        ]);
+                                    'parameters' => function ($q) { $q->where('code', 'n_mecanografico'); },
+                                    'user_parameters' => function ($q) { $q->where('parameters_id', 1); },
+                                    'matriculation' => function ($q) use ($anoActual) {
+                                        $q->where('ano_lectivo', $anoActual)
+                                        ->with(['classes.room.currentTranslation']);
                                     },
                                 ]);
                             },
                             'article',
                         ]);
                     },
-                    'transaction_info' => function ($q) {
-                        $q->with(['bank']);
-                    },
+                    'transaction_info' => function ($q) { $q->with(['bank']); },
                     'createdBy',
                 ])
                 ->firstOrFail();
+
 
             $transactionInfo = TransactionInfo::whereTransactionId($transactionId)
                 ->with(['bank'])
