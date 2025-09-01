@@ -805,7 +805,7 @@ class TransactionsArticleRequestController extends Controller
                                     'parameters' => function ($q) { $q->where('code', 'n_mecanografico'); },
                                     'user_parameters' => function ($q) { $q->where('parameters_id', 1); },
                                     'matriculation' => function ($q) use ($anoActual) {
-                                        $q->where('ano_lectivo', $anoActual)
+                                        $q->where('lective_year', $anoActual)
                                         ->with(['classes.room.currentTranslation']);
                                     },
                                 ]);
