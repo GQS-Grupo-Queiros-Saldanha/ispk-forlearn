@@ -212,7 +212,7 @@ class RequerimentoController extends Controller
             );
 
             Toastr::success(__('Solicitação de revisão de prova enviada com sucesso!'), __('toastr.success'));
-            return view('Avaliations::requerimento.solicitacao_revisao_prova', ['mensagem'=> $mensagem ]);
+            return view('Avaliations::requerimento.solicitacao_revisao_prova');
 
         }catch (Exception $e) {   
     dd($e->getMessage(), $e->getFile(), $e->getLine());

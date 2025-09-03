@@ -774,8 +774,7 @@ class TransactionsArticleRequestController extends Controller
     }
 
 
-    private function generateReceipt($transactionId, $receipt, $credit_balance, $cancelarMulta, $disciplines, $getRegraImplementEmolu, $getRegraImplementada, $cretidoUser, $matricula_finalista, $articleResume, $user = null)
-    {
+    private function generateReceipt($transactionId, $receipt, $credit_balance, $cancelarMulta, $disciplines, $getRegraImplementEmolu, $getRegraImplementada, $cretidoUser, $matricula_finalista, $articleResume, $user = null){
         try {
             $transaction = Transaction::where('id', $transactionId)
                 ->with([
