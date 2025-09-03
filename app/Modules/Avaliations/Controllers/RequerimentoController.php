@@ -172,7 +172,8 @@ class RequerimentoController extends Controller
                 'user_id' => $user_id, 
                 'article_id' => $emolumento->id, 
                 'base_value' => $emolumento->base_value, 
-                'status' => 'pending', 
+                'status' => 'pending',
+                $created_by = auth()->id();
                 'created_at' => now(), 
                 'updated_at' => now(), 
             ]);
