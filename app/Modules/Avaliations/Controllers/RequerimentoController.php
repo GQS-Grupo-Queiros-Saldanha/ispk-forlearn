@@ -152,6 +152,7 @@ class RequerimentoController extends Controller
             // Validar os dados recebidos
             $user_id = request()->input('student_id');
             $lective_year = request()->input('lective_year');
+            $code = "revisao_prova";
 
             /*$articleRequest = DB::table('article_requests')->inser([ 
                 'user_id' => $user_id, 
