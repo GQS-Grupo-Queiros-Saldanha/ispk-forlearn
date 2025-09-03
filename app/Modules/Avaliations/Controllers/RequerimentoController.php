@@ -172,7 +172,7 @@ class RequerimentoController extends Controller
                 Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
             }
-                       
+            dd($emolumen, $emolumen->id);              
             $articleRequest = DB::table('article_requests')->insert([ 
                 'user_id' => $user_id, 
                 'article_id' => $emolumento->id, 
