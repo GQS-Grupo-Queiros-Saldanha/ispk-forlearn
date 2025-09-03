@@ -153,6 +153,7 @@ class RequerimentoController extends Controller
             $user_id = request()->input('student_id');
             $lective_year = request()->input('lective_year');
             $code = "revisao_prova";
+            $created_by = auth()->user()->id;
 
             // Validar se veio ano lectivo
             if (!$lective_year) {
@@ -173,10 +174,40 @@ class RequerimentoController extends Controller
                 'article_id' => $emolumento->id, 
                 'base_value' => $emolumento->base_value, 
                 'status' => 'pending',
-                $created_by = auth()->id();
+                'created_by' => now(),
                 'created_at' => now(), 
                 'updated_at' => now(), 
             ]);
+            // Criar uma transação
+            $transaction = DB::table('transactions')->insertGetId(
+                [
+                    'type' => 'debit',
+                    'value' => $emolumento->base_value,
+                    'notes' => 'Débito inicial do valor base',
+                    "created_by" => auth()->user()->id,
+                    "created_at" => Carbon::now()
+                ]
+            );
+
+            // Criar article e transações
+            $article_transaction = DB::table('transaction_article_requests')->insertGetId(
+                [
+                    'article_request_id' => $emolumento->id,
+                    'transaction_id' => $transaction,
+                    "value" => $emolumento->base_value,
+                ]
+            );
+
+            // Guarda o codigo do documento 
+            $requerimento = DB::table('requerimento')->insertGetId(
+                [
+                    'article_id' => $emolumento->id,
+                    //'codigo_documento' => $this->gerar_codigo_documento(),
+                    'efeito' => 'Revisão de Prova',
+                    "user_id" => $created_by,
+                    'year' => $lective_year
+                ]
+            );
         
                 
             if (!$emolumento) {
