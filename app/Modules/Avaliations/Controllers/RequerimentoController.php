@@ -169,8 +169,7 @@ class RequerimentoController extends Controller
                 ->where('art.active', true)
                 ->select('art.id', 'art.base_value')
                 ->first();
-            dd($emolumento);  
-              
+                
             if (!$emolumento) {
                 Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
@@ -181,10 +180,9 @@ class RequerimentoController extends Controller
             return view('Avaliations::requerimento.solicitacao_revisao_prova', ['mensagem'=> $mensagem ]);
 
         }catch (Exception $e) {   
-            Toastr::error($e->getMessage(), __('toastr.error'));
+            Toastr::error(__('Falha ao enviar a solicitação de revisão de prova.'), __('toastr.error'));
             return redirect()->back();
         }
-
     }
 
 
