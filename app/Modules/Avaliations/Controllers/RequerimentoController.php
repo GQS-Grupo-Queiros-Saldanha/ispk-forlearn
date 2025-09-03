@@ -173,7 +173,7 @@ class RequerimentoController extends Controller
                 return redirect()->back();
             }
                         
-            $articleRequest = DB::table('article_requests')->insert([ 
+            $articleRequestId = DB::table('article_requests')->insertGetId([ 
                 'user_id' => $user_id, 
                 'article_id' => $emolumento->id, 
                 'base_value' => $emolumento->base_value, 
@@ -183,20 +183,18 @@ class RequerimentoController extends Controller
                 'updated_at' => now(), 
             ]);
             // Criar uma transação
-            $transaction = DB::table('transactions')->insertGetId(
-                [
+            $transaction = DB::table('transactions')->insertGetId([
                     'type' => 'debit',
                     'value' => $emolumento->base_value,
                     'notes' => 'Débito inicial do valor base',
                     "created_by" => auth()->user()->id,
                     "created_at" => Carbon::now()
-                ]
-            );
+            ]);
 
             // Criar article e transações
             $article_transaction = DB::table('transaction_article_requests')->insertGetId(
                 [
-                    'article_request_id' => $emolumento->id,
+                    'article_request_id' => $articleRequestId,
                     'transaction_id' => $transaction,
                     "value" => $emolumento->base_value,
                 ]
