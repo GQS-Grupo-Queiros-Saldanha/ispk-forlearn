@@ -166,7 +166,6 @@ class RequerimentoController extends Controller
                 ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
                 ->where('art.anoLectivo', $lective_year)
                 ->where('cd.code', $code)
-                ->where('art.active', true)
                 ->select('art.id', 'art.base_value')
                 ->first();
                 
