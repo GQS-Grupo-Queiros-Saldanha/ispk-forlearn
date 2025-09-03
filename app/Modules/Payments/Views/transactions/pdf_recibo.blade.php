@@ -80,16 +80,12 @@
                         <td style="font-size: 11px">{{ $nMecanografico }}</td>
                         <td style="font-size: 11px">{{$full_nameStudent}}</td>
                         <?php
-                            $latestMatriculation = $user->matriculation()
-                                ->orderBy('created_at', 'desc') // pega a matrícula mais recente
-                                ->first();
-
-                            $turma = $latestMatriculation && $latestMatriculation->classes->count() > 0
-                                ? $latestMatriculation->classes->first()->display_name
-                                : ($user->classes->first() ? $user->classes->first()->display_name : 'N/A');
-
-                            if ($matricula_finalista == true) {
-                                $turma = 'N/A';
+                            $turma = $user->matriculation ? $user->matriculation->classes->pluck('display_name')->implode(', ') :null;
+                            $turmaInUser = $user->classes->first() ? $user->classes->first()->display_name : null;
+                            $turma = $turma ?: $turmaInUser;
+                            $turma = $turma ?: 'N/A';
+                             if ($matricula_finalista==true) {
+                                $turma='N/A';
                             }
                         ?>
                         <td style="font-size: 11px">{{$user->email}}</td>
