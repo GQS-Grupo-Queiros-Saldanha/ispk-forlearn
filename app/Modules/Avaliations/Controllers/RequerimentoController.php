@@ -154,6 +154,12 @@ class RequerimentoController extends Controller
             $lective_year = request()->input('lective_year');
             $code = "revisao_prova";
 
+            // Validar se veio ano lectivo
+            if (!$lective_year) {
+                Toastr::error(__('Ano lectivo inválido'), __('toastr.error'));
+                return redirect()->back();
+            }
+
             /*$articleRequest = DB::table('article_requests')->insert([ 
                 'user_id' => $user_id, 
                 'article_id' => '358', 
@@ -168,6 +174,7 @@ class RequerimentoController extends Controller
                 ->where('cd.code', $code)
                 ->select('art.id', 'art.base_value')
                 ->first();
+        
             dd($emolumento);
                 
             if (!$emolumento) {
