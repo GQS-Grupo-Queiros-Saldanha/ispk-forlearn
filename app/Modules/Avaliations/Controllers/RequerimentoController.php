@@ -160,22 +160,23 @@ class RequerimentoController extends Controller
                 return redirect()->back();
             }
 
-            /*$articleRequest = DB::table('article_requests')->insert([ 
-                'user_id' => $user_id, 
-                'article_id' => '358', 
-                'base_value' => '8000', 
-                'status' => 'pending', 
-                'created_at' => now(), 
-                'updated_at' => now(), 
-            ]);*/ 
+
             $emolumento = DB::table('articles as art')
                 ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
                 ->where('art.anoLectivo', $lective_year)
                 ->where('cd.code', $code)
                 ->select('art.id', 'art.base_value')
                 ->first();
+            
+            $articleRequest = DB::table('article_requests')->insert([ 
+                'user_id' => $user_id, 
+                'article_id' => $emolumento->id, 
+                'base_value' => $emolumento->base_value, 
+                'status' => 'pending', 
+                'created_at' => now(), 
+                'updated_at' => now(), 
+            ]);
         
-            dd($emolumento);
                 
             if (!$emolumento) {
                 Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
