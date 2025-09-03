@@ -71,7 +71,7 @@
                         </div>
                     </div>
 
-                    <input type="hidden" id="lectiveY" value="{{ $lectiveYear->id }}" name="anoLectivo">
+                    <input type="hidden" id="lectiveY" value="{{ $lectiveYear->id }}" name="lective_year">
                 </div>
                 <hr>
                 <div class="float-right">
