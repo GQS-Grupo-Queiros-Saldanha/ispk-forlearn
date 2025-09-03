@@ -180,9 +180,9 @@ class RequerimentoController extends Controller
             return view('Avaliations::requerimento.solicitacao_revisao_prova', ['mensagem'=> $mensagem ]);
 
         }catch (Exception $e) {   
-            Toastr::error(__('Falha ao enviar a solicitação de revisão de prova.'), __('toastr.error'));
-            return redirect()->back();
-        }
+    dd($e->getMessage(), $e->getFile(), $e->getLine());
+}
+
     }
 
 
