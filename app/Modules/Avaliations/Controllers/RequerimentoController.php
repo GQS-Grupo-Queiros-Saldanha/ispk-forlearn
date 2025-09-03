@@ -154,7 +154,7 @@ class RequerimentoController extends Controller
             $lective_year = request()->input('lective_year');
             $code = "revisao_prova";
 
-            /*$articleRequest = DB::table('article_requests')->inser([ 
+            /*$articleRequest = DB::table('article_requests')->insert([ 
                 'user_id' => $user_id, 
                 'article_id' => '358', 
                 'base_value' => '8000', 
@@ -174,15 +174,16 @@ class RequerimentoController extends Controller
                 Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
             }
-            dd($emolumento);
+           
 
             Toastr::success(__('Solicitação de revisão de prova enviada com sucesso!'), __('toastr.success'));
             return view('Avaliations::requerimento.solicitacao_revisao_prova', ['mensagem'=> $mensagem ]);
 
         }catch (Exception $e) {   
-            Toastr::error(__('Falha ao enviar a solicitação de revisão de prova.'), __('toastr.error'));
+            Toastr::error($e->getMessage(), __('toastr.error'));
             return redirect()->back();
         }
+
     }
 
 
