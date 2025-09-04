@@ -124,7 +124,7 @@ class RequerimentoController extends Controller
                 ->distinct('id')
                 ->get();
 
-            return response()->json($model);
+            return response()->json($students);
 
 
         } catch (Exception | Throwable $e) {
