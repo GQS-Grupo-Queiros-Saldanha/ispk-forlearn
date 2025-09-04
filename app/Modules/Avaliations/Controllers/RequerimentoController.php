@@ -135,6 +135,7 @@ class RequerimentoController extends Controller
     }
 
     public function getDisciplinas($student_id, $lective_year){
+        
         try {
             
             $disciplinas = DB::table('study_plans_has_disciplines as spd')
@@ -145,8 +146,8 @@ class RequerimentoController extends Controller
                     $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                     $join->on('dt.active', '=', DB::raw(true));
                 })
-                ->wher('m.lective_year', $lective_year)
-                ->where('spd.years', 'm.course_year')
+                ->where('m.lective_year', $lective_year)
+                ->whereColumn('spd.years', 'm.course_year')
                 ->whereNull('spd.deleted_at')
                 ->whereNull('d.deleted_at')
                 ->whereNull('dt.deleted_at')
