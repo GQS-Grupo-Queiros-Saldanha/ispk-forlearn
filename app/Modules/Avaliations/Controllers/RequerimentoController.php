@@ -147,10 +147,6 @@ class RequerimentoController extends Controller
                 })
                 ->where('m.lective_year', $lective_year)
                 ->whereColumn('spd.years', 'm.course_year')
-                ->whereNull('spd.deleted_at')
-                ->whereNull('d.deleted_at')
-                ->whereNull('dt.deleted_at')
-                ->where('dt.active', 1)
                 ->select([
                     'd.id as discipline_id',
                     'd.code as code',
