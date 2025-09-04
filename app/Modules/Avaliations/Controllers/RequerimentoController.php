@@ -160,10 +160,10 @@ class RequerimentoController extends Controller
                 ->get();
 
             return response()->json($disciplinas);
-        } catch (Exception | Throwable $e) {
-            Log::error($e);
-            return response()->json(['error' => 'Failed to fetch disciplines'], 500);
-        }
+            } catch (\Throwable $e) {
+                dd($e->getMessage(), $e->getTraceAsString());
+            }
+
 
     }
 
