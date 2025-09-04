@@ -148,8 +148,6 @@ class RequerimentoController extends Controller
                 ->where('m.lective_year', $lective_year)
                 ->whereColumn('spd.years', 'm.course_year')
                 ->select([
-                    'd.id as discipline_id',
-                    'd.code as code',
                     'dt.display_name as name'
                 ])
                 ->orderBy("name")
