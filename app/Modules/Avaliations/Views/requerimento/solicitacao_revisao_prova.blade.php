@@ -91,7 +91,7 @@
         // Inicialização das variáveis
         const anoLectivo = $("#lectiveY");
         const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
-        const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+        const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
     
         anoLectivo.val($("#lective_year").val());
         
@@ -149,11 +149,13 @@
                     console.error('Erro no fetch:', erro);
                 });
 
+            
             // Requisição AJAX para buscar disciplinas
-            const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+            const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
             let ano = document.getElementById('lective_year').value;
+            let student_id = document.getElementById('student_id').value;
 
-            let url = `${baseUrl}/${course_id}/${ano}`;
+            let url = `${disciplinasUrl}/${student_id}/${ano}`;
 
             fetch(url)
                 .then(response => {

@@ -133,7 +133,7 @@ class RequerimentoController extends Controller
         }
 
     }
-    
+
     public function getDisciplinas($student_id, $year){
         try {
             
@@ -144,7 +144,7 @@ class RequerimentoController extends Controller
                     $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                     $join->on('dt.active', '=', DB::raw(true));
                 })
-                ->where('spd.years', $year)
+                //->where('spd.years', $year)
                 ->whereNull('spd.deleted_at')
                 ->whereNull('d.deleted_at')
                 ->whereNull('dt.deleted_at')
