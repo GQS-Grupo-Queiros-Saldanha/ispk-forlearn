@@ -176,7 +176,7 @@
                                     <option value="16">Percurso académico</option>
                                     <option value="18"> Prova parcelar (2ª chamada)</option>
                                     <option value="17">Solicitação de Estágio</option>
-                                    <option value="11">Marcação de Revisão de prova</option>
+                                    <option value="20">Marcação de Revisão de prova</option>
 
                                 </select>
                             </div>

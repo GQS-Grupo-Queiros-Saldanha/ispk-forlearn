@@ -749,6 +749,9 @@ class RequerimentoController extends Controller
                 case 19:
                         $texto = "%Carta de recomendação%";
                         break;
+                case 20:
+                        $texto = "%Revisão de Prova%";
+                        break;
 
 
             }
