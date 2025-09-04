@@ -156,7 +156,7 @@
 
             let url = `${disciplinasUrl}/${student_id}/${ano}`;
 
-            fetch(url)
+            /*fetch(url)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Erro na resposta da rede');
@@ -186,7 +186,7 @@
                 })
                 .catch(erro => {
                     console.error('Erro no fetch:', erro);
-                });
+                });*/
 
 
 
