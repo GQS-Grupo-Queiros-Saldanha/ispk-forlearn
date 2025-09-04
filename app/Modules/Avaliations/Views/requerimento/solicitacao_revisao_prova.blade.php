@@ -7,7 +7,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('requerimento.index') }}">Requerimentos</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Marcação de Revisão de Prova</li>
+    <li class="breadcrumb-item active" aria-current="page">Marcação de Revisão de prova</li>
 @endsection
 
 @section('selects')

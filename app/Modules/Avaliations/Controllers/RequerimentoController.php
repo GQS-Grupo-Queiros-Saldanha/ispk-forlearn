@@ -89,51 +89,39 @@ class RequerimentoController extends Controller
         }
     }
   
-    public function getEstudante($course_id, $lective_year = 11){
+    public function getEstudante($course_id){
         try {
             
-            $students = DB::table('user_courses')
-                ->where('courses_id', $course_id)
-                // Pega os estudantes que estão matriculados no curso
-                ->join('users', 'users.id', '=', 'user_courses.users_id')
-                ->leftJoin('user_parameters as nome', function ($join) {
-                    $join->on('nome.users_id', '=', 'users.id')
-                        ->where('nome.parameters_id', '=', 1);
+            $students = DB::table('users')
+                // ->whereIn('users.id',$students_ids)
+                ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
+                ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
+                ->where('usuario_cargo.model_type', "App\Modules\Users\Models\User")
+                ->where('usuario_cargo.role_id', 6)
+                ->leftjoin('user_parameters as up', 'up.users_id', '=', 'users.id')
+                ->leftjoin('user_parameters as up0', 'up0.users_id', '=', 'users.id')
+                ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'users.id')
+                ->join('courses_translations as ct', function ($join) {
+                    $join->on('ct.courses_id', '=', 'uc.courses_id');
+                    $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('ct.active', '=', DB::raw(true));
                 })
-                //Numero do Estudante
-                ->leftJoin('user_parameters as numero', function ($join) {
-                    $join->on('numero.users_id', '=', 'users.id')
-                        ->where('numero.parameters_id', '=', 19);
-                })
-                //Email do Estudane
-                ->leftJoin('user_parameters as email', function ($join) {
-                    $join->on('email.users_id', '=', 'users.id')
-                        ->where('email.parameters_id', '=', 312);
-                })
-                ->select(
-                    'users.id',
-                    'nome.value as nome',
-                    'numero.value as numero',
-                    'email.value as email'
-                )
-                ->get();
-
-                   // Filtra pelo ano lectivo
-            
-            
-            $lectiveYearSelected = DB::table('lective_years')->where('id', $lective_year)->first();
-
-            // Query principal para obter estudantes
-            $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
-                ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'u0.id')
                 ->where('uc.courses_id', $course_id)
-                ->where('matriculations.lective_year', $lectiveYearSelected->id)
+                ->whereNull('up.deleted_at')
+                ->where('up.parameters_id', 1)
+                ->where('up0.parameters_id', 19)
+                ->whereNull('up0.deleted_at')
+                ->whereNull('users.deleted_at')
+                ->whereNull('users.deleted_by')
                 ->select([
-                    'u0.id',
-                    'u0.name',          // Nome do estudante
-                    'u0.email',         // Email
-                    'matriculations.course_year',
+                    'users.id as user_id',
+                    'ct.display_name as course',
+                    'up.value as name',
+                    'users.email as email',
+                    'up0.value as student_number'
                 ])
+                ->orderBy("name")
+                ->distinct('id')
                 ->get();
 
             return response()->json($model);
@@ -197,6 +185,7 @@ class RequerimentoController extends Controller
                     'article_request_id' => $articleRequestId,
                     'transaction_id' => $transaction,
                     "value" => $emolumento->base_value,
+                    "created_at" => Carbon::now()
                 ]
             );
 
@@ -2285,36 +2274,36 @@ class RequerimentoController extends Controller
             // $students_ids= studentsSelectList()->pluck('id')->toArray();
            
             $students = DB::table('users')
-            // ->whereIn('users.id',$students_ids)
-            ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
-            ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
-            ->where('usuario_cargo.model_type', "App\Modules\Users\Models\User")
-            ->where('usuario_cargo.role_id', 6)
-            ->leftjoin('user_parameters as up', 'up.users_id', '=', 'users.id')
-            ->leftjoin('user_parameters as up0', 'up0.users_id', '=', 'users.id')
-            ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'users.id')
-            ->join('courses_translations as ct', function ($join) {
-                $join->on('ct.courses_id', '=', 'uc.courses_id');
-                $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('ct.active', '=', DB::raw(true));
-            })
-            ->where('uc.courses_id', $course_id)
-            ->whereNull('up.deleted_at')
-            ->where('up.parameters_id', 1)
-            ->where('up0.parameters_id', 19)
-            ->whereNull('up0.deleted_at')
-            ->whereNull('users.deleted_at')
-            ->whereNull('users.deleted_by')
-            ->select([
-                'users.id as user_id',
-                'ct.display_name as course',
-                'up.value as name',
-                'users.email as email',
-                'up0.value as student_number'
-            ])
-            ->orderBy("name")
-            ->distinct('id')
-            ->get();
+                // ->whereIn('users.id',$students_ids)
+                ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
+                ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
+                ->where('usuario_cargo.model_type', "App\Modules\Users\Models\User")
+                ->where('usuario_cargo.role_id', 6)
+                ->leftjoin('user_parameters as up', 'up.users_id', '=', 'users.id')
+                ->leftjoin('user_parameters as up0', 'up0.users_id', '=', 'users.id')
+                ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'users.id')
+                ->join('courses_translations as ct', function ($join) {
+                    $join->on('ct.courses_id', '=', 'uc.courses_id');
+                    $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('ct.active', '=', DB::raw(true));
+                })
+                ->where('uc.courses_id', $course_id)
+                ->whereNull('up.deleted_at')
+                ->where('up.parameters_id', 1)
+                ->where('up0.parameters_id', 19)
+                ->whereNull('up0.deleted_at')
+                ->whereNull('users.deleted_at')
+                ->whereNull('users.deleted_by')
+                ->select([
+                    'users.id as user_id',
+                    'ct.display_name as course',
+                    'up.value as name',
+                    'users.email as email',
+                    'up0.value as student_number'
+                ])
+                ->orderBy("name")
+                ->distinct('id')
+                ->get();
           
            
 
@@ -2959,7 +2948,7 @@ class RequerimentoController extends Controller
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
             ->first();
 
-        $lectiveYearSelected = $lectiveYearSelected->id ?? 10;
+        $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
         $courses = Course::with(['currentTranslation'])->get();
 
         $data = [
