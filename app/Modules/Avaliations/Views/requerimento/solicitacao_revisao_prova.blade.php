@@ -152,8 +152,7 @@
             
             // Requisição AJAX para buscar disciplinas
             const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
-            let ano = document.getElementById('lective_year').value;
-            let student_id = document.getElementById('student_id').value;
+            //let student_id = document.getElementById('student_id').value;
 
             let url = `${disciplinasUrl}/${student_id}/${ano}`;
 
