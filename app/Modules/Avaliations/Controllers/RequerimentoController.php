@@ -135,8 +135,7 @@ class RequerimentoController extends Controller
     }
 
     public function getDisciplinas($student_id, $lective_year){
-        dd($student_id, $lective_year);
-        
+    
        try {
             $disciplinas = DB::table('study_plans_has_disciplines as spd')
                 ->join('matriculations as m', 'm.user_id', $student_id)
