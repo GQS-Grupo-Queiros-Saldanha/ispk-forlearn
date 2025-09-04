@@ -133,6 +133,36 @@ class RequerimentoController extends Controller
         }
 
     }
+    
+    public function getDisciplinas($student_id, $year){
+        try {
+            
+            $disciplinas = DB::table('study_plans_has_disciplines as spd')
+                ->join('disciplines as d', 'spd.disciplines_id', '=', 'd.id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'd.id');
+                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('dt.active', '=', DB::raw(true));
+                })
+                ->where('spd.years', $year)
+                ->whereNull('spd.deleted_at')
+                ->whereNull('d.deleted_at')
+                ->whereNull('dt.deleted_at')
+                ->where('dt.active', 1)
+                ->select([
+                    'd.id as discipline_id',
+                    'd.code as code',
+                    'dt.display_name as name'
+                ])
+                ->orderBy("name")
+                ->get();
+
+            return response()->json($disciplinas);
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return response()->json(['error' => 'Failed to fetch disciplines'], 500);
+        }
+    }
 
     public function solicitacao_revisao_prova_store(Request $request){
         try {
@@ -491,7 +521,6 @@ class RequerimentoController extends Controller
     }
 
     # Pegar o ano do estudante
-
     public function ajax($id)
     {
         // return $id;

@@ -63,7 +63,7 @@
                         <div class="col-6">
                             <div class="form-group col">
                                 <label>Disciplinas</label>
-                                <select name="disciplina_id" id="students" class="selectpicker form-control form-control-sm">
+                                <select name="disciplina_id" id="disciplia" class="selectpicker form-control form-control-sm">
                                     <option value="" selected>Seleciona a disciplina</option>
                                     <!--Colocado pelo JS-->
                                 </select>
@@ -90,7 +90,9 @@
     <script>
         // Inicialização das variáveis
         const anoLectivo = $("#lectiveY");
-    const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}"; 
+        const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+        const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+    
         anoLectivo.val($("#lective_year").val());
         
         console.log('Ano lectivo selecionado: ' + anoLectivo.val());
@@ -113,6 +115,43 @@
             const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
             let ano = document.getElementById('lective_year').value;
 
+            let url = `${baseUrl}/${course_id}/${ano}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta da rede');
+                    }
+                    return response.json();
+                })
+                .then(dados => {
+                    console.log(dados);
+                    const studentSelect = $("#students");
+                    studentSelect.empty(); // Limpa opções antigas
+
+                    // Adiciona uma opção vazia no início
+                    studentSelect.append(`<option value=""></option>`);
+
+                    dados.forEach(student => {
+                        const nome = student.name ?? 'Sem nome';
+                        const numero = student.student_number ?? 'Sem número';
+                        const email = student.email ?? 'Sem email';
+
+                        studentSelect.append(
+                            `<option value="${student.id}">${nome} #${numero} (${email})</option>`
+                        );
+                    });
+
+                    // Atualiza o selectpicker do Bootstrap
+                    studentSelect.selectpicker('refresh');
+                })
+                .catch(erro => {
+                    console.error('Erro no fetch:', erro);
+                });
+
+            // Requisição AJAX para buscar disciplinas
+            const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+            let ano = document.getElementById('lective_year').value;
 
             let url = `${baseUrl}/${course_id}/${ano}`;
 

@@ -422,6 +422,7 @@ Route::group(
                 //Solicitação de Revisão de Prova
                 Route::get('/requerimento/solicitacao_revisao_prova', [RequerimentoController::class, 'solicitacao_revisao_prova'])->name('requerimento.solicitacao_revisao_prova');
                 Route::get('/requerimento/getEstudante/{course_id}/{lective_year}', [RequerimentoController::class, 'getEstudante'])->name('requerimento.getEstudante');
+                Route::get('/requerimento/getDisciplinas/{student_id}',[RequerimentoController::class, 'getDisciplinas'])->name('requerimento.getDisciplinas');
                 //Route::get('/requerimento/getDisciplinas/{student_id}/{lective_year}', [RequerimentoController::class, 'getDisciplinas'])->name('requerimento.getDisciplinas');
                 Route::post('/requerimento/solicitacao_revisao_prova_store', [RequerimentoController::class, 'solicitacao_revisao_prova_store'])->name('requerimento.solicitacao_revisao_prova_store');
                 
