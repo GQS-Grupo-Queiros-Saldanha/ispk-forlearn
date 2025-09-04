@@ -133,7 +133,7 @@
 
                     dados.forEach(student => {
                         const nome = student.name ?? 'Sem nome';
-                        const numero = student.numero ?? 'Sem número';
+                        const numero = student.student_number ?? 'Sem número';
                         const email = student.email ?? 'Sem email';
 
                         studentSelect.append(
