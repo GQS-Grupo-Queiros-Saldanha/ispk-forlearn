@@ -2782,8 +2782,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-    public function getTurmasDisciplina(Request $request, $id_edicao_plain, $anoLectivo)
-{
+    public function getTurmasDisciplina(Request $request, $id_edicao_plain, $anoLectivo){
     try {
         Log::info('Iniciando getTurmasDisciplina', [
             'id_edicao_plain' => $id_edicao_plain,
@@ -2923,7 +2922,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 ]);
 
                 $avaliacao = $avaliacao_time
-                    ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
+                    //->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
                     ->where('simestre', $Simestre)
                     ->first();
 
