@@ -171,15 +171,12 @@
                                     <option value="5">Exame especial</option>
                                     <option value="4">Exame de recurso</option>
                                     <option value="12">Mudança de turma</option>
-                                    <option value="14">Pedido de transferência (de entrada no {{$institution->abrev}})
-                                    </option>
-                                    <option value="15">Pedido de transferência (de saída do {{$institution->abrev}})
-                                    </option>
+                                    <option value="14">Pedido de transferência (de entrada no {{$institution->abrev}})</option>
+                                    <option value="15">Pedido de transferência (de saída do {{$institution->abrev}})</option>
                                     <option value="16">Percurso académico</option>
-                                   
                                     <option value="18"> Prova parcelar (2ª chamada)</option>
-
                                     <option value="17">Solicitação de Estágio</option>
+                                    <option value="11">Marcação de Revisão de prova</option>
 
                                 </select>
                             </div>
