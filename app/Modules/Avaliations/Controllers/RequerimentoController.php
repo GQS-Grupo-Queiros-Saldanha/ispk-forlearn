@@ -135,9 +135,9 @@ class RequerimentoController extends Controller
     }
 
     public function getDisciplinas($student_id, $lective_year){
+        dd($student_id, $lective_year);
         
-        try {
-            
+       try {
             $disciplinas = DB::table('study_plans_has_disciplines as spd')
                 ->join('matriculations as m', 'm.user_id', $student_id)
                 ->join('disciplines as d', 'spd.disciplines_id', '=', 'd.id')
@@ -165,6 +165,7 @@ class RequerimentoController extends Controller
             Log::error($e);
             return response()->json(['error' => 'Failed to fetch disciplines'], 500);
         }
+
     }
 
     public function solicitacao_revisao_prova_store(Request $request){
