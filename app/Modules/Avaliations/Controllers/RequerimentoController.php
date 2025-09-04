@@ -520,7 +520,6 @@ class RequerimentoController extends Controller
         //TODO: avaliar para quando o select estiver vazio
         try {
             $dados = explode(',', $id);
-            dd($dados);
             $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
 
             $currentData = Carbon::now();
