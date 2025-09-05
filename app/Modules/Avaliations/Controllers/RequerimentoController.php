@@ -138,7 +138,7 @@ class RequerimentoController extends Controller
     
        try {
             $disciplinas = DB::table('study_plans_has_disciplines as spd')
-                ->join('matriculations as m', 'm.user_id', $student_id)
+                ->join('matriculations as m', 'm.user_id', '=', $student_id)
                 ->join('disciplines as d', 'spd.disciplines_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
                     $join->on('dt.discipline_id', '=', 'd.id');

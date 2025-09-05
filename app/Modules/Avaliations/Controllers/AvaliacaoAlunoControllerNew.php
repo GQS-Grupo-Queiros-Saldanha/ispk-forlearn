@@ -3263,8 +3263,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-   private function metricas_avaliacoes($data)
-{
+   private function metricas_avaliacoes($data){
     Log::info('Iniciando metricas_avaliacoes', [
         'data' => $data
     ]);
