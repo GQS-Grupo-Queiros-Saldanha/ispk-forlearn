@@ -2962,8 +2962,8 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ->where('mtrc.avaliacaos_id', $id_avl)
                         ->where('mtrc.calendario', '!=', 1)
                         ->where('c_m.id_periodo_simestre', $Simestre)
-                        //->whereDate('sc.data_inicio', '<=', date("Y-m-d"))
-                        //->whereDate('sc.data_fim', '>=', date("Y-m-d"))
+                        ->whereDate('sc.data_inicio', '<=', date("Y-m-d"))
+                        ->whereDate('sc.data_fim', '>=', date("Y-m-d"))
                         ->orderBy('sc.data_inicio', 'DESC');
 
                     Log::info('Consulta Metrica_calendario (segunda chamada) construída', [
