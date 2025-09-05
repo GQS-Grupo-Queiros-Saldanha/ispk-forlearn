@@ -2922,7 +2922,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 ]);
 
                 $avaliacao = $avaliacao_time
-                    //->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
+                    ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`') 04/09/2025 descomentar quando criar-se um novo calendario.
                     ->where('simestre', $Simestre)
                     ->first();
 
