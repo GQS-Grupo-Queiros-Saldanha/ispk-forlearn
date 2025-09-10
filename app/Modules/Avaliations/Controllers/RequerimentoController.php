@@ -160,7 +160,8 @@ class RequerimentoController extends Controller
                 ->where('nog.user_id', $student_id)
                 ->where('nog.lective_year', 'like', '%' . $ano . '%')
                 ->select([
-                    'dt.display_name as name'
+                    'dt.display_name as name',
+                    'd.id'
                 ])
                 ->orderBy("name")
                 ->get();
