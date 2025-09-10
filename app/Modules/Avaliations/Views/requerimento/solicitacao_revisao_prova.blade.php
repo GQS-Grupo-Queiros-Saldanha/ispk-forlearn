@@ -138,6 +138,7 @@
         fetch(url)
             .then(response => response.json())
             .then(dados => {
+                console.log("Disciplinas recebidas:", dados);
                 const disciplinaSelect = $("#disciplia");
                 disciplinaSelect.empty();
                 disciplinaSelect.append(`<option value="">Seleciona a disciplina</option>`);
