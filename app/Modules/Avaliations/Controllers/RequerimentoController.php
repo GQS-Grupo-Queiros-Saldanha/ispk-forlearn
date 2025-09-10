@@ -137,16 +137,28 @@ class RequerimentoController extends Controller
     public function getDisciplinas($student_id, $lective_year){
     
        try {
-            $disciplinas = DB::table('study_plans_has_disciplines as spd')
-                ->join('matriculations as m', 'm.user_id', '=', $student_id)
-                ->join('disciplines as d', 'spd.disciplines_id', '=', 'd.id')
+
+            $lista = [
+                6  => '20/21'
+                9 => '24/25',
+                11 => '25/26',
+            ];
+
+            // Garante que o ano existe no array
+            if (!array_key_exists($lective_year, $lista)) {
+                return collect(); // coleção vazia
+            }
+
+            $ano = $lista[$lective_year];
+
+            $disciplinas = DB::table('new_old_grades as nog')
+                ->join('disciplines as d', 'nog.discipline_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
                     $join->on('dt.discipline_id', '=', 'd.id');
                     $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                    $join->on('dt.active', '=', DB::raw(true));
-                })
-                ->where('m.lective_year', $lective_year)
-                ->whereColumn('spd.years', 'm.course_year')
+                })                
+                ->where('nog.user_id', $student_id)
+                ->where('nog.lective_year', 'like', '%' . $ano . '%')
                 ->select([
                     'dt.display_name as name'
                 ])
