@@ -5731,6 +5731,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function historico_pauta_ajax($pauta_id)
     {
+        dd($pauta_id);
         try {
 
 
