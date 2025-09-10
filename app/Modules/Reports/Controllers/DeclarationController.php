@@ -3793,10 +3793,8 @@ return $pdf->stream($pdf_name . '.pdf');
 
     private function pedido_entrada($request, $config)
     {
-
+        dd($request);
         try {
-
-
 
             $this->gerar_codigo_documento($request->requerimento);
 
@@ -3999,7 +3997,11 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->where('id', $requerimento->transference_request)
                 ->first();
 
-            $documentation = $transference->documentation;
+            if (is_null($transference) || is_null($transference->documentation)) {
+                Toastr::warning('Nenhum dado foi encontrado para esta solicitação.', 'Atenção');
+            } else {
+                $documentation = $transference->documentation;
+            }
 
             $documentation = preg_split('/\r\n|\r|\n/', $documentation);
 
