@@ -139,7 +139,7 @@ class RequerimentoController extends Controller
        try {
 
             $lista = [
-                6  => '20/21'
+                6  => '20/21',
                 9 => '24/25',
                 11 => '25/26',
             ];
@@ -169,7 +169,6 @@ class RequerimentoController extends Controller
             } catch (\Throwable $e) {
                 dd($e->getMessage(), $e->getTraceAsString());
             }
-
 
     }
 
@@ -248,7 +247,6 @@ class RequerimentoController extends Controller
         }
 
     }
-
 
     /*Esta zona é para a solicitação de revisão de Prova!*/
 
