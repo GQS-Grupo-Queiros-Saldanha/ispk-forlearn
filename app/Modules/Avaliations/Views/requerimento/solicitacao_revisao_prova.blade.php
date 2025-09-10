@@ -154,9 +154,9 @@
             const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
             //let student_id = document.getElementById('student_id').value;
 
-            let url = `${disciplinasUrl}/${student_id}/${ano}`;
+            let url_discipline = `${disciplinasUrl}/${student_id}/${ano}`;
 
-            /*fetch(url)
+            fetch(url_discipline)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Erro na resposta da rede');
@@ -186,7 +186,7 @@
                 })
                 .catch(erro => {
                     console.error('Erro no fetch:', erro);
-                });*/
+                });
 
 
 
