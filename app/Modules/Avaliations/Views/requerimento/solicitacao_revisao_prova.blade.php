@@ -134,6 +134,7 @@
         if (!student_id) return;
 
         let url = `${disciplinasUrl}/${student_id}/${ano}`;
+        console.log("URL chamada:", url);
 
         fetch(url)
             .then(response => response.json())
