@@ -111,6 +111,7 @@
         fetch(url)
             .then(response => response.json())
             .then(dados => {
+                console.log("Estudantes recebidos:", dados);
                 const studentSelect = $("#students");
                 studentSelect.empty();
                 studentSelect.append(`<option value="">Selecione o Estudante</option>`);
