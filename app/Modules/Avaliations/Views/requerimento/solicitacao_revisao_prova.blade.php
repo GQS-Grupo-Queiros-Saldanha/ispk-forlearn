@@ -87,109 +87,71 @@
 
 @section('scripts')
     @parent
-    <script>
-        // Inicialização das variáveis
-        const anoLectivo = $("#lectiveY");
-        const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
-        const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
-    
-        anoLectivo.val($("#lective_year").val());
-        
-        console.log('Ano lectivo selecionado: ' + anoLectivo.val());
+<script>
+    const anoLectivo = $("#lectiveY");
 
-        // Evento de mudança no ano lectivo
-        $("#lective_year").change(function() {
-            anoLectivo.val($(this).val());
-            console.log('Ano lectivo alterado para: ' + anoLectivo.val());
-        });
+    // URLs
+    const estudantesUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+    const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
 
-        // Evento de mudança no curso selecionado
-        $("#courses").change(function() {
-            const course_id = $(this).val();
-            const lective_year_matriculation = $("#lective_year").val();
-            console.log("Evento disparado. ID do curso:", course_id);
+    // Atualiza o ano letivo escondido
+    $("#lective_year").change(function() {
+        anoLectivo.val($(this).val());
+    });
 
-            console.log('Curso selecionado: ' + course_id);
-            
-           // Requisição AJAX para buscar estudantes finalistas
-            const baseUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
-            let ano = document.getElementById('lective_year').value;
+    // Quando seleciona o curso -> buscar estudantes
+    $("#courses").change(function() {
+        const course_id = $(this).val();
+        const ano = $("#lective_year").val();
 
-            let url = `${baseUrl}/${course_id}/${ano}`;
+        if (!course_id) return;
 
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro na resposta da rede');
-                    }
-                    return response.json();
-                })
-                .then(dados => {
-                    console.log(dados);
-                    const studentSelect = $("#students");
-                    studentSelect.empty(); // Limpa opções antigas
+        let url = `${estudantesUrl}/${course_id}/${ano}`;
 
-                    // Adiciona uma opção vazia no início
-                    studentSelect.append(`<option value=""></option>`);
+        fetch(url)
+            .then(response => response.json())
+            .then(dados => {
+                const studentSelect = $("#students");
+                studentSelect.empty();
+                studentSelect.append(`<option value="">Selecione o Estudante</option>`);
 
-                    dados.forEach(student => {
-                        const nome = student.name ?? 'Sem nome';
-                        const numero = student.student_number ?? 'Sem número';
-                        const email = student.email ?? 'Sem email';
-
-                        studentSelect.append(
-                            `<option value="${student.id}">${nome} #${numero} (${email})</option>`
-                        );
-                    });
-
-                    // Atualiza o selectpicker do Bootstrap
-                    studentSelect.selectpicker('refresh');
-                })
-                .catch(erro => {
-                    console.error('Erro no fetch:', erro);
+                dados.forEach(student => {
+                    studentSelect.append(
+                        `<option value="${student.id}">${student.name ?? 'Sem nome'} #${student.student_number ?? ''}</option>`
+                    );
                 });
 
-            
-            // Requisição AJAX para buscar disciplinas
-            const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
-            //let student_id = document.getElementById('student_id').value;
+                studentSelect.selectpicker('refresh');
+            })
+            .catch(err => console.error("Erro a buscar estudantes:", err));
+    });
 
-            let url_discipline = `${disciplinasUrl}/${student_id}/${ano}`;
+    // Quando seleciona o estudante -> buscar disciplinas
+    $("#students").change(function() {
+        const student_id = $(this).val();
+        const ano = $("#lective_year").val();
 
-            fetch(url_discipline)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro na resposta da rede');
-                    }
-                    return response.json();
-                })
-                .then(dados => {
-                    console.log(dados);
-                    const studentSelect = $("#students");
-                    studentSelect.empty(); // Limpa opções antigas
+        if (!student_id) return;
 
-                    // Adiciona uma opção vazia no início
-                    studentSelect.append(`<option value=""></option>`);
+        let url = `${disciplinasUrl}/${student_id}/${ano}`;
 
-                    dados.forEach(student => {
-                        const nome = student.name ?? 'Sem nome';
-                        const numero = student.student_number ?? 'Sem número';
-                        const email = student.email ?? 'Sem email';
+        fetch(url)
+            .then(response => response.json())
+            .then(dados => {
+                const disciplinaSelect = $("#disciplia");
+                disciplinaSelect.empty();
+                disciplinaSelect.append(`<option value="">Seleciona a disciplina</option>`);
 
-                        studentSelect.append(
-                            `<option value="${student.id}">${nome} #${numero} (${email})</option>`
-                        );
-                    });
-
-                    // Atualiza o selectpicker do Bootstrap
-                    studentSelect.selectpicker('refresh');
-                })
-                .catch(erro => {
-                    console.error('Erro no fetch:', erro);
+                dados.forEach(disciplina => {
+                    disciplinaSelect.append(
+                        `<option value="${disciplina.id}">${disciplina.nome ?? 'Sem nome'}</option>`
+                    );
                 });
 
+                disciplinaSelect.selectpicker('refresh');
+            })
+            .catch(err => console.error("Erro a buscar disciplinas:", err));
+    });
+</script>
 
-
-        });
-    </script>
 @endsection
