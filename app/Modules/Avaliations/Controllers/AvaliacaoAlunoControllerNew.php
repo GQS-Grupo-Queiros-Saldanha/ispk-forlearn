@@ -5733,8 +5733,6 @@ class AvaliacaoAlunoControllerNew extends Controller
     {
         dd($pauta_id);
         try {
-
-
             $pauta = DB::table('lancar_pauta')
                 ->where('id', $pauta_id)
                 ->first();

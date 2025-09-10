@@ -465,9 +465,18 @@
 
 
             function getHistoric() {
+                if (!pauta_id) {
+                    console.error("pauta_id não definido!");
+                    return;
+                }
 
                 var url = '/avaliations/historico-pauta-ajax/' + pauta_id;
-                console.log(url)
+                console.log("Carregando histórico:", url);
+
+                if ($.fn.DataTable.isDataTable('#historic-table')) {
+                    $('#historic-table').DataTable().clear().destroy();
+                }
+
                 $('#historic-table').DataTable({
                     ajax: url,
                     columns: [{
