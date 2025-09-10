@@ -3791,9 +3791,7 @@ return $pdf->stream($pdf_name . '.pdf');
     }
 
 
-    private function pedido_entrada($request, $config)
-    {
-        dd($request);
+    private function pedido_entrada($req
         try {
 
             $this->gerar_codigo_documento($request->requerimento);
