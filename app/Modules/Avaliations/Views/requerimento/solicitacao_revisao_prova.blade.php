@@ -118,7 +118,7 @@
 
                 dados.forEach(student => {
                     studentSelect.append(
-                        `<option value="${student.id}">${student.name ?? 'Sem nome'} #${student.student_number ?? ''}</option>`
+                        `<option value="${student.user_id}">${student.name ?? 'Sem nome'} #${student.student_number ?? ''}</option>`
                     );
                 });
 
