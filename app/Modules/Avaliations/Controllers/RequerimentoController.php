@@ -2386,39 +2386,6 @@ class RequerimentoController extends Controller
                 ->get()
 
 
-            /*$students = DB::table('users')
-            // ->whereIn('users.id',$students_ids)
-            ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
-            ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
-            ->where('usuario_cargo.model_type', "App\Modules\Users\Models\User")
-            ->where('usuario_cargo.role_id', 6)
-            ->leftjoin('user_parameters as up', 'up.users_id', '=', 'users.id')
-            ->leftjoin('user_parameters as up0', 'up0.users_id', '=', 'users.id')
-            ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'users.id')
-            ->join('courses_translations as ct', function ($join) {
-                $join->on('ct.courses_id', '=', 'uc.courses_id');
-                $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('ct.active', '=', DB::raw(true));
-            })
-            ->where('uc.courses_id', $course_id)
-            ->whereNull('up.deleted_at')
-            ->where('up.parameters_id', 1)
-            ->where('up0.parameters_id', 19)
-            ->whereNull('up0.deleted_at')
-            ->whereNull('users.deleted_at')
-            ->whereNull('users.deleted_by')
-            ->select([
-                'users.id as user_id',
-                'ct.display_name as course',
-                'up.value as name',
-                'users.email as email',
-                'up0.value as student_number'
-            ])
-            ->orderBy("name")
-            ->distinct('id')
-            ->get();*/
-
-
             // $students = $students->filter(function($student) use ($allDiscipline) {
 
             //     $grades = DB::table('new_old_grades')
