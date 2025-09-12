@@ -2299,7 +2299,6 @@ class RequerimentoController extends Controller
     //referencia para pegar os estudantes finalistas
     public function get_finalists(Request $request, $course_id, $lective_year){
 
-        dd($request, $course_id, $lective_year);
         
         $type = $request->query('type',null);
 
