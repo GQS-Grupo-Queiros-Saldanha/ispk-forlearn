@@ -2838,8 +2838,7 @@ class ArticleRequestsController extends Controller
             }
         } catch (Exception | Throwable $e) {
             // logError($e);
-            return $e;
-            return Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+            return Request::ajax() ? response()->json(['error'=>$e->getMessage()], 500) : abort(500)
         }
     }
     
