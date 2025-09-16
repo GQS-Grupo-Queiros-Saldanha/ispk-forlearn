@@ -2386,8 +2386,8 @@ class ArticleRequestsController extends Controller
     
     
        public function getOutrosEmolumentoRequerido($userId,$anoLectivoSem_matricula){
+        
         try{
-            dd($userId,$anoLectivoSem_matricula);
             
             $vetorAnoLectivo=explode(",",$anoLectivoSem_matricula);
             $getRegraImplementEmolu=null;
