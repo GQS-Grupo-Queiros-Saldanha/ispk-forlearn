@@ -32,6 +32,10 @@
     class="div-borda"></div>
 <div class="divtable table-responsive mt-2">
     @php $total_to_pay = 0; @endphp
+    @php
+        $user = auth()->user();
+    @endphp
+ 
 
         <table style="z-index: 1;" id="requests-trans-table" class="table table-striped table-hover table-tesoraria">
             <thead>
