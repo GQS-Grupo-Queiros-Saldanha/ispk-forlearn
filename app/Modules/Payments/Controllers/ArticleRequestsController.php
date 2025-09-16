@@ -2842,8 +2842,7 @@ class ArticleRequestsController extends Controller
         }
     }
     
-     public function getEmolumentoFinalista($userId,$anoLectivoSem_matricula)
-    {
+     public function getEmolumentoFinalista($userId,$anoLectivoSem_matricula){
         try{
             
             
@@ -3273,7 +3272,8 @@ class ArticleRequestsController extends Controller
                 'disciplines'=>$disciplines,
                 'model'=>$model,
                 'modelo'=>$modelo,
-                'metrics'=>$metrics
+                'metrics'=>$metrics,
+                'user'=> auth()->user()->id
             ];
 
             $detalheEstorno=[
