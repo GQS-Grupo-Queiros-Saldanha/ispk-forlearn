@@ -2365,6 +2365,7 @@ class ArticleRequestsController extends Controller
                     }   
                 }
             }
+            $user = User::whereId($userId)->first();
             $data=[
                 'arrayMonth_getRegraImplementada'=>$arrayMonth_getRegraImplementada,
                 'arrayMonth_getRegraImplementEmolu'=>$arrayMonth_getRegraImplementEmolu,
@@ -2372,7 +2373,9 @@ class ArticleRequestsController extends Controller
                 'getRegraImplementEmolu'=>$getRegraImplementEmolu,
                 'disciplines'=>$disciplines,
                 'model'=>$model,
-                'metrics'=>$metrics
+                'metrics'=>$metrics,
+                'user'=> auth()->user() ?? $user
+
             ];
             
             $view = view("Payments::requests.table")->with($data)->render();
@@ -3264,6 +3267,8 @@ class ArticleRequestsController extends Controller
                     }   
                 }
             }  
+            $user = User::whereId($userId)->first();
+
             $data=[
                 'arrayMonth_getRegraImplementada'=>$arrayMonth_getRegraImplementada,
                 'arrayMonth_getRegraImplementEmolu'=>$arrayMonth_getRegraImplementEmolu,
@@ -3273,7 +3278,7 @@ class ArticleRequestsController extends Controller
                 'model'=>$model,
                 'modelo'=>$modelo,
                 'metrics'=>$metrics,
-                'user'=> auth()->user()->id
+                'user'=> auth()->user() ?? $user
             ];
 
             $detalheEstorno=[
