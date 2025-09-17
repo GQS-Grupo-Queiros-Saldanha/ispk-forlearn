@@ -807,7 +807,7 @@ class RequerimentoController extends Controller
                     ->whereNull('traducao.deleted_at')
                     ->where('traducao.active', 1)
                     ->where('up.parameters_id', 1)
-                    ->where('articles.id', 358)
+                    ->where('articles.id', 255)
                     ->orderBy('traducao.display_name')
                     ->select([
                         'rq.code',
@@ -860,11 +860,6 @@ class RequerimentoController extends Controller
                         ->rawColumns(['status', 'code', 'base_value', 'doc', 'actions', 'type'])
                         ->addIndexColumn()
                         ->toJson();
-
-                        break;
-
-
-                
                 
                 case 21:
                     $art_req = DB::table('articles')
