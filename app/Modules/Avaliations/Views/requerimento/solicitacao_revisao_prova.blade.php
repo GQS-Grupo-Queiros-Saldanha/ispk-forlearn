@@ -147,7 +147,7 @@
 
                 dados.forEach(disciplina => {
                     disciplinaSelect.append(
-                        `<option value="${disciplina.id}">${disciplina.name ?? 'Sem nome'}#${disciplina.code}</option>`
+                        `<option value="${disciplina.id}">${disciplina.name ?? 'Sem nome'} #(${disciplina.code})</option>`
                     );
                 });
 
