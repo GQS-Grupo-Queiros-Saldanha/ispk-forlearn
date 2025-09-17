@@ -161,7 +161,7 @@ class RequerimentoController extends Controller
                 ->where('nog.lective_year', 'like', '%' . $ano . '%')
                 ->select([
                     'dt.display_name as name',
-                    'dt.code as code',
+                    'd.code as code',
                     'd.id'
                 ])
                 ->orderBy("name")
