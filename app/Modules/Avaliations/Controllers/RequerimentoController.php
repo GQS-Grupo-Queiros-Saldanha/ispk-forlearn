@@ -572,7 +572,7 @@ class RequerimentoController extends Controller
 
             $lectiveYearSelected = LectiveYear::whereId($dados[0])->first();
 
-            dd(dados[1]);
+            dd($dados[1]);
             switch ($dados[1]) {
                 case 0:
 
