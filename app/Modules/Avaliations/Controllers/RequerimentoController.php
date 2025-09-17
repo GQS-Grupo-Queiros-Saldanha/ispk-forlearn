@@ -794,7 +794,7 @@ class RequerimentoController extends Controller
                     ->join("requerimento as rq", "rq.article_id", "=", "ar.id")
                     ->join('users as u0', 'u0.id', "=", "ar.user_id")
                     ->join('user_parameters as up', 'up.users_id', '=', 'u0.id')
-                    ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                    //->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
                     ->leftjoin("disciplines as disc", 'disc.id', 'ar.discipline_id')
                     ->leftjoin('disciplines_translations as dt', function ($join) {
                         $join->on('dt.discipline_id', '=', 'disc.id');
