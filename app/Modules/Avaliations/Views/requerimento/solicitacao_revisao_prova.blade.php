@@ -63,7 +63,7 @@
                         <div class="col-6">
                             <div class="form-group col">
                                 <label>Disciplinas</label>
-                                <select name="disciplina_id" id="disciplia" class="selectpicker form-control form-control-sm">
+                                <select name="disciplina_id" id="disciplina" class="selectpicker form-control form-control-sm">
                                     <option value="" selected>Seleciona a disciplina</option>
                                     <!--Colocado pelo JS-->
                                 </select>
@@ -141,7 +141,7 @@
             .then(response => response.json())
             .then(dados => {
                 console.log("Disciplinas recebidas:", dados);
-                const disciplinaSelect = $("#disciplia");
+                const disciplinaSelect = $("#disciplina");
                 disciplinaSelect.empty();
                 disciplinaSelect.append(`<option value="">Seleciona a disciplina</option>`);
 
