@@ -140,7 +140,7 @@
         </div>
     </div>
 
-    {{-- Main content --}}requerimento
+    {{-- Main content --}}
     <div class="content">
         <div class="container-fluid">
 
