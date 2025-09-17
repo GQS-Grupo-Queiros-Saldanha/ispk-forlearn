@@ -243,7 +243,7 @@ class RequerimentoController extends Controller
             );
 
             Toastr::success(__('Solicitação de revisão de prova enviada com sucesso!'), __('toastr.success'));
-            return redirect()->route('requerimento.index');
+            return redirect()->back();
 
 
         }catch (Exception $e) {   
