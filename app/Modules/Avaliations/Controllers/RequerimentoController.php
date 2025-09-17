@@ -182,7 +182,7 @@ class RequerimentoController extends Controller
             $lective_year = request()->input('lective_year');
             $code = "revisao_prova";
             $created_by = auth()->user()->id;
-            $dicipline_id = request()->input('disciplia');
+            $dicipline_id = request()->input('disciplina');
 
             // Validar se veio ano lectivo
             if (!$lective_year) {
