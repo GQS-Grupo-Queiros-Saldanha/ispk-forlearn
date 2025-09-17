@@ -801,7 +801,6 @@ class RequerimentoController extends Controller
                         $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                         $join->on('dt.active', '=', DB::raw(true));
                     })
-                    ->leftJoin('metricas as mt','mt.id','ar.metric_id')
                     ->whereNull('articles.deleted_by')
                     ->whereNull('ar.deleted_by')
                     ->whereNull('traducao.deleted_at')
@@ -825,16 +824,14 @@ class RequerimentoController extends Controller
                         'articles.base_value',
                         'ar.created_at',
                         'rq.transference_request as transference_request',
-                        'articles.id_code_dev as code_dev',
-                        'mt.nome as metric'
+                        'articles.id_code_dev as code_dev'
                     ])
                     ->get();
 
                     $art_req = $this->ordena_plano($art_req);
 
                     $requerimento = DB::table('requerimento')
-                        ->get();
-
+                                            ->get();
 
                     return Datatables::of($art_req)
 
@@ -844,7 +841,6 @@ class RequerimentoController extends Controller
                         ->addColumn('base_value', function ($money) {
                             return view('Avaliations::requerimento.datatables.money', compact('money'));
                         })
-
                         ->addColumn('doc', function ($state) use ($requerimento) {
                             return view('Avaliations::requerimento.datatables.doc', compact('state', 'requerimento'));
                         })
@@ -860,6 +856,7 @@ class RequerimentoController extends Controller
                         ->rawColumns(['status', 'code', 'base_value', 'doc', 'actions', 'type'])
                         ->addIndexColumn()
                         ->toJson();
+
                 
                 case 21:
                     $art_req = DB::table('articles')
