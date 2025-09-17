@@ -807,7 +807,7 @@ class RequerimentoController extends Controller
                     ->whereNull('traducao.deleted_at')
                     ->where('traducao.active', 1)
                     ->where('up.parameters_id', 1)
-                    ->where('articles.article_id', 358)
+                    ->where('articles.id', 358)
                     ->orderBy('traducao.display_name')
                     ->select([
                         'rq.code',
