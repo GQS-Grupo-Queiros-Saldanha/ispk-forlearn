@@ -251,7 +251,6 @@ class RequerimentoController extends Controller
         }
 
     }
-
     /*Esta zona é para a solicitação de revisão de Prova!*/
 
     /*Esta zona é para Defesa Extraordinaria!*/
@@ -362,6 +361,8 @@ class RequerimentoController extends Controller
             $ano = $lista[$lective_year];
 
             $disciplinas = DB::table('new_old_grades as nog')
+                ->join('study_plans', 'study_plans.courses_id', '=', $course_id)
+                ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
                 ->join('disciplines as d', 'nog.discipline_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
                     $join->on('dt.discipline_id', '=', 'd.id');
