@@ -276,77 +276,73 @@ class RequerimentoController extends Controller
         }
     }
   
-    public function getEstudante_extraordinario($course_id)
-{
-    try {
-        $currentDate = Carbon::now();
-        $lectiveYearSelected = DB::table('lective_years')
-            ->whereRaw('? between `start_date` and `end_date`', [$currentDate])
-            ->first();
+    public function getEstudante_extraordinario($course_id){
+        try {
 
-        if (!$lectiveYearSelected) {
-            return collect(); // Or handle more gracefully
+            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
+            $currentData = Carbon::now();
+            $lectiveYearSelected = DB::table('lective_years')->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')->first();
+            $lective_year = $lectiveYearSelected->id ?? 11;
+
+            $lista = [
+                6  => '20/21',
+                9 => '24/25',
+                11 => '25/26',
+            ];
+
+            // Garante que o ano existe no array
+            if (!array_key_exists($lective_year, $lista)) {
+                return collect(); // coleção vazia
+            }
+
+            $ano = $lista[$lective_year];
+
+            
+            $students = DB::table('users')
+                // ->whereIn('users.id',$students_ids)
+                ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
+                ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
+                ->join('new_old_grades as nog', 'nog.user_id', '=', 'users.id')
+                ->join('study_plans', 'study_plans.courses_id', '=', $course_id)
+                ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
+                ->where('nog.lective_year', 'like', '%' . $ano . '%')
+                ->where('usuario_cargo.model_type', "App\Modules\Users\Models\User")
+                ->where('usuario_cargo.role_id', 6)
+                ->leftjoin('user_parameters as up', 'up.users_id', '=', 'users.id')
+                ->leftjoin('user_parameters as up0', 'up0.users_id', '=', 'users.id')
+                ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'users.id')
+                ->join('courses_translations as ct', function ($join) {
+                    $join->on('ct.courses_id', '=', 'uc.courses_id');
+                    $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('ct.active', '=', DB::raw(true));
+                })
+                ->where('uc.courses_id', $course_id)
+                ->whereNull('up.deleted_at')
+                ->where('up.parameters_id', 1)
+                ->where('up0.parameters_id', 19)
+                ->whereNull('up0.deleted_at')
+                ->whereNull('users.deleted_at')
+                ->whereNull('users.deleted_by')
+                ->select([
+                    'users.id as user_id',
+                    'ct.display_name as course',
+                    'up.value as name',
+                    'users.email as email',
+                    'up0.value as student_number'
+                ])
+                ->orderBy("name")
+                ->distinct('id')
+                ->get();
+
+            return response()->json($students);
+
+
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return response()->json(['error' => 'Failed to fetch students'], 500);
         }
 
-        $lectiveYearId = $lectiveYearSelected->id;
-
-        $lectiveYearMap = [
-            6  => '20/21',
-            9  => '24/25',
-            11 => '25/26',
-        ];
-
-        if (!isset($lectiveYearMap[$lectiveYearId])) {
-            return collect();
-        }
-
-        $ano = $lectiveYearMap[$lectiveYearId];
-
-        $students = DB::table('users')
-            ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
-            ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
-            ->join('new_old_grades as nog', 'nog.user_id', '=', 'users.id')
-            ->join('user_courses as uc', 'uc.users_id', '=', 'users.id')
-            ->join('courses_translations as ct', function ($join) {
-                $join->on('ct.courses_id', '=', 'uc.courses_id')
-                     ->where('ct.language_id', LanguageHelper::getCurrentLanguage())
-                     ->where('ct.active', true);
-            })
-            ->join('study_plans', 'study_plans.courses_id', '=', 'uc.courses_id')
-            ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
-            ->leftJoin('user_parameters as up', function ($join) {
-                $join->on('up.users_id', '=', 'users.id')
-                     ->where('up.parameters_id', 1)
-                     ->whereNull('up.deleted_at');
-            })
-            ->leftJoin('user_parameters as up0', function ($join) {
-                $join->on('up0.users_id', '=', 'users.id')
-                     ->where('up0.parameters_id', 19)
-                     ->whereNull('up0.deleted_at');
-            })
-            ->where('nog.lective_year', 'like', '%' . $ano . '%')
-            ->where('usuario_cargo.model_type', "App\Modules\Users\Models\User")
-            ->where('usuario_cargo.role_id', 6)
-            ->where('uc.courses_id', $course_id)
-            ->whereNull('users.deleted_at')
-            ->whereNull('users.deleted_by')
-            ->select([
-                'users.id as user_id',
-                'ct.display_name as course',
-                'up.value as name',
-                'users.email as email',
-                'up0.value as student_number'
-            ])
-            ->orderBy("name")
-            ->distinct()
-            ->get();
-
-        return response()->json($students);
-    } catch (\Throwable $e) {
-        Log::error($e);
-        return response()->json(['error' => 'Failed to fetch students'], 500);
     }
-}
 
     public function getDisciplinas_($student_id, $lective_year){
     
