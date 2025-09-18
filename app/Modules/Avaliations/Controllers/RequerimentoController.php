@@ -276,7 +276,7 @@ class RequerimentoController extends Controller
         }
     }
   
-    public function getEstudante_($course_id){
+    public function getEstudante_extraordinario($course_id){
         try {
 
             $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
