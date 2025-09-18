@@ -361,23 +361,22 @@ class RequerimentoController extends Controller
             $ano = $lista[$lective_year];
 
             $disciplinas = DB::table('matriculations as m')
-                ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')    
-                ->join('study_plans', 'study_plans.courses_id', '=', 'sphd.study_plans_id')
+                ->join('study_plans as sp', 'sp.id', '=', 'm.course_year')
+                ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'sp.id')
                 ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
-                    $join->on('dt.discipline_id', '=', 'd.id');
-                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                })                
+                    $join->on('dt.discipline_id', '=', 'd.id')
+                        ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                })
                 ->where('m.user_id', $student_id)
-                ->where('sphd.year', $course_id)
+                ->where('sphd.years', $course_year) // aqui usa 'years'
                 ->select([
                     'dt.display_name as name',
                     'd.code as code',
                     'd.id'
                 ])
-                ->orderBy("name")
+                ->orderBy('name')
                 ->get();
-
 
             dd($disciplinas);
 
