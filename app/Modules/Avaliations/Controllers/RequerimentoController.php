@@ -369,7 +369,7 @@ class RequerimentoController extends Controller
                         ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 })
                 ->where('m.user_id', $student_id)
-                ->where('sphd.years', $course_year) // aqui usa 'years'
+                ->where('sphd.years', $course_id)
                 ->select([
                     'dt.display_name as name',
                     'd.code as code',
