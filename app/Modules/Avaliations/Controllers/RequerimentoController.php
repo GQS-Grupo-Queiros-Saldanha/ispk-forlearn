@@ -343,7 +343,7 @@ class RequerimentoController extends Controller
 
     }
 
-    public function getDisciplinas_extraordinaria($student_id, $lective_year){
+    public function getDisciplinas_extraordinaria($student_id, $lective_year, $course_id){
     
        try {
 
@@ -363,7 +363,7 @@ class RequerimentoController extends Controller
             $disciplinas = DB::table('new_old_grades as nog')
                 ->join('study_plans', 'study_plans.courses_id', '=', $course_id)
                 ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
-                ->join('disciplines as d', 'nog.discipline_id', '=', 'd.id')
+                ->join('disciplines as d', 'sphd.discipline_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
                     $join->on('dt.discipline_id', '=', 'd.id');
                     $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
