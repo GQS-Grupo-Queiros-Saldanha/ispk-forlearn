@@ -958,7 +958,7 @@ class MatriculationController extends Controller
                 'languages' => Language::whereActive(true)->get(),
                 'users' => $this->studentsWithCourseWithoutMatriculationSelectList()
             ];
-          
+          dd($data);
             return view('Users::matriculations.matriculation')->with($data);
         } catch (Exception | Throwable $e) {
             logError($e);
