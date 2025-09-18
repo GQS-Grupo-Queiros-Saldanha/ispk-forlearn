@@ -375,6 +375,7 @@ class RequerimentoController extends Controller
                     'd.code as code',
                     'd.id'
                 ])
+                ->distinct()
                 ->orderBy('name')
                 ->get();
 
