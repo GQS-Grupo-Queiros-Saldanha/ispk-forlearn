@@ -107,7 +107,7 @@ class estatisticaMatriculationController extends Controller
             'lectiveYearSelected' => $lectiveYearSelected,
             'lectiveYears' => $lectiveYears
         ];
-        dd($data);
+        //dd($data);
         return view("Users::matriculations.relatorios")->with($data);
     }
 
