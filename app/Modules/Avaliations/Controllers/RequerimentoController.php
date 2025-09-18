@@ -362,7 +362,7 @@ class RequerimentoController extends Controller
 
             $disciplinas = DB::table('new_old_grades as nog')
                 ->join('matriculations as m', 'm.user_id', '=', 'nog.user_id')
-                ->join('study_plans', 'study_plans.courses_id', '=', 'm.lective_year')
+                ->join('study_plans', 'study_plans.courses_id', '=', 'm.course_year')
                 ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
                 ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
