@@ -111,10 +111,7 @@ class estatisticaMatriculationController extends Controller
         return view("Users::matriculations.relatorios")->with($data);
     }
 
-    public function relatoriosPDF(Request $request)
-    {
-
-
+    public function relatoriosPDF(Request $request){
 
         $tranf_type = 'payment';
 
@@ -302,6 +299,17 @@ class estatisticaMatriculationController extends Controller
                 ->where('users_id', $keys[$i])
                 ->select(['users_id', 'value as nome'])
                 ->first();
+
+            if ($staff[$i]) {
+                $nome = explode(" ", $staff[$i]->nome);
+                $staff[$i]->nome = $nome[0] . " " . $nome[count($nome) - 1];
+            } else {
+                // fallback se não tiver nome definido
+                $staff[$i] = (object)[
+                    'users_id' => $keys[$i],
+                    'nome' => 'Sem Nome'
+                ];
+            }
 
             $nome = explode(" ", $staff[$i]->nome);
             $staff[$i]->nome = $nome[0] . " " . $nome[count($nome) - 1];
