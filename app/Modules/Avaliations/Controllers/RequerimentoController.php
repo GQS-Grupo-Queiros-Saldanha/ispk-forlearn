@@ -452,7 +452,7 @@ class RequerimentoController extends Controller
                 ]
             );
 
-            Toastr::success(__('Solicitação de revisão de prova enviada com sucesso!'), __('toastr.success'));
+            Toastr::success(__('Solicitação de Defesa Extraordinaria enviada com sucesso!'), __('toastr.success'));
             return redirect()->back();
 
 
