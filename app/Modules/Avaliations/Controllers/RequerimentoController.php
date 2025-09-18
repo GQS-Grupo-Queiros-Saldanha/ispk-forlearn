@@ -360,26 +360,31 @@ class RequerimentoController extends Controller
 
             $ano = $lista[$lective_year];
 
+            $disciplinas2 = DB::table('matriculations as m')
+                ->join('study_plans', 'study_plans.courses_id', '=', 'm.course_year')
+                ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
+                ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'd.id');
+                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                })                
+                ->where('m.user_id', $student_id)
+                ->where('study_plans.courses_id', $course_id)
+                ->select([
+                    'dt.display_name as name',
+                    'd.code as code',
+                    'd.id'
+                ])
+                ->orderBy("name")
+                ->get();
+
             $disciplinas = DB::table('matriculations as m')
-    ->join('study_plans', 'study_plans.courses_id', '=', 'm.course_year')
-    ->join('study_plans_has_disciplines as sphd', function ($join) {
-        $join->on('sphd.study_plans_id', '=', 'study_plans.id');
-        $join->on('sphd.years', '=', 'm.course_year');
-    })
-    ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
-    ->join('disciplines_translations as dt', function ($join) {
-        $join->on('dt.discipline_id', '=', 'd.id');
-        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-    })
-    ->where('m.user_id', $student_id)
-    ->where('study_plans.courses_id', $course_id)
-    ->select([
-        'dt.display_name as name',
-        'd.code as code',
-        'd.id'
-    ])
-    ->orderBy("name")
-    ->get();
+                ->join('study_plans', 'study_plans.courses_id', '=', 'm.course_year')
+                ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
+                ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
+                ->where('m.user_id', $student_id)
+                ->where('study_plans.courses_id', $course_id)
+                ->get();
 
             dd($disciplinas);
 
