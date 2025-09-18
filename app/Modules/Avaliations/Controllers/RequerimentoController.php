@@ -378,6 +378,7 @@ class RequerimentoController extends Controller
                 ])
                 ->orderBy("name")
                 ->get();
+            dd($disciplinas);
 
             return response()->json($disciplinas);
             } catch (\Throwable $e) {
