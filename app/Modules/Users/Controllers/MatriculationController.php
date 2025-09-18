@@ -1338,6 +1338,7 @@ class MatriculationController extends Controller
 
     public function fetch($id, $action)
     {
+        dd($id, $action);
         try {
             $matriculation = $matriculation = Matriculation::where('id', $id)
                 ->with([
