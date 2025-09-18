@@ -384,7 +384,7 @@ class RequerimentoController extends Controller
 
     }
 
-    public function solicitacao_revisao_prova_store_(Request $request){
+    public function solicitacao_solicitacao_defesa_extraordinaria_store_(Request $request){
         try {
             
             // Validar os dados recebidos
