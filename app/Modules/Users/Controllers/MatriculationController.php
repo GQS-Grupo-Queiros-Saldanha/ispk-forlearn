@@ -1390,7 +1390,7 @@ class MatriculationController extends Controller
             } else {
                 $data = ['action' => $action];
             }
-            dd($data);
+            //dd($data);
             return view('Users::matriculations.matriculation')->with($data);
         } catch (ModelNotFoundException $e) {
             Toastr::error(__('Users::matriculations.not_found_message'), __('toastr.error'));
