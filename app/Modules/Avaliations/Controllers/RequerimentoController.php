@@ -360,8 +360,7 @@ class RequerimentoController extends Controller
 
             $ano = $lista[$lective_year];
 
-            $disciplinas = DB::table('new_old_grades as nog')
-                ->join('matriculations as m', 'm.user_id', '=', 'nog.user_id')
+            $disciplinas = DB::table('matriculations as m')
                 ->join('study_plans', 'study_plans.courses_id', '=', 'm.course_year')
                 ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
                 ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
@@ -369,10 +368,8 @@ class RequerimentoController extends Controller
                     $join->on('dt.discipline_id', '=', 'd.id');
                     $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 })                
-                ->where('nog.user_id', $student_id)
+                ->where('m.user_id', $student_id)
                 ->where('study_plans.courses_id', $course_id)
-                ->where('sphd.years', '=', 'm.course_year')
-                ->where('nog.lective_year', 'like', '%' . $ano . '%')
                 ->select([
                     'dt.display_name as name',
                     'd.code as code',
