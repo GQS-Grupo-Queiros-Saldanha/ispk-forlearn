@@ -1388,7 +1388,10 @@ class MatriculationController extends Controller
                     'stored' => $stored
                 ];
             } else {
-                $data = ['action' => $action];
+                $data = [
+                    'action' => $action,
+                    'matriculation' => null,
+                ];
             }
             //dd($data);
             return view('Users::matriculations.matriculation')->with($data);

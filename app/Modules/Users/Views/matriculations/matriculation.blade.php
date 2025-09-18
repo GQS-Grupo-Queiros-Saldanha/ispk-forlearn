@@ -46,7 +46,7 @@
         @break
 
         @case('edit')
-            {!! Form::model($matriculation, ['route' => ['matriculations.update', $matriculation->id ?? 0], 'method' => 'put']) !!}
+            {!! Form::model($matriculation, ['route' => ['matriculations.update', $matriculation->id], 'method' => 'put']) !!}
         @break
     @endswitch
     <div class="row">
@@ -84,11 +84,11 @@
                 @break
 
                 @case('show')
-                    <a href="{{ route('matriculations.edit', $matriculation->id?? 0) }}" class="btn btn-sm btn-warning mb-3">
+                    <a href="{{ route('matriculations.edit', $matriculation->id) }}" class="btn btn-sm btn-warning mb-3">
                         <i class="fas fa-edit"></i>
                         @lang('common.edit')
                     </a>
-                    <a href="{{ route('matriculations.report', $matriculation->id ?? 0) }}" target="_blank"
+                    <a href="{{ route('matriculations.report', $matriculation->id) }}" target="_blank"
                         class="btn btn-sm btn-info mb-3">
                         <i class="fas fa-file-pdf"></i>
                         Gerar Boletim
@@ -113,7 +113,7 @@
                         <div class="col-6">
                             <div class="form-group col">
                                 <h5 class="card-title mb-3">@lang('Users::matriculations.code')</h5>
-                                {{ $matriculation->code ?? 0 }}
+                                {{ $matriculation->code }}
                             </div>
                         </div>
                     @endif
