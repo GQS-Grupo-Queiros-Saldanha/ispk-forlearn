@@ -371,6 +371,7 @@ class RequerimentoController extends Controller
                 })                
                 ->where('nog.user_id', $student_id)
                 ->where('study_plans.courses_id', $course_id)
+                ->where('sphd.years', '=', 'm.course_year')
                 ->where('nog.lective_year', 'like', '%' . $ano . '%')
                 ->select([
                     'dt.display_name as name',

@@ -83,8 +83,7 @@ class estatisticaMatriculationController extends Controller
         }
     }
 
-        public function relatorios()
-    {
+        public function relatorios(){
 
         $courses = Course::with([
             'currentTranslation'
@@ -101,13 +100,14 @@ class estatisticaMatriculationController extends Controller
         $lectiveYearSelected = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
             ->first();
-        $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+        $lectiveYearSelected = $lectiveYearSelected->id ?? 9;
 
         $data = [
             'courses' => $courses->get(),
             'lectiveYearSelected' => $lectiveYearSelected,
             'lectiveYears' => $lectiveYears
         ];
+        dd($data);
         return view("Users::matriculations.relatorios")->with($data);
     }
 
