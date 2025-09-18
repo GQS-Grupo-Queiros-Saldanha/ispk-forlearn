@@ -30,7 +30,7 @@
 @endsection
 
 @section('body')
-    <form action="{{ route('requerimento.solicitacao_revisao_prova_store') }}" method="POST">
+    <form action="{{ route('requerimento.solicitacao_solicitacao_defesa_extraordinaria_store') }}" method="POST">
         @csrf
         <div class="row">
             <div class="col">
@@ -92,7 +92,7 @@
 
     // URLs
     const estudantesUrl = "{{ url('/pt/avaliations/requerimento/getEstudante_extraordinario') }}";
-    const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
+    const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas_extraordinaria') }}";
 
     // Atualiza o ano letivo escondido
     $("#lective_year").change(function() {

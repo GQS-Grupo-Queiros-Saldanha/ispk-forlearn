@@ -344,7 +344,7 @@ class RequerimentoController extends Controller
 
     }
 
-    public function getDisciplinas_($student_id, $lective_year){
+    public function getDisciplinas_extraordinaria($student_id, $lective_year){
     
        try {
 
@@ -384,7 +384,7 @@ class RequerimentoController extends Controller
 
     }
 
-    public function solicitacao_solicitacao_defesa_extraordinaria_store_(Request $request){
+    public function solicitacao_solicitacao_defesa_extraordinaria_store(Request $request){
         try {
             
             // Validar os dados recebidos
