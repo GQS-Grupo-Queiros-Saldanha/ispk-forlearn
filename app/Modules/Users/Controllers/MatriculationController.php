@@ -958,7 +958,7 @@ class MatriculationController extends Controller
                 'languages' => Language::whereActive(true)->get(),
                 'users' => $this->studentsWithCourseWithoutMatriculationSelectList()
             ];
-          dd($data);
+          //dd($data);
             return view('Users::matriculations.matriculation')->with($data);
         } catch (Exception | Throwable $e) {
             logError($e);
@@ -1389,7 +1389,7 @@ class MatriculationController extends Controller
             } else {
                 $data = ['action' => $action];
             }
-
+            dd($data);
             return view('Users::matriculations.matriculation')->with($data);
         } catch (ModelNotFoundException $e) {
             Toastr::error(__('Users::matriculations.not_found_message'), __('toastr.error'));
