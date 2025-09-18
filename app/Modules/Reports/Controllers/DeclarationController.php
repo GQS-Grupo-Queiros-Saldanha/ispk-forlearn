@@ -3799,7 +3799,7 @@ return $pdf->stream($pdf_name . '.pdf');
             $requerimento = DB::table('requerimento')
                 ->where("id", $request->requerimento)
                 ->first();
-            dd($requerimento);
+            
 
 
             $recibo = $this->referenceGetRecibo($requerimento->article_id);
@@ -3991,7 +3991,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->first();
 
 
-                dd($requerimento->transference_request);
+            //dd($requerimento->transference_request);
             $transference = DB::table('tb_transference_studant')
                 ->where('id', $requerimento->transference_request)
                 ->first();
