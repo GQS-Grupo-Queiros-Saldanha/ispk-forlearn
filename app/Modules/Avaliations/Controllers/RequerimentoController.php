@@ -268,7 +268,7 @@ class RequerimentoController extends Controller
                 'lectiveYears' => $lectiveYears,
                 'courses' => $courses
             ];
-            return view('Avaliations::requerimento.solicitacao_defesa_eextraordinaria')->with($data);
+            return view('Avaliations::requerimento.solicitacao_defesa_extraordinaria')->with($data);
 
         } catch (Exception | Throwable $e) {
             Log::error($e);
