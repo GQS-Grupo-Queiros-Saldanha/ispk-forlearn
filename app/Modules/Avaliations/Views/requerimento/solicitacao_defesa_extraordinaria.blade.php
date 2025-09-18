@@ -130,7 +130,7 @@
     // Quando seleciona o estudante -> buscar disciplinas
     $("#students").change(function() {
         const student_id = $(this).val();
-        const course_id = $(this).val();
+        const course_id = $("#courses").val()
         const ano = $("#lective_year").val();
 
         if (!student_id) return;
