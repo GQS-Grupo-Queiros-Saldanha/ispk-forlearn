@@ -91,7 +91,7 @@
     const anoLectivo = $("#lectiveY");
 
     // URLs
-    const estudantesUrl = "{{ url('/pt/avaliations/requerimento/getEstudante') }}";
+    const estudantesUrl = "{{ url('/pt/avaliations/requerimento/getEstudante_extraordinario') }}";
     const disciplinasUrl = "{{ url('/pt/avaliations/requerimento/getDisciplinas') }}";
 
     // Atualiza o ano letivo escondido

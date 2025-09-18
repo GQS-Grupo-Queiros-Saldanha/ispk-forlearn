@@ -427,7 +427,7 @@ Route::group(
                 
                 //Defesa extraordinaria
                 Route::get('/requerimento/solicitacao_defesa_extraordinaria', [RequerimentoController::class, 'solicitacao_defesa_extraordinaria'])->name('requerimento.solicitacao_defesa_extraordinaria');
-                Route::get('/requerimento/getEstudante/{course_id}/{lective_year}', [RequerimentoController::class, 'getEstudante_extraordinario'])->name('requerimento.getEstudante_extraordinario');
+                Route::get('/requerimento/getEstudante_extraordinario/{course_id}/{lective_year}', [RequerimentoController::class, 'getEstudante_extraordinario'])->name('requerimento.getEstudante_extraordinario');
                 Route::get('/requerimento/getDisciplinas/{student_id}/{lective_year}',[RequerimentoController::class, 'getDisciplinas_'])->name('requerimento.getDisciplinas_');
                 Route::post('/requerimento/solicitacao_revisao_prova_store', [RequerimentoController::class, 'solicitacao_solicitacao_defesa_extraordinaria_store'])->name('requerimento.solicitacao_revisao_prova_store');
                 
