@@ -3793,7 +3793,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
     private function pedido_entrada($request, $config){
         try {
-
+            dd($request);
             $this->gerar_codigo_documento($request->requerimento);
 
             $requerimento = DB::table('requerimento')
