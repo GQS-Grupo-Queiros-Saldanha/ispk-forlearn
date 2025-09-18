@@ -254,6 +254,218 @@ class RequerimentoController extends Controller
 
     /*Esta zona é para a solicitação de revisão de Prova!*/
 
+    /*Esta zona é para Defesa Extraordinaria!*/
+    public function solicitacao_defesa_extraordinaria(){
+        try {
+            
+            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
+            $currentData = Carbon::now();
+            $lectiveYearSelected = DB::table('lective_years')->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')->first();
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
+            $courses = Course::with(['currentTranslation'])->get();
+            $data = [
+                'lectiveYearSelected' => $lectiveYearSelected,
+                'lectiveYears' => $lectiveYears,
+                'courses' => $courses
+            ];
+            return view('Avaliations::requerimento.solicitacao_defesa_eextraordinaria')->with($data);
+
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+        }
+    }
+  
+    public function getEstudante_($course_id){
+        try {
+
+            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
+            $currentData = Carbon::now();
+            $lectiveYearSelected = DB::table('lective_years')->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')->first();
+            $lective_year = $lectiveYearSelected->id ?? 11;
+
+            $lista = [
+                6  => '20/21',
+                9 => '24/25',
+                11 => '25/26',
+            ];
+
+            // Garante que o ano existe no array
+            if (!array_key_exists($lective_year, $lista)) {
+                return collect(); // coleção vazia
+            }
+
+            $ano = $lista[$lective_year];
+
+            
+            $students = DB::table('users')
+                // ->whereIn('users.id',$students_ids)
+                ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
+                ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
+                ->join('new_old_grades as nog', 'nog.user_id', '=', 'users.id')
+                ->join('study_plans', 'study_plans.courses_id', '=', $course_id)
+                ->join('study_plans_has_disciplines as sphd.study_plans_id', '=', 'study_plans.id')
+                ->where('nog.lective_year', 'like', '%' . $ano . '%')
+                ->where('usuario_cargo.model_type', "App\Modules\Users\Models\User")
+                ->where('usuario_cargo.role_id', 6)
+                ->leftjoin('user_parameters as up', 'up.users_id', '=', 'users.id')
+                ->leftjoin('user_parameters as up0', 'up0.users_id', '=', 'users.id')
+                ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'users.id')
+                ->join('courses_translations as ct', function ($join) {
+                    $join->on('ct.courses_id', '=', 'uc.courses_id');
+                    $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('ct.active', '=', DB::raw(true));
+                })
+                ->where('uc.courses_id', $course_id)
+                ->whereNull('up.deleted_at')
+                ->where('up.parameters_id', 1)
+                ->where('up0.parameters_id', 19)
+                ->whereNull('up0.deleted_at')
+                ->whereNull('users.deleted_at')
+                ->whereNull('users.deleted_by')
+                ->select([
+                    'users.id as user_id',
+                    'ct.display_name as course',
+                    'up.value as name',
+                    'users.email as email',
+                    'up0.value as student_number'
+                ])
+                ->orderBy("name")
+                ->distinct('id')
+                ->get();
+
+            return response()->json($students);
+
+
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return response()->json(['error' => 'Failed to fetch students'], 500);
+        }
+
+    }
+
+    public function getDisciplinas_($student_id, $lective_year){
+    
+       try {
+
+            $lista = [
+                6  => '20/21',
+                9 => '24/25',
+                11 => '25/26',
+            ];
+
+            // Garante que o ano existe no array
+            if (!array_key_exists($lective_year, $lista)) {
+                return collect(); // coleção vazia
+            }
+
+            $ano = $lista[$lective_year];
+
+            $disciplinas = DB::table('new_old_grades as nog')
+                ->join('disciplines as d', 'nog.discipline_id', '=', 'd.id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'd.id');
+                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                })                
+                ->where('nog.user_id', $student_id)
+                ->where('nog.lective_year', 'like', '%' . $ano . '%')
+                ->select([
+                    'dt.display_name as name',
+                    'd.code as code',
+                    'd.id'
+                ])
+                ->orderBy("name")
+                ->get();
+
+            return response()->json($disciplinas);
+            } catch (\Throwable $e) {
+                dd($e->getMessage(), $e->getTraceAsString());
+            }
+
+    }
+
+    public function solicitacao_revisao_prova_store_(Request $request){
+        try {
+            
+            // Validar os dados recebidos
+            $user_id = request()->input('student_id');
+            $lective_year = request()->input('lective_year');
+            $code = "revisao_prova";
+            $created_by = auth()->user()->id;
+            $dicipline_id = request()->input('disciplina_id');
+
+            // Validar se veio ano lectivo
+            if (!$lective_year) {
+                Toastr::error(__('Ano lectivo inválido'), __('toastr.error'));
+                return redirect()->back();
+            }
+
+            $emolumento = DB::table('articles as art')
+                ->join('code_developer as cd', 'art.id_code_dev', '=', 'cd.id')
+                ->where('art.anoLectivo', $lective_year)
+                ->where('cd.code', $code)
+                ->select('art.id', 'art.base_value')
+                ->first();
+        
+            if (!$emolumento) {
+                Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
+                return redirect()->back();
+            }
+                        
+            $articleRequestId = DB::table('article_requests')->insertGetId([ 
+                'user_id' => $user_id, 
+                'article_id' => $emolumento->id, 
+                'base_value' => $emolumento->base_value, 
+                'discipline_id' =>$dicipline_id,
+                'status' => 'pending',
+                'created_by' => $created_by,
+                'created_at' => now(), 
+                'updated_at' => now(), 
+            ]);
+            // Criar uma transação
+            $transaction = DB::table('transactions')->insertGetId([
+                    'type' => 'debit',
+                    'value' => $emolumento->base_value,
+                    'notes' => 'Débito inicial do valor base',
+                    "created_by" => auth()->user()->id,
+                    "created_at" => Carbon::now()
+            ]);
+
+            // Criar article e transações
+            $article_transaction = DB::table('transaction_article_requests')->insertGetId(
+                [
+                    'article_request_id' => $articleRequestId,
+                    'transaction_id' => $transaction,
+                    "value" => $emolumento->base_value,
+                    "created_at" => Carbon::now()
+                ]
+            );
+
+            // Guarda o codigo do documento 
+            $requerimento = DB::table('requerimento')->insertGetId(
+                [
+                    'article_id' => $emolumento->id,
+                    //'codigo_documento' => $this->gerar_codigo_documento(),
+                    'efeito' => 'Revisão de Prova',
+                    "user_id" => $created_by,
+                    'year' => $lective_year
+                ]
+            );
+
+            Toastr::success(__('Solicitação de revisão de prova enviada com sucesso!'), __('toastr.success'));
+            return redirect()->back();
+
+
+        }catch (Exception $e) {   
+            dd($e->getMessage(), $e->getFile(), $e->getLine());
+        }
+
+    }
+
+    /*Esta zona é para a solicitação de Defesa extraordinaria!*/
+
+
+
     public function merito()
     {
         try {
