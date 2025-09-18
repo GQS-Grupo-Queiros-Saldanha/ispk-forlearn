@@ -361,7 +361,7 @@ class RequerimentoController extends Controller
             $ano = $lista[$lective_year];
 
             $disciplinas = DB::table('new_old_grades as nog')
-                ->join('study_plans', 'study_plans.courses_id', '=', $course_id)
+                ->join('study_plans')
                 ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'study_plans.id')
                 ->join('disciplines as d', 'sphd.discipline_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
@@ -369,6 +369,7 @@ class RequerimentoController extends Controller
                     $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 })                
                 ->where('nog.user_id', $student_id)
+                ->where('study_plans.courses_id', $course_id)
                 ->where('nog.lective_year', 'like', '%' . $ano . '%')
                 ->select([
                     'dt.display_name as name',
