@@ -361,7 +361,7 @@ class RequerimentoController extends Controller
             $ano = $lista[$lective_year];
 
             $disciplinas = DB::table('matriculations as m')
-                ->join('study_plans as sp', 'sp.id', '=', 'm.course_year')
+                ->join('study_plans as sp', 'sp.courses_id', '=', 'm.course_year')
                 ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'sp.id')
                 ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
