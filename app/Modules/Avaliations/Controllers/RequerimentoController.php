@@ -379,6 +379,25 @@ class RequerimentoController extends Controller
                 ->orderBy('name')
                 ->get();
 
+            if ($disciplinas->isEmpty()) {
+                
+                $disciplinas = DB::table('new_old_grades as nog')
+                ->join('disciplines as d', 'nog.discipline_id', '=', 'd.id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'd.id');
+                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                })                
+                ->where('nog.user_id', $student_id)
+                ->where('nog.lective_year', 'like', '%' . $ano . '%')
+                ->select([
+                    'dt.display_name as name',
+                    'd.code as code',
+                    'd.id'
+                ])
+                ->orderBy("name")
+                ->get();
+            }
+
             return response()->json($disciplinas);
             } catch (\Throwable $e) {
                 dd($e->getMessage(), $e->getTraceAsString());
