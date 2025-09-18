@@ -390,7 +390,7 @@ class RequerimentoController extends Controller
             // Validar os dados recebidos
             $user_id = request()->input('student_id');
             $lective_year = request()->input('lective_year');
-            $code = "revisao_prova";
+            $code = "defesa_extraordinaria";
             $created_by = auth()->user()->id;
             $dicipline_id = request()->input('disciplina_id');
 
@@ -408,7 +408,7 @@ class RequerimentoController extends Controller
                 ->first();
         
             if (!$emolumento) {
-                Toastr::error(__('Não foi possível solicitar o emolumento de revisão de prova, por favor tente novamente'), __('toastr.error'));
+                Toastr::error(__('Não foi possível solicitar o emolumento, por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
             }
                         
