@@ -134,7 +134,7 @@ class RequerimentoController extends Controller
 
     }
 
-    public function getDisciplinas($student_id, $lective_year){
+    public function getDisciplinas($student_id, $lective_year, $course_id){
     
        try {
 

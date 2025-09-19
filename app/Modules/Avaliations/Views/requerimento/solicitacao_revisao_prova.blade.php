@@ -132,11 +132,12 @@
     // Quando seleciona o estudante -> buscar disciplinas
     $("#students").change(function() {
         const student_id = $(this).val();
+        const course_id = $("#courses").val()
         const ano = $("#lective_year").val();
 
         if (!student_id) return;
 
-        let url = `${disciplinasUrl}/${student_id}/${ano}`;
+        let url = `${disciplinasUrl}/${student_id}/${ano}/${course_id}`;
         console.log("URL chamada:", url);
 
         fetch(url)
