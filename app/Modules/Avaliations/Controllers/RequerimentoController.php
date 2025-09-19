@@ -151,21 +151,55 @@ class RequerimentoController extends Controller
 
             $ano = $lista[$lective_year];
 
-            $disciplinas = DB::table('new_old_grades as nog')
-                ->join('disciplines as d', 'nog.discipline_id', '=', 'd.id')
+            $disciplinas = DB::table('matriculations as m')
+                ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'm.course_year')
+                ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
+                ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
                 ->join('disciplines_translations as dt', function ($join) {
-                    $join->on('dt.discipline_id', '=', 'd.id');
-                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                })                
-                ->where('nog.user_id', $student_id)
-                ->where('nog.lective_year', 'like', '%' . $ano . '%')
+                    $join->on('dt.discipline_id', '=', 'd.id')
+                        ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                })
+                ->where('m.user_id', $student_id)
+                ->where('sp.courses_id', $course_id)
+                ->where('m.id', function ($query) use ($student_id) {
+                    $query->select('id')
+                        ->from('matriculations')
+                        ->where('user_id', $student_id)
+                        ->orderBy('created_at', 'desc')
+                        ->limit(1);
+                })
                 ->select([
                     'dt.display_name as name',
                     'd.code as code',
                     'd.id'
                 ])
-                ->orderBy("name")
+                ->distinct()
+                ->orderBy('name')
                 ->get();
+
+
+
+            if ($disciplinas->isEmpty()) {
+                
+                $disciplinas = DB::table('user_courses as uc')
+                 ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'uc.courses_id')
+                ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
+                ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'd.id')
+                        ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                })
+                ->where('uc.users_id', $student_id)
+                ->where('sp.courses_id', $course_id)
+                ->select([
+                    'dt.display_name as name',
+                    'd.code as code',
+                    'd.id'
+                ])
+                ->distinct()
+                ->orderBy('name')
+                ->get();
+            }
 
             return response()->json($disciplinas);
             } catch (\Throwable $e) {
@@ -513,7 +547,6 @@ class RequerimentoController extends Controller
         }
 
     }
-
     /*Esta zona é para a solicitação de Defesa extraordinaria!*/
 
 
