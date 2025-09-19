@@ -53,7 +53,7 @@
                         <div class="col-6">
                             <div class="form-group col">
                                 <label>Estudante</label>
-                                <select name="student_id" id="students" class="selectpicker form-control form-control-sm">
+                                <select name="student_id" id="students" class="selectpicker form-control form-control-sm" data-live-search="true">
                                     <option value="" selected>Selecione o Estudante</option>
                                     <!--Colocado pelo JS-->
                                 </select>
@@ -63,7 +63,7 @@
                         <div class="col-6">
                             <div class="form-group col">
                                 <label>Disciplinas</label>
-                                <select name="disciplina_id" id="disciplina" class="selectpicker form-control form-control-sm">
+                                <select name="disciplina_id" id="disciplina" class="selectpicker form-control form-control-sm" data-live-search="true">
                                     <option value="" selected>Seleciona a disciplina</option>
                                     <!--Colocado pelo JS-->
                                 </select>
@@ -118,7 +118,9 @@
 
                 dados.forEach(student => {
                     studentSelect.append(
-                        `<option value="${student.user_id}">${student.name ?? 'Sem nome'} #${student.student_number ?? ''}(${student.email ?? 'sem email'})</option>`
+                        `<option value="${student.user_id}"  data-tokens="${student.name} ${student.student_number} ${student.email}">
+                            ${student.name ?? 'Sem nome'} #${student.student_number ?? ''}(${student.email ?? 'sem email'})
+                        </option>`
                     );
                 });
 
@@ -148,7 +150,9 @@
 
                 dados.forEach(disciplina => {
                     disciplinaSelect.append(
-                        `<option value="${disciplina.id}">#(${disciplina.code}) - ${disciplina.name ?? 'Sem nome'}</option>`
+                        `<option value="${disciplina.id}" data-tokens="${disciplina.code} ${disciplina.name}">
+                            #(${disciplina.code}) - ${disciplina.name ?? 'Sem nome'}
+                        </option>`
                     );
                 });
 
