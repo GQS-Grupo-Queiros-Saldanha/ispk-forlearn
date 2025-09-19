@@ -361,23 +361,32 @@ class RequerimentoController extends Controller
             $ano = $lista[$lective_year];
 
             $disciplinas = DB::table('matriculations as m')
-                ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'm.course_year')
-                ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
-                ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
-                ->join('disciplines_translations as dt', function ($join) {
-                    $join->on('dt.discipline_id', '=', 'd.id')
-                        ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                })
-                ->where('m.user_id', $student_id)
-                ->where('sp.courses_id', $course_id)
-                ->select([
-                    'dt.display_name as name',
-                    'd.code as code',
-                    'd.id'
-                ])
-                ->distinct()
-                ->orderBy('name')
-                ->get();
+            ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'm.course_year')
+            ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
+            ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
+            ->join('disciplines_translations as dt', function ($join) {
+                $join->on('dt.discipline_id', '=', 'd.id')
+                    ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+            })
+            ->where('m.user_id', $student_id)
+            ->where('sp.courses_id', $course_id)
+            ->where('m.id', function ($query) use ($student_id, $course_id) {
+                $query->select('id')
+                    ->from('matriculations')
+                    ->where('user_id', $student_id)
+                    ->where('course_id', $course_id) // se tiver esta coluna
+                    ->orderBy('created_at', 'desc')
+                    ->limit(1);
+            })
+            ->select([
+                'dt.display_name as name',
+                'd.code as code',
+                'd.id'
+            ])
+            ->distinct()
+            ->orderBy('name')
+            ->get();
+
 
             if ($disciplinas->isEmpty()) {
                 
