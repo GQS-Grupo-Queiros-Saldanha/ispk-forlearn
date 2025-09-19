@@ -374,7 +374,7 @@ class RequerimentoController extends Controller
                 $query->select('id')
                     ->from('matriculations')
                     ->where('user_id', $student_id)
-                    ->where('course_id', $course_id) // se tiver esta coluna
+                    ->where('courses_id', $course_id) // se tiver esta coluna
                     ->orderBy('created_at', 'desc')
                     ->limit(1);
             })
