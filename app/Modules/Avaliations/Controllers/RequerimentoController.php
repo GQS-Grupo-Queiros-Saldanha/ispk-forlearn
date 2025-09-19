@@ -399,7 +399,7 @@ class RequerimentoController extends Controller
                 ->distinct()
                 ->orderBy('name')
                 ->get();
-            }if ($disciplinas->isEmpty()) {
+            }/*if ($disciplinas->isEmpty()) {
                 
                 $disciplinas = DB::table('new_old_grades as nog')
                 ->join('disciplines as d', 'nog.discipline_id', '=', 'd.id')
@@ -418,7 +418,7 @@ class RequerimentoController extends Controller
                 ->orderBy("name")
                 ->get();
 
-            }
+            }*/
 
             return response()->json($disciplinas);
             } catch (\Throwable $e) {
