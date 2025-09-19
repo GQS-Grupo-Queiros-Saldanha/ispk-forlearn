@@ -184,22 +184,16 @@
                                 <div class="col-6" id="caixaAvalicao" style="display: none">
                                     <div class="form-group col">
                                         <label>Selecione a avaliacão</label>
-                                        <select data-live-search="true" required
-                                            class="selectpicker form-control form-control-sm" required=""
-                                            id="avaliacao_id_Select" data-actions-box="false"
-                                            data-selected-text-format="values" name="avaliacao" tabindex="-98">
-                                            <option value="">Selecione a avaliação </option>
+                                        <select data-live-search="true" required class="selectpicker form-control form-control-sm" required="" id="avaliacao_id_Select" data-actions-box="false" data-selected-text-format="values" name="avaliacao" tabindex="-98">
+                                            <option value="" selected>Selecione a avaliação </option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-6" id="caixaMatrica" style="display: none">
                                     <div class="form-group col">
                                         <label>Selecione a métrica</label>
-                                        <select data-live-search="true" required
-                                            class="selectpicker form-control form-control-sm" required=""
-                                            id="metrica_id_Select" data-actions-box="false"
-                                            data-selected-text-format="values" name="metrica" tabindex="-98">
-                                            <option value="">Selecione a métrica </option>
+                                        <select data-live-search="true" required class="selectpicker form-control form-control-sm" required="" id="metrica_id_Select" data-actions-box="false" data-selected-text-format="values" name="metrica" tabindex="-98">
+                                            <option value="" selected>Selecione a métrica </option>
                                         </select>
                                     </div>
                                 </div>

@@ -37,6 +37,8 @@ Route::group([
                     Route::post('melhoria-notas/store', 'MelhoriaNotasController@store')->name('melhoria-notas.store');
                 
                     Route::get('exame-extraordinario-notas', 'MelhoriaNotasController@index');
+
+                    Route::get('revisao-prova', 'RevisaoProvaControll@index');
                 });
 
                 Route::get('student', 'GradesController@indexStudent')->name('grade_student.index');
