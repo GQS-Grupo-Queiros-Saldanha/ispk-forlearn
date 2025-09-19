@@ -180,7 +180,6 @@ class RequerimentoController extends Controller
             }
             // se ainda estiver vazio → tenta user_courses
             if ($disciplinas->isEmpty()) {
-                dd("aqui");
                 $disciplinas = DB::table('user_courses as uc')
                     ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'uc.courses_id')
                     ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
@@ -420,7 +419,7 @@ class RequerimentoController extends Controller
                 ->distinct()
                 ->orderBy('name')
                 ->get();
-            dd($disciplinas);
+
 
 
             if ($disciplinas->isEmpty()) {
