@@ -1,5 +1,7 @@
 <?php
 
+use App\Modules\Users\Controllers\RevisaoProvaController;
+
 Route::group([
     'module' => 'Grade',
     'prefix' => config('app.env') === 'testing' ? 'en' : LaravelLocalization::setLocale(),
@@ -38,8 +40,7 @@ Route::group([
                 
                     Route::get('exame-extraordinario-notas', 'MelhoriaNotasController@index');
 
-                    Route::get('revisao-prova', '
-                    @index');
+                    Route::get('revisao-prova', 'RevisaoProvaController@index');
                 });
 
                 Route::get('student', 'GradesController@indexStudent')->name('grade_student.index');
