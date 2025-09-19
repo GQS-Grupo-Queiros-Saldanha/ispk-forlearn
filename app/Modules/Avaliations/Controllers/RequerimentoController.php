@@ -394,7 +394,29 @@ class RequerimentoController extends Controller
                     'd.code as code',
                     'd.id'
                 ])
+                ->distinct()
                 ->orderBy("name")
+                ->get();
+
+            }elseif ($disciplinas->isEmpty()) {
+                
+                $disciplinas = DB::table('user_courses as uc')
+                 ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'uc.courses_id')
+                ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
+                ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'd.id')
+                        ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                })
+                ->where('uc.users_id', $student_id)
+                ->where('sp.courses_id', $course_id)
+                ->select([
+                    'dt.display_name as name',
+                    'd.code as code',
+                    'd.id'
+                ])
+                ->distinct()
+                ->orderBy('name')
                 ->get();
             }
 
