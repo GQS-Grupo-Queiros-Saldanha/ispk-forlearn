@@ -420,7 +420,7 @@ class RequerimentoController extends Controller
                 ->distinct()
                 ->orderBy('name')
                 ->get();
-
+            dd($disciplinas);
 
 
             if ($disciplinas->isEmpty()) {
