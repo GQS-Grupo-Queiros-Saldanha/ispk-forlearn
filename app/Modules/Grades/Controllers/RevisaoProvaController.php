@@ -15,7 +15,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\LanguageHelper;
 use App\Model\Institution;
-class MelhoriaNotasController extends Controller {
+
+class RevisaoProvaController extends Controller {
 
 
 
