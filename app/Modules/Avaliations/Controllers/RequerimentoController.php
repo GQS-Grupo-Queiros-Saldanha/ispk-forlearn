@@ -398,7 +398,7 @@ class RequerimentoController extends Controller
                 ->orderBy("name")
                 ->get();
 
-            }elseif ($disciplinas->isEmpty()) {
+            }if ($disciplinas->isEmpty()) {
                 
                 $disciplinas = DB::table('user_courses as uc')
                  ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'uc.courses_id')
