@@ -42,7 +42,7 @@ class RevisaoProvaController extends Controller {
                       'type' => $type
                    ];
 
-            return view("Grades::melhoria-notas.revisao-prova.blade")->with($data);
+            return view("Grades::melhoria-notas.revisao-prova")->with($data);
         } catch (Exception | Throwable $e) {
         logError($e);
         return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
