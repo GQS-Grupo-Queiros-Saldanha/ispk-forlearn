@@ -395,54 +395,55 @@ class RequerimentoController extends Controller
 
             $ano = $lista[$lective_year];
 
-            $disciplinas = DB::table('matriculations as m')
-                ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'm.course_year')
-                ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
-                ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
-                ->join('disciplines_translations as dt', function ($join) {
-                    $join->on('dt.discipline_id', '=', 'd.id')
-                        ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                })
-                ->where('m.user_id', $student_id)
-                ->where('sp.courses_id', $course_id)
-                ->where('m.id', function ($query) use ($student_id) {
-                    $query->select('id')
-                        ->from('matriculations')
-                        ->where('user_id', $student_id)
-                        ->orderBy('created_at', 'desc')
-                        ->limit(1);
-                })
-                ->select([
-                    'dt.display_name as name',
-                    'd.code as code',
-                    'd.id'
-                ])
-                ->distinct()
-                ->orderBy('name')
-                ->get();
+            $ultimaMatricula = DB::table('matriculations')
+                ->where('user_id', $student_id)
+                ->orderBy('created_at', 'desc')
+                ->first();
 
+            $disciplinas = collect(); // coleção vazia por defeito
 
-
+            if ($ultimaMatricula) {
+                $disciplinas = DB::table('matriculations as m')
+                    ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'm.course_year')
+                    ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
+                    ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
+                    ->join('disciplines_translations as dt', function ($join) {
+                        $join->on('dt.discipline_id', '=', 'd.id')
+                            ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    })
+                    ->where('m.id', $ultimaMatricula->id) // usamos direto o ID
+                    ->where('sp.courses_id', $course_id)
+                    ->select([
+                        'dt.display_name as name',
+                        'd.code as code',
+                        'd.id'
+                    ])
+                    ->distinct()
+                    ->orderBy('name')
+                    ->get();
+            }
+            // se ainda estiver vazio → tenta user_courses
             if ($disciplinas->isEmpty()) {
-                
                 $disciplinas = DB::table('user_courses as uc')
-                 ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'uc.courses_id')
-                ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
-                ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
-                ->join('disciplines_translations as dt', function ($join) {
-                    $join->on('dt.discipline_id', '=', 'd.id')
-                        ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                })
-                ->where('uc.users_id', $student_id)
-                ->where('sp.courses_id', $course_id)
-                ->select([
-                    'dt.display_name as name',
-                    'd.code as code',
-                    'd.id'
-                ])
-                ->distinct()
-                ->orderBy('name')
-                ->get();
+                    ->join('Import_data_forlearn as idf', 'idf.id_user', '=', 'uc.users_id')
+                    ->join('study_plans_has_disciplines as sphd', 'sphd.years', '=', 'idf.ano_curricular')
+                    ->join('study_plans as sp', 'sp.id', '=', 'sphd.study_plans_id')
+                    ->join('disciplines as d', 'sphd.disciplines_id', '=', 'd.id')
+                    ->join('disciplines_translations as dt', function ($join) {
+                        $join->on('dt.discipline_id', '=', 'd.id')
+                            ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    })
+                    ->where('uc.users_id', $student_id)
+                    ->where('sp.courses_id', $course_id)
+                    ->select([
+                        'dt.display_name as name',
+                        'd.code as code',
+                        'd.id'
+                    ])
+                    ->distinct()
+                    ->orderBy('name')
+                    ->get();
+
             }/*if ($disciplinas->isEmpty()) {
                 
                 $disciplinas = DB::table('new_old_grades as nog')
