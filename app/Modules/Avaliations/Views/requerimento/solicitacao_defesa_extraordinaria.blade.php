@@ -118,7 +118,7 @@
 
                 dados.forEach(student => {
                     studentSelect.append(
-                        `<option value="${student.user_id}">${student.name ?? 'Sem nome'} #${student.student_number ?? ''}</option>`
+                        `<option value="${student.user_id}">${student.name ?? 'Sem nome'} #${student.student_number ?? ''}(${student.email ?? 'sem email'})</option>`
                     );
                 });
 
@@ -148,7 +148,7 @@
 
                 dados.forEach(disciplina => {
                     disciplinaSelect.append(
-                        `<option value="${disciplina.id}">${disciplina.name ?? 'Sem nome'} #(${disciplina.code})</option>`
+                        `<option value="${disciplina.id}">#(${disciplina.code}) - ${disciplina.name ?? 'Sem nome'}</option>`
                     );
                 });
 
