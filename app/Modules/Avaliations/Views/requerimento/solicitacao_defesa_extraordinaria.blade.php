@@ -61,7 +61,7 @@
                         </div>
                         <!--Disciplinas-->
                         <div class="col-6">
-                            <div class="form-group col">
+                            <div class="form-group col d-none">
                                 <label>Disciplinas</label>
                                 <select name="disciplina_id" id="disciplina" class="selectpicker form-control form-control-sm" data-live-search="true">
                                     <option value="" selected>Seleciona a disciplina</option>

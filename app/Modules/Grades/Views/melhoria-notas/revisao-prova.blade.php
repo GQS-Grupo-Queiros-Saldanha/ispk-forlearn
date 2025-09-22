@@ -2,7 +2,7 @@
 @extends('layouts.generic_index_new')
 @php
 $title = 'LANÇAR NOTAS DE ';
-$title .= $type == 1 ? 'EXAME EXTRAORDINÁRIO' : 'EXAME DE MELHORIA'; 
+$title .= $type == 1 ? 'Revisão de Prova' : 'Revisão de Prova'; 
 @endphp
 @section('page-title', $title)
 @section('breadcrumb')

@@ -22,10 +22,10 @@ class RevisaoProvaController extends Controller {
 
 
     public function index(){
+        
         try{
            //Pegar o ano lectivo na select
-           $lectiveYears = LectiveYear::with(['currentTranslation'])
-           ->get();
+           $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
            $currentData = Carbon::now();
            $lectiveYearSelected = DB::table('lective_years')
                ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
@@ -33,7 +33,7 @@ class RevisaoProvaController extends Controller {
            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
 
            $url = substr(request()->path(),9);
-           $type = $url == "/exame-extraordinario-notas" ? 1 : 0;
+           $type = $url == "/revisao-de-prova" ? 1 : 0;
            //-----------------------------------------------------------------------//
            $data = [
                       //'courses' => $courses->get(),
@@ -43,9 +43,10 @@ class RevisaoProvaController extends Controller {
                    ];
 
             return view("Grades::melhoria-notas.revisao-prova")->with($data);
+
         } catch (Exception | Throwable $e) {
-        logError($e);
-        return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+            logError($e);
+            return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     
     }
@@ -242,7 +243,7 @@ class RevisaoProvaController extends Controller {
                     }
             }
 
-            public function generatePDFGrades($id, $id_anoLectivo,$type){
+        public function generatePDFGrades($id, $id_anoLectivo,$type){
             
             $lectiveYearSelected = DB::table('lective_years')
                 ->where('id', $id_anoLectivo)
@@ -283,92 +284,90 @@ class RevisaoProvaController extends Controller {
 
 
                          //pegar os utilizadores que lançaram as notas 
-        $coordenador = DB::table('melhoria_notas as mn')
-        ->join('model_has_roles as mr','mr.model_id','mn.updated_by')
-            ->join('user_parameters as u_p9', function ($q) {
-                $q->on('mn.updated_by', '=', 'u_p9.users_id')
-                    ->where('u_p9.parameters_id', 1);
-            })
-            ->select(['mn.updated_at as actualizado_a','u_p9.value as actualizador_fullname'])
-            ->where('mn.discipline_id', $discipline_id)
-            ->where('mn.lective_year', $lectiveYearSelected->id)
-            ->where('mn.finalist', $type)
-            ->first();
+                    $coordenador = DB::table('melhoria_notas as mn')
+                    ->join('model_has_roles as mr','mr.model_id','mn.updated_by')
+                        ->join('user_parameters as u_p9', function ($q) {
+                            $q->on('mn.updated_by', '=', 'u_p9.users_id')
+                                ->where('u_p9.parameters_id', 1);
+                        })
+                        ->select(['mn.updated_at as actualizado_a','u_p9.value as actualizador_fullname'])
+                        ->where('mn.discipline_id', $discipline_id)
+                        ->where('mn.lective_year', $lectiveYearSelected->id)
+                        ->where('mn.finalist', $type)
+                        ->first();
 
-            $LectiveYear = LectiveYear::where('id', $lectiveYearSelected->id)
-            ->with(['currentTranslation'])
-            ->first();
+                        $LectiveYear = LectiveYear::where('id', $lectiveYearSelected->id)
+                        ->with(['currentTranslation'])
+                        ->first();
 
-            //Pegar a disciplina 
-        $disciplina = DB::table('disciplines as disc')
-        ->leftJoin('disciplines_translations as trans', function ($join) {
-            $join->on('trans.discipline_id', '=', 'disc.id');
-            $join->on('trans.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-            $join->on('trans.active', '=', DB::raw(true));
-        })
+                        //Pegar a disciplina 
+                    $disciplina = DB::table('disciplines as disc')
+                    ->leftJoin('disciplines_translations as trans', function ($join) {
+                        $join->on('trans.discipline_id', '=', 'disc.id');
+                        $join->on('trans.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                        $join->on('trans.active', '=', DB::raw(true));
+                    })
 
-        ->select(['disc.code as codigo', 'trans.display_name as disciplina'])
-        ->where(['disc.id' => $discipline_id])
-        ->get();
-
-
-        //Dados do curso
-       $course = DB::table('courses')
-       ->leftJoin('courses_translations as ct', function ($join) {
-           $join->on('ct.courses_id', '=', 'courses.id');
-           $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-           $join->on('ct.active', '=', DB::raw(true));
-       })
-       ->select(['ct.display_name'])
-       ->where('courses.id', $course_id)
-       ->first();
-
-        //dados da instituição
-        $institution = Institution::latest()->first();
-        //Logotipo
-        $Logotipo_instituicao = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
-        // $titulo_documento = "Pauta de";
-        // $documentoGerado_documento = "Documento gerado a";
-        $documentoCode_documento = 10;
-
-            $data = [
-
-                'lectiveYear' => $LectiveYear,
-                'discipline_code' => $disciplina[0]->codigo . ' - ' . $disciplina[0]->disciplina,
-                'discipline_name' => $disciplina[0]->disciplina,
-                'curso' => $course->display_name,
-                'institution' => $institution,
-                'type' => $type,
-                'logotipo' => $Logotipo_instituicao,
-                'documentoCode_documento' => $documentoCode_documento,
-                'students' => $students,
-                'coordenador' => $coordenador
-            ];
-    
-           
-       
-            $pdf = PDF::loadView("Grades::melhoria-notas.pdf", $data);
-       
-       
-        $pdf->setOption('margin-top', '2mm');
-        $pdf->setOption('margin-left', '2mm');
-        $pdf->setOption('margin-bottom', '13mm');
-        $pdf->setOption('margin-right', '2mm');
-        $pdf->setOption('enable-javascript', true);
-        $pdf->setOption('debug-javascript', true);
-        $pdf->setOption('javascript-delay', 1000);
-        $pdf->setOption('enable-smart-shrinking', true);
-        $pdf->setOption('no-stop-slow-scripts', true);
-
-        $pdf->setPaper('a4');
-        $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-        $pdf->setOption('footer-html', $footer_html);
-        
-        $pdf_name = 'pauta_melhoria' . $disciplina[0]->codigo . $LectiveYear->currentTranslation->display_name;
-        return $pdf->stream($pdf_name . '.pdf');
+                    ->select(['disc.code as codigo', 'trans.display_name as disciplina'])
+                    ->where(['disc.id' => $discipline_id])
+                    ->get();
 
 
+                    //Dados do curso
+                $course = DB::table('courses')
+                ->leftJoin('courses_translations as ct', function ($join) {
+                    $join->on('ct.courses_id', '=', 'courses.id');
+                    $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('ct.active', '=', DB::raw(true));
+                })
+                ->select(['ct.display_name'])
+                ->where('courses.id', $course_id)
+                ->first();
+
+                    //dados da instituição
+                    $institution = Institution::latest()->first();
+                    //Logotipo
+                    $Logotipo_instituicao = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
+                    // $titulo_documento = "Pauta de";
+                    // $documentoGerado_documento = "Documento gerado a";
+                    $documentoCode_documento = 10;
+
+                        $data = [
+
+                            'lectiveYear' => $LectiveYear,
+                            'discipline_code' => $disciplina[0]->codigo . ' - ' . $disciplina[0]->disciplina,
+                            'discipline_name' => $disciplina[0]->disciplina,
+                            'curso' => $course->display_name,
+                            'institution' => $institution,
+                            'type' => $type,
+                            'logotipo' => $Logotipo_instituicao,
+                            'documentoCode_documento' => $documentoCode_documento,
+                            'students' => $students,
+                            'coordenador' => $coordenador
+                        ];
                 
+                    
+                
+                        $pdf = PDF::loadView("Grades::melhoria-notas.pdf", $data);
+                
+                
+                    $pdf->setOption('margin-top', '2mm');
+                    $pdf->setOption('margin-left', '2mm');
+                    $pdf->setOption('margin-bottom', '13mm');
+                    $pdf->setOption('margin-right', '2mm');
+                    $pdf->setOption('enable-javascript', true);
+                    $pdf->setOption('debug-javascript', true);
+                    $pdf->setOption('javascript-delay', 1000);
+                    $pdf->setOption('enable-smart-shrinking', true);
+                    $pdf->setOption('no-stop-slow-scripts', true);
+
+                    $pdf->setPaper('a4');
+                    $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+                    $pdf->setOption('footer-html', $footer_html);
+                    
+                    $pdf_name = 'pauta_melhoria' . $disciplina[0]->codigo . $LectiveYear->currentTranslation->display_name;
+                    return $pdf->stream($pdf_name . '.pdf');
+
             } catch (Exception | Throwable $e) {
                 logError($e);
                 return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
