@@ -504,7 +504,7 @@ class RequerimentoController extends Controller
                 'user_id' => $user_id, 
                 'article_id' => $emolumento->id, 
                 'base_value' => $emolumento->base_value, 
-                'discipline_id' =>$dicipline_id,
+                //'discipline_id' =>$dicipline_id,
                 'status' => 'pending',
                 'created_by' => $created_by,
                 'created_at' => now(), 
