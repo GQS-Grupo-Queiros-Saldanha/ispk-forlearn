@@ -31,7 +31,7 @@
             footer{
                 width: 100%;
                 position: fixed; /* mantém o footer no fundo em todas as páginas */
-                bottom: 50px;    /* sobe o footer, quanto menor for este valor, mais em baixo ele fica */
+                bottom: 5px;    /* sobe o footer, quanto menor for este valor, mais em baixo ele fica */
                 font-family: Calibri !important;
                 color: #f7371e !important
 
