@@ -33,7 +33,7 @@
             }.tb_footer{
                 opacity:0.8;
                 width: 1000px;
-                margin-top:-20px;
+                margin-top:20px;
                 
             }
 
