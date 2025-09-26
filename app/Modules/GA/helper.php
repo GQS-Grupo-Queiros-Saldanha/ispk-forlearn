@@ -200,6 +200,7 @@ function EmolumentCodeV($search, $lective_year_id)
         ->where('code.code', $search)
         ->where('emo.lective_year_id', $lective_year_id)
         ->get();
+        
     return $Consulta;
 }
 
