@@ -25,7 +25,7 @@
                 color: #444;
             }
             footer{
-                margin-top: 20px;
+                margin-top: 50px;
             
             }
             footer{
