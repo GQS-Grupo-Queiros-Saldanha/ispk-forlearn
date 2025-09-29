@@ -32,9 +32,7 @@
                 <input type="text" id="efeito_type" name="efeito_type" value="{{$item->efeito}}" class="d-none" />
                 <input type="text" id="requerimento" name="requerimento" value="{{$item->id}}" class="d-none" />
                
-
-                <button type="submit"tabindex="0" data-bs-toggle="tooltip" data-html="true" target="_blank"
-                    href="/reports/generate-declaration-note" class="btn btn-info "
+                <button type="submit"tabindex="0" data-bs-toggle="tooltip" data-html="true" target="_blank" href="/reports/generate-declaration-note" class="btn btn-info "
                     style="    padding: 3px 6px 3px 6px;border-radius: 7px;font-size: 12px;">
                     <i class="fas fa-file-pdf"></i>
                 </button>

@@ -1236,8 +1236,6 @@ class RequerimentoController extends Controller
 
             }
 
-
-
             $art_req = DB::table('articles')
                 ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                 ->join('article_requests as ar', 'ar.article_id', "=", "articles.id")
@@ -1319,8 +1317,7 @@ class RequerimentoController extends Controller
     }
 
 
-    public function ordena_plano($plano)
-    {
+    public function ordena_plano($plano){
 
 
         for ($i = 0; $i < count($plano); $i++) {
@@ -1366,8 +1363,7 @@ class RequerimentoController extends Controller
 
     # Pegar os articles que serão requeridos 
 
-    public function getUserArticle($id)
-    {
+    public function getUserArticle($id){
         //TODO: avaliar para quando o select estiver vazio
         try {
             $dados = explode(',', $id);
@@ -1553,9 +1549,7 @@ class RequerimentoController extends Controller
     }
 
     # Pegar os articles que serão requeridos para cerimonia
-
-    public function getUserArticleCerimonia($id)
-    {
+    public function getUserArticleCerimonia($id){
         //TODO: avaliar para quando o select estiver vazio
         try {
             $lectiveYears = LectiveYear::with(['currentTranslation'])
@@ -1589,9 +1583,7 @@ class RequerimentoController extends Controller
     }
 
     # Pegar a matrícula do estudante
-
-    public function matriculation($data)
-    {
+    public function matriculation($data){
         $data = explode(',', $data);
         $ano = $data[0];
         $doc_type = $data[1];
