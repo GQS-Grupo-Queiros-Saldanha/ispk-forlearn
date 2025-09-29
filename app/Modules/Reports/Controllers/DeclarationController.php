@@ -3996,6 +3996,8 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->where('id', $requerimento->transference_request)
                 ->first();
 
+            $documentation = null;
+
             if (is_null($transference) || is_null($transference->documentation)) {
                 Toastr::warning('Nenhum dado foi encontrado para esta solicitação.', 'Atenção');
                 //return redirect()->back();
