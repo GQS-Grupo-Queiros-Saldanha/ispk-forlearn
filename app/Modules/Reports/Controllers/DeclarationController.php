@@ -4004,7 +4004,7 @@ return $pdf->stream($pdf_name . '.pdf');
             }
 
            if (is_null($documentation)) {
-                $documentation = $requerimento->transference_request
+                $documentation = $requerimento->transference_request;
                 /*Toastr::warning('Nenhum dado foi encontrado para esta solicitação.', 'Atenção');
                 return redirect()->back();*/
             }else {
