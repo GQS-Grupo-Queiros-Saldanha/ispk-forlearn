@@ -125,8 +125,7 @@ class DeclarationController extends Controller
 
     public function generatePdfDeclaracao(Request $request){
         
-        dd($request);
-        
+
         switch ($request->type_document) {
             case '1':
                 $config = ConfigDocumentation::where('document_type', $request->type_document)->firstOrFail();
