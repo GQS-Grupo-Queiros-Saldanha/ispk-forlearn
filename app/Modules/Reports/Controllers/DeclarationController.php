@@ -4774,8 +4774,7 @@ return $pdf->stream($pdf_name . '.pdf');
     }
 
 
-    private function plano_disciplinas($request, $config)
-    {
+    private function plano_disciplinas($request, $config){
         try {
 
            

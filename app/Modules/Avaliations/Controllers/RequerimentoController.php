@@ -700,8 +700,7 @@ class RequerimentoController extends Controller
         }
     }
 
-    public function doc()
-    {
+    public function doc(){
         try {
 
             $diploma = DB::table('estudante_diploma')
@@ -1280,9 +1279,7 @@ class RequerimentoController extends Controller
 
             $art_req = $this->ordena_plano($art_req);
 
-            $requerimento = DB::table('requerimento')
-                ->get();
-
+            $requerimento = DB::table('requerimento')->get();
 
             return Datatables::of($art_req)
 
@@ -1293,7 +1290,7 @@ class RequerimentoController extends Controller
                     return view('Avaliations::requerimento.datatables.money', compact('money'));
                 })
 
-                ->addColumn('doc', function ($state) use ($requerimento) {
+                ->addColumn('doc', function ($ ) use ($requerimento) {
                     return view('Avaliations::requerimento.datatables.doc', compact('state', 'requerimento'));
                 })
                 ->addColumn('code', function ($state) use ($requerimento) {

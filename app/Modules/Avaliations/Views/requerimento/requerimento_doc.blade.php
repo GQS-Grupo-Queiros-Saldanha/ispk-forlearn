@@ -1,7 +1,5 @@
 <script src="https://kit.fontawesome.com/e1fa782e3f.js" crossorigin="anonymous"></script>
 
-
-
 @section('title', __('Documentos'))
 @extends('layouts.backoffice')
 @section('styles')
@@ -110,9 +108,8 @@
                             <div class="col-6 emo">
                                 <div class="form-group col">
                                     <label for="emolumentos_doc">Emolumentos</label>
-                                    <select class="selectpicker form-control " name="emolumentos_doc" id="emolumentos_doc"
-                                        data-actions-box="true" data-live-search="true">
-
+                                    <select class="selectpicker form-control " name="emolumentos_doc" id="emolumentos_doc" data-actions-box="true" data-live-search="true">
+                                    <option value="" checked>Selecione o Emolumento</option>
                                     </select>
                                 </div>
                             </div>
