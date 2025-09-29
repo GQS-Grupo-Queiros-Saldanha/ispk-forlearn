@@ -3998,6 +3998,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
             if (is_null($transference) || is_null($transference->documentation)) {
                 Toastr::warning('Nenhum dado foi encontrado para esta solicitação.', 'Atenção');
+                return redirect()->back();
             } else {
                 $documentation = $transference->documentation;
             }
@@ -4018,7 +4019,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 "nascimento" => $nascimento,
                 'matriculationYear' => $matriculationYear,
                 'transference' => $transference,
-                'documentation' => $documentation ?? 0
+                'documentation' => $documentation
 
             ];
 
