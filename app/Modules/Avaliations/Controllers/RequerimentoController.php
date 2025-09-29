@@ -854,9 +854,9 @@ class RequerimentoController extends Controller
 
     # Pegar os articles do requerimentos que serão listados na datatables da página ( INDEX )
 
-    public function my_articles($id)
-    {
+    public function my_articles($id){
         //TODO: avaliar para quando o select estiver vazio
+        Log::info('dados que vem do ajax '.$id );
         try {
             $dados = explode(',', $id);
             $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
