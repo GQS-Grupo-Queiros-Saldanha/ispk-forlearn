@@ -4004,16 +4004,28 @@ return $pdf->stream($pdf_name . '.pdf');
             }
 
            if (is_null($documentation)) {
-                $documentation = $requerimento->transference_request;
+                //$documentation = $requerimento->transference_request;
                 /*Toastr::warning('Nenhum dado foi encontrado para esta solicitação.', 'Atenção');
                 return redirect()->back();*/
+                
+            $data = [
+
+                'config' => $config,
+                'cargaHoraria' => $cargaHoraria,
+                'direitor' => $direitor,
+                'studentInfo' => $studentInfo,
+                'dataActual' => $dataActual,
+                'efeito' => $efeito,
+                'lectivo' => $lectivo,
+                "nascimento" => $nascimento,
+                'matriculationYear' => $matriculationYear,
+                'transference' => $transference
+
+            ];
             }else {
                 //$documentation = $transference->documentation;
                 $documentation = preg_split('/\r\n|\r|\n/', $documentation);
-            }
-
-
-
+                
             $data = [
 
                 'config' => $config,
@@ -4029,6 +4041,10 @@ return $pdf->stream($pdf_name . '.pdf');
                 'documentation' => $documentation
 
             ];
+            }
+
+
+
 
 
             $institution = Institution::latest()->first();
@@ -4076,8 +4092,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
     }
 
-    private function pedido_saida($request, $config)
-    {
+    private function pedido_saida($request, $config){
 
         try {
 
@@ -4355,15 +4370,13 @@ return $pdf->stream($pdf_name . '.pdf');
 
     }
 
-    public static function get_code_doc($code, $year)
-    {
+    public static function get_code_doc($code, $year){
         return substr($year, -2) . "-" . str_pad($code, 4, '0', STR_PAD_LEFT);
 
     }
 
 
-    public function grades_calculat($disciplines, $studentId)
-    {
+    public function grades_calculat($disciplines, $studentId){
 
         $status = 0;
         $array_disc = array();
@@ -4394,10 +4407,7 @@ return $pdf->stream($pdf_name . '.pdf');
     }
 
 
-
-
-    public function ordena_plano($plano)
-    {
+    public function ordena_plano($plano){
 
         for ($i = 0; $i < count($plano); $i++) {
 
@@ -4503,11 +4513,7 @@ return $pdf->stream($pdf_name . '.pdf');
     }
 
 
-
-
-
-    private function solicitacao_estagio($request, $config)
-    {
+    private function solicitacao_estagio($request, $config){
         $this->gerar_codigo_documento($request->requerimento);
         $requerimento = DB::table('requerimento')
             ->where("id", $request->requerimento)
