@@ -3795,7 +3795,7 @@ return $pdf->stream($pdf_name . '.pdf');
         try {
             
             $this->gerar_codigo_documento($request->requerimento);
-            dd($request->requerimento);
+            //dd($request->requerimento);
             $requerimento = DB::table('requerimento')
                 ->where("id", $request->requerimento)
                 ->first();
@@ -3991,7 +3991,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->first();
 
 
-            dd($requerimento->transference_request);
+            //dd($requerimento->transference_request);
             $transference = DB::table('tb_transference_studant')
                 ->where('id', $requerimento->transference_request)
                 ->first();
@@ -4018,7 +4018,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 "nascimento" => $nascimento,
                 'matriculationYear' => $matriculationYear,
                 'transference' => $transference,
-                'documentation' => $documentation
+                'documentation' => $documentation ?? 0
 
             ];
 
