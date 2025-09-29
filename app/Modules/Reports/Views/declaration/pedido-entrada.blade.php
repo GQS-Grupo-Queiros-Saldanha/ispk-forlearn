@@ -263,15 +263,19 @@
                 
 
                 
-                 <p style="margin-top:-10px!important;"><b>Documentação entregue:</b></p>
-                 <ul style="font-size: 14pt !important;margin-top:-20px!important;">
-                 @foreach($documentation as $doc)
+                <p style="margin-top:-10px!important;"><b>Documentação entregue:</b></p>
+                <ul style="font-size: 14pt !important;margin-top:-20px!important;">
+                @if(is_array($documentation) || is_object($documentation))
+                    @foreach($documentation as $doc)
                     
-                         <style>.li{ list-style-type: none; margin-left:40px; font-weight:200; margin-bottom:-10px!important} </style>
+                        <style>.li{ list-style-type: none; margin-left:40px; font-weight:200; margin-bottom:-10px!important} </style>
                         <li class="li">{{$doc}}</li>
+                    @endforeach
                    
-                 @endforeach
-                   </ul>
+                @else
+                    <p style="font-size: 14pt !important;margin-top:-20px!important;">Nenhum documento entregue.</p>
+                @endif
+                </ul>
            
                         
             <div><br><br><br>
