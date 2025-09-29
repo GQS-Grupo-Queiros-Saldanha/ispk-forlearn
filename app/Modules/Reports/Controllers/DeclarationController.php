@@ -3795,7 +3795,7 @@ return $pdf->stream($pdf_name . '.pdf');
         try {
             
             $this->gerar_codigo_documento($request->requerimento);
-
+            dd($request->requerimento);
             $requerimento = DB::table('requerimento')
                 ->where("id", $request->requerimento)
                 ->first();
