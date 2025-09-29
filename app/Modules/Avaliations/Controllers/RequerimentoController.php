@@ -1290,7 +1290,7 @@ class RequerimentoController extends Controller
                     return view('Avaliations::requerimento.datatables.money', compact('money'));
                 })
 
-                ->addColumn('doc', function ($ ) use ($requerimento) {
+                ->addColumn('doc', function ($state) use ($requerimento) {
                     return view('Avaliations::requerimento.datatables.doc', compact('state', 'requerimento'));
                 })
                 ->addColumn('code', function ($state) use ($requerimento) {
