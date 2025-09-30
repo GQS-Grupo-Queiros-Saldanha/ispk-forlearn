@@ -1653,7 +1653,6 @@ class RequerimentoController extends Controller
     }
 
     # Requerer qualquer documento
-
     public function store_doc($dados){
     Log::info("dados do store_doc:".$dados);
         $dados = explode(',', $dados);

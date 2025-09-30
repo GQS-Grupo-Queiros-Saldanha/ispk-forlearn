@@ -1,4 +1,5 @@
      
+dd($requerimento);
 @foreach ($requerimento as $item)
     @if(($state->code_dev == 25) && ($state->codigo_estudante == $item->user_id) && ($state->art_id==$item->article_id))
       @if ($state->status == 'total')
@@ -23,7 +24,6 @@
     @elseif (($state->codigo_estudante == $item->user_id) && ($state->art_id==$item->article_id) && ($state->code_dev != 25) && ($state->code_dev != 28) && ($state->code_dev != 35))
         @if ($state->status == 'total')
                 
-
                 {!! Form::open(['route' => ['document.generate-documentation'], 'method' => 'post', 'target' => '_blank']) !!}
 
                 <input type="number" id="students" name="students" value="{{$item->user_id}}" class="d-none" />
