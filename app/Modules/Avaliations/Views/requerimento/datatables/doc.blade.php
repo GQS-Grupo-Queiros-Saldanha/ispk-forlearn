@@ -1,5 +1,3 @@
-     
-dd($requerimento);
 @foreach ($requerimento as $item)
     @if(($state->code_dev == 25) && ($state->codigo_estudante == $item->user_id) && ($state->art_id==$item->article_id))
       @if ($state->status == 'total')
