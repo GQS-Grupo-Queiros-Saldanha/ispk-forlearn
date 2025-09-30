@@ -1655,7 +1655,7 @@ class RequerimentoController extends Controller
     # Requerer qualquer documento
 
     public function store_doc($dados){
-
+        dd("dados do store_doc:",$dados)
         $dados = explode(',', $dados);
         $vazio = 0;
 
