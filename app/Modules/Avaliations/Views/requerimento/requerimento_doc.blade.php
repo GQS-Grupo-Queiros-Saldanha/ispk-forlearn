@@ -361,6 +361,7 @@
                 if (data["type"] == 1) {
 
                     // Declarações
+                    console.log("DEBUG declarações:", data["articles"]);
                     data["articles"].forEach(function(article) {
 
                         var doc = article.nome.toLowerCase();

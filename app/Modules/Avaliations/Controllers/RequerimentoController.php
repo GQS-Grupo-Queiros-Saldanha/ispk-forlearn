@@ -708,8 +708,6 @@ class RequerimentoController extends Controller
                 ->orderBy("id", "desc")
                 ->first();
 
-
-
             $lectiveYears = LectiveYear::with(['currentTranslation'])
                 ->get();
 
@@ -1383,7 +1381,6 @@ class RequerimentoController extends Controller
                 case '2':
 
                     // Certificados 
-
                     $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                         ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
@@ -1435,7 +1432,6 @@ class RequerimentoController extends Controller
                 case '3':
 
                     // Diploma
-
                     $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                         ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
@@ -1465,7 +1461,6 @@ class RequerimentoController extends Controller
                 case '4':
 
                     // Anulação de matrícula
-
                     $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                         ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
@@ -1494,7 +1489,6 @@ class RequerimentoController extends Controller
                 case '5':
 
                     // Percurso académico
-
                     $articles = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                         ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
