@@ -128,8 +128,12 @@
                             <div class="col-6 emo">
                                 <div class="form-group col anos_estudantes">
                                     <label for="year">Ano</label>
-                                    <select class="selectpicker form-control " name="year" id="year"
-                                        data-actions-box="true" data-live-search="true">
+                                    <select class="selectpicker form-control " name="year" id="year" data-actions-box="true" >
+                                        <option value="1">1ª ano</option>
+                                        <option value="2">2ª ano</option>
+                                        <option value="3">3ª ano</option>
+                                        <option value="4">4ª ano</option>
+                                        <option value="5">5ª ano</option>
                                     </select>
                                 </div>
                                 <div class="form-group col efeito">
