@@ -865,11 +865,7 @@ class RequerimentoController extends Controller
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
             $lective = $lective->id ?? 11;
-
-
-
             $lectiveYearSelected = LectiveYear::whereId($dados[0])->first();
-
 
             switch ($dados[1]) {
                 case 0:
@@ -1664,8 +1660,7 @@ class RequerimentoController extends Controller
 
     # Requerer qualquer documento
 
-    public function store_doc($dados)
-    {
+    public function store_doc($dados){
 
         $dados = explode(',', $dados);
         $vazio = 0;
@@ -1722,7 +1717,6 @@ class RequerimentoController extends Controller
             }
 
             // Criar um article
-
             $article = DB::table('article_requests')->insertGetId(
                 [
                     "user_id" => $user,
@@ -1735,7 +1729,6 @@ class RequerimentoController extends Controller
             );
 
             // Criar uma transação
-
             $transaction = DB::table('transactions')->insertGetId(
                 [
                     'type' => 'debit',
@@ -1747,7 +1740,6 @@ class RequerimentoController extends Controller
             );
 
             // Criar article e transações
-
             $article_transaction = DB::table('transaction_article_requests')->insertGetId(
                 [
                     'article_request_id' => $article,
@@ -1757,7 +1749,6 @@ class RequerimentoController extends Controller
             );
 
             // Guarda o codigo do documento 
-
             $requerimento = DB::table('requerimento')->insertGetId(
                 [
                     'article_id' => $article,
@@ -1771,8 +1762,7 @@ class RequerimentoController extends Controller
 
 
 
-            # Se for um diploma 
-
+            // Se for um diploma 
             if ($type == 5) {
 
                 $this->gerar_codigo_diploma($user, $ano_diploma, $folha, $data_outorga, $n_registro);
@@ -1781,9 +1771,6 @@ class RequerimentoController extends Controller
 
 
             // Notificar o respectivo Estudante
-
-
-
             $users = DB::table('users')
                 ->where('id', '=', $user)
                 ->first();
