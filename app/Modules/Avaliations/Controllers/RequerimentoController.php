@@ -1661,10 +1661,11 @@ class RequerimentoController extends Controller
         // filtrar a coleção original
         $matriculation = $matriculation->whereIn('codigo', $idsPermitidos);
 
-        return $data = [
+      return [
             'doc_type' => $doc_type,
-            'matriculation' => $matriculation
+            'matriculation' => $matriculation->values()->toArray()
         ];
+
     }
 
     # Requerer qualquer documento
