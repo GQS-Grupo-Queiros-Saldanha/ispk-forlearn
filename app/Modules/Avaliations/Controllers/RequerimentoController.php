@@ -1646,6 +1646,21 @@ class RequerimentoController extends Controller
                 ->get();
         }
        
+        $disciplina_id = [71, 147, 223,287,355,421,489];
+
+        // pegar os ids dos alunos já retornados na coleção $matriculation
+        $idsMatriculados = $matriculation->pluck('codigo');
+
+        // buscar apenas os que têm nota >= 10 nessas disciplinas
+        $idsPermitidos = DB::table('new_old_grades')
+            ->whereIn('user_id', $idsMatriculados)
+            ->whereIn('discipline_id', $disciplina_id)
+            ->where('grade', '>=', 10)
+            ->pluck('user_id');
+
+        // filtrar a coleção original
+        $matriculation = $matriculation->whereIn('codigo', $idsPermitidos);
+
         return $data = [
             'doc_type' => $doc_type,
             'matriculation' => $matriculation
