@@ -29,15 +29,27 @@
             
             }
             footer {
-              width: 100%; position: absolute; /* mantém o footer no fundo em todas as páginas */ 
-              bottom: 25px; /* sobe o footer, quanto menor for este valor, mais em baixo ele fica */ 
-              padding-top: 10px; /* sobe os dizeres dentro do footer */ 
-              font-family: Calibri !important; color: #f7371e !important;
+                width: 100%;
+                position: fixed;     /* em vez de absolute */
+                bottom: 25px;        /* ajusta a altura desejada */
+                left: 0;
+                right: 0;
+                padding-top: 10px;
+                font-family: Calibri !important;
+                color: #f7371e !important;
             }
+
+           @page {
+                margin-bottom: 70px; /* garante espaço reservado para o footer */
+            }
+
             @media print {
                 footer {
                     position: fixed;
-                    bottom: 40px;  /* sobe os dizeres só na impressão */
+                    bottom: 25px;  /* altura que ficou boa para ti */
+                    left: 0;
+                    right: 0;
+                    text-align: center;
                 }
             }
 
