@@ -1571,6 +1571,7 @@ class RequerimentoController extends Controller
 
     # Pegar a matrícula do estudante
     public function matriculation($data){
+        dd($data);
         $data = explode(',', $data);
         $ano = $data[0];
         $doc_type = $data[1];
