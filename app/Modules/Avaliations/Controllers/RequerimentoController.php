@@ -1647,7 +1647,6 @@ class RequerimentoController extends Controller
                 ->get();
         }
        
-        
         if($doc_type == 4){
             $disciplina_id = [71, 147, 223,287,355,421,489];
             // pegar os ids dos alunos já retornados na coleção $matriculation
@@ -1662,13 +1661,20 @@ class RequerimentoController extends Controller
 
             // filtrar a coleção original
             $matriculation = $matriculation->whereIn('codigo', $idsPermitidos);
+
+            return [
+                'doc_type' => $doc_type,
+                'matriculation' => $matriculation->values()->toArray()
+            ];
+        }else{
+            return [
+                'doc_type' => $doc_type,
+                'matriculation' => $matriculation->values()->toArray()
+            ];
         }
         
 
-      return [
-            'doc_type' => $doc_type,
-            'matriculation' => $matriculation->values()->toArray()
-        ];
+      
 
     }
 
