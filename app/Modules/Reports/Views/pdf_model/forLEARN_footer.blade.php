@@ -29,11 +29,10 @@
             
             }
             footer {
-                width: 100%;
-                position: fixed;  /* fixo no fundo da página impressa */
-                bottom: 40px;     /* ajusta para subir */
-                font-family: Calibri !important;
-                color: #f7371e !important;
+              width: 100%; position: absolute; /* mantém o footer no fundo em todas as páginas */ 
+              bottom: 20px; /* sobe o footer, quanto menor for este valor, mais em baixo ele fica */ 
+              padding-top: 10px; /* sobe os dizeres dentro do footer */ 
+              font-family: Calibri !important; color: #f7371e !important;
             }
             @media print {
                 footer {
