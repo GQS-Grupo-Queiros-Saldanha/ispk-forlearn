@@ -30,7 +30,8 @@
             }
             footer {
                 width: 100%;
-                position: fixed;     /* em vez de absolute */
+                position: fixed; 
+                margin-top: 10px;    /* em vez de absolute */
                 bottom: 25px;        /* ajusta a altura desejada */
                 left: 0;
                 right: 0;
