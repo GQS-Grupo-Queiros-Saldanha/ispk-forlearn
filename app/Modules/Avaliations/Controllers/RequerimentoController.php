@@ -1571,7 +1571,7 @@ class RequerimentoController extends Controller
 
     # Pegar a matrícula do estudante
     public function matriculation($data){
-        dd($data);
+       
         $data = explode(',', $data);
         $ano = $data[0];
         $doc_type = $data[1];
@@ -1647,20 +1647,23 @@ class RequerimentoController extends Controller
                 ->get();
         }
        
-        $disciplina_id = [71, 147, 223,287,355,421,489];
+        
+        if($doc_type == 4){
+            $disciplina_id = [71, 147, 223,287,355,421,489];
+            // pegar os ids dos alunos já retornados na coleção $matriculation
+            $idsMatriculados = $matriculation->pluck('codigo');
 
-        // pegar os ids dos alunos já retornados na coleção $matriculation
-        $idsMatriculados = $matriculation->pluck('codigo');
+            // buscar apenas os que têm nota >= 10 nessas disciplinas
+            $idsPermitidos = DB::table('new_old_grades')
+                ->whereIn('user_id', $idsMatriculados)
+                ->whereIn('discipline_id', $disciplina_id)
+                ->where('grade', '>=', 10)
+                ->pluck('user_id');
 
-        // buscar apenas os que têm nota >= 10 nessas disciplinas
-        $idsPermitidos = DB::table('new_old_grades')
-            ->whereIn('user_id', $idsMatriculados)
-            ->whereIn('discipline_id', $disciplina_id)
-            ->where('grade', '>=', 10)
-            ->pluck('user_id');
-
-        // filtrar a coleção original
-        $matriculation = $matriculation->whereIn('codigo', $idsPermitidos);
+            // filtrar a coleção original
+            $matriculation = $matriculation->whereIn('codigo', $idsPermitidos);
+        }
+        
 
       return [
             'doc_type' => $doc_type,
