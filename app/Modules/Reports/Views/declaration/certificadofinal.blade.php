@@ -375,13 +375,13 @@
                 </p>
                 <br>
              
-                 <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:45px !important;margin-top:-10px">
+                 <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:40px !important;margin-top:-10px">
            
                  {{ $institution->provincia }}, aos {{ $dataActual }}
                 </p>
                 
                 <p>_________________________________________________________</p>
-                <p style="font-size: 14pt !important;margin-top:0px!important;">{{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b></p>
+                <p style="font-size: 14pt !important;margin-top:-5px!important;">{{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b></p>
                 <p style="font-size:11pt  !important;margin-top:-20px!important;">{{ $direitor->categoria_profissional ?? 'Categoria Profissional' }}</p>
                 <p style="font-size:11pt; !important;margin-top:-20px!important;">{{ $direitor->cargo  ?? 'Cargo' }} do {{$institution->abrev}}</p>
 
