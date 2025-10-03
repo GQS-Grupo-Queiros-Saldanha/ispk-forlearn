@@ -171,32 +171,32 @@
         
           .bg0{
         background-color: #2f5496!important;
-    }
-    .bg1{
-        background-color: #8eaadb!important;
-    }
-    .bg2{
-        background-color: #d9e2f3!important;
-    }
-    .bg3{
-        background-color:#fbe4d5!important;
-    }
-    .bg4{
-        background-color:#f4b083!important;
-    }
-    
-    .bg6{
-        background-color: #F5F3F3!important;
-    }
-    
-    .institution-name {
-        margin-left:95px!important;
-    }
-    
-    
-    .div-top_f {
-         margin-bottom: -30px!important;
-     }
+        }
+        .bg1{
+            background-color: #8eaadb!important;
+        }
+        .bg2{
+            background-color: #d9e2f3!important;
+        }
+        .bg3{
+            background-color:#fbe4d5!important;
+        }
+        .bg4{
+            background-color:#f4b083!important;
+        }
+        
+        .bg6{
+            background-color: #F5F3F3!important;
+        }
+        
+        .institution-name {
+            margin-left:95px!important;
+        }
+        
+        
+        .div-top_f {
+            margin-bottom: -30px!important;
+        }
     
 
         /* tr    { page-break-inside:avoid; page-break-after:auto } */
@@ -205,15 +205,12 @@
 
         
     </style>
+    
     <main>
 
         <!--@include('Reports::declaration.cabecalho.cabecalhoCertificado')-->
         @include('Reports::declaration.cabecalho.cabecalho_forLEARN')
         <!-- aqui termina o cabeçalho do pdf -->
-
-
-
-
 
         <style>
             @page {
@@ -257,35 +254,35 @@
             
             @php
             
-            $numeros = [
-        0  => 'Zero',
-        1  => 'Um',
-        2  => 'Dois',
-        3  => 'Três',
-        4  => 'Quatro',
-        5  => 'Cinco',
-        6  => 'Seis',
-        7  => 'Sete',
-        8  => 'Oito',
-        9  => 'Nove',
-        10 => 'Dez',
-        11 => 'Onze',
-        12 => 'Doze',
-        13 => 'Treze',
-        14 => 'Catorze',
-        15 => 'Quinze',
-        16 => 'Dezesseis',
-        17 => 'Dezessete',
-        18 => 'Dezoito',
-        19 => 'Dezenove',
-        20 => 'Vinte'
-    ];
+                $numeros = [
+                    0  => 'Zero',
+                    1  => 'Um',
+                    2  => 'Dois',
+                    3  => 'Três',
+                    4  => 'Quatro',
+                    5  => 'Cinco',
+                    6  => 'Seis',
+                    7  => 'Sete',
+                    8  => 'Oito',
+                    9  => 'Nove',
+                    10 => 'Dez',
+                    11 => 'Onze',
+                    12 => 'Doze',
+                    13 => 'Treze',
+                    14 => 'Catorze',
+                    15 => 'Quinze',
+                    16 => 'Dezasseis',
+                    17 => 'Dezassete',
+                    18 => 'Dezoito',
+                    19 => 'Dezanove',
+                    20 => 'Vinte'
 
-    
-                           $province = null;
-                           $province = matchProvince(substr($studentInfo->bi,-5,2));
+                ];
+
+        
+                $province = null;
+                $province = matchProvince(substr($studentInfo->bi,-5,2));
                      
-            
             @endphp
 
             
