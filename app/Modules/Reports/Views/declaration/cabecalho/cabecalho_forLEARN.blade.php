@@ -29,6 +29,7 @@
         margin-top: -15px;
         font-weight: 600;
         font-size: 15px;
+        text-align: center;
     }
 
     .h1-title {
@@ -52,6 +53,7 @@
 
     .doc-title {
         margin-top: 50px;
+        margin-bottom: 50px;
     }
 
     .doc-title h1 {
