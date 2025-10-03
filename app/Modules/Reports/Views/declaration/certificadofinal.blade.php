@@ -296,30 +296,19 @@
                 <b>{{ $studentInfo->number }},</b> tendo obtido as seguintes classificações: 
 
             </p>
-              
-
 
             <div class="row">
-
                 <div class="col-12">
-
-
-                 
-                        @foreach ($allDiscipline as $year => $disciplines)
-                               
+                        @foreach ($allDiscipline as $year => $disciplines)     
                         <table class="table_te">
                             <thead>
-                               
                                 <tr>
-                                     
-                                        <th class="bg2" style="text-align:center; font-size:15pt;">#</th>
-                                        <th class="bg2" style="text-align:center; font-size:15pt;">Ano</th>
-                                        <th class="bg2" style="text-align:left; font-size:15pt;text-indent:10px;"><b>DISCIPLINA</b></th>
-                                        <th class="bg2" style="text-align:center; font-size:15pt;"><b>U.C</b></th>
-                                        <th class="bg2" style="text-align:center; font-size:15pt;" colspan="2"><b>CLASSIFICAÇÃO</b></th>
-                                           
+                                    <th class="bg2" style="text-align:center; font-size:15pt;">#</th>
+                                    <th class="bg2" style="text-align:center; font-size:15pt;">Ano</th>
+                                    <th class="bg2" style="text-align:left; font-size:15pt;text-indent:10px;"><b>DISCIPLINA</b></th>
+                                    <th class="bg2" style="text-align:center; font-size:15pt;"><b>U.C</b></th>
+                                    <th class="bg2" style="text-align:center; font-size:15pt;" colspan="2"><b>CLASSIFICAÇÃO</b></th>     
                                 </tr>
-                               
                             </thead>
                             <tbody>
 
@@ -327,7 +316,6 @@
                                   @foreach ($disciplines as $discipline)
                                  
                                     <tr>
-                                         
                                         <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$index}}</td>
                                         @php $index++ @endphp
                                         <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$year}}º</td>
@@ -346,17 +334,14 @@
                                         @endforeach
                                     </tr>
                             </tbody>  
-                         
-                    @endforeach
-                    </table>
+                        </table>
+                        @endforeach
                    
                         @if($loop->iteration == 3)
                        
                         @endif
                       @endforeach
-
                     <br>
-
                 </div>
             </div>
         </div>
@@ -396,9 +381,8 @@
 
                 
             </div>            
-                <div class="watermark" style="top: 1400px;"></div>
-                <div class="watermark"></div>
-
+            <div class="watermark" style="top: 1400px;"></div>
+            <div class="watermark"></div>
         </div>
         </div>
 
