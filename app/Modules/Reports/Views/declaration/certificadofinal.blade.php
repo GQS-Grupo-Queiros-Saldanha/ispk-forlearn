@@ -371,7 +371,7 @@
                 <p> 
                    
                     Por ser verdade e me ter sido solicitado, passa-se o presente certificado nº {{$requerimento->code ?? 'código doc'}}, liquidado no CP nº {{$recibo ?? 'recibo'}},
-                    assinado e autenticado com o selo em branco em uso no {{$institution->abrev}}.
+                    assinado e autenticado com o selo em branco em uso no {{$institution->nome}}.
                 </p>
                 <br>
              
@@ -382,8 +382,8 @@
                 
                 <p>_________________________________________________________</p>
                           <p style="font-size: 14pt !important;margin-top:0px!important;">{{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b></p>
-                          <p style="font-size:11pt margin-top:10;">{{ $direitor->categoria_profissional ?? 'Categoria Profissional' }}</p>
-                          <p style="font-size:11pt; margin-top:10;">{{ $direitor->cargo  ?? 'Cargo' }} do {{$institution->nome}}</p>
+                          <p style="font-size:11pt  !important;margin-top:0px!important;">{{ $direitor->categoria_profissional ?? 'Categoria Profissional' }}</p>
+                          <p style="font-size:11pt; !important;margin-top:0px!important;">{{ $direitor->cargo  ?? 'Cargo' }} do {{$institution->abrev}}</p>
 
                 
             </div>            
