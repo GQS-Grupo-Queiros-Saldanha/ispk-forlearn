@@ -18,10 +18,11 @@
     }
 
     .institution-name {
-        margin-top: 205px;
+        margin-top: 25px;
         font-size: 29.5px;
         font-weight: bold;
         text-transform: uppercase;
+        text-align: center;
     }
 
     .institution-decree {
