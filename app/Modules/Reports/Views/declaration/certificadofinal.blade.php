@@ -287,15 +287,15 @@
 
             
             <p> 
-                    {{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b>,&nbsp;{{ $direitor->cargo ?? 'cargo' }}  <span>do</span> <b>{{ $institution->nome }}</b>, certifica
-                    em face dos respectivos livros que <b style="">
-                        {{ $studentInfo->name }}</b>, filho(a) de {{ $studentInfo->dad }} e de
-                    {{ $studentInfo->mam }}, natural da Província de {{ $studentInfo->province }}, nascido(a) aos
-                    {{ $nascimento }}, portador(a) do B.I nº {{ $studentInfo->bi }}, passado pelo Arquivo de Identificação de {{ $province }},
-                     concluiu  a Licenciatura em <b>{{ $studentInfo->course }}</b>, com a matrícula nº
-                    <b>{{ $studentInfo->number }},</b> tendo obtido as seguintes classificações: 
+                {{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b>,&nbsp;{{ $direitor->cargo ?? 'cargo' }}  <span>do</span> <b>{{ $institution->nome }}</b>, certifica
+                em face dos respectivos livros que <b style="">
+                    {{ $studentInfo->name }}</b>, filho(a) de {{ $studentInfo->dad }} e de
+                {{ $studentInfo->mam }}, natural da Província de {{ $studentInfo->province }}, nascido(a) aos
+                {{ $nascimento }}, portador(a) do B.I nº {{ $studentInfo->bi }}, passado pelo Arquivo de Identificação de {{ $province }},
+                    concluiu  a Licenciatura em <b>{{ $studentInfo->course }}</b>, com a matrícula nº
+                <b>{{ $studentInfo->number }},</b> tendo obtido as seguintes classificações: 
 
-                </p>
+            </p>
               
 
 
