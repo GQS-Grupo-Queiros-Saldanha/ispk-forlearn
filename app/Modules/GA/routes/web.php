@@ -24,7 +24,7 @@ Route::group(
 
             // Admin
             // Note: if changing prefix please change it as well in the database (menu_items)
-            Route::group(['prefix' => 'gestao-academica'], function () {
+        Route::group(['prefix' => 'gestao-academica'], function () {
             
             // Tipos de Documentos
             Route::prefix('documents-types')->name('documents-types.')->group(function () {

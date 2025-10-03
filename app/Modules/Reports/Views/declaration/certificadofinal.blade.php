@@ -313,14 +313,9 @@
                                 <tr>
                                      
                                         <th class="bg2" style="text-align:center; font-size:15pt;">#</th>
-                                        
-                                           <th class="bg2" style="text-align:center; font-size:15pt;">Ano</th>
-                                     
-                                       
+                                        <th class="bg2" style="text-align:center; font-size:15pt;">Ano</th>
                                         <th class="bg2" style="text-align:left; font-size:15pt;text-indent:10px;"><b>DISCIPLINA</b></th>
-                                        
-                                       
-                                       
+                                        <th class="bg2" style="text-align:center; font-size:15pt;"><b>U.C</b></th>
                                         <th class="bg2" style="text-align:center; font-size:15pt;" colspan="2"><b>CLASSIFICAÇÃO</b></th>
                                            
                                 </tr>
@@ -333,35 +328,26 @@
                                  
                                     <tr>
                                          
-                                           <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$index}}</td>
+                                        <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$index}}</td>
                                         @php $index++ @endphp
-                                          <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$year}}º</td>
+                                        <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$year}}º</td>
                                         <td class="bg6" style="text-align: left;text-indent: 5px;">{{ $discipline->disciplina }}</td>
-                                       
+                                        <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{ $discipline->uc }}</td>
                                         @foreach ($grades as $nota)
                                             @if ($discipline->discipline_id == $nota->discipline_id)
-                                            
                                             @php
-                                            $note =  round($nota->grade)
+                                                $note =  round($nota->grade)
                                             @endphp
-                                            
                                             <td class="bg6" style="text-align: center;background-color: #F9F2F4;">
                                                    {{ round($nota->grade) }}</td>
-                                                    
                                                 <td class="bg6" style="text-align: center;background-color: #F9F2F4;">
                                                     {{ $numeros[$note] }}</td>
-                                            @endif
-                                            
+                                            @endif 
                                         @endforeach
-                                       
-                                      
                                     </tr>
-                              
-                                
                             </tbody>  
                          
                     @endforeach
-                  
                     </table>
                    
                         @if($loop->iteration == 3)

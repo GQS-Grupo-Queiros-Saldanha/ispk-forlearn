@@ -1995,7 +1995,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 $join->on('dcp.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 $join->on('dcp.active', '=', DB::raw(true));
             })
-            ->select(['dcp.display_name as disciplina', 'disciplines.id as discipline_id', 'study_plans_has_disciplines.years as years'])
+            ->select(['dcp.display_name as disciplina', 'disciplines.id as discipline_id', 'study_plans_has_disciplines.years as years', 'disciplines.uc as uc'])
             ->distinct('disciplina')
             ->orderBy('years')
             ->get()
@@ -2069,14 +2069,6 @@ return $pdf->stream($pdf_name . '.pdf');
             ->distinct('disciplina')
             ->orderBy('years')
             ->first();
-
-
-
-
-
-
-
-
 
 
 
