@@ -296,8 +296,11 @@
                 <b>{{ $studentInfo->number }},</b> tendo obtido as seguintes classificações: 
 
             </p>
+              
+
 
             <div class="row">
+
                 <div class="col-12">
                         @foreach ($allDiscipline as $year => $disciplines)     
                         <table class="table_te">
@@ -334,14 +337,17 @@
                                         @endforeach
                                     </tr>
                             </tbody>  
-                        </table>
+                         
                         @endforeach
+                        </table>
                    
                         @if($loop->iteration == 3)
                        
                         @endif
                       @endforeach
+
                     <br>
+
                 </div>
             </div>
         </div>
@@ -381,8 +387,9 @@
 
                 
             </div>            
-            <div class="watermark" style="top: 1400px;"></div>
-            <div class="watermark"></div>
+                <div class="watermark" style="top: 1400px;"></div>
+                <div class="watermark"></div>
+
         </div>
         </div>
 
