@@ -382,8 +382,8 @@
                 
                 <p>_________________________________________________________</p>
                           <p style="font-size: 14pt !important;margin-top:0px!important;">{{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b></p>
-                          <p style="font-size:11pt  !important;margin-top:0px!important;">{{ $direitor->categoria_profissional ?? 'Categoria Profissional' }}</p>
-                          <p style="font-size:11pt; !important;margin-top:0px!important;">{{ $direitor->cargo  ?? 'Cargo' }} do {{$institution->abrev}}</p>
+                          <p style="font-size:11pt  !important;margin-top:5px!important;">{{ $direitor->categoria_profissional ?? 'Categoria Profissional' }}</p>
+                          <p style="font-size:11pt; !important;margin-top:5px!important;">{{ $direitor->cargo  ?? 'Cargo' }} do {{$institution->abrev}}</p>
 
                 
             </div>            
