@@ -339,15 +339,14 @@
                                             </td>
                                           
 
-
-
                                                 @foreach($cargaHoraria as $carga)   
                                                      @if($discipline->id===$carga->id_disciplina)
                                                         <td class="bg2" style="text-align: center;">{{ $carga->hora}}</td>
                                                      @endif
                                                  @endforeach
 
-                                                 <td class="bg2" style="text-align: center;">{{ $discipline->uc ?? ''}}</td>
+                                                 <td class="bg2" style="text-align: center;">{{ $discipline->uc ?? '' }}</td>
+
 
                                             @foreach ($oldGrades as $year => $oldGradex)
                                             @php $nao_tem_nota = true @endphp
