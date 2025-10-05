@@ -347,7 +347,7 @@
                                                      @endif
                                                  @endforeach
 
-                                                 <td class="bg2" style="text-align: center;">{{ $discipline->uc ?? ''}}</td>
+                                                 <td class="bg2" style="text-align: center;">{{ uc ?? ''}}</td>
 
                                             @foreach ($oldGrades as $year => $oldGradex)
                                             @php $nao_tem_nota = true @endphp
