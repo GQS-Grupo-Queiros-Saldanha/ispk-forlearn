@@ -345,7 +345,10 @@
                                                      @endif
                                                  @endforeach
 
-                                                 <td class="bg2" style="text-align: center; color:red;">UC: {{ $discipline->uc }}</td>
+                                                <td class="bg2" style="text-align: center;">
+                                                    {{ isset($discipline->uc) ? $discipline->uc : '' }}
+                                                </td>
+
 
 
 
