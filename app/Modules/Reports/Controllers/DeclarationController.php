@@ -644,7 +644,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->orderBy('course_year', 'ASC')
                 ->distinct('id')
                 ->get();
-                dd($disciplinas);
+                dd($disciplines);
 
             $disciplines = $this->ordena_plano($disciplines);
 
