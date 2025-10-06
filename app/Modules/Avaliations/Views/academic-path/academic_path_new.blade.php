@@ -168,64 +168,98 @@
                                         $cor = $i++ % 2 === 0 ? 'cor_linha' : '';
                                     @endphp
                                     
-                                   <tr class="{{ $cor }}">
-    <td style="text-align: center;">{{ $index++ }}</td>
-    <td style="text-align: center;">{{ $discipline->course_year }} º</td>
+                                    <tr class="{{ $cor }}">
+                                        <td style="text-align: center;">{{ $index }}</td>
+                                        @php $index++; @endphp
+                                        
+                                        <td style="text-align: center;">{{ $discipline->course_year }} º</td>
+                                        
+                                        @if (substr($discipline->code, -3, 1) == 'A')
+                                            <td style="text-align: center;">A</td>
+                                        @elseif(substr($discipline->code, -3, 1) == '1')
+                                            <td style="text-align: center;">1</td>
+                                        @elseif(substr($discipline->code, -3, 1) == '2')
+                                            <td style="text-align: center;">2</td>
+                                        @endif
+                                        
+                                        <td style="text-align: center;">{{ $discipline->code }}</td>
+                                        <td style="text-align: left;">
+                                            {{ $discipline->name }}
+                                            @php $contaDisciplina++; @endphp
+                                        </td>
 
-    <td style="text-align: center;">
-        @if (substr($discipline->code, -3, 1) == 'A') A
-        @elseif (substr($discipline->code, -3, 1) == '1') 1
-        @elseif (substr($discipline->code, -3, 1) == '2') 2
-        @endif
-    </td>
+                                        @foreach ($cargaHoraria as $carga)
+                                            @if ($carga->id_disciplina == $discipline->id)
+                                                <td style="text-align: center;">{{ $carga->hora }}</td>
+                                            @endif
+                                        @endforeach
+                                        
+                                        <td style="text-align: center;">{{ $discipline->uc ?? '' }}</td>
 
-    <td style="text-align: center;">{{ $discipline->code }}</td>
-    <td style="text-align: left;">{{ $discipline->name }}</td>
+                                        @foreach ($oldGradesOrder as $year => $oldGradex)
+                                            @php $flag = true @endphp
+                                            @php $oFlag = true; @endphp
+                                            
+                                            @foreach ($oldGradex as $oldGrade)
+                                                @if ($oldGrade->discipline_id == $discipline->id)
+                                                    @php $flag = false @endphp
 
-    {{-- Carga horária --}}
-    @php
-        $hora = '';
-        foreach ($cargaHoraria as $carga) {
-            if ($carga['id_disciplina'] == $discipline->id) {
-                $hora = $carga['hora'];
-                break;
-            }
-        }
-    @endphp
-    <td style="text-align: center;">{{ $hora }}</td>
+                                                    <!-- Cálculo das somas por ano -->
+                                                    @switch($discipline->course_year)
+                                                        @case(1)
+                                                            @php
+                                                                $soma1 += $oldGrade->grade;
+                                                                $count1++;
+                                                            @endphp
+                                                            @break
+                                                        @case(2)
+                                                            @php
+                                                                $soma2 += $oldGrade->grade;
+                                                                $count2++;
+                                                            @endphp
+                                                            @break
+                                                        @case(3)
+                                                            @php
+                                                                $soma3 += $oldGrade->grade;
+                                                                $count3++;
+                                                            @endphp
+                                                            @break
+                                                        @case(4)
+                                                            @php
+                                                                $soma4 += $oldGrade->grade;
+                                                                $count4++;
+                                                            @endphp
+                                                            @break
+                                                        @case(5)
+                                                            @php
+                                                                $soma5 += $oldGrade->grade;
+                                                                $count5++;
+                                                            @endphp
+                                                            @break
+                                                        @case(6)
+                                                            @php
+                                                                $soma6 += $oldGrade->grade;
+                                                                $count6++;
+                                                            @endphp
+                                                            @break
+                                                    @endswitch
 
-    <td style="text-align: center;">{{ $discipline['uc'] ?? '' }}</td>
-
-    {{-- Notas por ano --}}
-    @foreach ($oldGradesOrder as $year => $gradesPerYear)
-        @php
-            $grade = null;
-            foreach ($gradesPerYear as $oldGrade) {
-                if ($oldGrade['discipline_id'] == $discipline->id) {
-                    $grade = $oldGrade['grade'];
-                    
-                    // Soma por ano
-                    switch ($discipline['course_year']) {
-                        case 1: $soma1 += $grade; $count1++; break;
-                        case 2: $soma2 += $grade; $count2++; break;
-                        case 3: $soma3 += $grade; $count3++; break;
-                        case 4: $soma4 += $grade; $count4++; break;
-                        case 5: $soma5 += $grade; $count5++; break;
-                        case 6: $soma6 += $grade; $count6++; break;
-                    }
-
-                    $somatorio += $grade;
-                    $countGrade++;
-                    break;
-                }
-            }
-        @endphp
-        <td style="text-align: center;background-color: #F9F2F4;">
-            {{ $grade !== null ? round($grade) : '-' }}
-        </td>
-    @endforeach
-</tr>
-
+                                                    <td style="text-align: center; background-color: #F9F2F4;">
+                                                        {{ round($oldGrade->grade) }}
+                                                    </td>
+                                                    
+                                                    @php 
+                                                        $somatorio += $oldGrade->grade;
+                                                        $countGrade++;
+                                                    @endphp
+                                                @endif
+                                            @endforeach
+                                            
+                                            @if ($flag)
+                                                <td style="background-color: #F9F2F4;"></td>
+                                            @endif
+                                        @endforeach
+                                    </tr>
                                 @endforeach
                             </table>
 
