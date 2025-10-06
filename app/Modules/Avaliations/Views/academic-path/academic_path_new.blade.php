@@ -182,32 +182,46 @@
     <td style="text-align: center;">{{ $discipline->code }}</td>
     <td style="text-align: left;">{{ $discipline->name }}</td>
 
-    <td style="text-align: center;">
-        {{ optional($cargaHoraria->firstWhere('id_disciplina', $discipline->id))->hora ?? '' }}
-    </td>
+    {{-- Carga horária --}}
+    @php
+        $hora = '';
+        foreach ($cargaHoraria as $carga) {
+            if ($carga['id_disciplina'] == $discipline->id) {
+                $hora = $carga['hora'];
+                break;
+            }
+        }
+    @endphp
+    <td style="text-align: center;">{{ $hora }}</td>
 
-    <td style="text-align: center;">{{ $discipline->uc ?? '' }}</td>
+    <td style="text-align: center;">{{ $discipline['uc'] ?? '' }}</td>
 
     {{-- Notas por ano --}}
     @foreach ($oldGradesOrder as $year => $gradesPerYear)
         @php
-            $grade = $gradesPerYear->firstWhere('discipline_id', $discipline->id);
-            if ($grade) {
-                // Soma por ano
-                switch ($discipline->course_year) {
-                    case 1: $soma1 += $grade->grade; $count1++; break;
-                    case 2: $soma2 += $grade->grade; $count2++; break;
-                    case 3: $soma3 += $grade->grade; $count3++; break;
-                    case 4: $soma4 += $grade->grade; $count4++; break;
-                    case 5: $soma5 += $grade->grade; $count5++; break;
-                    case 6: $soma6 += $grade->grade; $count6++; break;
+            $grade = null;
+            foreach ($gradesPerYear as $oldGrade) {
+                if ($oldGrade['discipline_id'] == $discipline->id) {
+                    $grade = $oldGrade['grade'];
+                    
+                    // Soma por ano
+                    switch ($discipline['course_year']) {
+                        case 1: $soma1 += $grade; $count1++; break;
+                        case 2: $soma2 += $grade; $count2++; break;
+                        case 3: $soma3 += $grade; $count3++; break;
+                        case 4: $soma4 += $grade; $count4++; break;
+                        case 5: $soma5 += $grade; $count5++; break;
+                        case 6: $soma6 += $grade; $count6++; break;
+                    }
+
+                    $somatorio += $grade;
+                    $countGrade++;
+                    break;
                 }
-                $somatorio += $grade->grade;
-                $countGrade++;
             }
         @endphp
         <td style="text-align: center;background-color: #F9F2F4;">
-            {{ $grade ? round($grade->grade) : '-' }}
+            {{ $grade !== null ? round($grade) : '-' }}
         </td>
     @endforeach
 </tr>
