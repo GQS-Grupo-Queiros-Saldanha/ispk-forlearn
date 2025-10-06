@@ -196,64 +196,40 @@
                                         
                                         <td style="text-align: center;">{{ $discipline->uc ?? '' }}</td>
 
-                                        @foreach ($oldGradesOrder as $year => $oldGradex)
-                                            @php $flag = true @endphp
-                                            @php $oFlag = true; @endphp
-                                            
-                                            @foreach ($oldGradex as $oldGrade)
-                                                @if ($oldGrade->discipline_id == $discipline->id)
-                                                    @php $flag = false @endphp
+                                       @foreach ($oldGradesOrder as $year => $oldGradex)
+                                        @php
+                                            $gradeFound = false;
+                                        @endphp
+                                        @foreach ($oldGradex as $oldGrade)
+                                            @if ($oldGrade->discipline_id == $discipline->id)
+                                                <td style="text-align: center;background-color: #F9F2F4;">
+                                                    {{ round($oldGrade->grade) }}
+                                                </td>
 
-                                                    <!-- Cálculo das somas por ano -->
-                                                    @switch($discipline->course_year)
-                                                        @case(1)
-                                                            @php
-                                                                $soma1 += $oldGrade->grade;
-                                                                $count1++;
-                                                            @endphp
-                                                            @break
-                                                        @case(2)
-                                                            @php
-                                                                $soma2 += $oldGrade->grade;
-                                                                $count2++;
-                                                            @endphp
-                                                            @break
-                                                        @case(3)
-                                                            @php
-                                                                $soma3 += $oldGrade->grade;
-                                                                $count3++;
-                                                            @endphp
-                                                            @break
-                                                        @case(4)
-                                                            @php
-                                                                $soma4 += $oldGrade->grade;
-                                                                $count4++;
-                                                            @endphp
-                                                            @break
-                                                        @case(5)
-                                                            @php
-                                                                $soma5 += $oldGrade->grade;
-                                                                $count5++;
-                                                            @endphp
-                                                            @break
-                                                        @case(6)
-                                                            @php
-                                                                $soma6 += $oldGrade->grade;
-                                                                $count6++;
-                                                            @endphp
-                                                            @break
-                                                    @endswitch
+                                                @php
+                                                    $gradeFound = true;
+                                                    // Soma por ano
+                                                    switch ($discipline->course_year) {
+                                                        case 1: $soma1 += $oldGrade->grade; $count1++; break;
+                                                        case 2: $soma2 += $oldGrade->grade; $count2++; break;
+                                                        case 3: $soma3 += $oldGrade->grade; $count3++; break;
+                                                        case 4: $soma4 += $oldGrade->grade; $count4++; break;
+                                                        case 5: $soma5 += $oldGrade->grade; $count5++; break;
+                                                        case 6: $soma6 += $oldGrade->grade; $count6++; break;
+                                                    }
+                                                    $somatorio += $oldGrade->grade;
+                                                    $countGrade++;
+                                                @endphp
 
-                                                    <td style="text-align: center; background-color: #F9F2F4;">
-                                                        {{ round($oldGrade->grade) }}
-                                                    </td>
-                                                    
-                                                    @php 
-                                                        $somatorio += $oldGrade->grade;
-                                                        $countGrade++;
-                                                    @endphp
-                                                @endif
-                                            @endforeach
+                                                @break
+                                            @endif
+                                        @endforeach
+
+                                        @if (!$gradeFound)
+                                            <td style="text-align: center;background-color: #F9F2F4;">-</td>
+                                        @endif
+                                    @endforeach
+
                                             
                                             @if ($flag)
                                                 <td style="background-color: #F9F2F4;"></td>
