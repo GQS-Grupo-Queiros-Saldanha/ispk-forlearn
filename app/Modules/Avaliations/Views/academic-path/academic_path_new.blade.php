@@ -144,7 +144,7 @@
                                         <th style="text-align:center;">UC</th>
                                         @foreach ($oldGradesOrder as $year => $oldGrade)
                                             @if ($oldGrade != '')
-                                                <th style="width: 70px; text-align:center; font-size:12pt; " style="text-align:center;">
+                                                <th style="width: 70px; text-align:center; font-size:12pt; " colspan="{{ $i }}">
                                                     CLASSIFICAÇÃO
                                                 </th>
                                             @break
