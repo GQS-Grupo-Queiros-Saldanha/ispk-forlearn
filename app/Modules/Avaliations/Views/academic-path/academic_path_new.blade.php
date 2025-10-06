@@ -19,34 +19,38 @@
                     <div class="col-12 mb-4">
                         <table class="table_te">
                             <style>
-                            .table_te {
-                                background-color: #F5F3F3 !important;
-                                width: 100%;
-                                text-align: right;
-                                font-family: calibri light;
-                                margin-bottom: 6px;
-                                font-size: 12pt;
-                            }
+                                .table_te {
+                                    background-color: #F5F3F3;
+                                     !important;
+                                    width: 100%;
+                                    text-align: right;
+                                    font-family: calibri light;
+                                    margin-bottom: 6px;
+                                    font-size: 12pt;
+                                }
 
-                            .cor_linha {
-                                background-color: #999;
-                                color: #000;
-                            }
+                                .cor_linha {
+                                    background-color: #999;
+                                    color: #000;
+                                }
 
-                            .table_te th {
-                                border-left: 1px solid #fff;
-                                border-bottom: 1px solid #fff;
-                                padding: 4px !important;
-                                text-align: center;
-                            }
+                                .table_te th {
+                                    border-left: 1px solid #fff;
+                                    border-bottom: 1px solid #fff;
+                                    padding: 4px;
+                                     !important;
+                                    text-align: center;
+                                }
 
-                            .table_te td {
-                                border-left: 1px solid #fff;
-                                background-color: #F5F3F3;
-                                border-bottom: 1px solid white;
-                                font-size: 12pt;
-                            }
-                        </style>
+                                .table_te td {
+                                    border-left: 1px solid #fff;
+                                    background-color: #F5F3F3;
+                                    border-bottom: 1px solid white;
+                                    font-size: 12pt;
+                                }
+
+                                .tabble_te thead {}
+                            </style>
                             <tr class="bg1">
                                
                                 <th class="text-left" style="font-size: 12pt; padding: 0px;">ESTUDANTE</th>
@@ -140,7 +144,7 @@
                                         <th style="text-align:center;">UC</th>
                                         @foreach ($oldGradesOrder as $year => $oldGrade)
                                             @if ($oldGrade != '')
-                                                <th style="width: 70px; text-align:center; font-size:12pt; " colspan="{{ $i }}">
+                                                <th style="width: 70px; text-align:center; font-size:12pt; " style="text-align:center;">
                                                     CLASSIFICAÇÃO
                                                 </th>
                                             @break
