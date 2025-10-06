@@ -486,7 +486,6 @@ class GradesController extends Controller
                 }
          //}   
          
-                dd($model);
        return response()->json(['studant'=>$model]);
             // return response()->json($model);
         } catch (Exception | Throwable $e) {
