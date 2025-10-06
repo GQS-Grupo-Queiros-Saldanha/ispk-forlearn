@@ -196,38 +196,39 @@
                                         
                                         <td style="text-align: center;">{{ $discipline->uc ?? '' }}</td>
                                         @foreach ($oldGradesOrder as $year => $oldGradex)
-                                            @php
-                                                $gradeFound = false;
-                                            @endphp
-                                            @foreach ($oldGradex as $oldGrade)
-                                                @if ($oldGrade->discipline_id == $discipline->id)
-                                                    <td style="text-align: center;background-color: #F9F2F4;">
-                                                        {{ round($oldGrade->grade) }}
-                                                    </td>
+    @php
+        $gradeFound = false;
+    @endphp
 
-                                                    @php
-                                                        $gradeFound = true;
-                                                        // Soma por ano
-                                                        switch ($discipline->course_year) {
-                                                            case 1: $soma1 += $oldGrade->grade; $count1++; break;
-                                                            case 2: $soma2 += $oldGrade->grade; $count2++; break;
-                                                            case 3: $soma3 += $oldGrade->grade; $count3++; break;
-                                                            case 4: $soma4 += $oldGrade->grade; $count4++; break;
-                                                            case 5: $soma5 += $oldGrade->grade; $count5++; break;
-                                                            case 6: $soma6 += $oldGrade->grade; $count6++; break;
-                                                        }
-                                                        $somatorio += $oldGrade->grade;
-                                                        $countGrade++;
-                                                    @endphp
+    @foreach ($oldGradex as $oldGrade)
+        @if ($oldGrade->discipline_id == $discipline->id)
+            <td style="text-align: center;background-color: #F9F2F4;">
+                {{ round($oldGrade->grade) }}
+            </td>
 
-                                                    @break
-                                                @endif
-                                            @endforeach
+            @php
+                $gradeFound = true;
+                // soma por ano
+                switch ($discipline->course_year) {
+                    case 1: $soma1 += $oldGrade->grade; $count1++; break;
+                    case 2: $soma2 += $oldGrade->grade; $count2++; break;
+                    case 3: $soma3 += $oldGrade->grade; $count3++; break;
+                    case 4: $soma4 += $oldGrade->grade; $count4++; break;
+                    case 5: $soma5 += $oldGrade->grade; $count5++; break;
+                    case 6: $soma6 += $oldGrade->grade; $count6++; break;
+                }
+                $somatorio += $oldGrade->grade;
+                $countGrade++;
+            @endphp
 
-                                            @if (!$gradeFound)
-                                                <td style="text-align: center;background-color: #F9F2F4;">-</td>
-                                            @endif
-                                            @endforeach
+            @break
+        @endif
+    @endforeach
+
+    @if (!$gradeFound)
+        <td style="text-align: center;background-color: #F9F2F4;">-</td>
+    @endif
+@endforeach
 
 
                                             
