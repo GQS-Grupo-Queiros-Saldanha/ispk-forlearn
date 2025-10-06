@@ -9,6 +9,14 @@
             $doc_name = 'PERCURSO ACADÉMICO';
             $discipline_code = '';
             $logotipo = "https://".$_SERVER['HTTP_HOST']."/instituicao-arquivo/".$institution->logotipo;
+            
+            // DEFINIR oldGradesOrder SEMPRE, MESMO QUE VAZIA
+            $oldGradesOrder = isset($oldGrades) ? collect($oldGrades)->sortBy(function ($value, $key) {
+                if (is_numeric($key)) {
+                    return '0' . $key;
+                }
+                return '1' . $key;
+            })->all() : [];
         @endphp
         @include('Reports::pdf_model.forLEARN_header')
         <!-- aqui termina o cabeçalho do pdf -->
@@ -111,8 +119,8 @@
                                     <tr class="bg1">
                                         <th colspan="7" style="text-align: center; font-size: 12pt;"><b>UNIDADES
                                                 CURRICULARES</b></th>
-                                        @if(count($oldGradesOrder) > 0 || ($var == 1 && count($studyPlanEditions) > 0))
-                                        <th colspan="{{ count($oldGradesOrder) + ($var == 1 ? count($studyPlanEditions) : 0) }}" style="text-align: center; font-size: 12pt;"><b>CLASSIFICAÇÕES</b></th>
+                                        @if(count($oldGradesOrder) > 0 || ($var == 1 && isset($studyPlanEditions) && count($studyPlanEditions) > 0))
+                                        <th colspan="{{ count($oldGradesOrder) + ($var == 1 && isset($studyPlanEditions) ? count($studyPlanEditions) : 0) }}" style="text-align: center; font-size: 12pt;"><b>CLASSIFICAÇÕES</b></th>
                                         @endif
                                     </tr>
                                     <tr class="bg2">
@@ -127,7 +135,7 @@
                                         @foreach ($oldGradesOrder as $year => $oldGrade)
                                             <th style="text-align:center; font-size:12pt; width: 70px;">{{ $year }}</th>
                                         @endforeach
-                                        @if ($var == 1)
+                                        @if ($var == 1 && isset($studyPlanEditions))
                                             @foreach ($studyPlanEditions as $studyPlanEdition)
                                                 <th style="text-align:center; font-size:12pt; width: 70px;">{{ $studyPlanEdition->lective_year }}</th>
                                             @endforeach
@@ -144,7 +152,7 @@
                                 @foreach ($oldGradesOrder as $year => $oldGrade)
                                 <td style="background-color: white;"></td>
                                 @endforeach
-                                @if ($var == 1)
+                                @if ($var == 1 && isset($studyPlanEditions))
                                     @foreach ($studyPlanEditions as $studyPlanEdition)
                                     <td style="background-color: white;"></td>
                                     @endforeach
@@ -163,7 +171,7 @@
                                 @foreach ($oldGradesOrder as $year => $oldGrade)
                                 <td style="background-color: white;"></td>
                                 @endforeach
-                                @if ($var == 1)
+                                @if ($var == 1 && isset($studyPlanEditions))
                                     @foreach ($studyPlanEditions as $studyPlanEdition)
                                     <td style="background-color: white;"></td>
                                     @endforeach
@@ -259,7 +267,7 @@
                                             @endforeach
 
                                             <!-- Notas para studyPlanEditions -->
-                                            @if ($var == 1)
+                                            @if ($var == 1 && isset($studyPlanEditions))
                                                 @foreach ($studyPlanEditions as $studyPlanEdition)
                                                     @php $notaEncontrada = false; @endphp
                                                     <!-- Adaptar para buscar notas específicas do studyPlanEdition -->
@@ -390,7 +398,7 @@
                                     <td style="text-align: center ;  font-size: 12pt;">
                                         <b>
                                             @php
-                                                $final =  round($somatorio / $countGrade)
+                                                $final =  $countGrade > 0 ? round($somatorio / $countGrade) : 0;
                                             @endphp
                                             
                                                 @if ($final == 0)
