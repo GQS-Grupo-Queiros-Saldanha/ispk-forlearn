@@ -2111,8 +2111,7 @@ class ArticleRequestsController extends Controller
         return response()->json(['data'=>$consultRecibos]);
     }
     
-     public function getFiltroEmolumento_student($selectedUserId)
-    {
+     public function getFiltroEmolumento_student($selectedUserId){
         $display_nameAnolectivo=[];
         $filtroEmolumento=[];
 
@@ -2387,7 +2386,7 @@ class ArticleRequestsController extends Controller
     }
     
     
-       public function getOutrosEmolumentoRequerido($userId,$anoLectivoSem_matricula){
+    public function getOutrosEmolumentoRequerido($userId,$anoLectivoSem_matricula){
         
         try{
             
