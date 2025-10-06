@@ -127,7 +127,7 @@
                                     </th>
                                     @if($totalAnos > 0)
                                         <th colspan="{{ $totalAnos }}" style="text-align: center; font-size: 12pt;">
-                                            <b>CLASSIFICAÇÕES POR ANO LECTIVO</b>
+                                            <b>CLASSIFICAÇÃO/b>
                                         </th>
                                     @endif
                                 </tr>
