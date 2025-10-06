@@ -445,8 +445,9 @@ class GradesController extends Controller
 
 
 
-    public function getStudentsBy(Request $request, $lectiveYears,$courseId,$id_disciplina,$turma)
-    {
+    public function getStudentsBy(Request $request, $lectiveYears,$courseId,$id_disciplina,$turma){
+        Log::info("Entrou no getStudentsBy:".$lectiveYears."-".$courseId."-".$id_disciplina."-".$turma);
+         //return response()->json($request->all());
 
         try {
           
