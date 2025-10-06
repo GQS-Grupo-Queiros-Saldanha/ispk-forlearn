@@ -111,32 +111,8 @@
                                     <tr class="bg1">
                                         <th colspan="7" style="text-align: center; font-size: 12pt;"><b>UNIDADES
                                                 CURRICULARES</b></th>
-                                        @php
-                                            $i = 0;
-                                   
-                                       $oldGradesOrder = collect($oldGrades)->sortBy(function ($value, $key) {
-                                         if (is_numeric($key)) {
-                                             return '0' . $key; // Prioriza chaves numéricas
-                                         }
-                                        return '1' . $key; // Depois chaves no formato "XX / XX"
-                                    })->all();
-
-                                    // Calcular total de colunas de anos
-                                    $totalAnosColunas = count($oldGradesOrder);
-                                    if ($var == 1) {
-                                        $totalAnosColunas += count($studyPlanEditions);
-                                    }
-                                   @endphp
-                
-                               
-                                        @foreach ($oldGradesOrder as $year => $oldGrade)
-                                            @php $i++; @endphp
-                                            <th>{{ $year }} </th>
-                                        @endforeach
-                                        @if ($var == 1)
-                                            @foreach ($studyPlanEditions as $studyPlanEdition)
-                                                <th>{{ $studyPlanEdition->lective_year }}</th>
-                                            @endforeach
+                                        @if(count($oldGradesOrder) > 0 || ($var == 1 && count($studyPlanEditions) > 0))
+                                        <th colspan="{{ count($oldGradesOrder) + ($var == 1 ? count($studyPlanEditions) : 0) }}" style="text-align: center; font-size: 12pt;"><b>CLASSIFICAÇÕES</b></th>
                                         @endif
                                     </tr>
                                     <tr class="bg2">
@@ -147,22 +123,16 @@
                                         <th style="text-align:center;">Nome</th>
                                         <th style="text-align:center;">CH</th>
                                         <th style="text-align:center;">UC</th>
+                                        <!-- Colunas para anos lectivos -->
                                         @foreach ($oldGradesOrder as $year => $oldGrade)
-                                            @if ($oldGrade != '')
-                                                <th style="width: 70px; text-align:center; font-size:12pt; ">NOTA</th>
-                                            @break
+                                            <th style="text-align:center; font-size:12pt; width: 70px;">{{ $year }}</th>
+                                        @endforeach
+                                        @if ($var == 1)
+                                            @foreach ($studyPlanEditions as $studyPlanEdition)
+                                                <th style="text-align:center; font-size:12pt; width: 70px;">{{ $studyPlanEdition->lective_year }}</th>
+                                            @endforeach
                                         @endif
-                                    @endforeach
-
-                                    @if ($var == 1)
-                                        @foreach ($studyPlanEditions as $studyPlanEdition)
-                                            @if ($studyPlanEdition != '')
-                                                <th style="width: 70px; text-align:center; font-size:12pt;">NOTA</th>
-                                            @break
-                                        @endif
-                                    @endforeach
-                                @endif
-                            </tr>
+                                    </tr>
                             <tr class="bg2" style="background-color:white; padding: 3px;color: white;">
                                 <td style="background-color: white;"></td>
                                 <td style="background-color: white;"></td>
@@ -171,12 +141,14 @@
                                 <td style="background-color: white;"></td>
                                 <td style="background-color: white;"></td>
                                 <td style="background-color: white;"></td>
+                                @foreach ($oldGradesOrder as $year => $oldGrade)
                                 <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
+                                @endforeach
+                                @if ($var == 1)
+                                    @foreach ($studyPlanEditions as $studyPlanEdition)
+                                    <td style="background-color: white;"></td>
+                                    @endforeach
+                                @endif
 
 
                             </tr>
@@ -188,12 +160,14 @@
                                 <td style="background-color: white;"></td>
                                 <td style="background-color: white;"></td>
                                 <td style="background-color: white;"></td>
+                                @foreach ($oldGradesOrder as $year => $oldGrade)
                                 <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
-                                <td style="background-color: white;"></td>
+                                @endforeach
+                                @if ($var == 1)
+                                    @foreach ($studyPlanEditions as $studyPlanEdition)
+                                    <td style="background-color: white;"></td>
+                                    @endforeach
+                                @endif
                             </tr>
                             @php 
                             $contaDisciplina = 0;
@@ -233,9 +207,9 @@
                                             @endforeach
                                             <td style="text-align: center;">{{ $discipline->uc ?? '' }} </td>
 
+                                            <!-- NOTAS - CADA ANO TEM SUA PRÓPRIA COLUNA -->
                                             @foreach ($oldGradesOrder as $year => $oldGradex)
                                                 @php $flag = true @endphp
-                                                @php $oFlag = true; @endphp
                                                 @foreach ($oldGradex as $oldGrade)
                                                     @if ($oldGrade->discipline_id == $discipline->id)
                                                         @php $flag = false @endphp
@@ -284,12 +258,11 @@
                                                 @endif
                                             @endforeach
 
-                                            <!-- Notas para studyPlanEditions se aplicável -->
+                                            <!-- Notas para studyPlanEditions -->
                                             @if ($var == 1)
                                                 @foreach ($studyPlanEditions as $studyPlanEdition)
                                                     @php $notaEncontrada = false; @endphp
-                                                    <!-- Aqui você precisaria adaptar para buscar as notas específicas -->
-                                                    <!-- do studyPlanEdition para esta disciplina -->
+                                                    <!-- Adaptar para buscar notas específicas do studyPlanEdition -->
                                                     <td style="text-align: center;background-color: #F9F2F4;">-</td>
                                                 @endforeach
                                             @endif
