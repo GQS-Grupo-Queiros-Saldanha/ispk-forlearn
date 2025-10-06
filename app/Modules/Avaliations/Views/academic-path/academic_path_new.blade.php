@@ -36,6 +36,12 @@
             }
             return '1' . $key;
         })->all();
+
+        // Contar colunas de anos
+        $totalAnos = count($oldGradesOrder);
+        if ($var == 1) {
+            $totalAnos += count($studyPlanEditions);
+        }
     @endphp
 
     @include('Reports::pdf_model.forLEARN_header')
@@ -73,6 +79,12 @@
                                 border-bottom: 1px solid white;
                                 font-size: 12pt;
                             }
+
+                            .nota-cell {
+                                width: 70px;
+                                text-align: center;
+                                background-color: #F9F2F4;
+                            }
                         </style>
                         
                         <tr class="bg1">
@@ -108,220 +120,211 @@
                     <div class="">
                         <div class="">
                             <table class="table_te">
+                                <!-- Cabeçalho principal -->
                                 <tr class="bg1">
                                     <th colspan="7" style="text-align: center; font-size: 12pt;">
                                         <b>UNIDADES CURRICULARES</b>
                                     </th>
-                                    
-                                    @foreach ($oldGradesOrder as $year => $oldGrade)
-                                        @php $i++; @endphp
-                                        <th colspan="1">{{ $year }}</th>
-                                    @endforeach
-                                    
-                                    @if ($var == 1)
-                                        @foreach ($studyPlanEditions as $studyPlanEdition)
-                                            <th style="text-align: left;">{{ $studyPlanEdition->lective_year }}</th>
-                                        @endforeach
+                                    @if($totalAnos > 0)
+                                        <th colspan="{{ $totalAnos }}" style="text-align: center; font-size: 12pt;">
+                                            <b>CLASSIFICAÇÕES POR ANO LECTIVO</b>
+                                        </th>
                                     @endif
                                 </tr>
                                 
+                                <!-- Subcabeçalho com colunas fixas -->
                                 <tr class="bg2">
-                                    <th style="text-align: center;">#</th>
-                                    <th style="text-align: center;">Ano</th>
-                                    <th style="text-align: center;">S</th>
-                                    <th style="text-align: center;">Código</th>
+                                    <th style="text-align: center; width: 30px;">#</th>
+                                    <th style="text-align: center; width: 40px;">Ano</th>
+                                    <th style="text-align: center; width: 30px;">S</th>
+                                    <th style="text-align: center; width: 80px;">Código</th>
                                     <th style="text-align: center;">Nome</th>
-                                    <th style="text-align: center;">CH</th>
-                                    <th style="text-align: center;">UC</th>
+                                    <th style="text-align: center; width: 50px;">CH</th>
+                                    <th style="text-align: center; width: 50px;">UC</th>
                                     
+                                    <!-- Colunas dinâmicas para anos -->
                                     @foreach ($oldGradesOrder as $year => $oldGrade)
-                                        @if ($oldGrade != '')
-                                            <th style="width: 70px; text-align: center; font-size: 12pt;" colspan="{{ $i }}">
-                                                CLASSIFICAÇÃO
-                                            </th>
-                                            @break
-                                        @endif
+                                        <th style="text-align: center; width: 70px;">{{ $year }}</th>
                                     @endforeach
-
+                                    
                                     @if ($var == 1)
                                         @foreach ($studyPlanEditions as $studyPlanEdition)
-                                            @if ($studyPlanEdition != '')
-                                                <th style="width: 70px; text-align: center; font-size: 12pt;" colspan="{{ $i }}">
-                                                    CLASSIFICAÇÃO
-                                                </th>
-                                                @break
-                                            @endif
+                                            <th style="text-align: center; width: 70px;">{{ $studyPlanEdition->lective_year }}</th>
                                         @endforeach
                                     @endif
                                 </tr>
 
                                 <!-- Linhas em branco para espaçamento -->
-                                <tr class="bg2" style="background-color: white; padding: 3px; color: white;">
-                                    <td colspan="13" style="background-color: white;"></td>
-                                </tr>
-                                <tr style="background-color: white; padding: 3px; color: white;">
-                                    <td colspan="13" style="background-color: white;"></td>
+                                <tr style="background-color: white; height: 5px;">
+                                    <td colspan="{{ 7 + $totalAnos }}" style="background-color: white;"></td>
                                 </tr>
 
+                                <!-- Dados das disciplinas -->
                                 @foreach ($disciplines as $discipline)
                                     @php
-                                        $cor = $i++ % 2 === 0 ? 'cor_linha' : '';
+                                        $cor = $loop->iteration % 2 === 0 ? 'cor_linha' : '';
                                     @endphp
                                     
                                     <tr class="{{ $cor }}">
+                                        <!-- Colunas fixas -->
                                         <td style="text-align: center;">{{ $index }}</td>
                                         @php $index++; @endphp
                                         
-                                        <td style="text-align: center;">{{ $discipline->course_year }} º</td>
+                                        <td style="text-align: center;">{{ $discipline->course_year }}º</td>
                                         
+                                        <!-- Semestre -->
                                         @if (substr($discipline->code, -3, 1) == 'A')
                                             <td style="text-align: center;">A</td>
                                         @elseif(substr($discipline->code, -3, 1) == '1')
                                             <td style="text-align: center;">1</td>
                                         @elseif(substr($discipline->code, -3, 1) == '2')
                                             <td style="text-align: center;">2</td>
+                                        @else
+                                            <td style="text-align: center;">-</td>
                                         @endif
                                         
                                         <td style="text-align: center;">{{ $discipline->code }}</td>
-                                        <td style="text-align: left;">
-                                            {{ $discipline->name }}
-                                            @php $contaDisciplina++; @endphp
-                                        </td>
+                                        <td style="text-align: left;">{{ $discipline->name }}</td>
 
+                                        <!-- Carga horária -->
+                                        @php $cargaEncontrada = false; @endphp
                                         @foreach ($cargaHoraria as $carga)
                                             @if ($carga->id_disciplina == $discipline->id)
                                                 <td style="text-align: center;">{{ $carga->hora }}</td>
+                                                @php $cargaEncontrada = true; @endphp
+                                                @break
                                             @endif
                                         @endforeach
-                                        
-                                        <td style="text-align: center;">{{ $discipline->uc ?? '' }}</td>
+                                        @if (!$cargaEncontrada)
+                                            <td style="text-align: center;">-</td>
+                                        @endif
 
+                                        <!-- UC -->
+                                        <td style="text-align: center;">{{ $discipline->uc ?? '-' }}</td>
+
+                                        <!-- Notas por ano lectivo -->
                                         @foreach ($oldGradesOrder as $year => $oldGradex)
-                                            @php $flag = true @endphp
-                                            @php $oFlag = true; @endphp
-                                            
+                                            @php $notaEncontrada = false; @endphp
                                             @foreach ($oldGradex as $oldGrade)
                                                 @if ($oldGrade->discipline_id == $discipline->id)
-                                                    @php $flag = false @endphp
-
-                                                    <!-- Cálculo das somas por ano -->
-                                                    @switch($discipline->course_year)
-                                                        @case(1)
-                                                            @php
-                                                                $soma1 += $oldGrade->grade;
-                                                                $count1++;
-                                                            @endphp
-                                                            @break
-                                                        @case(2)
-                                                            @php
-                                                                $soma2 += $oldGrade->grade;
-                                                                $count2++;
-                                                            @endphp
-                                                            @break
-                                                        @case(3)
-                                                            @php
-                                                                $soma3 += $oldGrade->grade;
-                                                                $count3++;
-                                                            @endphp
-                                                            @break
-                                                        @case(4)
-                                                            @php
-                                                                $soma4 += $oldGrade->grade;
-                                                                $count4++;
-                                                            @endphp
-                                                            @break
-                                                        @case(5)
-                                                            @php
-                                                                $soma5 += $oldGrade->grade;
-                                                                $count5++;
-                                                            @endphp
-                                                            @break
-                                                        @case(6)
-                                                            @php
-                                                                $soma6 += $oldGrade->grade;
-                                                                $count6++;
-                                                            @endphp
-                                                            @break
-                                                    @endswitch
-
-                                                    <td style="text-align: center; background-color: #F9F2F4;">
+                                                    <td class="nota-cell">
                                                         {{ round($oldGrade->grade) }}
                                                     </td>
-                                                    
                                                     @php 
+                                                        $notaEncontrada = true;
                                                         $somatorio += $oldGrade->grade;
                                                         $countGrade++;
+                                                        
+                                                        // Cálculo das somas por ano
+                                                        switch($discipline->course_year) {
+                                                            case 1:
+                                                                $soma1 += $oldGrade->grade;
+                                                                $count1++;
+                                                                break;
+                                                            case 2:
+                                                                $soma2 += $oldGrade->grade;
+                                                                $count2++;
+                                                                break;
+                                                            case 3:
+                                                                $soma3 += $oldGrade->grade;
+                                                                $count3++;
+                                                                break;
+                                                            case 4:
+                                                                $soma4 += $oldGrade->grade;
+                                                                $count4++;
+                                                                break;
+                                                            case 5:
+                                                                $soma5 += $oldGrade->grade;
+                                                                $count5++;
+                                                                break;
+                                                            case 6:
+                                                                $soma6 += $oldGrade->grade;
+                                                                $count6++;
+                                                                break;
+                                                        }
                                                     @endphp
+                                                    @break
                                                 @endif
                                             @endforeach
-                                            
-                                            @if ($flag)
-                                                <td style="background-color: #F9F2F4;"></td>
+                                            @if (!$notaEncontrada)
+                                                <td class="nota-cell">-</td>
                                             @endif
                                         @endforeach
+
+                                        <!-- Notas para studyPlanEditions se aplicável -->
+                                        @if ($var == 1)
+                                            @foreach ($studyPlanEditions as $studyPlanEdition)
+                                                @php 
+                                                    // Aqui você precisaria adaptar para buscar as notas específicas
+                                                    // do studyPlanEdition para esta disciplina
+                                                    $notaEncontrada = false;
+                                                @endphp
+                                                <td class="nota-cell">-</td>
+                                            @endforeach
+                                        @endif
                                     </tr>
                                 @endforeach
                             </table>
 
-                            <!-- Tabela de médias -->
+                            <!-- Tabela de médias (mantida igual) -->
                             <div class="col-4 float-right mt-4 p-0 mb-8">
                                 <table class="mediaClass" style="background-color: #F5F3F3 !important; width: 100%; font-family: calibri light; margin-bottom: 6px; font-size: 12pt; padding-left: 2px;">
                                     <tr class="bg1">
-                                        <td colspan="6" style="font-size: 12pt; text-align: center;">
+                                        <td colspan="2" style="font-size: 12pt; text-align: center;">
                                             <b>MÉDIAS POR ANO</b>
                                         </td>
                                     </tr>
                                     
-                                    @if(isset($soma1))
+                                    @if(isset($soma1) && $count1 > 0)
                                     <tr style="background-color: #F9F2F4;">
                                         <td style="font-size: 12pt; text-align: center;">1º Ano</td>
                                         <td style="font-size: 12pt; text-align: center;">
-                                            {{ number_format($soma1 != 0 ? $soma1 / $count1 : $soma1, 2, ',', '') }}
+                                            {{ number_format($soma1 / $count1, 2, ',', '') }}
                                         </td>
                                     </tr>
                                     @endif
                                     
-                                    @if(isset($soma2))
+                                    @if(isset($soma2) && $count2 > 0)
                                     <tr style="background-color: #F9F2F4;">
                                         <td style="font-size: 12pt; text-align: center;">2º Ano</td>
                                         <td style="font-size: 12pt; text-align: center;">
-                                            {{ number_format($soma2 != 0 ? $soma2 / $count2 : $soma2, 2, ',', '') }}
+                                            {{ number_format($soma2 / $count2, 2, ',', '') }}
                                         </td>
                                     </tr>
                                     @endif
                                     
-                                    @if(isset($soma3))
+                                    @if(isset($soma3) && $count3 > 0)
                                     <tr style="background-color: #F9F2F4;">
                                         <td style="font-size: 12pt; text-align: center;">3º Ano</td>
                                         <td style="font-size: 12pt; text-align: center;">
-                                            {{ number_format($soma3 != 0 ? $soma3 / $count3 : $soma3, 2, ',', '') }}
+                                            {{ number_format($soma3 / $count3, 2, ',', '') }}
                                         </td>
                                     </tr>
                                     @endif
                                     
-                                    @if(isset($soma4))
+                                    @if(isset($soma4) && $count4 > 0)
                                     <tr style="background-color: #F9F2F4;">
                                         <td style="font-size: 12pt; text-align: center;">4º Ano</td>
                                         <td style="font-size: 12pt; text-align: center;">
-                                            {{ number_format($soma4 != 0 ? $soma4 / $count4 : $soma4, 2, ',', '') }}
+                                            {{ number_format($soma4 / $count4, 2, ',', '') }}
                                         </td>
                                     </tr>
                                     @endif
                                     
-                                    @if(isset($soma5))
+                                    @if(isset($soma5) && $count5 > 0)
                                     <tr style="background-color: #F9F2F4;">
                                         <td style="font-size: 12pt; text-align: center;">5º Ano</td>
                                         <td style="font-size: 12pt; text-align: center;">
-                                            {{ number_format($soma5 != 0 ? $soma5 / $count5 : $soma5, 2, ',', '') }}
+                                            {{ number_format($soma5 / $count5, 2, ',', '') }}
                                         </td>
                                     </tr>
                                     @endif
                                     
-                                    @if(isset($soma6))
+                                    @if(isset($soma6) && $count6 > 0)
                                     <tr style="background-color: #F9F2F4;">
                                         <td style="font-size: 12pt; text-align: center;">6º Ano</td>
                                         <td style="font-size: 12pt; text-align: center;">
-                                            {{ number_format($soma6 != 0 ? $soma6 / $count6 : $soma6, 2, ',', '') }}
+                                            {{ number_format($soma6 / $count6, 2, ',', '') }}
                                         </td>
                                     </tr>
                                     @endif
@@ -352,20 +355,10 @@
                                             </b>
                                         </td>
                                     </tr>
-
-                                    <!-- Espaçamento final -->
-                                    <tr style="background-color: white; padding: 3px; color: white; text-align: center;">
-                                        <td colspan="2"></td>
-                                    </tr>
-                                    <tr style="background-color: white; padding: 3px; color: white; text-align: center;">
-                                        <td colspan="2"></td>
-                                    </tr>
                                 </table>
                             </div>
 
-                            <br><br><br><br>
-
-                            <!-- Rodapé do documento -->
+                            <!-- Rodapé do documento (mantido igual) -->
                             <div style="margin-left: 30px; margin-top: 150px;">
                                 @if(isset($requerimento))
                                     <p>
@@ -403,5 +396,3 @@
 </main>
 
 @endsection
-
-<script></script>
