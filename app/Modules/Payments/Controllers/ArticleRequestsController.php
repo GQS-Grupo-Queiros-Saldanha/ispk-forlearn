@@ -2065,7 +2065,6 @@ class ArticleRequestsController extends Controller
     }
 
     public function getConsultaPropina_apagar($userId,$anolectivo_ativo){
-      Log::info($userId,$anolectivo_ativo);
         
         $lectiveYearSelected = LectiveYear::whereId($anolectivo_ativo)->first();
         $consultRecibos = DB::table('articles as art')
