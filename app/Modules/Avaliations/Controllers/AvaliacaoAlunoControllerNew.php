@@ -5801,6 +5801,12 @@ class AvaliacaoAlunoControllerNew extends Controller
                 ->where('lective_years_id', $id_ano_lectivo)
                 ->select('spe.id as id')
                 ->first();
+                
+            if (!$plano_estudo) {
+                DB::rollBack();
+                Toastr::error(__('Não foi possível encontrar o plano de estudo para esta pauta.'), __('toastr.error'));
+                return redirect()->back();
+            }
 
             $plano_estudo = $plano_estudo->id;
             $avaliacao = $m->avaliacaos_id;
