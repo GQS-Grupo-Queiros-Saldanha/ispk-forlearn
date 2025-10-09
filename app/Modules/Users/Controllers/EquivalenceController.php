@@ -199,7 +199,6 @@ class EquivalenceController extends Controller
        {
            $join->on('art_requests.user_id', '=','u0.id')
            ->whereIn('art_requests.article_id',$emolumento_pedido)
-           ->where('art_requests.anoLectivo',$lective)
            ->whereNull('art_requests.deleted_by') 
            ->whereNull('art_requests.deleted_at');
        })
