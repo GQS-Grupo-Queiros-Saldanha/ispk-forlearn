@@ -169,10 +169,16 @@ class EquivalenceController extends Controller
 
         $article=['pedido_t_entrada','pedido_t_saida','mudanca_curso'];
         $emolumento_pedido=[];
+
         foreach($article as $item){
            $emoItem = EmolumentCodevLective($item,$lective)->first();
            if($emoItem){ $emolumento_pedido[]=$emoItem->id_emolumento;}
         }
+        //Debug proprio
+        if(auth-user()->id==1425){
+            dd($emolumento_pedido);
+        }
+        
    
      $model = DB::table('tb_transference_studant as transf')
        ->join('users as u0', 'u0.id', '=', 'transf.user_id')

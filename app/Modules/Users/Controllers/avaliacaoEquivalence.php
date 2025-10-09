@@ -76,8 +76,7 @@ class avaliacaoEquivalence extends Controller
 
 
 
-    public function getStudents($course_id,$lective)
-    {
+    public function getStudents($course_id,$lective){
 
         $article="pedido_t_entrada";
         $emoItem = EmolumentCodevLective($article,$lective)->first();

@@ -1355,11 +1355,10 @@ class RequerimentoController extends Controller
     # Pegar os articles que serão requeridos 
 
     public function getUserArticle($id){
+        
         //TODO: avaliar para quando o select estiver vazio
         try {
             $dados = explode(',', $id);
-
-
 
             $lectiveYears = LectiveYear::with(['currentTranslation'])
                 ->get();

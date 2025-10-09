@@ -109,7 +109,7 @@
                                 <div class="form-group col">
                                     <label for="emolumentos_doc">Emolumentos</label>
                                     <select class="selectpicker form-control " name="emolumentos_doc" id="emolumentos_doc" data-actions-box="true" data-live-search="true">
-                                    <option value="" checked>Selecione o Emolumento</option>
+                                        <option value="" checked>Selecione o Emolumento</option>
                                     </select>
                                 </div>
                             </div>
@@ -305,7 +305,6 @@
 
 
         // Verificar o estado de mensalidade do estudante
-
         student.change(function() {
             mensalidades();
         });
@@ -386,7 +385,6 @@
                 } else if (data["type"] == 4) {
 
                     // Anulação de Matrículas
-
                     data["anulacao"].forEach(function(article) {
 
                         var doc = article.nome.toLowerCase();
@@ -407,7 +405,6 @@
                 } else if (data["type"] == 3) {
 
                     // Diploma
-
                     data["diploma"].forEach(function(article) {
 
                         var doc = article.nome.toLowerCase();
