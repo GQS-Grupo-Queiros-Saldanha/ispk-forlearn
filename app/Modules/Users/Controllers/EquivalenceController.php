@@ -174,10 +174,7 @@ class EquivalenceController extends Controller
            $emoItem = EmolumentCodevLective($item,$lective)->first();
            if($emoItem){ $emolumento_pedido[]=$emoItem->id_emolumento;}
         }
-        //Debug proprio
-        if(auth-user()->id==1425){
-            dd($emolumento_pedido);
-        }
+       
         
    
      $model = DB::table('tb_transference_studant as transf')
