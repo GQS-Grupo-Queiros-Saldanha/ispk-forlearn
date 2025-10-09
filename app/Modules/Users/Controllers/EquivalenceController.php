@@ -174,7 +174,6 @@ class EquivalenceController extends Controller
            $emoItem = EmolumentCodevLective($item,$lective)->first();
            if($emoItem){ $emolumento_pedido[]=$emoItem->id_emolumento;}
         }
-       
         
    
      $model = DB::table('tb_transference_studant as transf')
@@ -199,7 +198,6 @@ class EquivalenceController extends Controller
        {
            $join->on('art_requests.user_id', '=','u0.id')
            ->whereIn('art_requests.article_id',$emolumento_pedido)
-           ->where('art_requests.anoLectivo',11)
            ->whereNull('art_requests.deleted_by') 
            ->whereNull('art_requests.deleted_at');
        })
