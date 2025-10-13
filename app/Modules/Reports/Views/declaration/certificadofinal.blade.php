@@ -224,7 +224,6 @@
                 width: 75%;
                 text-align: right;
                 margin-bottom: 5px;
-                 margin-top: 1px;
                 font-size:{{ $config->tamanho_fonte }}pt !important;
             }
 
@@ -289,7 +288,7 @@
             
             <p> 
                 {{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b>,&nbsp;{{ $direitor->cargo ?? 'cargo' }}  <span>do</span> <b>{{ $institution->nome }}</b>, certifica
-                em face dos respectivos livros que <b style="">
+                em face dos respectivos livros que <b>
                     {{ $studentInfo->name }}</b>, filho(a) de {{ $studentInfo->dad }} e de
                 {{ $studentInfo->mam }}, natural da Província de {{ $studentInfo->province }}, nascido(a) aos
                 {{ $nascimento }}, portador(a) do B.I nº {{ $studentInfo->bi }}, passado pelo Arquivo de Identificação de {{ $province }},
