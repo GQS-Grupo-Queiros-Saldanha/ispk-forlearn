@@ -500,8 +500,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
 
 
-    private function withNoteI($request, $config)
-    {
+    private function withNoteI($request, $config){
         try {
             $studentId = $request->students;
             $type_document = $request->type_document;
@@ -1066,8 +1065,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
     }
 
-    private function withNoteEnd($request, $config)
-    {
+    private function withNoteEnd($request, $config){
 
 
 
@@ -1415,12 +1413,8 @@ return $pdf->stream($pdf_name . '.pdf');
 
         return $pdf->stream($pdf_name . '.pdf');
     }
-
-
-
-
-    private function CertificateMerito($request, $config)
-    {
+    
+    private function CertificateMerito($request, $config){
 
 
         switch ($request->tipo) {

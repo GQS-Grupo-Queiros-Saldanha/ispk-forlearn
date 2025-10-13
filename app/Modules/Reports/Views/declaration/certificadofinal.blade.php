@@ -148,12 +148,10 @@
         }
 
         p {
-            font-size: 20px;
-            margin-left: 120px;
-            margin-right: 120px;
-            color: black;
-            text-align: justify;
-            line-height: 22px;
+            font-size: 18px; /* Reduzir de 20px */
+            margin-left: 60px; /* Reduzir de 120px */
+            margin-right: 60px; /* Reduzir de 120px */
+            line-height: 20px; /* Reduzir de 22px */
         }
 
         .dados_pessoais {
@@ -218,10 +216,10 @@
             }
 
             .table_te {
-                margin-left: 120px !important;
-                margin-right: 120px !important;
+                margin-left: 160px !important;
+                margin-right: 160px !important;
                 background-color: #F5F3F3 !important;
-                width: 75%;
+                width: 85%;
                 text-align: right;
                 margin-bottom: 10px;
                 font-size:{{ $config->tamanho_fonte }}pt !important;
