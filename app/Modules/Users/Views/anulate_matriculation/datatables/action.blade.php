@@ -33,7 +33,7 @@ use App\Modules\Avaliations\Controllers\RequerimentoController;
     @if($item->state != 'total')
         <center>
             <a href="{{route('anulate.matriculation.restaure',$item->id_anulate_matriculation)}}" class="btn btn-warning btn-sm AnularBack" id="{{$item->id_anulate_matriculation}}" title="Voltar matrícula anulada">
-            <i class="fas fa-sync"></i>
+                <i class="fas fa-sync"></i>
             </a>
         </center>
     @endif
