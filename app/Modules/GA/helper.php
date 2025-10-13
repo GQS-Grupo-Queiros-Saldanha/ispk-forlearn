@@ -212,9 +212,9 @@ function EmolumentCodevLective($search, $lective_year_id)
         ->join('code_developer as code', 'code.id', '=', 'art.id_code_dev')
         ->select(['art.code', 'art.id as id_emolumento', 'art.anoLectivo as lectiveYear', 'code.code as codigo_dev'])
         ->where('code.code', $search)
-        ->where('art.anoLectivo', 9)
-        //->whereIn('art.anoLectivo', ['lective_year_id' => $lective_year_id]) 
+        //->where('art.anoLectivo', 9)
+        ->whereIn('art.anoLectivo', ['lective_year_id' => $lective_year_id]) 
         ->get();
-    Log::info($Consulta);
+    //Log::info($Consulta);
     return $Consulta;
 }
