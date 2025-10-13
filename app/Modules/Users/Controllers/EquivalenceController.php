@@ -34,8 +34,7 @@ class EquivalenceController extends Controller
 
 
 
-    public function index()
-    {
+    public function index(){
         try {
                //Pegar ano lectivo corrente.
           $lectiveYears = LectiveYear::with(['currentTranslation'])

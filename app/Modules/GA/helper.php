@@ -215,5 +215,6 @@ function EmolumentCodevLective($search, $lective_year_id)
         ->where('art.anoLectivo', 9)
         //->whereIn('art.anoLectivo', ['lective_year_id' => $lective_year_id]) 
         ->get();
+    Log::info($Consulta);
     return $Consulta;
 }
