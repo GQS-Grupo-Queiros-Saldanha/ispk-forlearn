@@ -224,6 +224,7 @@
                 width: 75%;
                 text-align: right;
                 margin-bottom: 5px;
+                 margin-top: 1px;
                 font-size:{{ $config->tamanho_fonte }}pt !important;
             }
 
