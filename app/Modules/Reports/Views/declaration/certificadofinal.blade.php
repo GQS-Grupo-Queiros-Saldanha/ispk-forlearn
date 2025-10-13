@@ -223,7 +223,7 @@
                 background-color: #F5F3F3 !important;
                 width: 75%;
                 text-align: right;
-                margin-bottom: 50px;
+                margin-bottom: 5px;
                 font-size:{{ $config->tamanho_fonte }}pt !important;
             }
 
