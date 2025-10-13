@@ -169,7 +169,7 @@
             page-break-after: auto
         }
         
-          .bg0{
+        .bg0{
         background-color: #2f5496!important;
         }
         .bg1{
@@ -223,7 +223,7 @@
                 background-color: #F5F3F3 !important;
                 width: 75%;
                 text-align: right;
-                margin-bottom: 10px;
+                margin-bottom: 50px;
                 font-size:{{ $config->tamanho_fonte }}pt !important;
             }
 
@@ -389,7 +389,6 @@
             </div>            
                 <div class="watermark" style="top: 1400px;"></div>
                 <div class="watermark"></div>
-
         </div>
         </div>
 
