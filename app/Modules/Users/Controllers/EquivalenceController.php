@@ -332,7 +332,8 @@ class EquivalenceController extends Controller
 
 
 
-public function anulate_equivalence(Request $request){
+
+    public function anulate_equivalence(Request $request){
 
       $currentData = Carbon::now();
       $consulta=DB::table('tb_transference_studant')
