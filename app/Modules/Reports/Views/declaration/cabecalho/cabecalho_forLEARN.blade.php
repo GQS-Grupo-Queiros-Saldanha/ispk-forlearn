@@ -33,7 +33,7 @@
     }
 
     .h1-title {
-        margin-top: 20px;
+        margin-top: 40px;
         font-size: 23px;
         font-weight: bolder;
         letter-spacing: 1px;

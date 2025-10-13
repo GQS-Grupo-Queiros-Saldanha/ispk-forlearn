@@ -169,7 +169,7 @@
             page-break-after: auto
         }
         
-        .bg0{
+          .bg0{
         background-color: #2f5496!important;
         }
         .bg1{
@@ -223,7 +223,7 @@
                 background-color: #F5F3F3 !important;
                 width: 75%;
                 text-align: right;
-                margin-bottom: 5px;
+                margin-bottom: 10px;
                 font-size:{{ $config->tamanho_fonte }}pt !important;
             }
 
@@ -288,7 +288,7 @@
             
             <p> 
                 {{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b>,&nbsp;{{ $direitor->cargo ?? 'cargo' }}  <span>do</span> <b>{{ $institution->nome }}</b>, certifica
-                em face dos respectivos livros que <b>
+                em face dos respectivos livros que <b style="">
                     {{ $studentInfo->name }}</b>, filho(a) de {{ $studentInfo->dad }} e de
                 {{ $studentInfo->mam }}, natural da Província de {{ $studentInfo->province }}, nascido(a) aos
                 {{ $nascimento }}, portador(a) do B.I nº {{ $studentInfo->bi }}, passado pelo Arquivo de Identificação de {{ $province }},
@@ -389,6 +389,7 @@
             </div>            
                 <div class="watermark" style="top: 1400px;"></div>
                 <div class="watermark"></div>
+
         </div>
         </div>
 
