@@ -217,37 +217,32 @@
                 
             }
 
-            .table_te {
-                margin-left: 120px !important;
-                margin-right: 120px !important;
-                background-color: #F5F3F3 !important;
-                width: 75%;
-                text-align: right;
-                margin-bottom: 10px;
-                font-size:{{ $config->tamanho_fonte }}pt !important;
-            }
-
-            .cor_linha {
-                background-color: #999;
-                color: #000;
-            }
-
-            .table_te th {
-              
-                padding: 4px !important;
-                text-align: center;
-            }
-
-            .table_te td {
-                background-color: #F5F3F3;
-                
-                font-size: 12pt!important;
-            }
-            
-            .table_te th{  border: 1px solid rgb(238, 233, 233)!important;padding: 4px; !important; text-align:center;}
-                .table_te td{  border: 1px solid rgb(238, 233, 233)!important; font-size:12pt!important;}
-
+            .table_te {margin-left: 120px !important; margin-right: 120px !important; background-color: #F5F3F3 !important; width: 75%; text-align: right; margin-bottom: 10px; font-size:{{ $config->tamanho_fonte }}pt !important; }
+            .cor_linha {background-color: #999; color: #000; }
+            .table_te th {padding: 4px !important; text-align: center;}
+            .table_te td {background-color: #F5F3F3; font-size: 12pt!important; }
+            .table_te th{border: 1px solid rgb(238, 233, 233)!important; padding: 4px; !important; text-align:center;}
+            .table_te td{border: 1px solid rgb(238, 233, 233)!important; font-size:12pt!important;}
             .tabble_te thead {}
+
+            /* GERAL: Permitir que as tabelas se partam de forma natural */
+            .table_te {
+                page-break-inside: auto !important;
+                break-inside: auto !important; /* Para navegadores modernos */
+                margin-bottom: 10px !important;
+            }
+
+            /* EVITAR QUE UMA LINHA SEJA DIVIDIDA AO MEIO */
+            .table_te tr {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* Garante que o cabeçalho aparece no início da página impressa */
+            .table_te thead {
+                display: table-header-group !important;
+            }
+
         </style>
 
         <div class="">
@@ -317,7 +312,6 @@
 
                                   @php $index=1 @endphp 
                                   @foreach ($disciplines as $discipline)
-                                 
                                     <tr>
                                         <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$index}}</td>
                                         @php $index++ @endphp
