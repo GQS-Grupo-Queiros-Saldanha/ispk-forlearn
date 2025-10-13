@@ -302,44 +302,44 @@
             <div class="row">
 
                 <div class="col-12">
-                       <div style="page-break-inside: avoid; break-inside: avoid;">
-    @foreach ($allDiscipline as $year => $disciplines)     
-    <table class="table_te" style="page-break-inside: avoid;">
-        <thead>
-            <tr>
-                <th class="bg2" style="text-align:center; font-size:15pt;">#</th>
-                <th class="bg2" style="text-align:center; font-size:15pt;">Ano</th>
-                <th class="bg2" style="text-align:left; font-size:15pt;text-indent:10px;"><b>DISCIPLINA</b></th>
-                <th class="bg2" style="text-align:center; font-size:15pt;"><b>U.C</b></th>
-                <th class="bg2" style="text-align:center; font-size:15pt;" colspan="2"><b>CLASSIFICAÇÃO</b></th>     
-            </tr>
-        </thead>
-        <tbody>
-            @php $index=1 @endphp 
-            @foreach ($disciplines as $discipline)
-            <tr>
-                <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$index}}</td>
-                @php $index++ @endphp
-                <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$year}}º</td>
-                <td class="bg6" style="text-align: left;text-indent: 5px;">{{ $discipline->disciplina }}</td>
-                <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{ $discipline->uc }}</td>
-                @foreach ($grades as $nota)
-                    @if ($discipline->discipline_id == $nota->discipline_id)
-                    @php
-                        $note =  round($nota->grade)
-                    @endphp
-                    <td class="bg6" style="text-align: center;background-color: #F9F2F4;">
-                           {{ round($nota->grade) }}</td>
-                        <td class="bg6" style="text-align: center;background-color: #F9F2F4;">
-                            {{ $numeros[$note] }}</td>
-                    @endif 
-                @endforeach
-            </tr>
-            @endforeach
-        </tbody>  
-    </table>
-    @endforeach
-</div>
+                        @foreach ($allDiscipline as $year => $disciplines)     
+                        <table class="table_te">
+                            <thead>
+                                <tr>
+                                    <th class="bg2" style="text-align:center; font-size:15pt;">#</th>
+                                    <th class="bg2" style="text-align:center; font-size:15pt;">Ano</th>
+                                    <th class="bg2" style="text-align:left; font-size:15pt;text-indent:10px;"><b>DISCIPLINA</b></th>
+                                    <th class="bg2" style="text-align:center; font-size:15pt;"><b>U.C</b></th>
+                                    <th class="bg2" style="text-align:center; font-size:15pt;" colspan="2"><b>CLASSIFICAÇÃO</b></th>     
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                  @php $index=1 @endphp 
+                                  @foreach ($disciplines as $discipline)
+                                 
+                                    <tr>
+                                        <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$index}}</td>
+                                        @php $index++ @endphp
+                                        <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{$year}}º</td>
+                                        <td class="bg6" style="text-align: left;text-indent: 5px;">{{ $discipline->disciplina }}</td>
+                                        <td class="bg6" style="text-align: center;background-color: #F9F2F4;">{{ $discipline->uc }}</td>
+                                        @foreach ($grades as $nota)
+                                            @if ($discipline->discipline_id == $nota->discipline_id)
+                                            @php
+                                                $note =  round($nota->grade)
+                                            @endphp
+                                            <td class="bg6" style="text-align: center;background-color: #F9F2F4;">
+                                                   {{ round($nota->grade) }}</td>
+                                                <td class="bg6" style="text-align: center;background-color: #F9F2F4;">
+                                                    {{ $numeros[$note] }}</td>
+                                            @endif 
+                                        @endforeach
+                                    </tr>
+                            </tbody>  
+                         
+                        @endforeach
+                        </table>
                    
                         @if($loop->iteration == 3)
                        
