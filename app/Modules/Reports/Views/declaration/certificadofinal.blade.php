@@ -301,7 +301,7 @@
 
             <div class="row">
 
-                <div class="col-12">
+                <div class="col-12 my-0">
                         @foreach ($allDiscipline as $year => $disciplines)     
                         <table class="table_te">
                             <thead>
