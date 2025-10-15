@@ -1,7 +1,7 @@
 <title>Avaliações | forLEARN® by GQS</title>
 @extends('layouts.generic_index_new')
 @php
-    $title = 'LANÇAR2 NOTAS';
+    $title = 'LANÇAR NOTAS';
     if ($segunda_chamada) {
         $title .= ' - 2ª CHAMADA';
     }
