@@ -1082,49 +1082,50 @@ class RequerimentoController extends Controller
                 case 20:
                     //Solicitação de Revisão de prova
                     $art_req = DB::table('articles')
-                    ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
-                    ->join('article_requests as ar', 'ar.article_id', "=", "articles.id")
-                    ->join("requerimento as rq", "rq.article_id", "=", "ar.id")
-                    ->join('users as u0', 'u0.id', "=", "ar.user_id")
-                    ->join('user_parameters as up', 'up.users_id', '=', 'u0.id')
-                    //->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                    ->leftjoin("disciplines as disc", 'disc.id', 'ar.discipline_id')
-                    ->leftjoin('disciplines_translations as dt', function ($join) {
-                        $join->on('dt.discipline_id', '=', 'disc.id');
-                        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                        $join->on('dt.active', '=', DB::raw(true));
-                    })
-                    ->whereNull('articles.deleted_by')
-                    ->whereNull('ar.deleted_by')
-                    ->whereNull('traducao.deleted_at')
-                    ->where('traducao.active', 1)
-                    ->where('up.parameters_id', 1)
-                    ->whereIn('articles.id', [255, 358])
-                    ->orderBy('traducao.display_name')
-                    ->select([
-                        'rq.code',
-                        'rq.codigo_documento',
-                        'rq.year',
-                        'u0.id as codigo_estudante',
-                        'u0.email',
-                        'up.value as nome_estudante',
-                        'articles.id as id_article',
-                        'ar.id as art_id',
-                        'traducao.display_name as nome',
-                        'ar.status',
-                        'disc.code as code_discipline',
-                        'dt.display_name as discipline',
-                        'articles.base_value',
-                        'ar.created_at',
-                        'rq.transference_request as transference_request',
-                        'articles.id_code_dev as code_dev'
-                    ])
-                    ->get();
+                        ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
+                        ->join('article_requests as ar', 'ar.article_id', "=", "articles.id")
+                        ->join("requerimento as rq", "rq.article_id", "=", "ar.id")
+                        ->join('users as u0', 'u0.id', "=", "ar.user_id")
+                        ->join('user_parameters as up', 'up.users_id', '=', 'u0.id')
+                        //->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                        ->leftjoin("disciplines as disc", 'disc.id', 'ar.discipline_id')
+                        ->leftjoin('disciplines_translations as dt', function ($join) {
+                            $join->on('dt.discipline_id', '=', 'disc.id');
+                            $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                            $join->on('dt.active', '=', DB::raw(true));
+                        })
+                        ->whereNull('articles.deleted_by')
+                        ->whereNull('ar.deleted_by')
+                        ->whereNull('traducao.deleted_at')
+                        ->where('traducao.active', 1)
+                        ->where('up.parameters_id', 1)
+                        ->whereIn('articles.id', [255, 358])
+                        ->orderBy('traducao.display_name')
+                        ->select([
+                            'rq.code',
+                            'rq.codigo_documento',
+                            'rq.year',
+                            'u0.id as codigo_estudante',
+                            'u0.email',
+                            'up.value as nome_estudante',
+                            'articles.id as id_article',
+                            'ar.id as art_id',
+                            'traducao.display_name as nome',
+                            'ar.status',
+                            'disc.code as code_discipline',
+                            'dt.display_name as discipline',
+                            'articles.base_value',
+                            'ar.created_at',
+                            'rq.transference_request as transference_request',
+                            'articles.id_code_dev as code_dev'
+                        ])
+                        ->get();
+                    Log::info($art_req)
+
 
                     $art_req = $this->ordena_plano($art_req);
 
-                    $requerimento = DB::table('requerimento')
-                                            ->get();
+                    $requerimento = DB::table('requerimento')->get();
 
                     return Datatables::of($art_req)
 
