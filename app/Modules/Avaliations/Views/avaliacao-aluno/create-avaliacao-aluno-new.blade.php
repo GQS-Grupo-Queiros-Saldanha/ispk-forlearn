@@ -1041,8 +1041,7 @@
                 cargo = Disciplina_id_Select.val().split(",")[0];
                 console.log(cargo);
                 var turma = Turma_id_Select.val();
-                let url = "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" +
-                    id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year + "?whoIs=" + cargo;
+                let url = "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" + id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year + "?whoIs=" + cargo;
                 @if ($segunda_chamada)
                     url += "&segunda_chamada=true";
                 @endif

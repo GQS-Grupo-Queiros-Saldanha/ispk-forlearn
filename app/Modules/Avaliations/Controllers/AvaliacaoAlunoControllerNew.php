@@ -3162,8 +3162,7 @@ class AvaliacaoAlunoControllerNew extends Controller
     }
 
     //Pegar as avalições do coordenador ... por distinção
-    private function avaliacaoes_coordenador($id_disciplina, $anoLectivo)
-    {
+    private function avaliacaoes_coordenador($id_disciplina, $anoLectivo){
 
 
         $avaliacaos = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')

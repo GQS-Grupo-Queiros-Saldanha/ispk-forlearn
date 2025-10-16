@@ -1080,6 +1080,7 @@ class RequerimentoController extends Controller
                         $texto = "%Carta de recomendação%";
                         break;
                 case 20:
+                    //Solicitação de Revisão de prova
                     $art_req = DB::table('articles')
                     ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                     ->join('article_requests as ar', 'ar.article_id', "=", "articles.id")
@@ -1098,7 +1099,7 @@ class RequerimentoController extends Controller
                     ->whereNull('traducao.deleted_at')
                     ->where('traducao.active', 1)
                     ->where('up.parameters_id', 1)
-                    ->where('articles.id', 255)
+                    ->whereIn('articles.id', [255, 358])
                     ->orderBy('traducao.display_name')
                     ->select([
                         'rq.code',
