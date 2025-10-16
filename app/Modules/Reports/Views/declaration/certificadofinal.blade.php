@@ -369,7 +369,7 @@
                 </p>
                 <br>
              
-                 <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:40px !important;margin-top:-10px">
+                 <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:35px !important;margin-top:-12px">
            
                  {{ $institution->provincia }}, aos {{ $dataActual }}
                 </p>
