@@ -1120,7 +1120,7 @@ class RequerimentoController extends Controller
                             'articles.id_code_dev as code_dev'
                         ])
                         ->get();
-                    Log::info($art_req)
+                    Log::info($art_req);
 
 
                     $art_req = $this->ordena_plano($art_req);
