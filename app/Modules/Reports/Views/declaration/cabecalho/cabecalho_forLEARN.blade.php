@@ -52,8 +52,8 @@
     }
 
     .doc-title {
-        margin-top: 50px;
-        margin-bottom: 50px;
+        margin-top: 15px;
+        margin-bottom: 15px;
     }
 
     .doc-title h1 {
