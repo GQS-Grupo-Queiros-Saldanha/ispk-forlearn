@@ -209,7 +209,7 @@
     <main>
 
         <!--@include('Reports::declaration.cabecalho.cabecalhoCertificado')-->
-        @include('Reports::declaration.cabecalho.cabecalho_forLEARN')
+        @include('Reports::declaration.cabecalho.cabecalho_forLEARN_certificado')
         <!-- aqui termina o cabeçalho do pdf -->
 
         <style>
