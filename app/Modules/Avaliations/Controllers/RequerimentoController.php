@@ -1577,9 +1577,14 @@ class RequerimentoController extends Controller
         $data = explode(',', $data);
         $ano = $data[0];
         $doc_type = $data[1];
+        
+        Log::info('matriculation - debug', [
+            'exploded_data' => $data,
+            'ano' => $ano,
+            'doc_type' => $doc_type
+        ]);
        
-        $lectiveYears = LectiveYear::with(['currentTranslation'])
-            ->get();
+        $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
 
         $currentData = Carbon::now();
         $lective = DB::table('lective_years')
