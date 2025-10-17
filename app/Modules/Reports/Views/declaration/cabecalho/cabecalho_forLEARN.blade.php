@@ -72,7 +72,7 @@
 <p class="institution-decree">{{$institution->decreto_instituicao}}</p>
 
 @if($requerimento->codigo_documento == 15)
-    <div style="margin-top:120px; margin-bottom:-30px; text-align:center;">
+    <div style="margin-top:120px; margin-bottom:30px; text-align:center;">
         <p class="instituicao-nome">{{ $instituicao_nome }}</p>
     </div>
 @else
