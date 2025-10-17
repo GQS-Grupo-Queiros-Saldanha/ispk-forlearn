@@ -367,7 +367,7 @@
                     assinado e autenticado com o selo em branco em uso no <b>{{$institution->nome}}</b>.
                 </p>
              
-                 <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:25px !important;margin-top:-20px">
+                <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:25px !important;margin-top:-10px">
            
                  {{--Tirar o comentario para a data ser a automatica
                     {{ $institution->provincia }}, aos {{ $dataActual }}
