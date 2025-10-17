@@ -363,11 +363,9 @@
        
             <div>
                 <p> 
-                   
                     Por ser verdade e me ter sido solicitado, passa-se o presente certificado nº {{$requerimento->code ?? 'código doc'}}, liquidado no CP nº {{$recibo ?? 'recibo'}},
                     assinado e autenticado com o selo em branco em uso no <b>{{$institution->nome}}</b>.
                 </p>
-                <br>
              
                  <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:25px !important;margin-top:-20px">
            
