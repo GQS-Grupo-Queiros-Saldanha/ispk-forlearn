@@ -347,11 +347,11 @@
         </div>
         </div>
         
-        <p style="font-size:12pt;margin-top:-7px">
+        <p style="font-size:12pt;margin-top:-12px">
             Escala de avaliação: 0-20 
         </p>
 
-        <p style="font-size:12pt;margin-top:-7px">
+        <p style="font-size:12pt;margin-top:-12px">
            Aprovação: nota >= 10 valores 
         </p>
 
