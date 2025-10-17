@@ -53,7 +53,7 @@
 
     .doc-title {
         margin-top: 15px;
-        margin-bottom: 15px;
+        margin-bottom: 35px;
     }
 
     .doc-title h1 {
