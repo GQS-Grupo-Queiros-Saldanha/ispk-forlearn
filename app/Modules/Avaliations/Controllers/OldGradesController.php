@@ -1362,8 +1362,7 @@ class OldGradesController extends Controller
     }
     
     
-        public function studentAcademicPathImported(Request $request, $studentId)
-    {
+        public function studentAcademicPathImported(Request $request, $studentId){
     
        
          $recibo = null;

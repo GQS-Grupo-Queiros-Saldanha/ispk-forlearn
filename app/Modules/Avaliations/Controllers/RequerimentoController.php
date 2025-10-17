@@ -1655,6 +1655,8 @@ class RequerimentoController extends Controller
         }
        
         if($doc_type == 4){
+            
+            //EC5202,EI5202,EM5203,EQ5201,EG5201,EP5201,EH5201
             $disciplina_id = [71, 147, 223,287,355,421,489];
             // pegar os ids dos alunos já retornados na coleção $matriculation
             $idsMatriculados = $matriculation->pluck('codigo');
