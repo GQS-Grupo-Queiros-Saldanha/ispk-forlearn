@@ -1992,6 +1992,7 @@ return $pdf->stream($pdf_name . '.pdf');
             ->select(['dcp.display_name as disciplina', 'disciplines.id as discipline_id', 'study_plans_has_disciplines.years as years', 'disciplines.uc as uc'])
             ->distinct('disciplina')
             ->orderBy('years')
+            ->orderBy('study_plans_has_disciplines.disciplines_id')
             ->get()
             ->groupBy('years');
 
