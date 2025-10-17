@@ -371,7 +371,10 @@
              
                  <p style="font-size: 16pt !important;text-align:left;font-weight:bolder !important;margin-bottom:25px !important;margin-top:-20px">
            
-                 {{ $institution->provincia }}, aos {{ $dataActual }}
+                 {{--Tirar o comentario para a data ser a automatica
+                    {{ $institution->provincia }}, aos {{ $dataActual }}
+                --}}
+                Luanda, aos 31 Julho de 2025 
                 </p>
                 
                 <p style="font-size: 14pt !important;margin-bottom:-5px!important;">_________________________________________________________</p>
