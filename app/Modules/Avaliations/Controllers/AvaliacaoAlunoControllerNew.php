@@ -1466,6 +1466,12 @@ class AvaliacaoAlunoControllerNew extends Controller
             }
 
             if ($segunda_chamada) {
+                /*$estudantesimportados = DB::table('Import_data_forlearn as import')
+                    ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
+                    ->join('article_requests as ar', 'ar.user_id', 'import.id_user')
+                    ->where('uc.class_id', $class_id)
+                    ->where('import.ano_curricular', 5)*/
+
                 $dado = collect();
                 $dados = $dados->whereIn(
                     'id_mat',

@@ -841,9 +841,7 @@
                 var lective_year_select = $("#lective_year").val();
                 cargo = Disciplina_id_Select.val().split(",")[0];
                 console.log(cargo);
-                let url = "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id_Select.val() +
-                    "/" + id_planoEstudo + "/" + avaliacao_id_Select.val() + "/" + turma + "/" +
-                    lective_year_select + "?whoIs=" + cargo;
+                let url = "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id_Select.val() + "/" + id_planoEstudo + "/" + avaliacao_id_Select.val() + "/" + turma + "/" + lective_year_select + "?whoIs=" + cargo;
 
                 @if ($segunda_chamada)
                     url += "&segunda_chamada=true";
