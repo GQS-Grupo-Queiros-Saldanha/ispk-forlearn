@@ -860,9 +860,6 @@
                     //Limpar a tabela sempre que for inicializada (Aberto o Modal)
 
 
-
-
-
                     $("#students_new").empty();
 
                     // var resultGrades = dataResult.data;

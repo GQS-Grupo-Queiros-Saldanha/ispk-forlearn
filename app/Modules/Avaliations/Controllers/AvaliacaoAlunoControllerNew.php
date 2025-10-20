@@ -1277,7 +1277,6 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ->get();
 
                     $dados = $reprovados->unique('user_id');
-                    Log::info("fui chamdo 01");
                 } else {
                     //$consulta_alunoG=$this->students_matriculado($id,$lectiveYearSelected);
                     //$consulta_alunoG->where('mc.class_id', $class_id)->where('md.exam_only',1) ->get();
@@ -1302,7 +1301,6 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                         $Id_Users_exame_recurso = $this->EstudanteRecurso($id, $id_matriculation_users, $lectiveYearSelected);
                         $dados = $consulta_alunoR->whereIn('mt.id', $Id_Users_exame_recurso)->get();
-                        Log::info("fui chamdo 02");
                     } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "oral") {
 
                         $consulta_alunoExameOral = $this->students_matriculado($id, $lectiveYearSelected->id);
@@ -1315,13 +1313,11 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                         $Id_Users_exame_recurso = $this->EstudanteExameOral($id, $id_matriculation_users, $lectiveYearSelected);
                         $dados = $consulta_alunoExameOral->whereIn('mt.id', $Id_Users_exame_recurso)->get();
-                        Log::info("fui chamdo 03");
 
 
                         // return "oral entrou aqui";
                     } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Exame_especial") {
                         $dados = $this->EstudanteExameEspecial($id, $class_id, $lectiveYearSelected);
-                        Log::info("fui chamdo 04");
                         // return "Exame especial";
                     } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Extraordinario") {
                         $dados = $this->EstudanteExameExtraordinario($id, $class_id, $lectiveYearSelected);
@@ -1331,7 +1327,6 @@ class AvaliacaoAlunoControllerNew extends Controller
                         //Dados dos estudantes matriculados na disciplina selecionada no formulario de atribuir nota.
 
                         $dados = $consulta_aluno->distinct()->where('md.exam_only', 0)->get();
-                        Log::info("fui chamdo 05");
                     }
                 }
             }
@@ -1451,8 +1446,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
             if (!$segunda_chamada) {
-                
-               // Estudantes "normais"
+
                 $students_segunda_chamada = DB::table("matriculations as mat")
                     ->join("users as user", 'mat.user_id', 'user.id')
                     ->join("tb_segunda_chamada_prova_parcelar as sc", 'sc.matriculation_id', 'mat.id')
@@ -1467,35 +1461,13 @@ class AvaliacaoAlunoControllerNew extends Controller
                     ->where('sc.metric_id', $metrica_id)
                     ->where('sc.lectiveYear_id', $id_anoLectivo)
                     ->select('user.id as user_id')
+                    ->get()
                     ->pluck('user_id');
-
-                // Estudantes "importados"
-                $estudantes_importados = DB::table('Import_data_forlearn as import')
-                    ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
-                    ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'import.id_user')
-                    ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
-                    ->whereIn('article_emolumento.id', [331, 387])
-                    ->where('user_emolumento.status', "total")
-                    ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                    ->where('uc.class_id', $class_id)
-                    ->where('import.ano_curricular', 5)
-                    ->select('import.id_user as user_id')
-                    ->pluck('user_id');
-
-                // Junta os dois conjuntos (sem duplicar)
-                $students_final = $students_segunda_chamada
-                    ->merge($estudantes_importados)
-                    ->unique()
-                    ->values(); // reindexa
-
-                // Agora $students_final contém todos os estudantes (normais + importados)
-                Log::info("fui chamdo 1");
             }
 
             if ($segunda_chamada) {
-                Log::info("fui chamdo 2");
-                
-                $dados = collect();
+
+                $dado = collect();
                 $dados = $dados->whereIn(
                     'id_mat',
                     DB::table('article_requests as art')
@@ -1506,14 +1478,15 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ->where('sc.id_class', $class_id)
                         ->where('sc.lectiveYear_id', $id_anoLectivo)
                         ->where('mat.lective_year', $id_anoLectivo)
+
                         ->join('articles', 'art.article_id', 'articles.id')
                         ->where('articles.id_code_dev', 35)
                         ->where('art.status', 'total')
                         ->select(['sc.*'])
+                        ->get()
                         ->pluck('matriculation_id')
                         ->toArray()
                 );
-
                 $dados->each(
                     function ($item) use ($dado) {
                         $dado->push($item);
@@ -1528,14 +1501,15 @@ class AvaliacaoAlunoControllerNew extends Controller
                 $grades->each(function ($item) use ($grade) {
                     $grade->push($item);
                 });
-                $grades = collect($grades ?? []);
-
+                $grades = $grade;
             }
 
 
+
+
             $config = DB::table('avalicao_config')->first();
-            Log::info('Dados dos estudantes', ['students' => $students_final->toArray()]);
-            Log::info('Dados dos estudantes', ['students' => $dados->toArray()]);
+            Log::info("dados dos estudante", $dados);
+
 
             return json_encode(
                 array(
@@ -1545,13 +1519,12 @@ class AvaliacaoAlunoControllerNew extends Controller
                     'estado_pauta' => $estado_p,
                     'config' => $config,
                     'estado_pauta_lancar' => $estado_l,
-                    'students_segunda_chamada' => $students_final,
+                    'students_segunda_chamada' => $students_segunda_chamada,
                     'version' => $pauta_version,
                     'pauta_id' => $pauta_id,
                     'pauta_path' => $pauta_path
                 )
             );
-
         } catch (Exception | Throwable $e) {
             return $e;
             logError($e);
@@ -1848,6 +1821,18 @@ class AvaliacaoAlunoControllerNew extends Controller
 
         //Método para filtrar os alunos que foram a recurso
         $article_id = "exame_extraordinario";
+
+        $estudantes_importados = DB::table('Import_data_forlearn as import')
+            ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
+            ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'import.id_user')
+            ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
+            ->whereIn('article_emolumento.id', [331, 387])
+            ->where('user_emolumento.status', "total")
+            ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+            ->where('uc.class_id', $class_id)
+            ->where('import.ano_curricular', 5)
+            ->select('import.id_user as user_id')
+            ->pluck('user_id');
 
         return  $studantes = DB::table('tb_exame_melhoria_nota as tb_exame_studant')
             ->join('matriculations as mt', 'mt.user_id', '=', 'tb_exame_studant.id_user')
