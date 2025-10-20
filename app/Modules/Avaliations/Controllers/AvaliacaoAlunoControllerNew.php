@@ -1206,8 +1206,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-    public function metricaAjaxCoordenador($id_avaliacao)
-    {
+    public function metricaAjaxCoordenador($id_avaliacao){
         $metrics = DB::table('metricas')
             ->where('avaliacaos_id', $id_avaliacao)
             ->where('deleted_at', null)
@@ -1218,8 +1217,48 @@ class AvaliacaoAlunoControllerNew extends Controller
         return json_encode(array('metricas' => $metrics));
     }
 
+    private function EstudantesImportados($id_disciplina, $class_id, $lectiveYearSelected){
 
+        return  $studantes = DB::table('Import_data_forlearn as import')
+                ->join('user_classes as uc', 'uc.user_id', '=', 'import.id_user')
+                ->join("users as user", 'user.id', 'import.id_user')
+                
+                ->leftJoin('user_parameters as u_p', function ($join) {
+                    $join->on('user.id', '=', 'u_p.users_id')
+                        ->where('u_p.parameters_id', 1);
+                })
+                ->leftJoin('user_parameters as up_meca', function ($join) {
+                    $join->on('user.id', '=', 'up_meca.users_id')
+                        ->where('up_meca.parameters_id', 19);
+                })
+                //Os que pagaram os emolumentos de confirmação de matricula e pré-matricula
+                ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'user.id')
+                ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
+                ->whereIn("article_emolumento.id", [331,387])
+                ->where('user_emolumento.status', "total")
+                ->where('article_emolumento.anoLectivo', $lectiveYearSelected->id)
+                //fim dos pagos
+                ->where('uc.class_id', $class_id)
+                ->select('user.id as user_id', 'up_meca.value as n_student', 'u_p.value as user_name')
 
+                ->distinct()
+                ->get()
+
+                ->map(function ($item, $key) use ($id_disciplina, $id_turma) {
+
+                    return [
+
+                        "user_id" => $item->user_id,
+                        "user_name" => $item->user_name,
+                        "n_student" => $item->n_student,
+                        "discipline_id" => $id_disciplina,
+                        "class_id" => $id_turma,
+                        "e_f" => 0
+
+                    ];
+                });   
+        
+    }
 
     public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo){
     // Log incoming parameters for debugging
@@ -1337,7 +1376,9 @@ class AvaliacaoAlunoControllerNew extends Controller
                         // return "Exame especial";
                     } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Extraordinario") {
                         $dados = $this->EstudanteExameExtraordinario($id, $class_id, $lectiveYearSelected);
-                    } else {
+                    } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "TESP") {
+                        $dados = $this->EstudantesImportados($id, $class_id, $lectiveYearSelected);
+                    }else {
 
                         //Dados dos estudantes matriculados na disciplina selecionada no formulario de atribuir nota.
                         $dados = $consulta_aluno->distinct()->where('md.exam_only', 0)->get();
@@ -1519,13 +1560,8 @@ class AvaliacaoAlunoControllerNew extends Controller
             }
 
 
-
-
             $config = DB::table('avalicao_config')->first();
             Log::info('Dados dos estudantes', ['students' => $dados->toArray()]);
-
-
-
 
             return json_encode(
                 array(
@@ -1883,6 +1919,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             });
 
     }
+    
 
 
 
