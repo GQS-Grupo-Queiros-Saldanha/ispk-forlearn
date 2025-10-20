@@ -1446,7 +1446,10 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
             if (!$segunda_chamada) {
+                
+                 Log::info("fui chamdo 1");
 
+                // 1. Obter estudantes "normais"
                 $students_segunda_chamada = DB::table("matriculations as mat")
                     ->join("users as user", 'mat.user_id', 'user.id')
                     ->join("tb_segunda_chamada_prova_parcelar as sc", 'sc.matriculation_id', 'mat.id')
@@ -1463,11 +1466,30 @@ class AvaliacaoAlunoControllerNew extends Controller
                     ->select('user.id as user_id')
                     ->get()
                     ->pluck('user_id');
-                    Log::info("fui chamdo 1");
+
+                // 2. Obter estudantes "importados"
+                $estudantesimportados = DB::table('Import_data_forlearn as import')
+                    ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
+                    ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'import.id_user')
+                    ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
+                    ->whereIn('articles.id', [331,387]) //representam os emolumentos do ano passado e o actual em que estamos, adiciona o do novo ano ou melhor ao filtro "Não compliques a tua vida"
+                    ->where('user_emolumento.status', "total")
+                    ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                    ->where('uc.class_id', $class_id)
+                    ->where('import.ano_curricular', 5)
+                    ->select('import.id_user as user_id')
+
+                // 3. Juntar ambos os grupos (sem duplicados)
+                $estudantesTodos = $students_segunda_chamada
+                    ->merge($estudantesimportados)  // junta os dois conjuntos
+                    ->unique()                      // remove duplicados
+                    ->values();                     // reindexa (opcional)
+                   
             }
 
             if ($segunda_chamada) {
                 Log::info("fui chamdo 2");
+                
 
                 $dado = collect();
                 $dados = $dados->whereIn(
