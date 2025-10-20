@@ -1223,7 +1223,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo){
         
-        Log::info('Dados da metrica', ['metrica' => $metrica_id->toArray()]);
+        dd($metrica_id);
 
         try {
             // echo $metrica_id;
