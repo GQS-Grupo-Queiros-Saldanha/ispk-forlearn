@@ -1274,6 +1274,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
             if ($metrics_analise_exame->isNotEmpty()) {
+                Log::info("metrica não vazio");
                 //Chamar o método que trás todos os alunos com suas notas.
                 //O último parametro ano lectivo é apenas para trazer a matricula recente.
                 //O id da métrica é para difinir o intervalo de notas que deve trazer ou seja != NEE (PF1,PF2,OA).
@@ -1338,9 +1339,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                         $dados = $this->EstudanteExameExtraordinario($id, $class_id, $lectiveYearSelected);
                     } else {
 
-
                         //Dados dos estudantes matriculados na disciplina selecionada no formulario de atribuir nota.
-
                         $dados = $consulta_aluno->distinct()->where('md.exam_only', 0)->get();
                     }
                 }
