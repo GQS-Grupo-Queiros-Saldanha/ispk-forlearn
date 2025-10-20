@@ -1221,9 +1221,8 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-    public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo)
-    {
-
+    public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo){
+        Log::info("Metrica id",$metrica_id);
         try {
             // echo $metrica_id;
             //avaliar se a metrica ja foi concluida, se retornar algo é porque já foi concluida
@@ -1818,23 +1817,10 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-    private function EstudanteExameExtraordinario($id_disciplina, $id_turma, $lectiveYearSelected)
-    {
+    private function EstudanteExameExtraordinario($id_disciplina, $id_turma, $lectiveYearSelected){
 
         //Método para filtrar os alunos que foram a recurso
         $article_id = "exame_extraordinario";
-
-        /*$estudantes_importados = DB::table('Import_data_forlearn as import')
-            ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
-            ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'import.id_user')
-            ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
-            ->whereIn('article_emolumento.id', [331, 387])
-            ->where('user_emolumento.status', "total")
-            ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-            ->where('uc.class_id', $class_id)
-            ->where('import.ano_curricular', 5)
-            ->select('import.id_user as user_id')
-            ->pluck('user_id');*/
 
         return  $studantes = DB::table('tb_exame_melhoria_nota as tb_exame_studant')
             ->join('matriculations as mt', 'mt.user_id', '=', 'tb_exame_studant.id_user')
