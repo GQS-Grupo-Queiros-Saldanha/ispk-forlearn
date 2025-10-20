@@ -1447,20 +1447,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
             if (!$segunda_chamada) {
                 
-                /*Query para trazer estudantes importados em lançar notas de Monografia*/
-                $estudantesimportados = DB::table('Import_data_forlearn as import')
-                    ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
-                    ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'import.id_user')
-                    ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
-                    ->whereIn('articles.id', [331,387]) //representam os emolumentos do ano passado e o actual em que estamos, adiciona o do novo ano ou melhor ao filtro "Não compliques a tua vida"
-                    ->where('user_emolumento.status', "total")
-                    ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                    ->where('uc.class_id', $class_id)
-                    ->where('import.ano_curricular', 5)
-                    ->select('import.id_user as user_id')
-                /* Fim query */
-
-
+               // Estudantes "normais"
                 $students_segunda_chamada = DB::table("matriculations as mat")
                     ->join("users as user", 'mat.user_id', 'user.id')
                     ->join("tb_segunda_chamada_prova_parcelar as sc", 'sc.matriculation_id', 'mat.id')
@@ -1475,10 +1462,29 @@ class AvaliacaoAlunoControllerNew extends Controller
                     ->where('sc.metric_id', $metrica_id)
                     ->where('sc.lectiveYear_id', $id_anoLectivo)
                     ->select('user.id as user_id')
-                    ->get()
                     ->pluck('user_id');
 
-                    Log::info("fui chamdo 1");
+                // Estudantes "importados"
+                $estudantes_importados = DB::table('Import_data_forlearn as import')
+                    ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
+                    ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'import.id_user')
+                    ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
+                    ->whereIn('article_emolumento.id', [331, 387])
+                    ->where('user_emolumento.status', "total")
+                    ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                    ->where('uc.class_id', $class_id)
+                    ->where('import.ano_curricular', 5)
+                    ->select('import.id_user as user_id')
+                    ->pluck('user_id');
+
+                // Junta os dois conjuntos (sem duplicar)
+                $students_final = $students_segunda_chamada
+                    ->merge($estudantes_importados)
+                    ->unique()
+                    ->values(); // reindexa
+
+                // Agora $students_final contém todos os estudantes (normais + importados)
+                Log::info("fui chamdo 1");
             }
 
             if ($segunda_chamada) {
