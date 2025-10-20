@@ -1222,8 +1222,22 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
     public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo){
-        
-        dd($metrica_id);
+    // Log incoming parameters for debugging
+        Log::info('studentAjax called', [
+            'route_params' => [
+                'id' => $id,
+                'metrica_id' => $metrica_id,
+                'study_plan_id' => $study_plan_id,
+                'avaliacao_id' => $avaliacao_id,
+                'class_id' => $class_id,
+                'id_anoLectivo' => $id_anoLectivo,
+            ],
+            'query_params' => $request->query(),
+            'body' => $request->all(),
+            'headers' => $request->headers->all(),
+            'ip' => $request->ip(),
+            'user_id' => Auth::id()
+        ]);
 
         try {
             // echo $metrica_id;
