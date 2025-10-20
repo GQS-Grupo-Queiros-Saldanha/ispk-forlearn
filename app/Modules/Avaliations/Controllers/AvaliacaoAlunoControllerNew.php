@@ -1236,6 +1236,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
                 ->whereIn("article_emolumento.id", [331,387])
                 ->where('user_emolumento.status', "total")
+                ->where('import.ano_curricular', 5)
                 ->where('article_emolumento.anoLectivo', $lectiveYearSelected->id)
                 //fim dos pagos
                 ->where('uc.class_id', $class_id)
