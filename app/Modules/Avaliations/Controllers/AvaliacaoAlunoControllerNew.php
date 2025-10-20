@@ -1377,9 +1377,9 @@ class AvaliacaoAlunoControllerNew extends Controller
                         // return "Exame especial";
                     } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Extraordinario") {
                         $dados = $this->EstudanteExameExtraordinario($id, $class_id, $lectiveYearSelected);
-                    } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "TESP") {
+                    /*} elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "TESP") {
                         $dados = $this->EstudantesImportados($id, $class_id, $lectiveYearSelected);
-                    }else {
+                    }*/else {
 
                         //Dados dos estudantes matriculados na disciplina selecionada no formulario de atribuir nota.
                         $dados = $consulta_aluno->distinct()->where('md.exam_only', 0)->get();
