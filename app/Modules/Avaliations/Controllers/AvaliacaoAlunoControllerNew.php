@@ -1463,14 +1463,11 @@ class AvaliacaoAlunoControllerNew extends Controller
                     ->select('user.id as user_id')
                     ->get()
                     ->pluck('user_id');
+                    Log::info("fui chamdo 1");
             }
 
             if ($segunda_chamada) {
-                /*$estudantesimportados = DB::table('Import_data_forlearn as import')
-                    ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
-                    ->join('article_requests as ar', 'ar.user_id', 'import.id_user')
-                    ->where('uc.class_id', $class_id)
-                    ->where('import.ano_curricular', 5)*/
+                Log::info("fui chamdo 1");
 
                 $dado = collect();
                 $dados = $dados->whereIn(
