@@ -1222,7 +1222,9 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
     public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo){
-        Log::info("Metrica id",$metrica_id);
+        
+        Log::info('Dados da metrica', ['metrica' => $metrica_id->toArray()]);
+
         try {
             // echo $metrica_id;
             //avaliar se a metrica ja foi concluida, se retornar algo é porque já foi concluida
