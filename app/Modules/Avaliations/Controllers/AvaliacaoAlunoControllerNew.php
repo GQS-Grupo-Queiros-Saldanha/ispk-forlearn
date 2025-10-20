@@ -1822,7 +1822,7 @@ class AvaliacaoAlunoControllerNew extends Controller
         //Método para filtrar os alunos que foram a recurso
         $article_id = "exame_extraordinario";
 
-        $estudantes_importados = DB::table('Import_data_forlearn as import')
+        /*$estudantes_importados = DB::table('Import_data_forlearn as import')
             ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
             ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'import.id_user')
             ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
@@ -1832,7 +1832,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             ->where('uc.class_id', $class_id)
             ->where('import.ano_curricular', 5)
             ->select('import.id_user as user_id')
-            ->pluck('user_id');
+            ->pluck('user_id');*/
 
         return  $studantes = DB::table('tb_exame_melhoria_nota as tb_exame_studant')
             ->join('matriculations as mt', 'mt.user_id', '=', 'tb_exame_studant.id_user')
