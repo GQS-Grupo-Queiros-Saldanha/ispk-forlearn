@@ -1490,8 +1490,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             if ($segunda_chamada) {
                 Log::info("fui chamdo 2");
                 
-
-                $dado = collect();
+                $dados = collect();
                 $dados = $dados->whereIn(
                     'id_mat',
                     DB::table('article_requests as art')
@@ -1502,15 +1501,14 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ->where('sc.id_class', $class_id)
                         ->where('sc.lectiveYear_id', $id_anoLectivo)
                         ->where('mat.lective_year', $id_anoLectivo)
-
                         ->join('articles', 'art.article_id', 'articles.id')
                         ->where('articles.id_code_dev', 35)
                         ->where('art.status', 'total')
                         ->select(['sc.*'])
-                        ->get()
                         ->pluck('matriculation_id')
                         ->toArray()
                 );
+
                 $dados->each(
                     function ($item) use ($dado) {
                         $dado->push($item);
@@ -1525,10 +1523,9 @@ class AvaliacaoAlunoControllerNew extends Controller
                 $grades->each(function ($item) use ($grade) {
                     $grade->push($item);
                 });
-                $grades = $grade;
+                $grades = collect($grades ?? []);
+
             }
-
-
 
 
             $config = DB::table('avalicao_config')->first();
@@ -1541,12 +1538,13 @@ class AvaliacaoAlunoControllerNew extends Controller
                     'estado_pauta' => $estado_p,
                     'config' => $config,
                     'estado_pauta_lancar' => $estado_l,
-                    'students_segunda_chamada' => $students_segunda_chamada,
+                    'students_segunda_chamada' => $students_final,
                     'version' => $pauta_version,
                     'pauta_id' => $pauta_id,
                     'pauta_path' => $pauta_path
                 )
             );
+
         } catch (Exception | Throwable $e) {
             return $e;
             logError($e);
