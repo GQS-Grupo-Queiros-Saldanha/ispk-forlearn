@@ -1508,7 +1508,9 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
             $config = DB::table('avalicao_config')->first();
-            Log::info("dados dos estudante", $dados);
+            Log::info('Dados dos estudantes', ['students' => $dados->toArray()]);
+
+
 
 
             return json_encode(
