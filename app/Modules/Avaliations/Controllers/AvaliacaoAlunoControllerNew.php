@@ -1467,7 +1467,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             }
 
             if ($segunda_chamada) {
-                Log::info("fui chamdo 1");
+                Log::info("fui chamdo 2");
 
                 $dado = collect();
                 $dados = $dados->whereIn(
