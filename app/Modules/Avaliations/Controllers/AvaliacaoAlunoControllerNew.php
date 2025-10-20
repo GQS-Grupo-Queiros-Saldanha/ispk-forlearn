@@ -1277,6 +1277,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ->get();
 
                     $dados = $reprovados->unique('user_id');
+                    Log::info("fui chamdo 01");
                 } else {
                     //$consulta_alunoG=$this->students_matriculado($id,$lectiveYearSelected);
                     //$consulta_alunoG->where('mc.class_id', $class_id)->where('md.exam_only',1) ->get();
@@ -1301,6 +1302,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                         $Id_Users_exame_recurso = $this->EstudanteRecurso($id, $id_matriculation_users, $lectiveYearSelected);
                         $dados = $consulta_alunoR->whereIn('mt.id', $Id_Users_exame_recurso)->get();
+                        Log::info("fui chamdo 02");
                     } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "oral") {
 
                         $consulta_alunoExameOral = $this->students_matriculado($id, $lectiveYearSelected->id);
@@ -1313,11 +1315,13 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                         $Id_Users_exame_recurso = $this->EstudanteExameOral($id, $id_matriculation_users, $lectiveYearSelected);
                         $dados = $consulta_alunoExameOral->whereIn('mt.id', $Id_Users_exame_recurso)->get();
+                        Log::info("fui chamdo 03");
 
 
                         // return "oral entrou aqui";
                     } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Exame_especial") {
                         $dados = $this->EstudanteExameEspecial($id, $class_id, $lectiveYearSelected);
+                        Log::info("fui chamdo 04");
                         // return "Exame especial";
                     } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Extraordinario") {
                         $dados = $this->EstudanteExameExtraordinario($id, $class_id, $lectiveYearSelected);
@@ -1327,6 +1331,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                         //Dados dos estudantes matriculados na disciplina selecionada no formulario de atribuir nota.
 
                         $dados = $consulta_aluno->distinct()->where('md.exam_only', 0)->get();
+                        Log::info("fui chamdo 05");
                     }
                 }
             }
