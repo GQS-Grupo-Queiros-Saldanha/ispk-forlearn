@@ -637,6 +637,7 @@ if($segunda_chamada)
             }
             //Metrodo de trazer as metricas --de forma manual.
             function metricasCoordenador(id_avaliacao) {
+                console.log(id_avaliacao);
                 $.ajax({
                     url: "/pt/avaliations/metrica_ajax_coordenador/" + id_avaliacao,
                     type: "GET",
