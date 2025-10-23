@@ -2113,8 +2113,7 @@ class PautaGeralAvaliacoesController extends Controller
     }
 
 
-    public function discipline_exame_especial_grades($code)
-    {
+    public function discipline_exame_especial_grades($code){
         try {
             $lectiveYears = LectiveYear::with(['currentTranslation'])
                 ->get();
@@ -2146,8 +2145,7 @@ class PautaGeralAvaliacoesController extends Controller
         }
     }
 
-    public function discipline_exame_extraordinario_grades()
-    {
+    public function discipline_exame_extraordinario_grades(){
         try {
             $lectiveYears = LectiveYear::with(['currentTranslation'])
                 ->get();
@@ -2278,8 +2276,7 @@ class PautaGeralAvaliacoesController extends Controller
 
 
     
-    public function getStudentGradesExameEspecial($id_anoLectivo, $id_curso, $Turma_id_Select, $id_disciplina, $pub_print)
-    {
+    public function getStudentGradesExameEspecial($id_anoLectivo, $id_curso, $Turma_id_Select, $id_disciplina, $pub_print){
 
         // $propinas = $this->getMatriculations_paymentsAlectivo($id_anoLectivo);
         // return 1;
@@ -2483,8 +2480,7 @@ class PautaGeralAvaliacoesController extends Controller
 
 
  // PAUTA DE RECURSO
- public function getStudentGradesExameExtraordinario($id_anoLectivo, $id_curso, $Turma_id_Select, $id_disciplina)
- {
+ public function getStudentGradesExameExtraordinario($id_anoLectivo, $id_curso, $Turma_id_Select, $id_disciplina){
 
      // $propinas = $this->getMatriculations_paymentsAlectivo($id_anoLectivo);
      // return 1;

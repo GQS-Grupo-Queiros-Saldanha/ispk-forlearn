@@ -81,17 +81,24 @@
                         <td style="font-size: 11px">{{$full_nameStudent}}</td>
                         <?php
                             $latestMatriculation = $user->matriculation()
-                                ->orderBy('created_at', 'desc') // pega a matrícula mais recente
+                                ->orderBy('created_at', 'desc')
                                 ->first();
 
-                            $turma = $latestMatriculation && $latestMatriculation->classes->count() > 0
-                                ? $latestMatriculation->classes->first()->display_name
-                                : ($user->classes->first() ? $user->classes->first()->display_name : 'N/A');
+                            if ($latestMatriculation && $latestMatriculation->classes->count() > 0) {
+                                // junta todas as turmas da matrícula mais recente
+                                $turma = $latestMatriculation->classes->pluck('display_name')->implode(', ');
+                            } else {
+                                // se não houver, usa a primeira turma do utilizador
+                                $turma = $user->classes->count() > 0 
+                                    ? $user->classes->pluck('display_name')->implode(', ')
+                                    : 'N/A';
+                            }
 
                             if ($matricula_finalista == true) {
                                 $turma = 'N/A';
                             }
                         ?>
+
                         <td style="font-size: 11px">{{$user->email}}</td>
                         @php($curso = $user->courses->first() ? $user->courses->first()->currentTranslation->display_name : 'N/A')
                         @if(count($disciplines)==1 && $disciplines[0]->perfil_disciplina==8) 
