@@ -2877,7 +2877,6 @@ class PautaGeralAvaliacoesController extends Controller
 
 
     public function publisher_final_grade(Request $request){
-        dd('dados',$request);
 
         try {
             //$request->pauta_dados;
@@ -3005,7 +3004,6 @@ class PautaGeralAvaliacoesController extends Controller
                 $dados_estatistico = $this->escala_estatistica($request, $pauta_tipoE);
             }
 
-
             if ($request->pauta_code == "40") {
                 $pauta_tipo = "Pauta Frequência";
                 $pauta_tipoE = "MAC";
@@ -3105,6 +3103,22 @@ class PautaGeralAvaliacoesController extends Controller
                         $next = 45;
                         $name = 'Exame Extraordinário';
                         $actual = 'Exame Especial';
+                    }
+                    if ($request->pauta_code == "60"){
+                       /*Caso isolado para a pauta final*/
+                        DB::table('publicar_pauta')
+                            ->where('id', $id_Publicação)
+                            ->update(
+                                [
+                                    'estado' => 0,
+                                    'id_user_publish' => $id_user,
+                                    'updated_by' => $id_user
+                                ]
+                            );
+                        //Gerar PDF da Pauta
+                        $Gerar = $this->generatePDF_Grades($request, $consulta[0]->id, $dados_estatistico) : "Não gera Pauta";
+                        Toastr::success(__($message), __('toastr.success'));
+                        return back();
                     }
 
                   if($request->pauta_code != "45"){
