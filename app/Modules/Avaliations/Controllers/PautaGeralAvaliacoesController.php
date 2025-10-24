@@ -693,8 +693,7 @@ class PautaGeralAvaliacoesController extends Controller
 
 
 
-    public function publisher_final_grade_tfc(Request $request)
-    {
+    public function publisher_final_grade_tfc(Request $request){
 
         try {
             
@@ -2877,8 +2876,8 @@ class PautaGeralAvaliacoesController extends Controller
 
 
 
-    public function publisher_final_grade(Request $request)
-    {
+    public function publisher_final_grade(Request $request){
+        Log::info("publisher_final_grade", ['dados' => $request->all()]);
 
         try {
             //$request->pauta_dados;
