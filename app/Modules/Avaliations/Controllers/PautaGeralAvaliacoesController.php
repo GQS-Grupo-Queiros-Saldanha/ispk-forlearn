@@ -3116,7 +3116,7 @@ class PautaGeralAvaliacoesController extends Controller
                                 ]
                             );
                         //Gerar PDF da Pauta
-                        $Gerar = $this->generatePDF_Grades($request, $consulta[0]->id, $dados_estatistico) : "Não gera Pauta";
+                        $Gerar = $this->generatePDF_Grades($request, $consulta[0]->id, $dados_estatistico) ?? "Não gera Pauta";
                         Toastr::success(__($message), __('toastr.success'));
                         return back();
                     }
