@@ -41,6 +41,7 @@ use App\Model\Institution;
 use App\Modules\Avaliations\util\PautaGeralAvaliacoesUtil;
 use App\Modules\Cms\Controllers\mainController;
 use Log;
+use Illuminate\Support\Facades\Log;
 use App\Modules\Users\Controllers\MatriculationDisciplineListController;
 class PautaGeralAvaliacoesController extends Controller
 {
