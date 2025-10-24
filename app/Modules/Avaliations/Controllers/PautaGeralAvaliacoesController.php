@@ -2878,7 +2878,7 @@ class PautaGeralAvaliacoesController extends Controller
 
 
     public function publisher_final_grade(Request $request){
-        dd('dados',$request);
+        //dd('dados',$request);
 
         try {
             //$request->pauta_dados;
