@@ -40,7 +40,6 @@ use PDF;
 use App\Model\Institution;
 use App\Modules\Avaliations\util\PautaGeralAvaliacoesUtil;
 use App\Modules\Cms\Controllers\mainController;
-use Log;
 use Illuminate\Support\Facades\Log;
 use App\Modules\Users\Controllers\MatriculationDisciplineListController;
 class PautaGeralAvaliacoesController extends Controller
@@ -2878,7 +2877,7 @@ class PautaGeralAvaliacoesController extends Controller
 
 
     public function publisher_final_grade(Request $request){
-        //dd('dados',$request);
+        dd('dados',$request);
 
         try {
             //$request->pauta_dados;
