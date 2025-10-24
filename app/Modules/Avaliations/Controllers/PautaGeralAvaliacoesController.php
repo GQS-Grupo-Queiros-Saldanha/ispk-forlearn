@@ -3105,7 +3105,8 @@ class PautaGeralAvaliacoesController extends Controller
                         $actual = 'Exame Especial';
                     }
                     if ($request->pauta_code == "60"){
-                       /*Caso isolado para a pauta final*/
+                       /*Caso exolado para a pauta final*/
+                       $id_Publicação = $consulta[0]->id;
                         DB::table('publicar_pauta')
                             ->where('id', $id_Publicação)
                             ->update(
@@ -3116,7 +3117,7 @@ class PautaGeralAvaliacoesController extends Controller
                                 ]
                             );
                         //Gerar PDF da Pauta
-                        $Gerar = $this->generatePDF_Grades($request, $consulta[0]->id, $dados_estatistico) ?? "Não gera Pauta";
+                        //$Gerar = $this->generatePDF_Grades($request, $consulta[0]->id, $dados_estatistico);
                         Toastr::success(__($message), __('toastr.success'));
                         return back();
                     }
