@@ -3107,7 +3107,7 @@ class PautaGeralAvaliacoesController extends Controller
                     if ($request->pauta_code == "60"){
                        /*Caso exolado para a pauta final*/
                        $id_Publicação = $consulta[0]->id;
-                       $message = "A Pauta foi desbloqueada com sucesso, com esta acção os docentes podem editar novamente as notas lançadas com base no calendário actual." : "A Pauta foi publicada com sucesso.";
+                        $message = $consulta[0]->estado == 1 ? "A Pauta foi desbloqueada com sucesso, com esta acção os docentes podem editar novamente as notas lançadas com base no calendário actual." : "A Pauta foi publicada com sucesso.";
 
                         DB::table('publicar_pauta')
                             ->where('id', $id_Publicação)
@@ -3118,6 +3118,7 @@ class PautaGeralAvaliacoesController extends Controller
                                     'updated_by' => $id_user
                                 ]
                             );
+                        
                         //Gerar PDF da Pauta
                         //$Gerar = $this->generatePDF_Grades($request, $consulta[0]->id, $dados_estatistico);
                         Toastr::success(__($message), __('toastr.success'));
