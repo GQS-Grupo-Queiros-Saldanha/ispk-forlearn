@@ -812,7 +812,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
     public function store(MatriculationRequest $request)
     {
        
-     
+     dd($request);
         try {
     
         //Ano lectivo 

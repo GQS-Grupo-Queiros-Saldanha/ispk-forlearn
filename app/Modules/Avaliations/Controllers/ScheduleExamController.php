@@ -1244,10 +1244,10 @@ class ScheduleExamController extends Controller
      Toastr::success(__("A sua marcação de ".$text." foi solicitada com sucesso. Dirija-se à TESOURARIA para liquidar os respectivos emolumentos. Obrigado."), "OPERAÇÃO REALIZADA COM SUCESSO:");
       return back();
 
-     
+        
 
 
 
-}
+    }
 
 }
