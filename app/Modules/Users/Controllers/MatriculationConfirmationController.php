@@ -896,10 +896,8 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
           }
 
-          dd($request->years, $request->disciplines);
-
           //Regra de aprovação de matrícula por número de cadeiras em atraso
-          $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[0]);
+          $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[$request->years[0]]);
           if(!$approved){
             // Success message
              Toastr::warning(
