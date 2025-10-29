@@ -806,19 +806,29 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
 
 
-    private function Approval_rules(ano_anterior, ano_novo, disciplinas_reprovadas){
+    private function approvalRules($anoAnterior, $anoNovo, $disciplinasReprovadas){
+        
         $consulta = DB::table('matriculation_aprove_roles_config')
-        ->where('currular_year', $ano_novo)
-        ->select('matriculation_aprove_roles_config.discipline_in_delay')
-        ->first();
+            ->where('currular_year', $anoNovo)
+            ->select('discipline_in_delay')
+            ->first();
 
-        if($consulta <= count($disciplinas_reprovadas) ){
-            return true;
-            
+        // Se não encontrou configuração, retorna falso
+        if (!$consulta) {
+            return false;
         }
-        return false;
 
+        $limite = (int) $consulta->discipline_in_delay;
+        $numeroReprovadas = count($disciplinasReprovadas);
+
+        // Se o número de cadeiras reprovadas é maior que o limite → reprova
+        if ($numeroReprovadas > $limite) {
+            return false;
+        }
+
+        return true;
     }
+
 
 
     public function store(MatriculationRequest $request)
@@ -833,12 +843,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
         ->where('id',$request->anoLective)
          ->get();
 
-         //Verificar as disciplinas aprovadas
-         $approved = $this->Approval_rules($request->years[0], $request->years[1], $request->disciplines[0]);
-
-         
-
-       
+    
           $user_student = User::whereId($request->user)->first();
           $id_curso=$user_student->courses()->first()->id;
         
@@ -891,9 +896,15 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
           }
 
-          if($approved == FALSE){
+          $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[0]);
+          if(!$approved){
             // Success message
-            Toastr::Warning(__('O sistema detectou que a matrícula para o'. $ano_novo .'ano não pode ter este numero de cadeiras em atraso, consulta a PA para validar esta informação , Obrigado(a) !'), __('toastr.warning'));
+             Toastr::warning(
+                __('O sistema detetou que a matrícula para o ano ' . $request->years[1] . 
+                ' não pode ter este número de cadeiras em atraso. Consulta a PA para validar esta informação. Obrigado(a)!'),
+                __('Aviso')
+            );
+
             return redirect()->route('matriculations.index');
             
           }
