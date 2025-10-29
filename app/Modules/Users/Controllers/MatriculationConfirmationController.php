@@ -806,7 +806,19 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
 
 
+    private function Approval_rules(ano_anterior, ano_novo, disciplinas_reprovadas){
+        $consulta = DB::table('matriculation_aprove_roles_config')
+        ->where('currular_year', $ano_novo)
+        ->select('matriculation_aprove_roles_config.discipline_in_delay')
+        ->first();
 
+        if($consulta <= count($disciplinas_reprovadas) ){
+            return true;
+            
+        }
+        return false;
+
+    }
 
 
     public function store(MatriculationRequest $request)
@@ -820,6 +832,9 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
          $lectiveYearSelected = DB::table('lective_years')
         ->where('id',$request->anoLective)
          ->get();
+
+         //Verificar as disciplinas aprovadas
+         $approved = $this->Approval_rules($request->years[0], $request->years[1], $request->disciplines[0]);
 
          
 
@@ -858,6 +873,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
             return redirect()->route('matriculations.index');
             
           }
+
           
           //barrar se não tem emolumento Pago - ano passado
            $ConfirmaPagamento= DB::table('article_requests')
@@ -873,6 +889,13 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
             Toastr::Warning(__('A forLEARN detectou que este(a) estudante tem pendentes na tesouraria.'), __('toastr.warning'));
             return redirect()->route('matriculations.index');
 
+          }
+
+          if($approved == FALSE){
+            // Success message
+            Toastr::Warning(__('O sistema detectou que a matrícula para o'. $ano_novo .'ano não pode ter este numero de cadeiras em atraso, consulta a PA para validar esta informação , Obrigado(a) !'), __('toastr.warning'));
+            return redirect()->route('matriculations.index');
+            
           }
           
 
