@@ -808,8 +808,15 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
 
 
-    private function approvalRules($anoAnterior, $anoNovo, $disciplinasReprovadas){
-        //Log::info("ano anterior: $anoAnterior, ano novo: $anoNovo, disciplinas reprovadas: ", $disciplinasReprovadas);
+    private function approvalRules($anoAnterior, $anoNovo, $disciplinasReprovadas, $user_student){
+         Log::info("ano anterior: $anoAnterior, ano novo: $anoNovo, disciplinas reprovadas: ", $disciplinasReprovadas, "user_student: ", $user_student->id);
+        $registration = DB('matriculation')
+            ->where('user_id', $user_student->id)
+            ->whereNull('deleted_at')
+            ->first();
+        if (!$registration) {
+            return true;
+        }
         $consulta = DB::table('matriculation_aprove_roles_config')
             ->where('currular_year', $anoAnterior)
             ->select('discipline_in_delay')
@@ -898,9 +905,9 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
         //Regra de aprovação de matrícula por número de cadeiras em atraso
         if(isset($request->years[1])) {
-            $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[$request->years[0]]);
+            $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[$request->years[0]], $user_student);
         } else {
-            $approved = $this->approvalRules($request->years[0], $request->years[0], $request->disciplines[$request->years[0]]);
+            $approved = $this->approvalRules($request->years[0], $request->years[0], $request->disciplines[$request->years[0]], $user_student);
         }
 
         if(!$approved) {
