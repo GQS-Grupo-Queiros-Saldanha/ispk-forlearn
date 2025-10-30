@@ -809,9 +809,9 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
 
     private function approvalRules($anoAnterior, $anoNovo, $disciplinasReprovadas){
-        Log::info("ano anterior: $anoAnterior, ano novo: $anoNovo, disciplinas reprovadas: ", $disciplinasReprovadas);
+        //Log::info("ano anterior: $anoAnterior, ano novo: $anoNovo, disciplinas reprovadas: ", $disciplinasReprovadas);
         $consulta = DB::table('matriculation_aprove_roles_config')
-            ->where('currular_year', $anoNovo)
+            ->where('currular_year', $anoAnterior)
             ->select('discipline_in_delay')
             ->first();
 
