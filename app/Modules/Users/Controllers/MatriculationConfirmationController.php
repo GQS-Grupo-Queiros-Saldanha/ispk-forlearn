@@ -28,6 +28,8 @@ use App\Modules\Users\util\MatriculationUtil;
 use App\Modules\Users\util\MatriculationStrategyConfigUtil;
 use App\Modules\Users\Events\PaidStudentCardEvent;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 class MatriculationConfirmationController extends Controller
 {
     //METODO QUE APAGA REGISTE DE MATRICULA MAL FEITA.
