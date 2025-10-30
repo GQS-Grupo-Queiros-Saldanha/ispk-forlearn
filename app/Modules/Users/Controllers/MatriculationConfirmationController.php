@@ -833,10 +833,8 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
 
 
-    public function store(MatriculationRequest $request)
-    {
+    public function store(MatriculationRequest $request){
        
-     
         try {
     
         //Ano lectivo 
@@ -898,24 +896,24 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
           }
 
-          //Regra de aprovação de matrícula por número de cadeiras em atraso
-         if(isset($request->years[1])){
-           $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[$request->years[0]]);
-          }else{
+        //Regra de aprovação de matrícula por número de cadeiras em atraso
+        if(isset($request->years[1])) {
+            $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[$request->years[0]]);
+        } else {
             $approved = $this->approvalRules($request->years[0], $request->years[0], $request->disciplines[$request->years[0]]);
-            }
+        }
 
-          if(!$approved){
-            // Success message
-             Toastr::warning(
-                __('O sistema detetou que a matrícula para o ano ' . $request->years[1] . 
+        if(!$approved) {
+            $anoDestino = $request->years[1] ?? $request->years[0];
+            Toastr::warning(
+                __('O sistema detetou que a matrícula para o ano ' . $anoDestino .
                 ' não pode ter este número de cadeiras em atraso. Consulta a PA para validar esta informação. Obrigado(a)!'),
                 __('Aviso')
             );
 
             return redirect()->route('matriculations.index');
-            
-          }
+        }
+
           
 
 
