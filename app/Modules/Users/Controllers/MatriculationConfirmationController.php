@@ -820,7 +820,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
             return true;
         }
         if($code=='code'){
-            $previosuYear = DB::table('matriculations')->where('user_id', $user_student)->orderBy('course_year', 'desc')->first();
+            $previosuYear = DB::table('matriculations')->where('user_id', $user_student->id)->orderBy('course_year', 'desc')->first();
         }
         else{
             $previosuYear = $anoAnterior;
@@ -835,10 +835,22 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
         if (!$consulta) {
             return false;
         }
-
-        $limite = (int) $consulta->discipline_in_delay;
+        //para não explodir
+        $limite = 0;
+        if ($limite){
+            $limit = DB::table('new_olg_grades')
+                ->where('user_id', $user_student->id)
+                ->where('grade', '<', 10)
+                ->count();
+                
+            if($limit == 0) {
+                $limite = $limit;
+            }
+            else {
+                $limite = (int) $consulta->discipline_in_delay;
+            }
+        }
         $numeroReprovadas = count($disciplinasReprovadas);
-
         // Se o número de cadeiras reprovadas é maior que o limite → reprova
         if ($numeroReprovadas > $limite) {
             return false;
