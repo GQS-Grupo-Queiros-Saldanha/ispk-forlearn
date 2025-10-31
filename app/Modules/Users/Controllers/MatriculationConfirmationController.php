@@ -808,7 +808,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
 
 
-    private function approvalRules($anoAnterior, $anoNovo, $disciplinasReprovadas, $user_student){
+    private function approvalRules($anoAnterior, $anoNovo, $disciplinasReprovadas, $user_student, $code = NULL) {
         Log::info("ano anterior: $anoAnterior, ano novo: $anoNovo, disciplinas reprovadas: ", $disciplinasReprovadas, "user_student: ", $user_student->id);
         
         $registration = DB::table('matriculations')
@@ -819,9 +819,15 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
         if (!$registration) {
             return true;
         }
+        if(!$code ==NULL){
+            $previosuYear = DB::table('matriculations')->where('user_id', $user_student)->orderBy('course_year', 'desc')->first();
+        }
+        else{
+            $previosuYear = $anoAnterior;
+        }
 
         $consulta = DB::table('matriculation_aprove_roles_config')
-            ->where('currular_year', $anoAnterior)
+            ->where('currular_year',  $previosuYear)
             ->select('discipline_in_delay')
             ->first();
 
@@ -910,7 +916,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
         if(isset($request->years[1])) {
             $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[$request->years[0]], $user_student);
         } else {
-            $approved = $this->approvalRules($request->years[0], $request->years[0], $request->disciplines[$request->years[0]], $user_student);
+            $approved = $this->approvalRules($request->years[0], $request->years[0], $request->disciplines[$request->years[0]], $user_student, 'code');
         }
 
         if(!$approved) {
