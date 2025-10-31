@@ -429,7 +429,12 @@ class MatriculationConfirmationController extends Controller
 
              // Utilizador importado
              $data = $this->Imported_Student($studentId, $lectiveYearSelected);
-             Log::info("Importado",['data'=>$data] "estudanteID:".$studentId "anoLectivo:".$lectiveYearSelected);
+            Log::info('Importado', [
+                    'data' => $data,
+                    'estudanteID' => $studentId,
+                    'anoLectivo' => $lectiveYearSelected
+                ]);
+
 
              if ($data != 0) {
                   $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
