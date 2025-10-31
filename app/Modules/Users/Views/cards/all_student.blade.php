@@ -158,9 +158,11 @@
             });
 
             
-            $("#lective_year").change(function() {
-                $("#report_all").attr("href", "/pt/users/cards/report_all/"+$("#lective_year").val())+"/"+selectCurricularYear.val();
+           $("#lective_year").change(function() {
+                let anoLectivo = $("#lective_year").val() || "{{ $lectiveYearSelected }}";
+                $("#report_all").attr("href", "/pt/users/cards/report_all/" + anoLectivo + "/1");
             });
+
 
 
 

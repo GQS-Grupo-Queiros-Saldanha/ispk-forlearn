@@ -808,7 +808,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
 
 
-    private function approvalRules($anoAnterior, $anoNovo, $disciplinasReprovadas, $user_student){
+    /*private function approvalRules($anoAnterior, $anoNovo, $disciplinasReprovadas, $user_student){
          Log::info("ano anterior: $anoAnterior, ano novo: $anoNovo, disciplinas reprovadas: ", $disciplinasReprovadas, "user_student: ", $user_student->id);
         $registration = DB('matriculation')
             ->where('user_id', $user_student->id)
@@ -836,7 +836,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
         }
 
         return true;
-    }
+    }*/
 
 
 
