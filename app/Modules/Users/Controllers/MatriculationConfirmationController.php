@@ -429,11 +429,11 @@ class MatriculationConfirmationController extends Controller
 
              // Utilizador importado
              $data = $this->Imported_Student($studentId, $lectiveYearSelected);
-             Log::info("Importado", $data);
+             Log::info("Importado", ['data'=>$data]);
 
 
              if ($data != 0) {
-                Log::info("chamdo");
+                Log::info("chamado");
                   $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
                
                  $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();
