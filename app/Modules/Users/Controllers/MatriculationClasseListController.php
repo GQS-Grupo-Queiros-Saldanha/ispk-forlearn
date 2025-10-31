@@ -86,123 +86,123 @@ class MatriculationClasseListController extends Controller
 
 
 
-  public function ajaxUserDataPDF(Request $request){
+ public function ajaxUserDataPDF(Request $request){
     try {
 
-        // 🧩 1. Validação inicial
         if (empty($request->classe)) {
             Toastr::error(__('Verifique se selecionou uma turma antes de gerar o PDF.'), __('toastr.error'));
             return redirect()->back();
         }
 
-        // 🏫 2. Buscar o curso selecionado
+        // 🔹 Buscar curso
         $courses = DB::table('courses as curso')
             ->join('courses_translations as ct', function ($join) {
                 $join->on('ct.courses_id', '=', 'curso.id')
-                    ->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()))
-                    ->on('ct.active', '=', DB::raw(true));
+                     ->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()))
+                     ->on('ct.active', '=', DB::raw(true));
             })
             ->where('curso.id', $request->course)
             ->get();
 
-        // 📅 3. Obter o ano lectivo
-        $lectiveYearSelectedP = DB::table('lective_years')
+        // 🔹 Ano lectivo
+        $lectiveYear = DB::table('lective_years')
             ->where('id', $request->AnoLectivo)
             ->first();
 
-        if (!$lectiveYearSelectedP) {
+        if (!$lectiveYear) {
             Toastr::error(__('Ano lectivo inválido.'), __('toastr.error'));
             return redirect()->back();
         }
 
-        // 🧮 4. Consulta principal de alunos
-        $model = DB::table('matriculation_classes as mat_class')
-            ->join('matriculations as mat', 'mat.id', '=', 'mat_class.matriculation_id')
-            ->join('classes as turma', 'mat_class.class_id', '=', 'turma.id')
+        // 🔹 Consulta de alunos (sem duplicação)
+        $model = DB::table('matriculations as mat')
+            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'mat.id')
+            ->join('classes as turma', 'mc.class_id', '=', 'turma.id')
             ->join('users as user', 'mat.user_id', '=', 'user.id')
 
-            // 🧱 Parâmetros do utilizador
+            // Parâmetros do utilizador
             ->leftJoin('user_parameters as u_p', function ($join) {
                 $join->on('user.id', '=', 'u_p.users_id')
-                    ->where('u_p.parameters_id', 1);
+                     ->where('u_p.parameters_id', 1);
             })
             ->leftJoin('user_parameters as up_meca', function ($join) {
                 $join->on('user.id', '=', 'up_meca.users_id')
-                    ->where('up_meca.parameters_id', 19);
+                     ->where('up_meca.parameters_id', 19);
             })
             ->leftJoin('user_parameters as up_bi', function ($join) {
                 $join->on('user.id', '=', 'up_bi.users_id')
-                    ->where('up_bi.parameters_id', 14);
+                     ->where('up_bi.parameters_id', 14);
             })
 
-            // 📘 Disciplinas (left join para não excluir quem não tem)
-            ->leftJoin('matriculation_disciplines as mat_disc', 'mat.id', '=', 'mat_disc.matriculation_id')
-            ->leftJoin('study_plans_has_disciplines as st_has_d', 'st_has_d.disciplines_id', '=', 'mat_disc.discipline_id')
-
-            // 💰 Emolumentos (LEFT JOIN para não perder quem ainda não pagou)
-            ->leftJoin('article_requests as user_emolumento', 'user_emolumento.user_id', '=', 'user.id')
-            ->leftJoin('articles as article_emolumento', 'user_emolumento.article_id', '=', 'article_emolumento.id')
-            ->leftJoin('code_developer as code_dev', 'code_dev.id', '=', 'article_emolumento.id_code_dev')
-
-            // 💡 Filtro de pagamentos: aceitar confirmados OU nulos (sem pagamento ainda)
-            ->where(function ($q) use ($lectiveYearSelectedP) {
-                $q->whereIn('code_dev.code', ['confirm', 'p_matricula'])
-                  ->orWhereNull('code_dev.code');
-            })
-            ->where(function ($q) use ($lectiveYearSelectedP) {
-                $q->whereBetween('article_emolumento.created_at', [
-                        $lectiveYearSelectedP->start_date,
-                        $lectiveYearSelectedP->end_date
-                    ])
-                  ->orWhereNull('article_emolumento.created_at');
+            // Apenas verificar se o aluno tem disciplinas válidas
+            ->whereExists(function ($q) use ($request) {
+                $q->select(DB::raw(1))
+                  ->from('matriculation_disciplines as md')
+                  ->join('study_plans_has_disciplines as st', 'st.disciplines_id', '=', 'md.discipline_id')
+                  ->whereRaw('md.matriculation_id = mat.id')
+                  ->where('md.exam_only', $request->regime ?? 0)
+                  ->where('st.years', $request->curricular_year);
             })
 
-            // 📌 5. Filtros principais
-            ->where('mat.lective_year', $lectiveYearSelectedP->id)
+            // Verificar se existe pagamento confirm/p_matricula (ou nenhum)
+            ->where(function ($q) use ($lectiveYear) {
+                $q->whereExists(function ($sub) use ($lectiveYear) {
+                    $sub->select(DB::raw(1))
+                        ->from('article_requests as ar')
+                        ->join('articles as art', 'art.id', '=', 'ar.article_id')
+                        ->join('code_developer as cd', 'cd.id', '=', 'art.id_code_dev')
+                        ->whereRaw('ar.user_id = user.id')
+                        ->whereIn('cd.code', ['confirm', 'p_matricula'])
+                        ->where('ar.status', 'total')
+                        ->whereBetween('art.created_at', [
+                            $lectiveYear->start_date,
+                            $lectiveYear->end_date
+                        ]);
+                })
+                ->orWhereRaw('NOT EXISTS (SELECT 1 FROM article_requests WHERE user_id = user.id)');
+            })
+
+            ->where('mat.lective_year', $lectiveYear->id)
             ->where('turma.lective_year_id', $request->AnoLectivo)
             ->where('turma.id', $request->classe)
             ->whereNull('mat.deleted_at')
-            ->where('st_has_d.years', $request->curricular_year)
-            ->where('mat_disc.exam_only', $request->regime ?? 0)
 
-            // 📋 6. Seleção de colunas
             ->select([
                 'user.id as user_id',
-                'user.email',
                 'u_p.value as student',
                 'up_bi.value as n_bi',
                 'up_meca.value as matricula',
+                'user.email',
                 'mat.id as mat_id',
+                'mat.code as code_matricula',
+                'mat.course_year',
+                'turma.display_name as turma',
+                'turma.lective_year_id as id_anoLectivo'
+            ])
+            ->groupBy(
+                'user.id',
+                'u_p.value',
+                'up_bi.value',
+                'up_meca.value',
+                'user.email',
+                'mat.id',
                 'mat.code',
                 'mat.course_year',
-                'mat_disc.matriculation_id',
-                'mat_disc.exam_only',
-                'turma.display_name as turma',
-                'turma.lective_year_id as id_anoLectivo',
-                'user_emolumento.status as pago',
-                'article_emolumento.id as id_article',
-                'article_emolumento.code as code_article'
-            ])
-            ->distinct()
+                'turma.display_name',
+                'turma.lective_year_id'
+            )
             ->orderBy('student', 'ASC')
             ->get();
 
-        // 🧹 7. Garantir que não está vazio
         if ($model->isEmpty()) {
             Toastr::error(__('Não foram encontrados alunos matriculados na turma selecionada.'), __('toastr.error'));
             return redirect()->back();
         }
 
-        // 💡 8. Filtro de course_year removido (duplicava lógica)
-        // 🔍 Se quiseres, poderás validar divergências:
-        // $model = $model->filter(fn($i) => $i->course_year == $request->curricular_year);
-
-        // 💰 9. Verificação opcional de dívidas / bolsas
+        // 💰 Filtro de dívidas e bolsas (mantido)
         if (isset($request->status) && $request->status == "0") {
-            $model = collect($model)->filter(function ($item) {
+            $model = $model->filter(function ($item) {
                 $dividas = $this->get_payments($item->id_anoLectivo, $item->mat_id);
-
-                // Mantém bolseiros mesmo com dívidas
                 if ($dividas > 0) {
                     $isBolseiro = DB::table('scholarship_holder as hold')
                         ->join('scholarship_entity as ent', 'ent.id', '=', 'hold.scholarship_entity_id')
@@ -210,16 +210,13 @@ class MatriculationClasseListController extends Controller
                         ->where('hold.are_scholarship_holder', 1)
                         ->where('ent.type', 'BOLSA')
                         ->exists();
-
                     return $isBolseiro;
                 }
-
-                // Mantém alunos sem dívidas
                 return true;
             });
         }
 
-        // 📘 10. Preparar dados do PDF
+        // 🖨️ Preparar PDF
         $classe = DB::table('classes')->where('id', $request->classe)->first();
         $turmaC = $classe->display_name ?? 'Turma sem nome';
         $curso = $courses[0]->display_name ?? 'Curso sem nome';
@@ -230,10 +227,9 @@ class MatriculationClasseListController extends Controller
             ->where('id', $request->AnoLectivo)
             ->get();
 
-        $anoLectivo = $lectiveYears[0]->currentTranslation->display_name ?? 'Ano Lectivo Desconhecido';
+        $anoLectivo = $lectiveYears[0]->currentTranslation->display_name ?? 'Ano Lectivo';
         $institution = Institution::latest()->first();
 
-        // 🖨️ 11. Gerar PDF
         $pdf = PDF::loadView("Users::list-class-matriculation.pdf_lista", compact(
             'model',
             'regime',
@@ -244,137 +240,22 @@ class MatriculationClasseListController extends Controller
             'institution'
         ));
 
-        // Opções visuais do PDF
-        $pdf->setOption('margin-top', '1mm');
-        $pdf->setOption('margin-left', '1mm');
-        $pdf->setOption('margin-bottom', '12mm');
-        $pdf->setOption('margin-right', '1mm');
-        $pdf->setOption('enable-javascript', true);
-        $pdf->setOption('debug-javascript', true);
-        $pdf->setOption('javascript-delay', 1000);
-        $pdf->setOption('enable-smart-shrinking', true);
-        $pdf->setOption('no-stop-slow-scripts', true);
         $pdf->setPaper('a4', 'landscape');
+        $pdf->setOption('margin-top', '1mm');
+        $pdf->setOption('margin-bottom', '12mm');
+        $pdf->setOption('footer-html', view('Reports::pdf_model.pdf_footer', compact('institution'))->render());
 
-        $pdf_name = "LdM_" . "_" . $anoLectivo . '_' . $courses[0]->code . "_" . $ano . "_" . $turmaC;
-        $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-        $pdf->setOption('footer-html', $footer_html);
-
+        $pdf_name = "LdM_" . $anoLectivo . '_' . $courses[0]->code . "_" . $ano . "_" . $turmaC;
         return $pdf->stream($pdf_name . '.pdf');
 
     } catch (Exception | Throwable $e) {
         logError($e);
-        return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+        return request()->ajax()
+            ? response()->json($e->getMessage(), 500)
+            : abort(500);
     }
-    }
+}
 
-
-
-
-
-    public function turma($curso,$id_anoLectivo,$anoCurricular)
-    {
-        // return $curso. $id_anoLectivo .$anoCurricular;
-   
-        $turma=DB::table('classes as class')
-        ->select(['class.id as id','class.display_name as turma'])
-        ->where('class.courses_id',$curso)
-        ->where('class.year',$anoCurricular)
-        ->where('class.lective_year_id',$id_anoLectivo)
-        ->whereNull('class.deleted_by')
-        ->whereNull('class.deleted_at')
-        ->get();
-
-
-      return $turma;
-        
-
-    }
-
-
-
-    public function store()
-    {
-      return $request;
-
-
-    }
-    
-    
-    public static function get_payments($lective_year,$matriculations){
-
-      $payments = DB::table("matriculations as mat")
-     ->join("article_requests as ar",'ar.user_id','mat.user_id')
-     ->join("articles as art","art.id","ar.article_id")
-     ->where("mat.id", $matriculations)
-     ->where("art.anoLectivo",$lective_year)
-     ->where("ar.status","pending")
-     ->whereNotNull("ar.month")
-     ->whereNotNull("ar.year")
-     ->whereNull("art.deleted_at")
-     ->whereNull("ar.deleted_at")
-     ->select(["ar.base_value","ar.status","ar.month","ar.year"])
-     ->get(); 
-
-
-      $payments = collect($payments)->map(function($item,$key){
-         $month = [
-             "",
-             "Janeiro",
-             "Fevereiro",
-             "Março",
-             "Abril",
-             "Maio",
-             "Junho",
-             "Julho",
-             "Agosto",
-             "Setembro",
-             "Outubro",
-             "Novembro",
-             "Dezembro"
-           ];
-
-        if(isset($item->month) && ($item->month>0)){
-          
-            $item->mes = " (".$month[(int) $item->month]." ".$item->year.")";
-
-        }
-        
-        return $item;
-     });
-
-      $config_divida = DB::table("config_divida_instituicao")
-     ->where("status","ativo")
-     ->whereNull("deleted_at")
-     ->select(["qtd_divida","dias_exececao"])
-     ->first();
-     
-    
-     $dividas = collect($payments)->groupBy("status")->map(function($item,$key) use ($config_divida){ 
-
-         $i = null;
-    
-         if($key=="pending"){
-             foreach ($item as $mensalidade) {
-                 if(isset($mensalidade->year) && ($mensalidade->year>0) ){
-                     $hoje = Carbon::create(date("Y-m-d"));
-                     $limite = Carbon::create($mensalidade->year."-".$mensalidade->month."-".$config_divida->dias_exececao);
-                     if($hoje>=$limite){ 
-                         ++$i;
-                     }
-                 }
-             }
-         }
-        
-         if($config_divida->qtd_divida<$i){
-             return $i;
-         }
-         
-     });
-           
-           return isset($dividas["pending"])?$dividas["pending"]:null;
-
-  }
 
 
     }
