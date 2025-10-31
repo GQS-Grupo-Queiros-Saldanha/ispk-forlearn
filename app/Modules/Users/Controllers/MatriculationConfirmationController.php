@@ -443,7 +443,7 @@ class MatriculationConfirmationController extends Controller
                  return response()->json(array('html' => $view));
              }
              if($studentId == 114){
-                $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
+                $status = $matriculationStrategyConfigUtil->aproveStatus($studentId, $lectiveYearSelected->id);
                
                  $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();
                  return response()->json(array('html' => $view));
