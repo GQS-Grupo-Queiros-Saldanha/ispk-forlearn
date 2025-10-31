@@ -924,7 +924,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
 
         //Regra de aprovação de matrícula por número de cadeiras em atraso
         if(isset($request->years[1])) {
-            $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[$request->years[0]], $user_student);
+            $approved = $this->approvalRules($request->years[0], $request->years[1], $request->disciplines[$request->years[0]], $user_student, 'null');
         } else {
             $approved = $this->approvalRules($request->years[0], $request->years[0], $request->disciplines[$request->years[0]], $user_student, 'code');
         }
