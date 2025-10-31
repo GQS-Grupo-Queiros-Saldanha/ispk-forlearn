@@ -836,20 +836,18 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
             return false;
         }
         //para não explodir
-        $limite = 0;
-        if ($limite){
-            $limit = DB::table('new_olg_grades')
-                ->where('user_id', $user_student->id)
-                ->where('grade', '<', 10)
-                ->count();
+       
+        $limit = DB::table('new_olg_grades')
+            ->where('user_id', $user_student->id)
+            ->where('grade', '<', 10)
+            ->count();
                 
-            if($limit == 0) {
+        if($limit == 0) {
                 $limite = $limit;
-            }
-            else {
+        }else {
                 $limite = (int) $consulta->discipline_in_delay;
             }
-        }
+
         $numeroReprovadas = count($disciplinasReprovadas);
         // Se o número de cadeiras reprovadas é maior que o limite → reprova
         if ($numeroReprovadas > $limite) {
