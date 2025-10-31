@@ -361,8 +361,7 @@ class MatriculationConfirmationController extends Controller
      
      
      
-    public function ajaxUserData($studentId)
-    {       
+    public function ajaxUserData($studentId){       
      try{
 
        
