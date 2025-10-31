@@ -819,7 +819,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
         if (!$registration) {
             return true;
         }
-        if(!$code ==NULL){
+        if($code=='code'){
             $previosuYear = DB::table('matriculations')->where('user_id', $user_student)->orderBy('course_year', 'desc')->first();
         }
         else{
