@@ -2,7 +2,7 @@
 @section('title', __('Solicitação de Convite'))
 
 @section('page-title')
-    @lang('Marcação de Revisão de Prova')
+    @lang('Solicitação de Convite')
 @endsection
 
 @section('breadcrumb')
@@ -45,9 +45,7 @@
                                 </select>
                             </div>
                         </div>
-                        
                     </div>
-
                 </div>
                 <hr>
                 <div class="float-right">
