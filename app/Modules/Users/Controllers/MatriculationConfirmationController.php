@@ -412,9 +412,8 @@ class MatriculationConfirmationController extends Controller
            
 
 
-         if (empty($studentInfo)) {
-            // $studentId=1888;
-            
+        if (empty($studentInfo)) {
+            // $studentId=1888; 
            $data=$this->equivalence_Student($studentId,$lectiveYearSelected);
            Log::info("Equivalência", ['data' => $data,'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected]);
                             
@@ -439,26 +438,25 @@ class MatriculationConfirmationController extends Controller
 
             
            $studentInfo = User::where('users.id', $studentId)
-                    ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
-                    ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
-                    ->leftJoin('courses_translations as ct', function ($join) {
-                        $join->on('ct.courses_id', '=', 'courses.id');
-                        $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                        $join->on('ct.active', '=', DB::raw(true));
-                    })
-                    ->join('matriculations', 'matriculations.user_id', '=', 'users.id')
-                    ->select(['matriculations.course_year as year','courses.id as course_id','courses.code as code'])
-                    ->firstOrFail();
+            ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
+            ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
+            ->leftJoin('courses_translations as ct', function ($join) {
+                $join->on('ct.courses_id', '=', 'courses.id');
+                $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                $join->on('ct.active', '=', DB::raw(true));
+            })
+            ->join('matriculations', 'matriculations.user_id', '=', 'users.id')
+            ->select(['matriculations.course_year as year','courses.id as course_id','courses.code as code'])
+            ->firstOrFail();
 
-                    //se o estudante for candidato exibir apenas as disciplinas do 1º ano
-                    //return response()->json($studentInfo);
-                    $status=0;
-                    Log::info('studentInfo: ' . json_encode($studentInfo, JSON_PRETTY_PRINT));
-                    if($studentInfo->hasRole('candidado-a-estudante')) {  
-                        $data = $this->candidato_primeiro($studentInfo);
-                    }
-
+            //se o estudante for candidato exibir apenas as disciplinas do 1º ano
+            //return response()->json($studentInfo);
+            $status=0;
+            Log::info('studentInfo: ' . json_encode($studentInfo, JSON_PRETTY_PRINT));
+            if($studentInfo->hasRole('candidado-a-estudante')) {  
+                $data = $this->candidato_primeiro($studentInfo);
             }
+        }
 
       if ($status==="CE") {
           
@@ -486,19 +484,17 @@ class MatriculationConfirmationController extends Controller
          * 3 - (agrupar por ano) listar todas as disciplinas do plano curricular apenas com as que ja estao no historico
          * verificar se as disciplinas do curso já têm notas ou não.
          */
-         //Pegar ano lectivo corrente.
-            $lectiveYears = LectiveYear::with(['currentTranslation'])
-            ->get();
+         //get correct lective year
+            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
             $currentData = Carbon::now();
             $lectiveYearSelected = DB::table('lective_years')
-               ->where("id",$anoLEctivo)
+                ->where("id",$anoLEctivo)
                 ->first();
                 
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 12;
             $classes = Classes::whereCoursesId($studentInfo->course_id)
-
-            ->where('lective_year_id',$lectiveYearSelected)
-            ->get();
+                ->where('lective_year_id',$lectiveYearSelected)
+                ->get();
 
             $matriculation = Matriculation::whereUserId($studentId)
             ->orderBy('created_at', 'desc')
@@ -507,9 +503,9 @@ class MatriculationConfirmationController extends Controller
 
             //trazer todas as disciplinas (do estudante)  armazenadas no historico
             $disciplinesInOldGrades = DB::table('new_old_grades')
-                                    ->where('user_id', $studentId)
-                                    ->join('disciplines', 'disciplines.id', '=', 'new_old_grades.discipline_id')
-                                    ->get();
+                ->where('user_id', $studentId)
+                ->join('disciplines', 'disciplines.id', '=', 'new_old_grades.discipline_id')
+                ->get();
 
             //armazenar as positivas em uma collection e as negativas noutra
 
@@ -533,34 +529,34 @@ class MatriculationConfirmationController extends Controller
             //trazer todas as disciplinas do historico excepto as com positivas.
 
             $disciplinesReproved = StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
-                                ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
-                                ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
-                                ->join('disciplines_translations as dt', function ($join) {
-                                    $join->on('dt.discipline_id', '=', 'disciplines.id');
-                                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                                    $join->on('dt.active', '=', DB::raw(true));
-                                })
-                                //->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))//array_column($allApprovedDisciplines, 'id')
-                                //->whereNotIn('disciplines.id', $disciplinesWithPositiveGrade)
-                                ->whereIn('disciplines.id', $disciplinesWithNegativeGrade)
-                                ->where('study_plans_has_disciplines.years', '<=', $matriculation->course_year)
-                                ->get()
-                                ->groupBy('years');
+                ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
+                ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'disciplines.id');
+                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('dt.active', '=', DB::raw(true));
+                })
+                //->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))//array_column($allApprovedDisciplines, 'id')
+                //->whereNotIn('disciplines.id', $disciplinesWithPositiveGrade)
+                ->whereIn('disciplines.id', $disciplinesWithNegativeGrade)
+                ->where('study_plans_has_disciplines.years', '<=', $matriculation->course_year)
+                ->get()
+                ->groupBy('years');
 
             $curricularPlanDisciplines = StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
-                                    ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
-                                    ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
-                                    ->join('disciplines_translations as dt', function ($join) {
-                                        $join->on('dt.discipline_id', '=', 'disciplines.id');
-                                        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                                        $join->on('dt.active', '=', DB::raw(true));
-                                        })
-                                    //->whereNotIn('')
-                                    ->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))//array_column($allApprovedDisciplines, 'id')
-                                    //->whereNotIn('disciplines.id', )//array_column($allReprovedDisciplines, 'id')
-                                    ->where('study_plans_has_disciplines.years', '>=', $matriculation->course_year)
-                                    ->get()
-                                    ->groupBy('years');
+                ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
+                ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'disciplines.id');
+                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('dt.active', '=', DB::raw(true));
+                    })
+                //->whereNotIn('')
+                ->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))//array_column($allApprovedDisciplines, 'id')
+                //->whereNotIn('disciplines.id', )//array_column($allReprovedDisciplines, 'id')
+                ->where('study_plans_has_disciplines.years', '>=', $matriculation->course_year)
+                ->get()
+                ->groupBy('years');
 
               //Regras do 5 pontos (saber sobre aprovação ou não)         
               $code_curso=DB::table('courses')->select(['code'])->whereId($studentInfo->course_id)->get();
@@ -574,8 +570,6 @@ class MatriculationConfirmationController extends Controller
               ->where('status',1)
               ->where('lective_year_id',$lectiveYearSelected)
               ->first();
-              
-
             
      
               if($curso_mudanca_status){
@@ -631,7 +625,7 @@ class MatriculationConfirmationController extends Controller
          
          
         
-        // return response()->json($data);
+        return response()->json($data);
         $view = view("Users::confirmations-matriculations.disciplines")->with($data)->render();
 
         return response()->json(array('html' => $view));
