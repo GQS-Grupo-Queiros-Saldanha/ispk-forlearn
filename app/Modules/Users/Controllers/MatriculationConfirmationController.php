@@ -2099,8 +2099,7 @@ public function colocar_emolumento($id_user){
 
 
 
- protected function studentsWithCourseAndMatriculationSelectList()
-    {
+    public function studentsWithCourseAndMatriculationSelectList(){
         
         
         $currentData = Carbon::now();
