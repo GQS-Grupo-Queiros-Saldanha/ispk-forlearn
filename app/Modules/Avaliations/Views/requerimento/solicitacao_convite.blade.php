@@ -133,7 +133,7 @@
                 },
                 body: JSON.stringify({
                     name: document.getElementById('name').value,
-                    type: document.getElementById('type').value
+                    type: document.getElementById('type').value,
                     lective_year: document.getElementById('lective_year').value
                 })
             })
