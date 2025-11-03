@@ -33,6 +33,8 @@ use Toastr;
 use App\Modules\GA\Models\Course;
 use App\Modules\Users\Events\PaidStudentCardEvent;
 use App\Modules\GA\Models\Discipline;
+use App\Modules\Users\Controllers\MatriculationConfirmationController;
+
 class RequerimentoController extends Controller
 {
     /**
