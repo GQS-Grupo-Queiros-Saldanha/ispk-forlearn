@@ -433,7 +433,7 @@ Route::group(
                 
                 //Convite
                 Route::get('/requerimento/solicitacao_convite', [RequerimentoController::class, 'solicitacao_convite'])->name('requerimento.solicitacao_convite');
-                Route::get('/requerimento/create_convite', [RequerimentoController::class, 'create_convite'])->name('requerimento.create_convite');
+                Route:post('/requerimento/create_convite', [RequerimentoController::class, 'create_convite'])->name('requerimento.create_convite');
                 
                 //TFC
                 Route::get('requerimento/create_student_tfc', 'RequerimentoController@createStudentTfc')->name("create_student_tfc");
