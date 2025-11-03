@@ -562,6 +562,7 @@ class RequerimentoController extends Controller
             
             //get estudante
             $estudantes = "";
+            
             //get type convite
             $invitation = DB::table('invitation')
                 ->whereNull('deleted_at')
