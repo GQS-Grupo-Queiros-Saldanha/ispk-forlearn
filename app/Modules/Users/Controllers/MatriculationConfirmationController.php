@@ -132,7 +132,6 @@ class MatriculationConfirmationController extends Controller
             'nextYear' => 1,
             'disciplinesReproved' => $disciplinesReproved
         ];
-        dd($data);
         return  $data;
     }
 
@@ -418,6 +417,7 @@ class MatriculationConfirmationController extends Controller
             // $studentId=1888;
             
            $data=$this->equivalence_Student($studentId,$lectiveYearSelected);
+           Log::info("Equivalência", ['data' => $data,'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected]);
                             
         
      
