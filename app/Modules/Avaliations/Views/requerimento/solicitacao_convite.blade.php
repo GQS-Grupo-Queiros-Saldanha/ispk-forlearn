@@ -13,17 +13,11 @@
 @section('selects')
     <div class="mb-2 mt-3">
         <label for="lective_year">Selecione o ano lectivo</label>
-        <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm" style="width: 100%; !important">
+        <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm" style="width: 100% !important">
             @foreach ($lectiveYears as $lectiveYear)
-                @if ($lectiveYearSelected == $lectiveYear->id)
-                    <option value="{{ $lectiveYear->id }}" selected>
-                        {{ $lectiveYear->currentTranslation->display_name }}
-                    </option>
-                @else
-                    <option value="{{ $lectiveYear->id }}">
-                        {{ $lectiveYear->currentTranslation->display_name }}
-                    </option>
-                @endif
+                <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id ? 'selected' : '' }}>
+                    {{ $lectiveYear->currentTranslation->display_name }}
+                </option>
             @endforeach
         </select>
     </div>
@@ -39,103 +33,97 @@
         @csrf
         <div class="row">
             <div class="col">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group col">
-                                <label>Estudante</label>
-                                <select name="student_id" id="students" class="selectpicker form-control form-control-sm" data-live-search="true">
-                                    <option value="" selected>Selecione o Estudante</option>
-                                    <!--Colocado pelo JS-->
-                                </select>
-                            </div>
-                            <div class="form-group col">
-                                <label>Tipo de Convite</label>
-                                <select name="student_id" id="students" class="selectpicker form-control form-control-sm" data-live-search="true">
-                                    <option value="" selected>Selecione o Tipo de Convite</option>
-                                    @foreach ($invitation as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                             <div class="form-group col">
-                                <label>Quantidade</label>
-                                <input type="number" name="quantidade" class="form-control form-control-sm" min="1" value="1" required>
-                            </div>
+                <div class="card p-3">
+                    <div class="row g-3">
+                        <!-- Estudante e Tipo de Convite lado a lado -->
+                        <div class="col-md-6">
+                            <label>Estudante</label>
+                            <select name="student_id" id="student_id" class="selectpicker form-control form-control-sm" data-live-search="true">
+                                <option value="" selected>Selecione o Estudante</option>
+                                <!-- Populado via JS -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Tipo de Convite</label>
+                            <select name="invitation_type_id" id="invitation_type_id" class="selectpicker form-control form-control-sm" data-live-search="true">
+                                <option value="" selected>Selecione o Tipo de Convite</option>
+                                @foreach ($invitation as $type)
+                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Quantidade</label>
+                            <input type="number" name="quantidade" class="form-control form-control-sm" min="1" value="1" required>
                         </div>
                     </div>
-                </div>
-                <hr>
-                <div class="float-right">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-paper-plane me-1"></i>Requerer
-                    </button>
+
+                    <hr>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane me-1"></i>Requerer
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </form>
-@endsection
-<!-- O Modal -->
-<div id="invitationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
-    background-color:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
-    
-    <div style="background:white; padding:20px; border-radius:8px; width:300px; position:relative;">
-        <h2>Criar Tipo de Convite</h2>
-        <form id="invitationForm">
-            <!-- Input de nome -->
-            <div style="margin-bottom:10px;">
-                <label for="name">Nome:</label><br>
-                <input type="text" id="name" name="name" required>
+
+    <!-- Modal Criar Tipo de Convite -->
+    <div id="invitationModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Criar Tipo de Convite</h5>
+                    <button type="button" class="btn-close" id="closeModalBtn"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="invitationForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome:</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Tipo:</label>
+                            <select id="type" name="type" class="form-select" required>
+                                <option value="">Selecionar</option>
+                                <option value="tipo1">Tipo 1</option>
+                                <option value="tipo2">Tipo 2</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Criar</button>
+                    </form>
+                </div>
             </div>
-
-            <!-- Selector -->
-            <div style="margin-bottom:10px;">
-                <label for="type">Tipo:</label><br>
-                <select id="type" name="type" required>
-                    <option value="">Selecionar</option>
-                    <option value="tipo1">Tipo 1</option>
-                    <option value="tipo2">Tipo 2</option>
-                </select>
-            </div>
-
-            <!-- Botão de criar -->
-            <button type="submit">Criar</button>
-        </form>
-
-        <!-- Botão para fechar modal -->
-        <button id="closeModalBtn" style="position:absolute; top:10px; right:10px;">X</button>
+        </div>
     </div>
-</div>
+@endsection
 
 @section('scripts')
     @parent
-<script>
-    const modal = document.getElementById('invitationModal');
-    const openBtn = document.getElementById('openModalBtn');
-    const closeBtn = document.getElementById('closeModalBtn');
-    const form = document.getElementById('invitationForm');
+    <script>
+        // Modal
+        const modal = new bootstrap.Modal(document.getElementById('invitationModal'));
+        const openBtn = document.getElementById('openModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const form = document.getElementById('invitationForm');
 
-    // Abrir modal
-    openBtn.addEventListener('click', () => {
-        modal.style.display = 'flex';
-    });
+        openBtn.addEventListener('click', () => modal.show());
+        closeBtn.addEventListener('click', () => modal.hide());
 
-    // Fechar modal
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const type = document.getElementById('type').value;
 
-    // Submeter form
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('name').value;
-        const type = document.getElementById('type').value;
-        console.log('Criar convite:', { name, type });
-        // Aqui podes adicionar fetch/AJAX para enviar os dados ao servidor
-        modal.style.display = 'none';
-        form.reset();
-    });
+            console.log('Criar convite:', { name, type });
+            // Aqui podes adicionar fetch/AJAX para enviar os dados ao servidor
 
-</script>
-
+            form.reset();
+            modal.hide();
+        });
+    </script>
 @endsection

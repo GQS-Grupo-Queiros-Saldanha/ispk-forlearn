@@ -153,7 +153,7 @@
                                        <td class="text-left bg2" style="font-size: 14pt; width:425px!important; padding: 6px 8px;">{{$item->student}}</td> 
                                        <td class="text-left bg2" style="width:240px;font-size: 14pt; padding: 6px 8px;">{{$item->email}}</td>  
                                         <td class="text-center bg2" style="font-size: 14pt; padding: 6px 4px;">
-                                            <div style="height: 20px; border-bottom: 1px solid #000; margin: 0 10px;"></div>
+                                            <!--<div style="height: 20px; border-bottom: 1px solid #000; margin: 0 10px;"></div>-->
                                         </td>
                                         <td class="text-center bg2" style="width:70px;font-size: 14pt; padding: 6px 4px;"></td>
                                     

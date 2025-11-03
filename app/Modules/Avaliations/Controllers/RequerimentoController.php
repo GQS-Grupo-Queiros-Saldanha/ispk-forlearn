@@ -581,6 +581,14 @@ class RequerimentoController extends Controller
             return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
+    public function create_convite(Request $request){
+        try {
+            
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+        }
+    }
 
     /*Zona de requerimento de mérito */
     public function merito()
