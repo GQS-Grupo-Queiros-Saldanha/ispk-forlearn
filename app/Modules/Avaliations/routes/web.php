@@ -432,7 +432,7 @@ Route::group(
                 Route::post('/requerimento/solicitacao_solicitacao_defesa_extraordinaria_store', [RequerimentoController::class, 'solicitacao_solicitacao_defesa_extraordinaria_store'])->name('requerimento.solicitacao_solicitacao_defesa_extraordinaria_store');
                 
                 //Convite
-                Route::get('/requerimento/solicitacao_convite', [RequerimentoController::class, 'Convite'])->name('requerimento.solicitacao_convite');
+                Route::get('/requerimento/solicitacao_convite', [RequerimentoController::class, 'solicitacao_convite'])->name('requerimento.solicitacao_convite');
                 
                 //TFC
                 Route::get('requerimento/create_student_tfc', 'RequerimentoController@createStudentTfc')->name("create_student_tfc");
