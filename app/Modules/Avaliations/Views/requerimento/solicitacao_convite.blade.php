@@ -40,7 +40,7 @@
                             <select name="student_id" id="student_id" class="selectpicker form-control form-control-sm" data-live-search="true">
                                 <option value="" selected>Selecione o Estudante</option>
                                 @foreach ($estudantes as $student)
-                                    <option value="{{ $student->id }}">{{ $student->student }}</option>
+                                    <option value="{{ $student->id }}">{{ $student->name }}#{{$studente->number}}({{student->email}})</option>
                                 @endforeach
                             </select>
                         </div>

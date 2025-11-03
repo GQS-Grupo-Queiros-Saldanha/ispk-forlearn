@@ -561,7 +561,7 @@ class RequerimentoController extends Controller
             $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
             
             //get estudante
-            $estudante =  $students = DB::table('users')
+            $estudantes = DB::table('users')
                 // ->whereIn('users.id',$students_ids)
                 ->join('model_has_roles as usuario_cargo', 'users.id', '=', 'usuario_cargo.model_id')
                 ->join('roles as cargo', 'usuario_cargo.role_id', '=', 'cargo.id')
@@ -587,7 +587,7 @@ class RequerimentoController extends Controller
                     'ct.display_name as course',
                     'up.value as name',
                     'users.email as email',
-                    'up0.value as student_number'
+                    'up0.value as number'
                 ])
                 ->orderBy("name")
                 ->distinct('id')
@@ -605,6 +605,7 @@ class RequerimentoController extends Controller
                 ->select(['art.id', 'art.base_value', 'art.code'])
                 ->get();
 
+            
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
@@ -612,6 +613,7 @@ class RequerimentoController extends Controller
                 'invitation' => $invitation,
                 'articleTypes' => $articleTypes
             ];
+
             return view('Avaliations::requerimento.solicitacao_convite')->with($data);
 
         } catch (Exception | Throwable $e) {
