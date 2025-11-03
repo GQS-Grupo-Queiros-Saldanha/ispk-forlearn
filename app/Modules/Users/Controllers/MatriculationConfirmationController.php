@@ -132,6 +132,7 @@ class MatriculationConfirmationController extends Controller
             'nextYear' => 1,
             'disciplinesReproved' => $disciplinesReproved
         ];
+        dd($data);
         return  $data;
     }
 
