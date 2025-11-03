@@ -327,8 +327,7 @@ class MatriculationConfirmationController extends Controller
 
 
 
-    private function Imported_Student($studentId, $anoLEctivo)
-    {
+    private function Imported_Student($studentId, $anoLEctivo){
 
         $imported_studant = User::query()
             ->whereHas('roles', function ($q) {
@@ -422,33 +421,22 @@ class MatriculationConfirmationController extends Controller
         
      
            if($data!=0){
-            
-            // return $data;
+          
                 $view = view("Users::confirmations-matriculations.disciplines_equivalencia")->with($data)->render();
                 return response()->json(array('html' => $view));
             }
 
              // Utilizador importado
-             $data = $this->Imported_Student($studentId, $lectiveYearSelected);
-            Log::info('Importado', [
-                    'data' => $data,
-                    'estudanteID' => $studentId,
-                    'anoLectivo' => $lectiveYearSelected
-                ]);
+            $data = $this->Imported_Student($studentId, $lectiveYearSelected);
+            Log::info('Importado', ['data' => $data,'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected]);
 
 
              if ($data != 0) {
                   $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
-               
                  $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();
                  return response()->json(array('html' => $view));
              }
-             if($studentId == 114){
-                $status = $matriculationStrategyConfigUtil->aproveStatus($studentId, $lectiveYearSelected->id);
-               
-                 $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();
-                 return response()->json(array('html' => $view));
-             }
+
             
            $studentInfo = User::where('users.id', $studentId)
                     ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
@@ -460,17 +448,15 @@ class MatriculationConfirmationController extends Controller
                     })
                     ->join('matriculations', 'matriculations.user_id', '=', 'users.id')
                     ->select(['matriculations.course_year as year','courses.id as course_id','courses.code as code'])
-                  
                     ->firstOrFail();
+
                     //se o estudante for candidato exibir apenas as disciplinas do 1º ano
                     //return response()->json($studentInfo);
-                    $status=0; 
+                    $status=0;
+                    Log::info("studentInfo", ['data' => $studentInfo]); 
                     if($studentInfo->hasRole('candidado-a-estudante')) {  
-                            
                         $data = $this->candidato_primeiro($studentInfo);
-                     // return "Nao é CE1111";
-    
-                     }
+                    }
 
             }
 
