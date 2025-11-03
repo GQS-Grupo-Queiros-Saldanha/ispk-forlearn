@@ -561,7 +561,7 @@ class RequerimentoController extends Controller
             $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
             
             //get estudante
-            $estudante = new MatriculationCormitaionController();
+            $estudante = new MatriculationConfirmationController();
             $estudantes = $estudante->studentsWithCourseAndMatriculationSelectList();
 
             //get type convite
