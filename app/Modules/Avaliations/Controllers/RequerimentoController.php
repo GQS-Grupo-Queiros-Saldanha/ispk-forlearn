@@ -619,10 +619,10 @@ class RequerimentoController extends Controller
     
     public function get_invitation_type($lective_year_id){
         try {
-            
+           
             $invitation = DB::table('invitation')
                 ->whereNull('deleted_at')
-                -where('lective_year', $lective_year_id)
+                ->where('lective_year', $lective_year_id)
                 ->select(['id', 'name', 'article_id'])
                 ->get();
 
