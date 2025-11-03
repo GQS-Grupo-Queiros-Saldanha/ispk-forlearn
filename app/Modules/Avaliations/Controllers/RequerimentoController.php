@@ -561,13 +561,18 @@ class RequerimentoController extends Controller
             $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
             
             //get estudante
-            $estudantes = None;
+            $estudantes = "";
             //get type convite
-            $invitation = None;
+            $invitation = DB::table('invitation')
+                ->whereNull('deleted_at')
+                ->select(['id', 'name'])
+                ->get();
 
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
+                'estudantes' => $estudantes,
+                'invitation' => $invitation
             ];
             return view('Avaliations::requerimento.solicitacao_convite')->with($data);
 
