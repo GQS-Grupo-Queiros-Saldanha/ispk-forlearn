@@ -12,7 +12,7 @@
 
 @section('selects')
     <div class="mb-2 mt-3">
-        <label for="lective_year" class="form-label">Selecione o ano lectivo</label>
+        <label for="lective_year">Selecione o ano lectivo</label>
         <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm" style="width: 100%; !important">
             @foreach ($lectiveYears as $lectiveYear)
                 @if ($lectiveYearSelected == $lectiveYear->id)
@@ -27,10 +27,8 @@
             @endforeach
         </select>
     </div>
-    
-    <!-- Botão Criar Tipo de Convite movido para aqui -->
     <div class="mb-3">
-        <button type="button" class="btn btn-outline-primary btn-sm">
+        <button type="button" class="btn btn-success btn-sm" id="create_tipo_convite_btn">
             <i class="fas fa-plus-circle me-1"></i>Criar tipo de convite
         </button>
     </div>
@@ -42,38 +40,31 @@
         <div class="row">
             <div class="col">
                 <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="students" class="form-label">Estudante</label>
-                                    <select name="student_id" id="students" class="selectpicker form-control form-control-sm" data-live-search="true">
-                                        <option value="" selected>Selecione o Estudante</option>
-                                        <!--Colocado pelo JS-->
-                                    </select>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="invite_type" class="form-label">Tipo de Convite</label>
-                                    <select name="invite_type" id="invite_type" class="selectpicker form-control form-control-sm" data-live-search="true">
-                                        <option value="" selected>Selecione o Tipo de Convite</option>
-                                        <!--Colocado pelo JS-->
-                                    </select>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="quantity" class="form-label">Quantidade</label>
-                                    <select name="quantity" id="quantity" class="selectpicker form-control form-control-sm" data-live-search="true">
-                                        <option value="" selected>Selecione a quantidade</option>
-                                        <!--Colocado pelo JS-->
-                                    </select>
-                                </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group col">
+                                <label>Estudante</label>
+                                <select name="student_id" id="students" class="selectpicker form-control form-control-sm" data-live-search="true">
+                                    <option value="" selected>Selecione o Estudante</option>
+                                    <!--Colocado pelo JS-->
+                                </select>
+                            </div>
+                            <div class="form-group col">
+                                <label>Tipo de Convite</label>
+                                <select name="student_id" id="students" class="selectpicker form-control form-control-sm" data-live-search="true">
+                                    <option value="" selected>Selecione o Tipo de Convite</option>
+                                    <!--Colocado pelo JS-->
+                                </select>
+                            </div>
+                             <div class="form-group col">
+                                <label>Quantidade</label>
+                                <input type="number" name="quantidade" class="form-control form-control-sm" min="1" value="1" required>
                             </div>
                         </div>
                     </div>
                 </div>
-                
                 <hr>
-                
-                <div class="float-end">
+                <div class="float-right">
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-paper-plane me-1"></i>Requerer
                     </button>
@@ -81,11 +72,13 @@
             </div>
         </div>
     </form>
+  
 @endsection
 
 @section('scripts')
     @parent
 <script>
-    // Scripts podem ser adicionados aqui posteriormente
+
 </script>
+
 @endsection

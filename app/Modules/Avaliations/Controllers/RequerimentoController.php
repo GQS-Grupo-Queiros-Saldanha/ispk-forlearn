@@ -559,6 +559,12 @@ class RequerimentoController extends Controller
             $currentData = Carbon::now();
             $lectiveYearSelected = DB::table('lective_years')->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')->first();
             $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
+            
+            //get estudante
+            $estudantes = None;
+            //get type convite
+            $invitation = None;
+
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
