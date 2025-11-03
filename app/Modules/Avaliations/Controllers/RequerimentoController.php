@@ -583,7 +583,7 @@ class RequerimentoController extends Controller
                 ->whereNull('users.deleted_at')
                 ->whereNull('users.deleted_by')
                 ->select([
-                    'users.id as user_id',
+                    'users.id as id',
                     'ct.display_name as course',
                     'up.value as name',
                     'users.email as email',
