@@ -67,6 +67,7 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" name="lective_year" id="lective_year" value="{{ $lectiveYearSelected }}">
     </form>
 
     <!-- Modal Criar Tipo de Convite -->
