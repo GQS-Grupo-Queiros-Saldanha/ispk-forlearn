@@ -625,7 +625,7 @@ class MatriculationConfirmationController extends Controller
          
          
         
-        Log::info('studentInfo: ' . json_encode($data, JSON_PRETTY_PRINT));
+        Log::info('ReturnedData: ' . json_encode($data, JSON_PRETTY_PRINT));
         $view = view("Users::confirmations-matriculations.disciplines")->with($data)->render();
 
         return response()->json(array('html' => $view));
