@@ -149,16 +149,20 @@
                 .then(response => response.json())
                 .then(data => {
                     const invitationSelect = document.getElementById('invitation_type_id');
+                    invitationSelect.innerHTML = '<option value="" selected>Selecione o Tipo de Convite</option>';
 
-                    data.forEach(item => 
-                        invitationSelect.innerHTML = '<option value="${item.article_id}" selected>${item.name}</option>';
-                        invitationSelect.appendChild(invitationSelect);
-                    );
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.article_id;
+                        option.textContent = item.name;
+                        invitationSelect.appendChild(option);
+                    });
 
                     // Atualiza o selectpicker
                     $('.selectpicker').selectpicker('refresh');
                 })
                 .catch(error => console.error('Erro ao carregar tipos de convite:', error));
         });
+
     </script>
 @endsection

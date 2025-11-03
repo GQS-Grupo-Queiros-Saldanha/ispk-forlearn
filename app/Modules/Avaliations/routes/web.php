@@ -434,7 +434,7 @@ Route::group(
                 //Convite
                 Route::get('/requerimento/solicitacao_convite', [RequerimentoController::class, 'solicitacao_convite'])->name('requerimento.solicitacao_convite');
                 Route::post('/requerimento/create_convite', [RequerimentoController::class, 'create_convite'])->name('requerimento.create_convite');
-                Route::get('/requerimento/get_convite/{lective_year_id}', [RequerimentoController::class, 'create_convite'])->name('requerimento.get_convite');
+                Route::get('/requerimento/get_convite/{lective_year_id}', [RequerimentoController::class, 'get_invitation_type'])->name('requerimento.get_convite');
                 Route::post('/requerimento/solicitacao_convite_store', [RequerimentoController::class, 'solicitacao_convite_store'])->name('requerimento.solicitacao_convite_store');
                 
                 //TFC
