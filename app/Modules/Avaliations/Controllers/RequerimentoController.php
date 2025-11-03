@@ -593,11 +593,7 @@ class RequerimentoController extends Controller
                 ->distinct('id')
                 ->get();
 
-            //get type convite
-            $invitation = DB::table('invitation')
-                ->whereNull('deleted_at')
-                ->select(['id', 'name', 'article_id'])
-                ->get();
+           
             //get article type
             $articleTypes = DB::table('articles as art')
                 ->where('art.id_category', 19)
@@ -622,6 +618,23 @@ class RequerimentoController extends Controller
         }
     }
     
+    public function get_invitation_type($lective_year_id){
+        try {
+            
+            $invitation = DB::table('invitation')
+                ->whereNull('deleted_at')
+                -where('lective_year', $lective_year_id)
+                ->select(['id', 'name', 'article_id'])
+                ->get();
+
+            return response()->json($invitation);
+
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return response()->json(['error' => 'Failed to fetch invitation'], 500);
+        }
+    }
+
     public function create_convite(Request $request){
         try {
             // Validação mínima

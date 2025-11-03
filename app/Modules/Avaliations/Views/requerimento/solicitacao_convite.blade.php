@@ -48,9 +48,7 @@
                             <label>Tipo de Convite</label>
                             <select name="invitation_type_id" id="invitation_type_id" class="selectpicker form-control form-control-sm" data-live-search="true">
                                 <option value="" selected>Selecione o Tipo de Convite</option>
-                                @foreach ($invitation as $type)
-                                    <option value="{{ $type->article_id }}">{{ $type->name }}</option>
-                                @endforeach
+                                <!--Colocado pelo JS-->
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -89,7 +87,7 @@
                             <select id="type" name="type" class="form-select" required>
                                 <option value="">Selecionar</option>
                                 @foreach ($articleTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->code }}/{{$type->base_value}}Kz</option>
+                                    <option value="{{ $type->id }}">{{ $type->code }}#{{$type->base_value}}Kz </option>
                                 @endforeach                       
                             </select>
                         </div>
@@ -140,6 +138,27 @@
 
             form.reset();
             modal.hide();
+        });
+
+
+        // Atualizar tipos de convite ao mudar o ano lectivo
+        document.getElementById('lective_year').addEventListener('change', function() {
+            const lective_year_id = this.value;
+
+            fetch(`/pt/avaliations/requerimento/get_convite/${lective_year_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const invitationSelect = document.getElementById('invitation_type_id');
+
+                    data.forEach(item => 
+                        invitationSelect.innerHTML = '<option value="${item.article_id}" selected>${item.name}</option>';
+                        invitationSelect.appendChild(invitationSelect);
+                    );
+
+                    // Atualiza o selectpicker
+                    $('.selectpicker').selectpicker('refresh');
+                })
+                .catch(error => console.error('Erro ao carregar tipos de convite:', error));
         });
     </script>
 @endsection
