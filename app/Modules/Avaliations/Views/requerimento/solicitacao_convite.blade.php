@@ -14,6 +14,7 @@
     <div class="mb-2 mt-3">
         <label for="lective_year">Selecione o ano lectivo</label>
         <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm" style="width: 100% !important">
+            <option value="" checked>Selecione o ano lectivo</option>
             @foreach ($lectiveYears as $lectiveYear)
                 <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id ? 'selected' : '' }}>
                     {{ $lectiveYear->currentTranslation->display_name }}
@@ -143,7 +144,8 @@
 
         // Atualizar tipos de convite ao mudar o ano lectivo
         document.getElementById('lective_year').addEventListener('change', function() {
-            const lective_year_id = this.value;
+            const lective_year_id = getElementById('lective_year').value;
+            console.log('Ano lectivo selecionado:', lective_year_id);
 
             fetch(`/pt/avaliations/requerimento/get_convite/${lective_year_id}`)
                 .then(response => response.json())
