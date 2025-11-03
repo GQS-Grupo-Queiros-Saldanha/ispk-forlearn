@@ -561,8 +561,9 @@ class RequerimentoController extends Controller
             $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
             
             //get estudante
-            $estudantes = "";
-            
+            $estudante = new MatriculationCormitaionController();
+            $estudantes = $estudante->studentsWithCourseAndMatriculationSelectList();
+
             //get type convite
             $invitation = DB::table('invitation')
                 ->whereNull('deleted_at')

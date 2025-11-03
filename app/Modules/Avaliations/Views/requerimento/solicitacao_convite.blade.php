@@ -35,12 +35,13 @@
             <div class="col">
                 <div class="card p-3">
                     <div class="row g-3">
-                        <!-- Estudante e Tipo de Convite lado a lado -->
                         <div class="col-md-6">
                             <label>Estudante</label>
                             <select name="student_id" id="student_id" class="selectpicker form-control form-control-sm" data-live-search="true">
                                 <option value="" selected>Selecione o Estudante</option>
-                                <!-- Populado via JS -->
+                                @foreach ($estudantes as $student)
+                                    <option value="{{ $student->id }}">{{ $student->student }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -52,13 +53,11 @@
                                 @endforeach
                             </select>
                         </div>
-
                         <div class="col-md-3">
                             <label>Quantidade</label>
                             <input type="number" name="quantidade" class="form-control form-control-sm" min="1" value="1" required>
                         </div>
                     </div>
-
                     <hr>
                     <div class="text-end">
                         <button type="submit" class="btn btn-success">
@@ -84,17 +83,15 @@
                             <label for="name" class="form-label">Nome:</label>
                             <input type="text" id="name" name="name" class="form-control" required>
                         </div>
-
                         <div class="mb-3">
                             <label for="type" class="form-label">Tipo:</label>
                             <select id="type" name="type" class="form-select" required>
-                                <option value="">Selecionar</option> 
+                                <option value="">Selecionar</option>
                                 @foreach ($articleTypes as $type)
                                     <option value="{{ $type->id }}">{{ $type->code }}/{{$type->base_value}}Kz</option>
                                 @endforeach                       
                             </select>
                         </div>
-
                         <button type="submit" class="btn btn-success w-100">Criar</button>
                     </form>
                 </div>
@@ -109,7 +106,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Modal
         const modal = new bootstrap.Modal(document.getElementById('invitationModal'));
         const openBtn = document.getElementById('openModalBtn');
         const closeBtn = document.getElementById('closeModalBtn');
@@ -122,25 +118,22 @@
             e.preventDefault();
             const name = document.getElementById('name').value;
             const type = document.getElementById('type').value;
+            const lective_year = document.getElementById('lective_year').value;
 
-            console.log('Criar convite:', { name, type });
-            // Aqui podes adicionar fetch/AJAX para enviar os dados ao servidor
             fetch('/pt/avaliations/requerimento/create_convite', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify({
-                    name: document.getElementById('name').value,
-                    type: document.getElementById('type').value,
-                    lective_year: document.getElementById('lective_year').value
-                })
+                body: JSON.stringify({ name, type, lective_year })
             })
             .then(res => res.json())
             .then(data => {
                 alert(data.success);
-                modal.style.display = 'none';
+
+                // Após adicionar, recarrega a página para atualizar selects e dados
+                window.location.reload();
             })
             .catch(err => console.error(err));
 

@@ -76,7 +76,7 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        {{-- O butão estava aqui --}}
+                                        {{-- O botão estava aqui --}}
                                     </div>
                                 </div>
                                 @if ($action !== 'create')
