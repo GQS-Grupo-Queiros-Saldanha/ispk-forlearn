@@ -88,9 +88,10 @@
                         <div class="mb-3">
                             <label for="type" class="form-label">Tipo:</label>
                             <select id="type" name="type" class="form-select" required>
-                                <option value="">Selecionar</option>
-                                <option value="tipo1">Tipo 1</option>
-                                <option value="tipo2">Tipo 2</option>
+                                <option value="">Selecionar</option> 
+                                @foreach ($articleTypes as $type)
+                                    <option value="{{ $type->id }}">{{ $type->code }}/{{$type->base_value}}Kz</option>
+                                @endforeach                       
                             </select>
                         </div>
 
@@ -104,6 +105,9 @@
 
 @section('scripts')
     @parent
+    <!-- Bootstrap 5 JS (bundle inclui Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         // Modal
         const modal = new bootstrap.Modal(document.getElementById('invitationModal'));
@@ -121,6 +125,24 @@
 
             console.log('Criar convite:', { name, type });
             // Aqui podes adicionar fetch/AJAX para enviar os dados ao servidor
+            fetch('/pt/avaliations/requerimento/create_convite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    name: document.getElementById('name').value,
+                    type: document.getElementById('type').value
+                    lective_year: document.getElementById('lective_year').value
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.success);
+                modal.style.display = 'none';
+            })
+            .catch(err => console.error(err));
 
             form.reset();
             modal.hide();

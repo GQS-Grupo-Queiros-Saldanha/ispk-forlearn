@@ -567,12 +567,19 @@ class RequerimentoController extends Controller
                 ->whereNull('deleted_at')
                 ->select(['id', 'name'])
                 ->get();
+            //get article type
+            $articleTypes = DB::table('articles as art')
+                ->where('art.id_category', 19)
+                ->whereNull('art.deleted_by')
+                ->select(['art.id', 'art.base_value', 'art.code'])
+                ->get();
 
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
                 'estudantes' => $estudantes,
-                'invitation' => $invitation
+                'invitation' => $invitation,
+                'articleTypes' => $articleTypes
             ];
             return view('Avaliations::requerimento.solicitacao_convite')->with($data);
 
@@ -581,14 +588,32 @@ class RequerimentoController extends Controller
             return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
+    
     public function create_convite(Request $request){
         try {
-            
+            // Validação mínima
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'type' => 'required|string|max:255'
+            ]);
+
+            // Inserção
+            $create = DB::table('invitation')->insertGetId([
+                'name' => $request->input('name'),
+                'article_id' => $request->input('type'), 
+                'lective_year' => $request->input('lective_year'),         
+                'created_by' => auth()->user()->id,
+                'created_at' => now()
+            ]);
+
+            return response()->json(['success' => 'Convite criado com sucesso!'], 200);
+
         } catch (Exception | Throwable $e) {
             Log::error($e);
-            return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+            return $request->ajax() ? response()->json(['error' => $e->getMessage()], 500) : abort(500);
         }
     }
+
 
     /*Zona de requerimento de mérito */
     public function merito()
