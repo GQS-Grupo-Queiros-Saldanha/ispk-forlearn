@@ -596,7 +596,7 @@ class RequerimentoController extends Controller
             //get type convite
             $invitation = DB::table('invitation')
                 ->whereNull('deleted_at')
-                ->select(['id', 'name'])
+                ->select(['id', 'name', 'article_id'])
                 ->get();
             //get article type
             $articleTypes = DB::table('articles as art')
@@ -605,7 +605,7 @@ class RequerimentoController extends Controller
                 ->select(['art.id', 'art.base_value', 'art.code'])
                 ->get();
 
-            
+            //return
             $data = [
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
@@ -645,6 +645,81 @@ class RequerimentoController extends Controller
             Log::error($e);
             return $request->ajax() ? response()->json(['error' => $e->getMessage()], 500) : abort(500);
         }
+    }
+
+    public function solicitacao_convite_store(Request $request){
+        
+        try {
+            // Validar os dados recebidos
+            $user_id = request()->input('student_id');
+            $lective_year = request()->input('lective_year');
+            $articletype_id = request()->input('invitation_type_id');
+            $created_by = auth()->user()->id;
+            $quantidade = request()->input('quantidade');
+
+            // Validar se veio ano lectivo
+            if (!$lective_year) {
+                Toastr::error(__('Ano lectivo inválido'), __('toastr.error'));
+                return redirect()->back();
+            }
+
+            $emolumento = DB::table('articles as art')
+                ->where('art.id', $articletype_id)
+                ->select('art.id', 'art.base_value')
+                ->first();
+        
+            if (!$emolumento) {
+                Toastr::error(__('Não foi possível solicitar o emolumento, por favor tente novamente'), __('toastr.error'));
+                return redirect()->back();
+            }
+                        
+            $articleRequestId = DB::table('article_requests')->insertGetId([ 
+                'user_id' => $user_id, 
+                'article_id' => $emolumento->id, 
+                'base_value' => $emolumento->base_value*$quantidade, 
+                //'discipline_id' =>$dicipline_id,
+                'status' => 'pending',
+                'created_by' => $created_by,
+                'created_at' => now(), 
+                'updated_at' => now(), 
+            ]);
+            // Criar uma transação
+            $transaction = DB::table('transactions')->insertGetId([
+                    'type' => 'debit',
+                    'value' => $emolumento->base_value*$quantidade,
+                    'notes' => 'Débito inicial do valor base',
+                    "created_by" => auth()->user()->id,
+                    "created_at" => Carbon::now()
+            ]);
+
+            // Criar article e transações
+            $article_transaction = DB::table('transaction_article_requests')->insertGetId(
+                [
+                    'article_request_id' => $articleRequestId,
+                    'transaction_id' => $transaction,
+                    "value" => $emolumento->base_value*$quantidade,
+                    "created_at" => Carbon::now()
+                ]
+            );
+
+            // Guarda o codigo do documento 
+            $requerimento = DB::table('requerimento')->insertGetId(
+                [
+                    'article_id' => $emolumento->id,
+                    //'codigo_documento' => $this->gerar_codigo_documento(),
+                    'efeito' => 'Solicitação de Convite',
+                    "user_id" => $created_by,
+                    'year' => $lective_year
+                ]
+            );
+
+            Toastr::success(__('Solicitação de convite enviada com sucesso!'), __('toastr.success'));
+            return redirect()->back();
+        }catch (Exception $e) {   
+            Toastr::success(__('Problemas ao solicitar!'), __('toastr.error'));
+            return redirect()->back();
+        }
+
     }
 
 
