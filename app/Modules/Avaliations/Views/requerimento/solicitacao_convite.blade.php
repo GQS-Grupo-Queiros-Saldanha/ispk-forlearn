@@ -14,9 +14,9 @@
     <div class="mb-2 mt-3">
         <label for="lective_year_select">Selecione o ano lectivo</label>
         <select name="lective_year_select" id="lective_year_select" class="selectpicker form-control form-control-sm" style="width: 100% !important">
-            <option value="" checked>Selecione o ano lectivo</option>
+            <option value="" selected>Selecione o ano lectivo</option>
             @foreach ($lectiveYears as $lectiveYear)
-                <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id ? 'selected' : '' }}>
+                <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id }}>
                     {{ $lectiveYear->currentTranslation->display_name }}
                 </option>
             @endforeach
