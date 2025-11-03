@@ -641,77 +641,95 @@ class MatriculationConfirmationController extends Controller
     }
     
     
-/**
- * Verifica aprovação do aluno com base nas disciplinas reprovadas e no curso.
- *
- * @param Collection $disciplinesReproved - Disciplinas reprovadas do aluno, agrupadas por ano.
- * @param int $id_curso - ID do curso do aluno.
- * @return array - Observação com estado, pontos, quantidade de disciplinas e curso.
- */
-    private function verificarAprovacao($disciplinesReproved, $id_curso){
-        // Obter informações do curso
-        $curso = DB::table('courses')->whereId($id_curso)->first();
 
-        // Variáveis de controle
-        $anual_total = 0;
-        $simestral_total = 0;
 
-        // Processar todas as disciplinas reprovadas
-        foreach ($disciplinesReproved as $ano => $disciplinas) {
-            foreach ($disciplinas as $disciplina) {
-                // Extrair o indicador do período da disciplina (penúltimo ou terceiro caractere do código)
-                $periodo = substr($disciplina['code'], -3, 1);
+private function verificarAprovacao($disciplinesReproved,$id_curso){
+        //Pegar o curso 
+         $curso=DB::table('courses')->whereId($id_curso)->get();
+        
+        //Processamento de encontrar as anuais e as simestrais.
+        //variavel global para analizar as cadeiras.
+         $Observacao=[];
+        
+        $resultado=[];
+        $anual=[]; $simestral=[];
+        $reprovadas_estado = $disciplinesReproved->map(function($item,$key) use($disciplinesReproved,$simestral,$anual,$resultado){
+           for ($i=0; $i <count($disciplinesReproved[$key]) ; $i++) { 
+             $periodo=substr($item[$i]['code'],-3, 1);
+             if($periodo=="1" || $periodo=="2"){$simestral[]="S";}
+             else if($periodo=="A"){ $anual[]="A";}  
+         }
+             $resultado['Anual']=count($anual);
+             $resultado['Simestral']=count($simestral);
+             return $resultado;
+         });
+        //Processamento somatório agrupar as anuais e as simestrais
+        $anual_total=0;   
+        $simestral_total=0;   
+        foreach ($reprovadas_estado as $key=>$item ){
+            $anual_total+=$reprovadas_estado[$key]['Anual'];  
+            $simestral_total+=$reprovadas_estado[$key]['Simestral'];  
+        }
 
-                if (in_array($periodo, ['1', '2'])) {
-                    // Disciplinas semestrais
-                    $simestral_total++;
-                } else {
-                    // Considera todas as outras como anuais (inclui "A" ou códigos diferentes)
-                    $anual_total++;
+        //Criar as condições finais possiveis.
+        if($anual_total+$simestral_total >=5){
+
+            $A_pontos=$anual_total*2;
+            return  $Observacao = [
+                        'Obs'=>'regra01',
+                        'confirmacao'=>1,
+                        'qtd_disciplina'=>$anual_total+$simestral_total,
+                        'emolumento'=>'P_normais',
+                        'estado'=> $curso[0]->code =="RI" && $A_pontos+$simestral_total>=5 && $A_pontos+$simestral_total< 7 ? 'aprovado':'reprovado',
+                        'curso'=>$curso[0]->code,
+                        'pontos'=>$A_pontos+$simestral_total,
+                        'atencao'=>"Se as disciplinas em atraso forem >= 5,gerar as 10 propinas e a confirmação de matrícula"
+                    ];
+
+         }
+       else if($anual_total+$simestral_total <=4 & $anual_total+$simestral_total>0 ){
+                    
+         $anual_pontos=$anual_total*2;
+
+        if($anual_pontos > 2 & $simestral_total > 0 ) {
+                    
+                        
+                    return $Observacao = [
+                            'Obs'=>'regra02',
+                            'confirmacao'=>1,
+                            'qtd_disciplina'=>$anual_total+$simestral_total,
+                            'emolumento'=>'inscricao_frenquencia',
+                            'estado'=>$simestral_total+$anual_pontos >=5 ?'com cadeira':'',
+                            'curso'=>$curso[0]->code,
+                            'pontos'=>$simestral_total+$anual_pontos,
+                            'atencao'=>"Se as disciplinas em atraso forem <= 4,gerar emolumentos 'Inscricao por frequencia' e a confirmação de matrícula(Ex: gerar o nº de emolumento por mês ...4 por mês dependendo das disciplinas em atraso) "
+                    ];
+
+               }
+                    
+         else if($simestral_total+$anual_pontos >4){
+                        return  $Observacao = [
+                            'Obs'=>'regra02',
+                            'confirmacao'=>1,
+                            'curso'=>'test',
+                            'qtd_disciplina'=>$anual_total+$simestral_total,
+                            'emolumento'=>'inscricao_frenquencia',
+                            'estado'=>$simestral_total+$anual_pontos >= 5 ?'com cadeira':'',
+                            'curso'=>$curso[0]->code,
+                            'pontos'=>$simestral_total+$anual_pontos,
+                            'atencao'=>"Se as disciplinas em atraso forem <= 4,gerar emolumentos 'Inscricao por frequencia' e a confirmação de matrícula(Ex: gerar o nº de emolumento por mês ...4 por mês dependendo das disciplinas em atraso) "
+                        ];
                 }
-            }
+
         }
 
-        $total_disciplinas = $anual_total + $simestral_total;
-        $pontos = $anual_total * 2 + $simestral_total; // 2 pontos para anuais, 1 ponto para semestrais
-
-        // Definir observação final
-        if ($total_disciplinas >= 5) {
-            // Caso de muitas reprovações: regra01
-            $estado = ($curso->code == "RI" && $pontos >= 5 && $pontos < 7) ? 'aprovado' : 'reprovado';
-            $obs = 'regra01';
-            $emolumento = 'P_normais';
-            $atencao = "Se as disciplinas em atraso forem >= 5, gerar as 10 propinas e a confirmação de matrícula";
-        } elseif ($total_disciplinas > 0 && $total_disciplinas <= 4) {
-            // Caso de algumas reprovações: regra02
-            if ($pontos >= 5) {
-                $estado = 'com cadeira';
-            } else {
-                $estado = '';
-            }
-            $obs = 'regra02';
-            $emolumento = 'inscricao_frequencia';
-            $atencao = "Se as disciplinas em atraso forem <= 4, gerar emolumentos 'Inscrição por frequência' e a confirmação de matrícula";
-        } else {
-            // Sem reprovações
-            $estado = 'FOI';
-            $obs = 'normal';
-            $emolumento = '';
-            $atencao = '';
-            $pontos = 0;
-        }
-
-        return [
-            'Obs' => $obs,
-            'confirmacao' => 1,
-            'qtd_disciplina' => $total_disciplinas,
-            'emolumento' => $emolumento,
-            'estado' => $estado,
-            'curso' => $curso->code,
-            'pontos' => $pontos,
-            'atencao' => $atencao
-        ];
-    }
+         return $Observacao = [
+                    'Obs'=>'normal',
+                    'curso'=>$curso[0]->code,
+                    'pontos'=>isset($simestral_total)+isset($anual_pontos)??0,
+                    'estado'=>"FOI"
+                   ];
+}
 
 
 
@@ -2099,7 +2117,8 @@ public function colocar_emolumento($id_user){
 
 
 
-    public function studentsWithCourseAndMatriculationSelectList(){
+ protected function studentsWithCourseAndMatriculationSelectList()
+    {
         
         
         $currentData = Carbon::now();

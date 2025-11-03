@@ -33,8 +33,6 @@ use Toastr;
 use App\Modules\GA\Models\Course;
 use App\Modules\Users\Events\PaidStudentCardEvent;
 use App\Modules\GA\Models\Discipline;
-use App\Modules\Users\Controllers\MatriculationConfirmationController;
-
 class RequerimentoController extends Controller
 {
     /**
@@ -42,8 +40,7 @@ class RequerimentoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(){
         try {
 
             $lectiveYears = LectiveYear::with(['currentTranslation'])
@@ -69,6 +66,214 @@ class RequerimentoController extends Controller
             return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
+
+    protected function studentsWithCourseAndMatriculationSelectList(){
+        
+        
+        $currentData = Carbon::now();
+        $lectiveYearSelected = DB::table('lective_years')
+          ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
+          ->first();
+          
+        $lectiveYearSelected = $lectiveYearSelected ?? DB::table('lective_years')
+          ->where('lective_years.id', 9)
+          ->first();
+           
+
+          
+ 
+        $Id_Matriculados_confirmados = DB::table('matriculations as mat')
+         ->join('users','mat.user_id','=','users.id')
+         ->select(['mat.id as id_matricula','users.id','users.name'])
+         ->whereNull('mat.deleted_at')
+         ->where('mat.lective_year', $lectiveYearSelected->id)
+         ->where('mat.course_year','!=',1)
+         ->get()
+         ->map(function ($user) {
+             return ['id' => $user->id];
+         });
+ 
+  
+      
+        $users = User::whereHas('roles', function ($q) {
+             $q->whereIn('id', [6]);
+         })
+             ->whereHas('courses')
+             ->whereHas('matriculation')
+             // ->doesntHave('matriculation')
+             ->with(['parameters' => function ($q) {
+              $q->whereIn('code', ['nome', 'n_mecanografico']);
+             }])
+            //  ->whereNotin('users.id',$Id_Matriculados_confirmados)
+             ->select(['users.*'])
+             ->get()
+             ->map(function ($user) {
+                 $displayName = $this->formatUserName($user);
+                 return ['id' => $user->id, 'display_name' => $displayName];
+             });
+ 
+            
+        //trazer com notas de exame de acesso.
+        $candidates = User::whereHas('roles', function ($q) {
+                $q->whereIn('id', [15]);
+            })
+                // ->whereHas('courses')
+                // //->whereHas('matriculation')
+                    ->with(['parameters' => function ($q) {
+                    $q->whereIn('code', ['nome', 'n_mecanografico']);
+                    }])
+                ->whereBetween('users.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                ->leftJoin('user_candidate as u_cand' ,'u_cand.user_id','users.id')
+                ->leftJoin('article_requests', 'article_requests.user_id', '=', 'u_cand.user_id')
+                ->join('exame_candidates_status as status_exame_candidate' ,'status_exame_candidate.user_id','users.id')
+                ->where('article_requests.status','total')
+                ->where('status_exame_candidate.status' ,'1')
+                ->select(['u_cand.*','users.*'])
+                ->get()
+                ->map(function ($user) {
+                    $displayName = $this->formatUserName($user);
+                    return ['id' => $user->id, 'display_name' => $displayName];
+                });
+    
+          
+              //Estudantes por Equivalência
+
+              $equivalente_studant = User::whereHas('roles', function ($q) {
+                    $q->whereIn('id', [6]);
+                })
+                    ->whereHas('courses')
+                    ->whereDoesntHave('matriculation')
+                    ->with(['parameters' => function ($q) {
+                      $q->whereIn('code', ['nome', 'n_mecanografico']);
+                    }])
+                    
+                    ->join('tb_transference_studant as transf' ,'transf.user_id','users.id')
+                    ->leftJoin('article_requests', 'article_requests.user_id', '=', 'transf.user_id')
+                    ->where('article_requests.status','total')
+                    
+                    ->where('transf.type_transference',1)
+                    ->where('transf.status_disc',1)
+
+                    ->select(['transf.*','users.*'])
+                    ->get()
+                    ->map(function ($user) {
+                        $displayName = $this->formatUserName($user);
+                        return ['id' => $user->id, 'display_name' => $displayName];
+                    });
+                    
+                    //Importados estudantes
+                  $StudentImported = User::whereHas('roles', function ($q) {
+                        $q->whereIn('id', [6]);
+                    })
+            
+                        ->whereHas('courses')
+                        ->whereDoesntHave('matriculation')
+                        ->with(['parameters' => function ($q) {
+                            $q->whereIn('code', ['nome', 'n_mecanografico']);
+                        }])
+            
+                        ->join('Import_data_forlearn as imp', 'imp.id_user', 'users.id')
+                        ->join('new_old_grades as percurso', 'percurso.user_id', 'users.id')
+                        ->where('imp.type_user', 1)
+            
+                        ->select(['imp.*', 'users.*'])
+                        ->distinct()
+                        ->get()
+                        ->map(function ($user) {
+                            $displayName = $this->formatUserName($user);
+                            return ['id' => $user->id, 'display_name' => $displayName];
+                        });
+
+                        $usuarios = collect();
+
+                        if (!$users->isEmpty()) {
+                            $usuarios = $usuarios->concat($users);
+                        }
+                        
+                        if (!$candidates->isEmpty()) {
+                            $usuarios = $usuarios->concat($candidates);
+                        }
+
+                        if (!$StudentImported->isEmpty()) {
+                            $usuarios = $usuarios->concat($StudentImported);
+                        }
+                        
+            
+            
+        
+          
+
+
+        return $usuarios->sortBy(function ($item) {
+            return strtr(
+                utf8_decode($item['display_name']),
+                utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'),
+                'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY'
+            );
+        });
+        
+        
+          
+        
+    }
+
+
+    protected function formatUserName($user)
+    {   
+
+        $fullNameParameter = $user->parameters->firstWhere('code', 'nome');
+        $fullName = $fullNameParameter && $fullNameParameter->pivot->value ?
+        $fullNameParameter->pivot->value : $user->name;
+        //Pegar o número de candidado ao estudante CE 
+        
+        $outher_number= $user->code ? $user->code: "000";
+
+        $studentNumberParameter = $user->parameters->firstWhere('code', 'n_mecanografico');
+        $studentNumber = $studentNumberParameter && $studentNumberParameter->pivot->value ?
+        $studentNumberParameter->pivot->value :$outher_number ;
+        //  
+        return "$fullName #$studentNumber ($user->email)";
+    }               
+
+
+
+
+
+    private function changeState($type, $userId, $maxSelectedYear, $courseID)
+    {
+        if ($type == "STORE") {
+            //Avaliar apenas se ele esta a ser matriculado no ultimo ano do curso - se estiver a ser matriculado, mudar o estado para finalista
+            //$yearsMatriculated = Matriculation::whereUserId($userId)->get();
+            $maxCourseYear = Course::whereId($courseID)->firstOrFail();
+
+            //se o ano em que ele esta matriculado for igual ao maior do curso. (ex: se estiver no 5 ano e o curso tem 5 anos.)
+            if ($maxCourseYear->duration_value == $maxSelectedYear) {
+                UserState::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['state_id' => 19, 'courses_id' => null] //19 => Finalista
+                );
+                UserStateHistoric::create([
+                                    'user_id' => $userId,
+                                    'state_id' => 19
+                                ]);
+            } 
+        } elseif ($type == "CHANGE") {
+            $user_state = UserState::whereUserId($userId)->first();
+
+            if (!$user_state == null && $user_state->state_id == 9) {
+                UserState::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['state_id' => 7]
+                );
+                UserStateHistoric::create([
+                        'user_id' => $userId,
+                        'state_id' => 7
+                    ]);
+                }
+            }
+        }
+    }
+
     /*Esta zona é para a solicitação de revisão de Prova!*/
     public function solicitacao_revisao_prova(){
         try {
@@ -563,8 +768,7 @@ class RequerimentoController extends Controller
             $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
             
             //get estudante
-            $estudante = new MatriculationConfirmationController();
-            $estudantes = $estudante->studentsWithCourseAndMatriculationSelectList();
+            $estudante = $this->;
 
             //get type convite
             $invitation = DB::table('invitation')
