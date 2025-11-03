@@ -551,8 +551,27 @@ class RequerimentoController extends Controller
     }
     /*Esta zona é para a solicitação de Defesa extraordinaria!*/
 
+    /*The zone of convite*/
+    public function solicitacao_convite(){
+        try {
+            
+            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
+            $currentData = Carbon::now();
+            $lectiveYearSelected = DB::table('lective_years')->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')->first();
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
+            $data = [
+                'lectiveYearSelected' => $lectiveYearSelected,
+                'lectiveYears' => $lectiveYears,
+            ];
+            return view('Avaliations::requerimento.solicitacao_convite')->with($data);
 
+        } catch (Exception | Throwable $e) {
+            Log::error($e);
+            return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+        }
+    }
 
+    /*Zona de requerimento de mérito */
     public function merito()
     {
         try {
