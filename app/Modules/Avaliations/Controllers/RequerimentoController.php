@@ -606,7 +606,6 @@ class RequerimentoController extends Controller
                 'lectiveYearSelected' => $lectiveYearSelected,
                 'lectiveYears' => $lectiveYears,
                 'estudantes' => $estudantes,
-                'invitation' => $invitation,
                 'articleTypes' => $articleTypes
             ];
 
