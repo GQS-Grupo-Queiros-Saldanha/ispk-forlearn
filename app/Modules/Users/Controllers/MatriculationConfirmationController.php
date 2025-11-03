@@ -453,7 +453,7 @@ class MatriculationConfirmationController extends Controller
                     //se o estudante for candidato exibir apenas as disciplinas do 1º ano
                     //return response()->json($studentInfo);
                     $status=0;
-                    Log::info("studentInfo", ['data' => $studentInfo]); 
+                    Log::info('studentInfo: ' . json_encode($studentInfo, JSON_PRETTY_PRINT));
                     if($studentInfo->hasRole('candidado-a-estudante')) {  
                         $data = $this->candidato_primeiro($studentInfo);
                     }
