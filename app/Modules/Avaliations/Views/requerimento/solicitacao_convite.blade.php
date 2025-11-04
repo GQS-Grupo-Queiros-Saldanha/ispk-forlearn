@@ -151,19 +151,25 @@
             .then(response => response.json())
             .then(data => {
                 const invitationSelect = document.getElementById('invitation_type_id');
-
-                // limpa o select antes de adicionar
                 invitationSelect.innerHTML = '';
 
-                if (data) {
-                    // adiciona o novo option via template string
-                    invitationSelect.innerHTML = `<option value="${data.id}" selected>${data.name}</option>`;
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.name;
+                        invitationSelect.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.textContent = 'Nenhum tipo de convite disponível';
+                    invitationSelect.appendChild(option);
                 }
 
-                // Atualiza o selectpicker
                 $('.selectpicker').selectpicker('refresh');
             })
             .catch(error => console.error('Erro ao carregar tipos de convite:', error));
+
         }
 
         // --- Chama a função ao mudar o ano ---
