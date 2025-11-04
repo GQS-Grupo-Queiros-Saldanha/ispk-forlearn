@@ -48,7 +48,6 @@
                         <div class="col-md-6">
                             <label>Tipo de Convite</label>
                             <select name="invitation_type_id" id="invitation_type_id" class="selectpicker form-control form-control-sm" data-live-search="true">
-                                <option value="" selected>Selecione o Tipo de Convite</option>
                                 <!--Colocado pelo JS-->
                             </select>
                         </div>
@@ -144,26 +143,28 @@
 
         // Atualizar tipos de convite ao mudar o ano lectivo
         document.getElementById('lective_year_select').addEventListener('change', function() {
-            const lective_year_id = this.value;
-            console.log('Ano lectivo selecionado:', lective_year_id);
+        const lective_year_id = this.value;
+        console.log('Ano lectivo selecionado:', lective_year_id);
 
-            fetch(`/pt/avaliations/requerimento/get_convite/${lective_year_id}`)
-                .then(response => response.json())
-                .then(data => {
-                    const invitationSelect = document.getElementById('invitation_type_id');
+        fetch(`/pt/avaliations/requerimento/get_convite/${lective_year_id}`)
+            .then(response => response.json())
+            .then(data => {
+                const invitationSelect = document.getElementById('invitation_type_id');
 
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.id;
-                        option.textContent = item.name;
-                        invitationSelect.appendChild(option);
-                    });
+                // limpa o select antes de adicionar
+                invitationSelect.innerHTML = '';
 
-                    // Atualiza o selectpicker
-                    $('.selectpicker').selectpicker('refresh');
-                })
-                .catch(error => console.error('Erro ao carregar tipos de convite:', error));
-        });
+                if (data) {
+                    // adiciona o novo option via template string
+                    invitationSelect.innerHTML = `<option value="${data.id}" selected>${data.name}</option>`;
+                }
+
+                // Atualiza o selectpicker
+                $('.selectpicker').selectpicker('refresh');
+            })
+            .catch(error => console.error('Erro ao carregar tipos de convite:', error));
+    });
+
 
     </script>
 @endsection
