@@ -15,7 +15,7 @@
         <label for="lective_year_select">Selecione o ano lectivo</label>
         <select name="lective_year_select" id="lective_year_select" class="selectpicker form-control form-control-sm" style="width: 100% !important">
             @foreach ($lectiveYears as $lectiveYear)
-                <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id }} selected>
+                <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id ? 'selected' : '' }}>
                     {{ $lectiveYear->currentTranslation->display_name }}
                 </option>
             @endforeach
@@ -44,12 +44,10 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label>Tipo de Convite</label>
-                            <select name="invitation_type_id" id="invitation_type_id" class="selectpicker form-control form-control-sm d-none" data-live-search="true">
-                                <!--Colocado pelo JS-->
-                            </select>
-                        </div>
+
+                        <!-- Tipo de Convite Oculto -->
+                        <input type="hidden" name="invitation_type_id" id="invitation_type_id">
+
                         <div class="col-md-3">
                             <label>Quantidade</label>
                             <input type="number" name="quantidade" class="form-control form-control-sm" min="1" value="1" required>
@@ -100,7 +98,6 @@
 
 @section('scripts')
     @parent
-    <!-- Bootstrap 5 JS (bundle inclui Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -129,8 +126,6 @@
             .then(res => res.json())
             .then(data => {
                 alert(data.success);
-
-                // Após adicionar, recarrega a página para atualizar selects e dados
                 window.location.reload();
             })
             .catch(err => console.error(err));
@@ -139,51 +134,35 @@
             modal.hide();
         });
 
+        // Função para carregar o convite do ano lectivo
+        function carregarConvitePorAno(lective_year_id) {
+            if (!lective_year_id) return;
 
-        // Atualizar tipos de convite ao mudar o ano lectivo
-       function carregarConvitePorAno(lective_year_id) {
+            fetch(`/pt/avaliations/requerimento/get_convite/${lective_year_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const invitationInput = document.getElementById('invitation_type_id');
 
-        if (!lective_year_id) return; // evita chamadas vazias
-
-        console.log('Ano lectivo selecionado:', lective_year_id);
-
-        fetch(`/pt/avaliations/requerimento/get_convite/${lective_year_id}`)
-            .then(response => response.json())
-            .then(data => {
-                const invitationSelect = document.getElementById('invitation_type_id');
-                invitationSelect.innerHTML = '';
-
-                if (Array.isArray(data) && data.length > 0) {
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.id;
-                        option.textContent = item.name;
-                        invitationSelect.appendChild(option);
-                    });
-                } else {
-                    const option = document.createElement('option');
-                    option.textContent = 'Nenhum tipo de convite disponível';
-                    invitationSelect.appendChild(option);
-                }
-
-                $('.selectpicker').selectpicker('refresh');
-            })
-            .catch(error => console.error('Erro ao carregar tipos de convite:', error));
-
+                    if (Array.isArray(data) && data.length > 0) {
+                        // Pega apenas o primeiro convite
+                        invitationInput.value = data[0].id;
+                    } else {
+                        invitationInput.value = '';
+                    }
+                })
+                .catch(error => console.error('Erro ao carregar tipos de convite:', error));
         }
 
-        // --- Chama a função ao mudar o ano ---
+        // Atualiza convite ao mudar o ano
         document.getElementById('lective_year_select').addEventListener('change', function() {
             const lective_year_id = this.value;
             carregarConvitePorAno(lective_year_id);
         });
 
-        // --- Chama automaticamente ao carregar a página ---
+        // Carrega automaticamente ao iniciar a página
         document.addEventListener('DOMContentLoaded', function() {
             const selectedYear = document.getElementById('lective_year_select').value;
             carregarConvitePorAno(selectedYear);
         });
-
-
     </script>
 @endsection
