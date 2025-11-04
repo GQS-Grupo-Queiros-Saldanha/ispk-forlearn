@@ -625,7 +625,7 @@ class RequerimentoController extends Controller
                 ->whereNull('a.deleted_at')
                 ->where('a.anoLectivo', $lective_year_id)
                 ->whereIn('a.id', [401,402]) // IDs dos tipos de convite
-                ->select(['a.id as id', 'at.display_name as name'])
+                ->select(['a.id as id', 'at.display_name as name', 'a.anoLectivo as lective_year'])
                 ->get();
             return response()->json($invitation);
 
