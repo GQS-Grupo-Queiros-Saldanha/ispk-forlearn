@@ -620,8 +620,8 @@ class RequerimentoController extends Controller
     public function get_invitation_type($lective_year_id){
         try {
            
-            $invitation = DB::table('articles')
-                ->join('article_translations as at', 'articles.id', '=', 'at.article_id')
+            $invitation = DB::table('articles as a')
+                ->join('article_translations as at', 'a.id', '=', 'at.article_id')
                 ->whereNull('deleted_at')
                 ->where('lective_year', $lective_year_id)
                 ->select(['id', 'at.display_name as name'])
