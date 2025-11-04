@@ -14,15 +14,15 @@
     <div class="mb-2 mt-3">
         <label for="lective_year_select">Selecione o ano lectivo</label>
         <select name="lective_year_select" id="lective_year_select" class="selectpicker form-control form-control-sm" style="width: 100% !important">
-            <option value="" selected>Selecione o ano lectivo</option>
+            <option value="" >Selecione o ano lectivo</option>
             @foreach ($lectiveYears as $lectiveYear)
-                <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id }}>
+                <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id }} selected>
                     {{ $lectiveYear->currentTranslation->display_name }}
                 </option>
             @endforeach
         </select>
     </div>
-    <div class="mb-3">
+    <div class="mb-3 d-none">
         <button type="button" class="btn btn-success btn-sm" id="openModalBtn">
             <i class="fas fa-plus-circle me-1"></i>Criar tipo de convite
         </button>
