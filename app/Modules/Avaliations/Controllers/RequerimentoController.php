@@ -624,6 +624,7 @@ class RequerimentoController extends Controller
                 ->join('article_translations as at', 'a.id', '=', 'at.article_id')
                 ->whereNull('a.deleted_at')
                 ->where('a.anoLectivo', $lective_year_id)
+                ->where('at.active', 1)
                 ->whereIn('a.id', [401,402]) // IDs dos tipos de convite
                 ->select(['a.id as id', 'at.display_name as name', 'a.anoLectivo as lective_year'])
                 ->get();
