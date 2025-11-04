@@ -14,9 +14,10 @@
     <div class="mb-2 mt-3">
         <label for="lective_year_select">Selecione o ano lectivo</label>
         <select name="lective_year_select" id="lective_year_select" class="selectpicker form-control form-control-sm" style="width: 100% !important">
-            <option value="" >Selecione o ano lectivo</option>
+            <option value="">Selecione o ano lectivo</option>
             @foreach ($lectiveYears as $lectiveYear)
-                <option value="{{ $lectiveYear->id }}" {{ $lectiveYearSelected == $lectiveYear->id }} selected>
+                <option value="{{ $lectiveYear->id }}" 
+                    {{ $lectiveYearSelected == $lectiveYear->id ? 'selected' : '' }}>
                     {{ $lectiveYear->currentTranslation->display_name }}
                 </option>
             @endforeach
@@ -41,15 +42,15 @@
                             <select name="student_id" id="student_id" class="selectpicker form-control form-control-sm" data-live-search="true">
                                 <option value="" selected>Selecione o Estudante</option>
                                 @foreach ($estudantes as $student)
-                                    <option value="{{ $student->id }}">{{ $student->name }} #{{$student->number}} ( {{$student->email}} )</option>
+                                    <option value="{{ $student->id }}">{{ $student->name }} #{{ $student->number }} ({{ $student->email }})</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-none" id="invitation_type_container">
                             <label>Tipo de Convite</label>
                             <select name="invitation_type_id" id="invitation_type_id" class="selectpicker form-control form-control-sm" data-live-search="true">
                                 <option value="" selected>Selecione o Tipo de Convite</option>
-                                <!--Colocado pelo JS-->
+                                <!-- Preenchido dinamicamente -->
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -88,8 +89,8 @@
                             <select id="type" name="type" class="form-select" required>
                                 <option value="">Selecionar</option>
                                 @foreach ($articleTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->code }}#{{$type->base_value}}Kz </option>
-                                @endforeach                       
+                                    <option value="{{ $type->id }}">{{ $type->code }}#{{ $type->base_value }}Kz</option>
+                                @endforeach
                             </select>
                         </div>
                         <button type="submit" class="btn btn-success w-100">Criar</button>
@@ -102,7 +103,6 @@
 
 @section('scripts')
     @parent
-    <!-- Bootstrap 5 JS (bundle inclui Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -131,8 +131,6 @@
             .then(res => res.json())
             .then(data => {
                 alert(data.success);
-
-                // Após adicionar, recarrega a página para atualizar selects e dados
                 window.location.reload();
             })
             .catch(err => console.error(err));
@@ -141,29 +139,51 @@
             modal.hide();
         });
 
+        // Função para carregar tipos de convite conforme o ano lectivo
+        function carregarTiposConvite(lective_year_id) {
+            if (!lective_year_id) return;
 
-        // Atualizar tipos de convite ao mudar o ano lectivo
-        document.getElementById('lective_year_select').addEventListener('change', function() {
-            const lective_year_id = this.value;
-            console.log('Ano lectivo selecionado:', lective_year_id);
+            const invitationSelect = document.getElementById('invitation_type_id');
+            const container = document.getElementById('invitation_type_container');
+
+            // Limpar opções anteriores
+            invitationSelect.innerHTML = '<option value="" selected>Selecione o Tipo de Convite</option>';
 
             fetch(`/pt/avaliations/requerimento/get_convite/${lective_year_id}`)
                 .then(response => response.json())
                 .then(data => {
-                    const invitationSelect = document.getElementById('invitation_type_id');
+                    if (data && data.length > 0) {
+                        data.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            option.textContent = item.name;
+                            invitationSelect.appendChild(option);
+                        });
 
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.id;
-                        option.textContent = item.name;
-                        invitationSelect.appendChild(option);
-                    });
+                        // Seleciona automaticamente o primeiro tipo disponível
+                        invitationSelect.selectedIndex = 1;
 
-                    // Atualiza o selectpicker
-                    $('.selectpicker').selectpicker('refresh');
+                        // Mostra o campo e atualiza o selectpicker
+                        container.classList.remove('d-none');
+                        $('.selectpicker').selectpicker('refresh');
+                    } else {
+                        container.classList.add('d-none');
+                    }
                 })
                 .catch(error => console.error('Erro ao carregar tipos de convite:', error));
+        }
+
+        // Quando mudar o ano lectivo
+        document.getElementById('lective_year_select').addEventListener('change', function() {
+            const lective_year_id = this.value;
+            document.getElementById('lective_year').value = lective_year_id;
+            carregarTiposConvite(lective_year_id);
         });
 
+        // Ao carregar a página, chamar automaticamente com o ano actual selecionado
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectedYear = document.getElementById('lective_year_select').value;
+            if (selectedYear) carregarTiposConvite(selectedYear);
+        });
     </script>
 @endsection
