@@ -178,6 +178,7 @@
                                     <option value="17">Solicitação de Estágio</option>
                                     <option value="20">Marcação de Revisão de prova</option>
                                     <option value="21">Defesa Extraordinaria</option>
+                                    <option value="22">Convite</option>
 
                                 </select>
                             </div>
