@@ -622,11 +622,10 @@ class RequerimentoController extends Controller
            
             $invitation = DB::table('articles as a')
                 ->join('article_translations as at', 'a.id', '=', 'at.article_id')
-                ->whereNull('deleted_at')
-                ->where('lective_year', $lective_year_id)
+                ->whereNull('a.deleted_at')
+                ->where('a.lective_year', $lective_year_id)
                 ->select(['id', 'at.display_name as name'])
                 ->get();
-
             return response()->json($invitation);
 
         } catch (Exception | Throwable $e) {
