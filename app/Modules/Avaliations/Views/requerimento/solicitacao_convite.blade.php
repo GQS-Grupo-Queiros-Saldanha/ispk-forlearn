@@ -46,7 +46,7 @@
                         </div>
                         <div class="col-md-6">
                             <label>Tipo de Convite</label>
-                            <select name="invitation_type_id" id="invitation_type_id" class="selectpicker form-control form-control-sm" data-live-search="true">
+                            <select name="invitation_type_id" id="invitation_type_id" class="selectpicker form-control form-control-sm d-none" data-live-search="true">
                                 <!--Colocado pelo JS-->
                             </select>
                         </div>
