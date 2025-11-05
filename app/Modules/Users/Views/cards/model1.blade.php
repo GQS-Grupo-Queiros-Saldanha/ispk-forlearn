@@ -87,15 +87,9 @@
             margin-top: 78px;
             margin-left: 107px;
             position: fixed;
-
-            @if (isset($student->photo))
-                background-image: url({{ $student->photo }});
-            @endif
-            background-size: 70px 70px;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-color:white;
+            background-color: white;
         }
+
 
         .logo-verse {
             height: 40px;
@@ -250,7 +244,15 @@
         <div class="card-frent">
             <div class="card-two">
                 <div class="header-card">
-                    <div class="photo-profile"></div>
+                   
+                    <div class="photo-profile">
+                        @if(isset($student->photo))
+                            <img src="{{ $student->photo }}" alt="Foto do estudante" style="width:70px;height:70px;border-radius:2px;">
+                        @else
+                            <img src="{{ public_path('images/sem_foto.png') }}" alt="Sem foto" style="width:70px;height:70px;border-radius:2px;">
+                        @endif
+                    </div>
+
                     <div class="logo"></div>
                     <div class="text-institution">
                         <p style="margin-left:-8px!important">Instituto Superior Politécnico Katangoji</p>
