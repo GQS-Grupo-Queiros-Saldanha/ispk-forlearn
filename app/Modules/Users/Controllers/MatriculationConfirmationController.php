@@ -420,7 +420,6 @@ class MatriculationConfirmationController extends Controller
         
      
            if($data!=0){
-          
                 $view = view("Users::confirmations-matriculations.disciplines_equivalencia")->with($data)->render();
                 return response()->json(array('html' => $view));
             }
@@ -431,12 +430,13 @@ class MatriculationConfirmationController extends Controller
 
 
              if ($data != 0) {
+                Log::info("Função chamada para importado", ['data' => $data,'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected->id]);
                  $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
                  $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();
                  return response()->json(array('html' => $view));
              }
 
-            
+           
            $studentInfo = User::where('users.id', $studentId)
             ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
             ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
