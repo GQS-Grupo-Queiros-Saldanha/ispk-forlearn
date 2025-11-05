@@ -178,9 +178,7 @@ class CardsController extends Controller
 
                     if(!isset($student->card_validity)){
                          //gerar validade 
-                         
-                        event(new PaidStudentCardEvent($student->id_usuario));
-                                              
+                        event(new PaidStudentCardEvent($id));                    
                     }
                     
                     $this->verify_status_cards($student->id);

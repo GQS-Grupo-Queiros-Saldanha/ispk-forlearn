@@ -430,7 +430,7 @@ class MatriculationConfirmationController extends Controller
 
 
              if ($data != 0) {
-                Log::info("Função chamada para importado", ['data' => $data,'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected->id]);
+                 Log::info("Função chamada para importado", ['data' => $data,'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected->id]);
                  $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
                  Log::info('Status retornado de aproveStatus', ['status' => $status]);
                  $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();

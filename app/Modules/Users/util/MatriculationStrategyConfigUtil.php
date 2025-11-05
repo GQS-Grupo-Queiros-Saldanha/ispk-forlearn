@@ -23,7 +23,6 @@ class MatriculationStrategyConfigUtil
         $this->setInstitutionStrategy();
     }
     private  function setInstitutionStrategy()
-
     {
         $strategy = DB::table('matriculation_strategy_config as mtsc')
             ->join('users as u1', 'u1.id', '=', 'mtsc.created_by')
@@ -67,11 +66,6 @@ class MatriculationStrategyConfigUtil
                 return "sem dados activo na estratégia";
         }
     }
-
-
-
-
-
 
 
     private function inspunyl($studant, $lectiveYear)
