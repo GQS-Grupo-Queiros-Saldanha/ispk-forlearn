@@ -28,6 +28,7 @@ use App\Modules\GA\Models\LectiveYear;
 use App\Model\Institution;
 use Toastr;
 use App\Modules\Users\Events\PaidStudentCardEvent;
+use Illuminate\Support\Facades\Log;
 
 class CardsController extends Controller
 {
