@@ -197,9 +197,12 @@ class CardsController extends Controller
             return back();
         }
 
-        $student->photo = str_replace(" ", "%20", 'https://' . $_SERVER['HTTP_HOST'] . '/users/avatar/' . $student->photo);
+       if (isset($student->photo)) {
+            // caminho físico absoluto para DOMPDF
+            $student->photo = public_path('storage/' . $student->photo);
+        }
 
-    
+            
         
           
 
