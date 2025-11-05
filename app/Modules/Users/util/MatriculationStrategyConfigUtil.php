@@ -53,7 +53,7 @@ class MatriculationStrategyConfigUtil
 
     public function aproveStatus($student, $lectiveYear)
     {
-
+        Log::info('Estratégia de matrícula ativa: ' . $this->Strategy_apply);
         switch ($this->Strategy_apply) {
 
             case "inspunyl":
@@ -213,7 +213,7 @@ class MatriculationStrategyConfigUtil
             })
             ->select(['courses.id as course_id'])
             ->first();
-            
+
         if (!$studentInfo) {
             Log::error('studentInfo não encontrado para estudante ID: ' . $studant[0]->id_user);
             return [
