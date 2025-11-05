@@ -193,6 +193,7 @@ class MatriculationStrategyConfigUtil
 
 
     private function ispk($studant, $lectiveYear){
+        Log::info('Iniciando a função ispk para o estudante ID: ' . $studant[0]->id_user);
 
         $rules_matriculation = DB::table('matriculation_aprove_roles_config as aprove')
             ->select(['aprove.*'])
@@ -324,14 +325,14 @@ class MatriculationStrategyConfigUtil
                     'info' => $info ?? ""
 
                 ];
-        Log::info('Resultado da função ispk:', [
-            'estado' => $aproveStatus,
-            'containsReproved' => $containsReproved,
-            'reproved_year' => $reproved_year,
-            'countBadGrade' => $countBadGrade,
-            'DADOS_DISCIPLINA' => $Result,
-            'curricularPlanDisciplines' => $curricularPlanDisciplines_dados,
-        ]);
+            /*Log::info('Resultado da função ispk:', [
+                'estado' => $aproveStatus,
+                'containsReproved' => $containsReproved,
+                'reproved_year' => $reproved_year,
+                'countBadGrade' => $countBadGrade,
+                'DADOS_DISCIPLINA' => $Result,
+                'curricularPlanDisciplines' => $curricularPlanDisciplines_dados,
+            ]);*/
 
         return $data;
     }

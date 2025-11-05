@@ -431,7 +431,7 @@ class MatriculationConfirmationController extends Controller
 
 
              if ($data != 0) {
-                  $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
+                 $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
                  $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();
                  return response()->json(array('html' => $view));
              }
