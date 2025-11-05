@@ -83,121 +83,123 @@ class CardsController extends Controller
 
     public function student_pdf($request)
     {
-        
+        $data = explode(",", $request);
+        $id = $data[0];
+        $model = $data[1];
 
-     
-            
-            $data = explode(",",$request);
-            $id = $data[0];
-            $model = $data[1];
-           
-            
-                $currentData = Carbon::now();
-                    $lectiveYearSelected = DB::table('lective_years')
-                    ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-                    ->first();
-                    
-                $lt = DB::table('lective_year_translations')
-                ->where("lective_years_id",$lectiveYearSelected->id)
-                ->first();
-                
-                
-        
-        $emolumento_confirma_prematricula= $this->pre_matricula_confirma_emolumento($lectiveYearSelected->id);
+        $currentData = Carbon::now();
+
+        // Ano lectivo atual
+        $lectiveYearSelected = DB::table('lective_years')
+            ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
+            ->first();
+
+        if (!$lectiveYearSelected) {
+            Log::warning("Nenhum ano lectivo ativo encontrado em {$currentData}");
+            Toastr::warning(__('Ano lectivo não encontrado.'), __('toastr.warning'));
+            return back();
+        }
+
+        $lt = DB::table('lective_year_translations')
+            ->where("lective_years_id", $lectiveYearSelected->id)
+            ->first();
+
+        // Emolumentos
+        $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYearSelected->id);
         Log::info('Emolumentos para confirmação e pré-matrícula: ' . implode(", ", $emolumento_confirma_prematricula));
-        
-         $student = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
-                    ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
-                    ->leftJoin('users as u2', 'u2.id', '=', 'matriculations.updated_by')
-                    ->leftJoin('users as u3', 'u3.id', '=', 'matriculations.deleted_by')
-                    ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'u0.id')     
-                    ->join('courses_translations as ct', function ($join) {
-                        $join->on('ct.courses_id', '=', 'uc.courses_id');
-                        $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                        $join->on('ct.active', '=', DB::raw(true));
-                    })
 
-                    ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
-                    ->join('classes as cl', function ($join)  {
-                        $join->on('cl.id', '=', 'mc.class_id');
-                        $join->on('mc.matriculation_id', '=', 'matriculations.id');
-                        $join->on('matriculations.course_year', '=', 'cl.year');
-                    })                             
-                                        
+        // Query principal
+        $student = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
+            ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
+            ->leftJoin('users as u2', 'u2.id', '=', 'matriculations.updated_by')
+            ->leftJoin('users as u3', 'u3.id', '=', 'matriculations.deleted_by')
+            ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'u0.id')
+            ->join('courses_translations as ct', function ($join) {
+                $join->on('ct.courses_id', '=', 'uc.courses_id')
+                    ->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()))
+                    ->on('ct.active', '=', DB::raw(true));
+            })
+            ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+            ->join('classes as cl', function ($join) {
+                $join->on('cl.id', '=', 'mc.class_id')
+                    ->on('mc.matriculation_id', '=', 'matriculations.id')
+                    ->on('matriculations.course_year', '=', 'cl.year');
+            })
+            ->leftJoin('user_parameters as u_p', function ($join) {
+                $join->on('u0.id', '=', 'u_p.users_id')
+                    ->where('u_p.parameters_id', 1);
+            })
+            ->leftJoin('user_parameters as picture', function ($join) {
+                $join->on('u0.id', '=', 'picture.users_id')
+                    ->where('picture.parameters_id', 25);
+            })
+            ->leftJoin('user_parameters as up_meca', function ($join) {
+                $join->on('u0.id', '=', 'up_meca.users_id')
+                    ->where('up_meca.parameters_id', 19);
+            })
+            ->leftJoin('user_parameters as up_bi', function ($join) {
+                $join->on('u0.id', '=', 'up_bi.users_id')
+                    ->where('up_bi.parameters_id', 14);
+            })
+            ->leftJoin('article_requests as art_requests', function ($join) use ($emolumento_confirma_prematricula) {
+                $join->on('art_requests.user_id', '=', 'u0.id')
+                    ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)
+                    ->whereNull('art_requests.deleted_by')
+                    ->whereNull('art_requests.deleted_at');
+            })
+            ->leftJoin('card_student_status as card', 'card.matriculation_id', '=', 'matriculations.id')
+            ->select([
+                'matriculations.*',
+                'u0.id as id_usuario',
+                'matriculations.code as code_matricula',
+                'up_meca.value as matricula',
+                'art_requests.status as state',
+                'up_bi.value as n_bi',
+                'cl.display_name as classe',
+                'u_p.value as student',
+                'u0.email as email',
+                'u1.name as criado_por',
+                'u2.name as actualizado_por',
+                'u3.name as deletador_por',
+                'ct.display_name as course',
+                'uc.courses_id as id_course',
+                'picture.value as photo',
+                'card.valido_ate as card_validity'
+            ])
+            ->where('u0.id', $id)
+            ->where('matriculations.lective_year', $lectiveYearSelected->id)
+            ->groupBy('u_p.value')
+            ->distinct('id')
+            ->first();
 
-                    ->leftJoin('user_parameters as u_p', function ($join) {
-                         $join->on('u0.id', '=', 'u_p.users_id')
-                         ->where('u_p.parameters_id', 1);
-                    })
-                    ->leftJoin('user_parameters as picture', function ($join) {
-                         $join->on('u0.id', '=', 'picture.users_id')
-                         ->where('picture.parameters_id', 25);
-                    })
+        // Verificação se encontrou estudante
+        if (!$student) {
+            Log::warning("Nenhum estudante encontrado com ID {$id} e ano lectivo {$lectiveYearSelected->id}");
+            Toastr::warning(__('Estudante não encontrado.'), __('toastr.warning'));
+            return back();
+        }
 
-                    ->leftJoin('user_parameters as up_meca', function ($join) {
-                         $join->on('u0.id','=','up_meca.users_id')
-                         ->where('up_meca.parameters_id', 19);
-                    })
-                    ->leftJoin('user_parameters as up_bi', function ($join) {
-                        $join->on('u0.id','=','up_bi.users_id')
-                        ->where('up_bi.parameters_id', 14);
-                   })
+        Log::info('Gerando cartão para o estudante ID: ' . $student->id_usuario);
 
-                  ->leftJoin('article_requests as art_requests',function ($join) use($emolumento_confirma_prematricula)
-                    {
-                        $join->on('art_requests.user_id','=','u0.id')
-                        ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula);
-                    })
-                    ->leftJoin('card_student_status as card', 'card.matriculation_id', '=', 'matriculations.id')
-                    ->select([
-                        'matriculations.*',
-                        'u0.id as id_usuario',
-                        'matriculations.code as code_matricula',
-                        'up_meca.value as matricula',
-                        'art_requests.status as state' ,
-                        'up_bi.value as n_bi',
-                        'cl.display_name as classe',
-                        'u_p.value as student',
-                        'u0.email as email',
-                        'u1.name as criado_por',
-                        'u2.name as actualizado_por',
-                        'u3.name as deletador_por',
-                        'ct.display_name as course',
-                        //sedrac
-                        'uc.courses_id as id_course',
-                        'picture.value as photo',
-                        'card.valido_ate as card_validity'
-                    ])
-                    ->where("u0.id",$id)
-                    ->where('art_requests.deleted_by', null) 
-                    ->where('art_requests.deleted_at', null)
-                    ->groupBy('u_p.value')
-                    
-                    ->where('matriculations.lective_year', $lectiveYearSelected->id)
-                    
-                    ->distinct('id')
-                    ->first();
-                   Log::info('Gerando cartão para o estudante ID: ' . $student->id_usuario);
+        // Gera validade do cartão se ainda não existir
+        if (!isset($student->card_validity)) {
+            event(new PaidStudentCardEvent($student->id_usuario));
+        }
 
-                    if(!isset($student->card_validity)){
-                         //gerar validade 
-                        event(new PaidStudentCardEvent($student->id_usuario));
-                    
-                    }
-                    if(isset($student->$student->id)){
-                       $this->verify_status_cards($student->id);
-                    }
-                    
-                    if(!isset($student->photo)){
-                        Toastr::warning(__('Foto de perfil do(a) estudante em falta.'), __('toastr.warning'));
-                        return back();
-                    }
-                 
-               
-                 
-                $student->photo = str_replace(" ", "%20",'https://'.$_SERVER['HTTP_HOST'] . '/users/avatar/'.$student->photo);
-        
-                    
+        // Verificação do estado do cartão
+        if (isset($student->id)) {
+            $this->verify_status_cards($student->id);
+        }
+
+        // Foto do estudante
+        if (!isset($student->photo)) {
+            Toastr::warning(__('Foto de perfil do(a) estudante em falta.'), __('toastr.warning'));
+            return back();
+        }
+
+        $student->photo = str_replace(" ", "%20", 'https://' . $_SERVER['HTTP_HOST'] . '/users/avatar/' . $student->photo);
+
+    
         
           
 
