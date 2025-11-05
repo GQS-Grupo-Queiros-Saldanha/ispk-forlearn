@@ -171,11 +171,11 @@ class CardsController extends Controller
                     ->where('art_requests.deleted_at', null)
                     ->groupBy('u_p.value')
                     
-                    ->where('matriculations.lective_year', $lectiveYearSelected->id)
+                    ->where('matriculations.lective_year', $lectiveYearSelected->id "id da busca do estudante", $id)
                     
                     ->distinct('id')
                     ->first();
-                    dd($student);
+                   Log::info('Gerando cartão para o estudante ID: ' . $student->id_usuario);
 
                     if(!isset($student->card_validity)){
                          //gerar validade 
