@@ -178,11 +178,13 @@ class CardsController extends Controller
 
                     if(!isset($student->card_validity)){
                          //gerar validade 
-                        event(new PaidStudentCardEvent($id));                    
+                        event(new PaidStudentCardEvent($student->id_usuario));
+                    
+                    }
+                    if(isset($student->$student->id)){
+                       $this->verify_status_cards($student->id);
                     }
                     
-                    $this->verify_status_cards($student->id);
-                 
                     if(!isset($student->photo)){
                         Toastr::warning(__('Foto de perfil do(a) estudante em falta.'), __('toastr.warning'));
                         return back();
