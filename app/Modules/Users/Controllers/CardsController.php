@@ -167,7 +167,7 @@ class CardsController extends Controller
                 'card.valido_ate as card_validity'
             ])
             ->where('u0.id', $id)
-            ->where('matriculations.lective_year', $lectiveYearSelected->id)
+            //->where('matriculations.lective_year', $lectiveYearSelected->id)
             ->groupBy('u_p.value')
             ->distinct('id')
             ->first();
