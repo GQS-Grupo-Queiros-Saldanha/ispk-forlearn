@@ -62,6 +62,7 @@ class MatriculationStrategyConfigUtil
             case "ispk":
                     return $this->ispk($student, $lectiveYear);
                 break;
+
             default:
                 return "sem dados activo na estratégia";
         }
@@ -212,7 +213,14 @@ class MatriculationStrategyConfigUtil
             })
             ->select(['courses.id as course_id'])
             ->first();
-
+            
+        if (!$studentInfo) {
+            Log::error('studentInfo não encontrado para estudante ID: ' . $studant[0]->id_user);
+            return [
+                'error' => 'studentInfo não encontrado',
+                'student_id' => $studant[0]->id_user
+            ];
+        }
 
         //Turma do estundante
         $classes = Classes::whereCoursesId($studentInfo->course_id)
