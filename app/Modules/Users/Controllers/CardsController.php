@@ -175,7 +175,7 @@ class CardsController extends Controller
                     
                     ->distinct('id')
                     ->first();
-                    
+                    dd($student);
 
                     if(!isset($student->card_validity)){
                          //gerar validade 
