@@ -1418,7 +1418,7 @@ class RequerimentoController extends Controller
                    $art_req = DB::table('articles')
                         ->join('article_translations as traducao', 'traducao.article_id', "=", "articles.id")
                         ->join('article_requests as ar', 'ar.article_id', "=", "articles.id")
-                        ->join("requerimento as rq", "rq.article_id", "=", "ar.id")
+                        ->join("requerimento as rq", "rq.article_id", "=", "articles.id")
                         ->join('users as u0', 'u0.id', "=", "ar.user_id")
                         ->join('user_parameters as up', 'up.users_id', '=', 'u0.id')
                         ->whereBetween('articles.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
