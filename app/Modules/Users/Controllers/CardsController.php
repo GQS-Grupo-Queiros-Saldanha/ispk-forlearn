@@ -103,6 +103,7 @@ class CardsController extends Controller
                 
         
         $emolumento_confirma_prematricula= $this->pre_matricula_confirma_emolumento($lectiveYearSelected->id);
+        Log::info('Emolumentos para confirmação e pré-matrícula: ' . implode(", ", $emolumento_confirma_prematricula));
         
          $student = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
                     ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
