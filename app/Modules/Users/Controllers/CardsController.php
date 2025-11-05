@@ -197,10 +197,13 @@ class CardsController extends Controller
             return back();
         }
 
-       if (isset($student->photo)) {
-            // caminho físico absoluto para DOMPDF
-            $student->photo = public_path('storage/' . $student->photo);
-        }
+      if (isset($student->photo)) {
+    // Caminho absoluto no servidor
+        $student->photo = '/home/ispkforlearn/storage/app/public/attachment/' . $student->photo;
+    } else {
+        $student->photo = public_path('images/sem_foto.png'); // fallback
+    }
+
 
             
         
