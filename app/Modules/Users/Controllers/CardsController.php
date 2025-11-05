@@ -171,7 +171,7 @@ class CardsController extends Controller
                     ->where('art_requests.deleted_at', null)
                     ->groupBy('u_p.value')
                     
-                    ->where('matriculations.lective_year', $lectiveYearSelected->id "id da busca do estudante", $id)
+                    ->where('matriculations.lective_year', $lectiveYearSelected->id ,"id da busca do estudante", $id)
                     
                     ->distinct('id')
                     ->first();
