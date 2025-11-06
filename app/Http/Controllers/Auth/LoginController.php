@@ -83,7 +83,7 @@ class LoginController extends Controller
            // return redirect("https://forlearn.ao?login_invalid=1");
         }
     }
-    public function WhatsappChecked(Request $request)
+    /*public function WhatsappChecked(Request $request)
     {
         
         $userId = auth()->id();
@@ -100,6 +100,6 @@ class LoginController extends Controller
         $ordem = 'exibir';   // porque o utilizador foi encontrado
 
         return \Illuminate\Support\Facades\View::file(base_path('app/Modules/Users/Views/forlearn/criterio.blade.php'), ['id' => $userId, 'ordem' => $ordem]); // Passando o utilizador para a view
-    }    
+    }*/    
     
 }

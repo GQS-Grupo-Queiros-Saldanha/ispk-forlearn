@@ -74,7 +74,7 @@
             margin-left: 5px;
             position: fixed;
             transform: translate(5px, 30px);
-            background-image: url({{ 'https://' . $_SERVER['HTTP_HOST'] . '/storage/' . $institution->logotipo }});
+            background-image: url({{ 'https://ispk.forlearn.ao/pt/instituicao-arquivo/attachment/1723910298_profile_image.png'}});
             background-size: 39px 40px;
             background-repeat: no-repeat;
             background-position: left;
