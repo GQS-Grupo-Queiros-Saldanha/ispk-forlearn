@@ -318,19 +318,19 @@
                                     <p class="data" style="text-transform: none;">
                                         Válido até:<br>
                                         <span class="data-value"> 
-                                            @if($student->card_validity){
+                                            @if($student->card_validity)
                                                 {{ $student->card_validity }}
-                                            }
-                                            @else{
-                                                @if($student->lective_year_card == 9){
+                                            
+                                            @else
+                                                @if($student->lective_year_card == 9)
                                                     2029-07-31
-                                                }@elseif($student->lective_year_card == 11){
+                                                @elseif($student->lective_year_card == 11)
                                                     N/A
-                                                }@else{
+                                                @else
                                                     N/A
-                                                }
                                                 
-                                            }
+                                                @endif
+                                                
                                             @endif
                                             
                                         </span>
