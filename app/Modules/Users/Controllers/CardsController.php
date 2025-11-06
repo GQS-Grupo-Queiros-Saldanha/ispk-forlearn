@@ -164,7 +164,8 @@ class CardsController extends Controller
                 'ct.display_name as course',
                 'uc.courses_id as id_course',
                 'picture.value as photo',
-                'card.valido_ate as card_validity'
+                'card.valido_ate as card_validity',
+                'card.lective_year as lective_year_card',
             ])
             ->where('u0.id', $id)
             //->where('matriculations.lective_year', $lectiveYearSelected->id)
