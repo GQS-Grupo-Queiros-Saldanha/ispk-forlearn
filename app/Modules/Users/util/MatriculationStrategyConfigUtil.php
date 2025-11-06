@@ -83,7 +83,7 @@ class MatriculationStrategyConfigUtil
 
 
         //Pegar dados do TRANSFERIDO 
-        $studentInfo = User::where('users.id', $studant[0]->id_user)
+        $studentInfo = User::where('users.id', $studentId)
             ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
             ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
             ->leftJoin('courses_translations as ct', function ($join) {
@@ -103,12 +103,12 @@ class MatriculationStrategyConfigUtil
 
         //trazer todas as disciplinas (do estudante)  armazenadas no historico
         $disciplinesInOldGrades = DB::table('new_old_grades')
-            ->where('user_id', $studant[0]->id_user)
+            ->where('user_id', $studentId)
             ->join('disciplines', 'disciplines.id', '=', 'new_old_grades.discipline_id')
             ->get();
 
 
-        $matriculation = Matriculation::whereUserId($studant[0]->id_user)
+        $matriculation = Matriculation::whereUserId($studentId)
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -124,7 +124,7 @@ class MatriculationStrategyConfigUtil
             })
             ->select(['disciplines.id', 'new_old_grades.grade', 'dt.display_name', 'study_plans_has_disciplines.years'])
             ->whereIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))
-            ->where('new_old_grades.user_id', $studant[0]->id_user)
+            ->where('new_old_grades.user_id', $studentId)
             ->get()
             ->groupBy('years');
 
@@ -192,9 +192,35 @@ class MatriculationStrategyConfigUtil
     }
 
 
-    private function ispk($studant, $lectiveYear){
-        Log::info('Iniciando a função ispk para o estudante ID: ' . $studant[0]->id_user);
+   private function ispk($studant, $lectiveYear){
+        // Verificar se o estudante é um modelo Eloquent válido
+        $studentId = null;
 
+        if (is_array($studant) && isset($studant[0])) {
+            $s = $studant[0];
+
+            if (is_object($s)) {
+                // Caso 1: é um modelo Eloquent (User)
+                if (property_exists($s, 'id_user') && !empty($s->id_user)) {
+                    $studentId = $s->id_user;
+                }
+                // Caso 2: pode ser um modelo normal com 'id'
+                elseif (property_exists($s, 'id')) {
+                    $studentId = $s->id;
+                }
+            }
+        }
+
+        // Verificação de segurança
+        if (empty($studentId)) {
+            Log::error('ID do estudante não encontrado ou inválido.', ['studant' => $studant]);
+            return ['error' => 'Estudante inválido'];
+        }
+
+        Log::info('Iniciando função ispk para estudante ID: ' . $studentId);
+
+        // Daqui em diante, substitui todas as ocorrências de
+        // $studentId por $studentId
         $rules_matriculation = DB::table('matriculation_aprove_roles_config as aprove')
             ->select(['aprove.*'])
             ->where('aprove.id_lective', $lectiveYear)
@@ -202,7 +228,7 @@ class MatriculationStrategyConfigUtil
 
 
         //Pegar dados do TRANSFERIDO 
-        $studentInfo = User::where('users.id', $studant[0]->id_user)
+        $studentInfo = User::where('users.id', $studentId)
             ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
             ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
             ->leftJoin('courses_translations as ct', function ($join) {
@@ -214,10 +240,10 @@ class MatriculationStrategyConfigUtil
             ->first();
 
         if (!$studentInfo) {
-            Log::error('studentInfo não encontrado para estudante ID: ' . $studant[0]->id_user);
+            Log::error('studentInfo não encontrado para estudante ID: ' . $studentId);
             return [
                 'error' => 'studentInfo não encontrado',
-                'student_id' => $studant[0]->id_user
+                'student_id' => $studentId
             ];
         }
 
@@ -229,12 +255,12 @@ class MatriculationStrategyConfigUtil
 
         //trazer todas as disciplinas (do estudante)  armazenadas no historico
         $disciplinesInOldGrades = DB::table('new_old_grades')
-            ->where('user_id', $studant[0]->id_user)
+            ->where('user_id', $studentId)
             ->join('disciplines', 'disciplines.id', '=', 'new_old_grades.discipline_id')
             ->get();
 
 
-        $matriculation = Matriculation::whereUserId($studant[0]->id_user)
+        $matriculation = Matriculation::whereUserId($studentId)
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -250,7 +276,7 @@ class MatriculationStrategyConfigUtil
             })
             ->select(['disciplines.id','disciplines.mandatory_discipline', 'new_old_grades.grade', 'dt.display_name', 'study_plans_has_disciplines.years'])
             ->whereIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))
-            ->where('new_old_grades.user_id', $studant[0]->id_user)
+            ->where('new_old_grades.user_id', $studentId)
             ->get()
             ->groupBy('years');
 
