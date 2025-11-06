@@ -1455,7 +1455,7 @@ class RequerimentoController extends Controller
                             'articles.id_code_dev as code_dev',
                             'mt.nome as metric'
                         ])
-                        ->get();
+                        ->first();
 
                         $art_req = $this->ordena_plano($art_req);
 
