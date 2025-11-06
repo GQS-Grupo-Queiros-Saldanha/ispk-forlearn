@@ -1456,6 +1456,7 @@ class RequerimentoController extends Controller
                             'mt.nome as metric'
                         ])
                         ->get();
+                        Log::info("daos dos convites".$art_req);
 
                         $art_req = $this->ordena_plano($art_req);
 
