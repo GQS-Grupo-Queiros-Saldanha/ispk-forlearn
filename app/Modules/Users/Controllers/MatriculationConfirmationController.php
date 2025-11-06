@@ -427,6 +427,12 @@ class MatriculationConfirmationController extends Controller
              // Utilizador importado
             $data = $this->Imported_Student($studentId, $lectiveYearSelected);
             Log::info('Importado', ['data' => var_export($data,true), 'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected]);
+            Log::info('ANTES DE CHAMAR aproveStatus', [
+    'data_tipo' => gettype($data),
+    'é_array' => is_array($data),
+    'primeiro_tipo' => isset($data[0]) ? get_class($data[0]) : 'n/d',
+    'json_preview' => substr(json_encode($data), 0, 200)
+]);
 
 
              if ($data != 0) {
