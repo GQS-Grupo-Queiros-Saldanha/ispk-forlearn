@@ -195,6 +195,10 @@ class MatriculationStrategyConfigUtil
    private function ispk($studant, $lectiveYear){
         // Verificar se o estudante é um modelo Eloquent válido
         $studentId = null;
+        if (is_object($lectiveYear) && property_exists($lectiveYear, 'id')) {
+            $lectiveYear = $lectiveYear->id;
+        }
+
 
         if (is_array($studant) && isset($studant[0])) {
             $s = $studant[0];
