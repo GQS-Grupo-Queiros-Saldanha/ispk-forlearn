@@ -13,11 +13,14 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
+        "@commitlint/cli": "^20.1.0",
+        "@commitlint/config-conventional": "^20.0.0",
         "axios": "^0.18.1",
         "bootstrap": "^4.4.1",
         "cross-env": "^5.2.1",
         "css-loader": "^2.1.1",
         "datatables.mark.js": "github:julmot/datatables.mark.js",
+        "husky": "^9.1.7",
         "jquery": "^3.4.1",
         "laravel-mix": "^4.1.2",
         "lodash": "^4.17.15",
