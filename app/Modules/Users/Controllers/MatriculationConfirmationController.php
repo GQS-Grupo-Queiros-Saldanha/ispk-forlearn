@@ -431,7 +431,16 @@ class MatriculationConfirmationController extends Controller
 
              if ($data != 0) {
                  Log::info("Função chamada para importado", ['data' => var_export($data, true),'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected->id]);
-                 $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
+                if (!is_array($data)) {
+                    $data = [$data];
+                }
+                if (empty($data)) {
+                    Log::warning('Data vazio ou inválido antes de chamar aproveStatus', ['data' => $data]);
+                    $status = ['error' => 'Nenhum estudante para processar'];
+                } else {
+                    $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
+                }
+
                  Log::info('Status retornado de aproveStatus', ['status' => $status]);
                  $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();
                  return response()->json(array('html' => $view));
