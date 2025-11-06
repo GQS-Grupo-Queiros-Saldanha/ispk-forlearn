@@ -198,13 +198,11 @@ class CardsController extends Controller
             return back();
         }
 
-      if (isset($student->photo)) {
-    // Caminho absoluto no servidor
-        $student->photo = '/home/ispkforlearn/storage/app/public/attachment/' . $student->photo;
-    } else {
-        $student->photo = public_path('images/sem_foto.png'); // fallback
-    }
-
+        if (isset($student->photo)) {
+            $student->photo = asset('storage/attachment/' . $student->photo);
+        } else {
+            $student->photo = asset('images/sem_foto.png'); // fallback
+        }
 
             
         

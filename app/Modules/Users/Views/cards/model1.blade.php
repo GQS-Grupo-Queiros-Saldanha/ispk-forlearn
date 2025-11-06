@@ -317,13 +317,9 @@
                                 <td style="width: 175px!important;">
                                     <p class="data" style="text-transform: none;">
                                         Válido até:<br>
-                                        <span class="data-value"> 
-                                            
+                                        <span class="data-value">  
                                          2029-07-31
-                                            
                                         </span>
-
-
                                     </p>
 
 
