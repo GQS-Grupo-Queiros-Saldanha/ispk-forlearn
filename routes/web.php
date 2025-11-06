@@ -34,7 +34,7 @@ Route::group([
     Route::post('login', 'Auth\LoginController@loginApi');
     Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::get('logout', 'Auth\LoginController@logout')->name('logout');
-    Route::get('/{ordem}', [LoginController::class, 'WhatsappChecked'])->name('criterio');
+    //Route::get('/{ordem}', [LoginController::class, 'WhatsappChecked'])->name('criterio');
     Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
     Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
     Route::post('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.update');
