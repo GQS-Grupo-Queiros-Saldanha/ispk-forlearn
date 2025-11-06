@@ -430,7 +430,7 @@ class MatriculationConfirmationController extends Controller
 
 
              if ($data != 0) {
-                 Log::info("Função chamada para importado", ['data' => var_export($data, true),'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected->id]);
+                Log::info("Função chamada para importado", ['data' => var_export($data, true),'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected->id]);
                 if (!is_array($data)) {
                     $data = [$data];
                 }
