@@ -103,10 +103,9 @@ class MatriculationDisciplineListController extends Controller
 
 
 
-  public function ajaxUserDataPDF(Request $request)
-
-  {
-
+  public function ajaxUserDataPDF(Request $request){
+    
+    dd($request);
     try {
 
 
