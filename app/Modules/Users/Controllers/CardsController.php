@@ -200,29 +200,25 @@ class CardsController extends Controller
 
         if (isset($student->photo) && !empty($student->photo)) {
 
-        // Pega apenas o nome do ficheiro
+        // Pega apenas o nome real do ficheiro
         $filename = basename($student->photo);
 
         // Caminho absoluto no storage
         $filePath = storage_path('app/public/attachment/' . $filename);
 
-        // Substitui espaços por %20 e trata caracteres UTF-8 para PDF
-        $filePathSafe = str_replace(' ', '%20', $filePath);
-
-        // Verifica se o ficheiro existe
+        // Verifica se existe
         if (file_exists($filePath)) {
-            $student->photo = $filePathSafe;
+            $student->photo = $filePath; // SEM URL encoding
         } else {
-            // fallback se o ficheiro não existir
-            $student->photo = public_path('images/sem_foto.png');
+            $student->photo = public_path('images/sem_foto.png'); // fallback
         }
 
-        Log::info('Foto do estudante: ' . json_encode($student->photo));
+        Log::info('Foto do estudante: ' . $student->photo);
 
     } else {
-        // fallback se não houver foto
         $student->photo = public_path('images/sem_foto.png');
     }
+
 
 
         $institution = Institution::latest()->first();
