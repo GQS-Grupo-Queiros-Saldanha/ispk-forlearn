@@ -643,7 +643,7 @@
 
             function Turma(id_plano, anolectivo) {
                 var re = /\s*,\s*/;
-                console.log(id_plano, anolectivo);
+                console.log("id do palano e ano lectivo",id_plano, anolectivo);
                 var Planno_disciplina = id_plano.split(re);
                 let url = "/pt/avaliations/turma_teacher/" + id_plano + "/" + anolectivo;
 
