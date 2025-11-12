@@ -3010,6 +3010,16 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ]);
                     }
                 }
+                Log::info('Retorno da função turma_teacher', [
+                    'total_turmas' => isset($turmas) ? count($turmas) : 0,
+                    'turmas' => $turmas,
+                    'avaliacao' => $avaliacao,
+                    'metrica' => $Metrica_calendario,
+                    'whoIs' => 'teacher',
+                    'plano_estudo' => $id_plano_estudo,
+                    'disciplina' => $id_disciplina
+                ]);
+
 
                 return response()->json([
                     'turma' => $turmas,
@@ -3045,7 +3055,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
     private function turmas_teacher($id_teacher, $courseYear, $plano_edition, $anoLectivo){
-        
+
         Log::info('dados da consulta', ['teacher_id' => $id_teacher,'courseYear' => $courseYear,'plano_edition' => $plano_edition,'anoLectivo' => $anoLectivo,]);
 
         $turma =  PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
