@@ -3023,6 +3023,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
                 return response()->json([
                     'turma' => $turmas,
+                    'code_dev' => 200,
                     'avaliacao' => $avaliacao,
                     'metrica' => $Metrica_calendario,
                     'whoIs' => 'teacher',
@@ -3280,9 +3281,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
    private function metricas_avaliacoes($data){
-    Log::info('Iniciando metricas_avaliacoes', [
-        'data' => $data
-    ]);
+    Log::info('Iniciando metricas_avaliacoes', ['data' => $data]);
 
     $metricas = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
         ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')

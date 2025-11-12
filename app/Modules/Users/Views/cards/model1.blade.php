@@ -246,11 +246,14 @@
                 <div class="header-card">
                    
                     <div class="photo-profile">
-                        @if(isset($student->photo))
-                            <img src="{{ $student->photo }}" alt="Foto do estudante" style="width:70px;height:70px;border-radius:2px;">
-                        @else
-                            <img src="{{ public_path('images/sem_foto.png') }}" alt="Sem foto" style="width:70px;height:70px;border-radius:2px;">
-                        @endif
+                       @php
+                            $photoPath = isset($student->photo)
+                                ? public_path('storage/attachment/' . basename($student->photo))
+                                : public_path('images/sem_foto.png');
+                        @endphp
+
+                        <img src="{{ $photoPath }}" alt="Foto do estudante" style="width:70px;height:70px;border-radius:2px;">
+
                     </div>
 
                     <div class="logo"></div>
