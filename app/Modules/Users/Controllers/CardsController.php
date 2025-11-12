@@ -201,7 +201,8 @@ class CardsController extends Controller
       if (isset($student->photo)) {
     // Caminho absoluto no servidor
         $student->photo = '/home/ispkforlearn/storage/app/public/attachment/' . $student->photo;
-        Log::info('Foto do estudante: '.$student->photo);
+        Log::info('Foto do estudante: ' . json_encode($student->photo));
+
 
         } else {
             $student->photo = public_path('images/sem_foto.png'); // fallback
