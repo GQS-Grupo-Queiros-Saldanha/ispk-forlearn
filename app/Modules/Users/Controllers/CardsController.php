@@ -29,7 +29,7 @@ use App\Model\Institution;
 use Toastr;
 use App\Modules\Users\Events\PaidStudentCardEvent;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Str;
 class CardsController extends Controller
 {
   
@@ -78,6 +78,43 @@ class CardsController extends Controller
         return $emolumentos;
 
 
+    }
+
+    public function getSafePhotoPath($student) {
+        // fallback padrão
+        $fallback = public_path('images/sem_foto.png');
+
+        if (!isset($student->photo) || empty($student->photo)) {
+            return $fallback;
+        }
+
+        $originalPath = storage_path('app/public/attachment/' . basename($student->photo));
+
+        if (!file_exists($originalPath)) {
+            return $fallback;
+        }
+
+        // Cria nome seguro para o PDF
+        $filename = basename($student->photo);
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        $nameWithoutExt = pathinfo($filename, PATHINFO_FILENAME);
+
+        // remove acentos e caracteres especiais
+        $safeName = Str::ascii($nameWithoutExt); 
+        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $safeName); // tudo que não é alfanumérico vira _
+        $safePath = storage_path('app/public/pdf_temp/' . $safeName . '.' . $ext);
+
+        // cria a pasta se não existir
+        if (!file_exists(dirname($safePath))) {
+            mkdir(dirname($safePath), 0755, true);
+        }
+
+        // copia o ficheiro se ainda não existir
+        if (!file_exists($safePath)) {
+            copy($originalPath, $safePath);
+        }
+
+        return $safePath;
     }
 
 
@@ -200,20 +237,15 @@ class CardsController extends Controller
 
         if (isset($student->photo) && !empty($student->photo)) {
 
-        // Pega apenas o nome real do ficheiro
-        $filename = basename($student->photo);
+            // Pega apenas o nome real do ficheiro
+            $filename = basename($student->photo);
 
-        // Caminho absoluto no storage
-        $filePath = storage_path('app/public/attachment/' . $filename);
+            // Caminho absoluto no storage
+            $filePath = storage_path('app/public/attachment/' . $filename);
 
-        // Verifica se existe
-        if (file_exists($filePath)) {
-            $student->photo = $filePath; // SEM URL encoding
-        } else {
-            $student->photo = public_path('images/sem_foto.png'); // fallback
-        }
-
-        Log::info('Foto do estudante: ' . $student->photo);
+            // Verifica se existe
+            $student->photo = $this->getSafePhotoPath($student);
+            Log::info('Foto do estudante: ' . $student->photo);
 
     } else {
         $student->photo = public_path('images/sem_foto.png');
@@ -296,7 +328,11 @@ class CardsController extends Controller
         return $pdf->stream($pdf_name.'.pdf');
 
     }
-    
+
+   
+
+
+
     public function all_student()
     {
         try {
