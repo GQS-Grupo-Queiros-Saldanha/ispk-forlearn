@@ -3046,7 +3046,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
     private function turmas_teacher($id_teacher, $courseYear, $plano_edition, $anoLectivo)
     {
-        Log::info('dados da consulta'.$id_teacher, $courseYear, $plano_edition, $anoLectivo)
+        Log::info('dados da consulta'.$id_teacher, $courseYear, $plano_edition, $anoLectivo);
         $turma =  PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
             ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
             ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
