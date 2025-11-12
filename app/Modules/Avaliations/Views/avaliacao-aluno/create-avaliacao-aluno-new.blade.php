@@ -764,7 +764,7 @@
                     $('plano_estudo').val(id_planoEstudo);
                     discipline_id = data['disciplina'];
                     if (titulo == "teacher") {
-
+                        console.log(data['turma']);
                         $("#Titulo_Avalicao").empty();
                         metrica_id = data['metrica'].length > 0 ? data['metrica'][0].mtrc_id :
                             "Sem métrica no intervalo";
