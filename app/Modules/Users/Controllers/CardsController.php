@@ -198,20 +198,32 @@ class CardsController extends Controller
             return back();
         }
 
-      if (isset($student->photo)) {
-    // Caminho absoluto no servidor
-        $student->photo = '/home/ispkforlearn/storage/app/public/attachment/' . $student->photo;
-        Log::info('Foto do estudante: ' . json_encode($student->photo));
+        if (isset($student->photo) && !empty($student->photo)) {
 
+        // Pega apenas o nome do ficheiro
+        $filename = basename($student->photo);
 
+        // Caminho absoluto no storage
+        $filePath = storage_path('app/public/attachment/' . $filename);
+
+        // Substitui espaços por %20 e trata caracteres UTF-8 para PDF
+        $filePathSafe = str_replace(' ', '%20', $filePath);
+
+        // Verifica se o ficheiro existe
+        if (file_exists($filePath)) {
+            $student->photo = $filePathSafe;
         } else {
-            $student->photo = public_path('images/sem_foto.png'); // fallback
+            // fallback se o ficheiro não existir
+            $student->photo = public_path('images/sem_foto.png');
         }
 
+        Log::info('Foto do estudante: ' . json_encode($student->photo));
 
-            
-        
-          
+    } else {
+        // fallback se não houver foto
+        $student->photo = public_path('images/sem_foto.png');
+    }
+
 
         $institution = Institution::latest()->first();
         $titulo_documento = "LISTA DE MATRICULADOS POR TURMA";
