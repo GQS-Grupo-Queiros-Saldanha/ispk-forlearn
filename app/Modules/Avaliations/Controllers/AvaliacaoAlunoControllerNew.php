@@ -3022,7 +3022,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
                 return response()->json([
-                    'turmas' => $turmas->toArray(),   // <-- converte Collection para array
+                    'turma' => $turmas->toArray(),   // <-- converte Collection para array
                     'avaliacao' => $avaliacao ? $avaliacao->toArray() : null,
                     'metrica' => $Metrica_calendario->toArray(),
                     'whoIs' => 'teacher',
