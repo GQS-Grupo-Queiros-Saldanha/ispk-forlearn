@@ -2884,7 +2884,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 }
 
                 return response()->json([
-                    'turma' => $turmas->toArray(),,
+                    'turma' => $turmas,
                     'avaliacao' => $avaliacaoResult,
                     'whoIs' => "super",
                     'plano_estudo' => $id_plano_estudo,
@@ -3022,13 +3022,14 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
                 return response()->json([
-                    'turmas' => $turmas->toArray(),
-                    'avaliacao' => $avaliacao,
-                    'metrica' => $Metrica_calendario,
+                    'turmas' => $turmas->toArray(),   // <-- converte Collection para array
+                    'avaliacao' => $avaliacao ? $avaliacao->toArray() : null,
+                    'metrica' => $Metrica_calendario->toArray(),
                     'whoIs' => 'teacher',
                     'plano_estudo' => $id_plano_estudo,
                     'disciplina' => $id_disciplina
                 ]);
+
             }
         } else {
             Log::warning('Nenhum courseYear encontrado', [
