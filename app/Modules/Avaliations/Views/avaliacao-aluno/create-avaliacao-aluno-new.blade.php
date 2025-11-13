@@ -654,6 +654,7 @@
                 
                 state.whoIs = data.whoIs;
             } else {
+                console.log(data);
                 handleTeacherTurma(data);
             }
         }
