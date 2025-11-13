@@ -109,7 +109,7 @@ class SpecialCourseEditionsController extends Controller {
 
  
     public function storeEdition(Request $request){
-        Log::info('requets cursos profissionais'$request)
+        Log::info('requets cursos profissionais'.$request);
         
       
         if(strtotime($request->get('start_date')) > strtotime($request->get('end_date'))){
