@@ -109,6 +109,7 @@ class SpecialCourseEditionsController extends Controller {
 
  
     public function storeEdition(Request $request){
+        Log::info('requets cursos profissionais'$request)
         
       
         if(strtotime($request->get('start_date')) > strtotime($request->get('end_date'))){
@@ -122,32 +123,32 @@ class SpecialCourseEditionsController extends Controller {
             ->orderBy('id','DESC')
             ->first();
 
-if(strtotime($request->get('start_date')) <= strtotime($last->end_date))
-{
-    return response()->json(['error'=>"Data inválida! a data inicial tem que superior a ".$last->end_date]);
-}
-else{
-    DB::table('special_course_edition')
-    ->insert(
-        [
-        'number' => $request->get('number'),
-        'special_course_id' => $request->get('course_id'),
-        'lective_year_id' => $request->get('lective_year'),
-        'start_date' => $request->get('start_date'),
-        'end_date' => $request->get('end_date')
-    ]);
+            if(strtotime($request->get('start_date')) <= strtotime($last->end_date))
+            {
+                return response()->json(['error'=>"Data inválida! a data inicial tem que superior a ".$last->end_date]);
+            }
+            else{
+                DB::table('special_course_edition')
+                ->insert(
+                    [
+                    'number' => $request->get('number'),
+                    'special_course_id' => $request->get('course_id'),
+                    'lective_year_id' => $request->get('lective_year'),
+                    'start_date' => $request->get('start_date'),
+                    'end_date' => $request->get('end_date')
+                ]);
 
-     // Success message
-    return response()->json(['success'=>"Edição adicionada com sucesso"]);
+                // Success message
+                return response()->json(['success'=>"Edição adicionada com sucesso"]);
 
-         
-        }
-    
- 
-       
-    }
+                    
+                    }
+                
+            
+                
+                }
 
-}
+            }
 
     public function updateEdition($id, Request $request){
       
