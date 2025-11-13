@@ -2884,7 +2884,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                 }
 
                 return response()->json([
-                    'turma' => $turmas,
+                    'turma' => $turmas->toArray(),,
                     'avaliacao' => $avaliacaoResult,
                     'whoIs' => "super",
                     'plano_estudo' => $id_plano_estudo,
@@ -3022,7 +3022,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
                 return response()->json([
-                    'turmas' => $turmas,
+                    'turmas' => $turmas->toArray(),
                     'avaliacao' => $avaliacao,
                     'metrica' => $Metrica_calendario,
                     'whoIs' => 'teacher',
