@@ -3022,8 +3022,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
                 return response()->json([
-                    'turma' => $turmas,
-                    'code_dev' => 200,
+                    'turma' => $turma,
                     'avaliacao' => $avaliacao,
                     'metrica' => $Metrica_calendario,
                     'whoIs' => 'teacher',

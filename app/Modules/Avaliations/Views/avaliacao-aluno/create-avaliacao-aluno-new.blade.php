@@ -716,8 +716,8 @@
                             metrica_id_teacher = data['metrica'].length > 0 ? data['metrica'][0].mtrc_id :
                                 "Sem métrica no intervalo";
                             //metrica_id_teacher=data['metrica'][0].mtrc_id;
-                            metrica_code_dev = data['metrica'][0].code_dev;
-                            console.log("metrica up", metrica_code_dev);
+                            metrica_code_dev = data['metrica'][0].code_dev || null;
+
                             discipline_id = data['disciplina'];
                             id_planoEstudo = data['plano_estudo'];
 
