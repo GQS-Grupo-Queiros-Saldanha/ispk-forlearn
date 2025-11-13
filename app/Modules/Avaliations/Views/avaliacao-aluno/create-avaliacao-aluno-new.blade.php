@@ -411,1318 +411,732 @@
 @endsection
 @section('scripts-new')
     @parent
-    <script>
-        $(document).ready(function() {
-            //Inicio do Cláudio JS
-            //Variaveis
-            var Disciplina_id_Select = $("#Disciplina_id_Select");
-            var Turma_id_Select = $("#Turma_id_Select");
-            var avaliacao_id_Select = $("#avaliacao_id_Select");
-            var metrica_id_Select = $("#metrica_id_Select");
-            var lective_year = $("#lective_year");
-            let Nota_aluno = '';
-            let estado_presença = '';
-            let presencaClass = '';
-            let ausente = '';
-            let regime = '';
-            let id_avaliacao = 0;
-            let metrica_id = 0;
-            let id_planoEstudo = 0;
-            let discipline_id = 0;
-            let whoIs = "";
-            let metrica_id_teacher = "";
-            //botões a serem ocultos
-            let ElementoBTN_salvar = "";
-            let callSumit = "";
-            let cargo = "";
-            let version = "";
-            var selectedLective = $('#lective_year').val();
-            var metric = null;
-            var metrica_code_dev;
-            let estado_pauta_lancar;
-            let pauta_id;
-            let pauta_path;
+   <script>
+    $(document).ready(function() {
+        // Inicialização de variáveis com valores padrão
+        const elements = {
+            disciplinaSelect: $("#Disciplina_id_Select"),
+            turmaSelect: $("#Turma_id_Select"),
+            avaliacaoSelect: $("#avaliacao_id_Select"),
+            metricaSelect: $("#metrica_id_Select"),
+            lectiveYear: $("#lective_year"),
+            formNota: $("#id_form_Nota"),
+            tabelaNew: $("#tabela_new"),
+            studentsNew: $("#students_new"),
+            description: $("#description"),
+            caixaAvalicao: $("#caixaAvalicao"),
+            caixaMatrica: $("#caixaMatrica"),
+            caixaDesc: $("#caixaDesc"),
+            tituloAvalicao: $("#Titulo_Avalicao"),
+            btnEnviar: $("#btn-Enviar"),
+            btnCallSubmit: $("#btn-callSubmit"),
+            modalAviso: $("#modalAviso"),
+            textoAviso: $("#textoAviso"),
+            navLockPauta: $("#nav-lock-pauta"),
+            navOpenPauta: $("#nav-open-pauta"),
+            btnPdf: $("#btn_pdf")
+        };
 
+        // Estado da aplicação
+        const state = {
+            selectedLective: elements.lectiveYear.val() || '',
+            whoIs: "",
+            metricaCodeDev: "",
+            idAvaliacao: 0,
+            metricaId: 0,
+            idPlanoEstudo: 0,
+            disciplineId: 0,
+            metricaIdTeacher: "",
+            elementoBtnSalvar: "",
+            callSubmit: "",
+            cargo: "",
+            version: "",
+            metric: null,
+            estadoPautaLancar: null,
+            pautaId: null,
+            pautaPath: null,
+            elementLockPauta: elements.navLockPauta.html() || '',
+            elementOpenPauta: elements.navOpenPauta.html() || ''
+        };
 
-            let elementLockPauta = $('#nav-lock-pauta').html();
-            let elementOpenPauta = $('#nav-open-pauta').html();
-            $('#btn_lock_pauta').remove();
-            $('#btn_open_pauta').remove();
+        // Remover botões de lock/open pauta inicialmente
+        $('#btn_lock_pauta').remove();
+        $('#btn_open_pauta').remove();
 
+        console.log("Ano lectivo selecionado:", state.selectedLective);
 
+        // Adicionar campo hidden para ano lectivo
+        const lectiveInput = `<input type="hidden" name="selectedLective" id="selectedLective" class="form-control" value="${state.selectedLective}">`;
+        elements.formNota.append(lectiveInput);
 
-            console.log(selectedLective)
-            var lective =
-                "<input type='hidden' name='selectedLective' id='selectedLective' class='form-control' value=" +
-                selectedLective + "> ";
-            $('#id_form_Nota').append(lective);
+        // ========== FUNÇÕES PRINCIPAIS ==========
 
-
-            function getHistoric() {
-                if (!pauta_id) {
-                    console.error("pauta_id não definido!");
-                    return;
-                }
-
-                var url = '/avaliations/historico-pauta-ajax/' + pauta_id;
-                console.log("Carregando histórico:", url);
-
-                if ($.fn.DataTable.isDataTable('#historic-table')) {
-                    $('#historic-table').DataTable().clear().destroy();
-                }
-
-                $('#historic-table').DataTable({
-                    ajax: url,
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'description',
-                            name: 'description'
-                        },
-                        {
-                            data: 'file',
-                            name: 'file'
-                        },
-                        {
-                            data: 'name',
-                            name: 'posted_by'
-                        },
-                        {
-                            data: 'updated_at',
-                            name: 'posted_at',
-                        }
-
-                    ],
-                    language: {
-                        url: '{{ asset('lang/datatables/' . App::getLocale() . '.json') }}',
-                    }
-                });
+        /**
+         * Carrega o histórico da pauta
+         */
+        function getHistoric() {
+            if (!state.pautaId) {
+                console.error("Erro: pauta_id não definido!");
+                return;
             }
 
+            const url = `/avaliations/historico-pauta-ajax/${state.pautaId}`;
+            console.log("Carregando histórico:", url);
 
-
-            function setar_pauta(whoIs) {
-
-                console.log(whoIs)
-
-                const pauta_status = {
-                    'PF1': '40',
-                    'PF2': '40',
-                    'OA': '40',
-                    'Recurso': '10',
-                    'Neen': '20',
-                    'oral': '25',
-                    'Exame_especial': '35',
-                    'Extraordinario': '45',
-                    'Trabalho': '50',
-                    'Defesa': '50',
-                    'TESP': '60'
-                };
-
-                var pauta_tipo = "";
-                var tipo = 0;
-
-                if (whoIs == "teacher") {
-                    metric = metrica_code_dev;
-                }
-                if (whoIs == "super") {
-                    metric = $("#metrica_id_Select").find('option:selected').data('metric');
-                }
-
-
-
-                $.each(pauta_status, function(chave, valor) {
-                    if (chave == metric) {
-                        pauta_tipo = metric;
-                        tipo = valor;
-                    }
-                });
-                var paut = pauta_tipo + "," + tipo;
-                $('#pauta').val(paut);
-                console.log($('#pauta').val())
+            if ($.fn.DataTable.isDataTable('#historic-table')) {
+                $('#historic-table').DataTable().clear().destroy();
             }
-            //Carregar
-            ambiente();
-            //Evento de mudança na select anolectivo
-            lective_year.change(function() {
-                //chamndo a função de mudança de frames
-                ambiente();
-                selectedLective = $('#lective_year').val();
-                $('#selectedLective').val(selectedLective);
-            });
-            //Evento de mudança na select disciplina
-            Disciplina_id_Select.change(function() {
-                //chamndo a função de mudança de frames
-                $("#avaliacao_id_Select").empty();
 
-                $("#description").val('');
-
-                // $("#tabela_new").empty();
-                $("#tabela_new").hide();
-                $("#students_new").empty();
-                var id = Disciplina_id_Select.val();
-                Turma(id, lective_year.val());
-            });
-            //Evento de mudança na select turma e
-            Turma_id_Select.change(function() {
-                $("#description").val('');
-                //chamndo a função de mudança de turma e trazer os estudantes
-                var lective_year = $("#lective_year").val();
-                var id = Disciplina_id_Select.val();
-                StudantGrade(discipline_id, metrica_id, id_planoEstudo, id_avaliacao, lective_year);
-                if (Turma_id_Select.val() == "") {
-                    console.log('a')
-                    avaliacao_id_Select.prop('disabled', true);
-                } else {
-
-                    avaliacao_id_Select.prop('disabled', false);
-                    $("#tabela_new").show();
+            $('#historic-table').DataTable({
+                ajax: url,
+                columns: [
+                    { data: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'description', name: 'description' },
+                    { data: 'file', name: 'file' },
+                    { data: 'name', name: 'posted_by' },
+                    { data: 'updated_at', name: 'posted_at' }
+                ],
+                language: {
+                    url: '{{ asset('lang/datatables/' . App::getLocale() . '.json') }}',
                 }
             });
+        }
 
-            //Função de mudança de frame
-            function ambiente() {
-                var anoL = lective_year.val();
-                if (anoL == 6) {
-                    $("#NextStap").hide();
-                    $("#tabela_new").hide();
-                    $("#ConteudoMain").show();
-                    Turma_id_Select.empty();
-                } else {
-                    //Passar o parametro de ano lectivo
-                    //Neste momento colequei o ano anterior pk não há registro desse ano lectivo
-                    //Por tando no final terei de colocar a variavel (anoL)como parametro.
-                    Turma_id_Select.empty();
-                    var anoL = lective_year.val();
-                    discipline_get_new(anoL);
-                    // discipline_get_new();
-                    $("#ConteudoMain").hide();
-                    $("#NextStap").show();
+        /**
+         * Define o tipo de pauta baseado na métrica
+         */
+        function setarPauta(whoIs) {
+            console.log("Setando pauta para:", whoIs);
+
+            const pautaStatus = {
+                'PF1': '40', 'PF2': '40', 'OA': '40', 'Recurso': '10',
+                'Neen': '20', 'oral': '25', 'Exame_especial': '35',
+                'Extraordinario': '45', 'Trabalho': '50', 'Defesa': '50', 'TESP': '60'
+            };
+
+            let pautaTipo = "";
+            let tipo = 0;
+
+            if (whoIs === "teacher") {
+                state.metric = state.metricaCodeDev;
+            } else if (whoIs === "super") {
+                const selectedMetric = elements.metricaSelect.find('option:selected');
+                state.metric = selectedMetric.data('metric') || null;
+            }
+
+            if (state.metric && pautaStatus.hasOwnProperty(state.metric)) {
+                pautaTipo = state.metric;
+                tipo = pautaStatus[state.metric];
+            }
+
+            const pautaValue = `${pautaTipo},${tipo}`;
+            $('#pauta').val(pautaValue);
+            console.log("Pauta definida:", $('#pauta').val());
+        }
+
+        /**
+         * Controla a exibição dos elementos baseado no ambiente
+         */
+        function ambiente() {
+            const anoL = elements.lectiveYear.val();
+            
+            if (anoL == 6) {
+                $("#NextStap").hide();
+                elements.tabelaNew.hide();
+                $("#ConteudoMain").show();
+                elements.turmaSelect.empty();
+            } else {
+                elements.turmaSelect.empty();
+                const anoL = elements.lectiveYear.val();
+                disciplineGetNew(anoL);
+                $("#ConteudoMain").hide();
+                $("#NextStap").show();
+            }
+        }
+
+        /**
+         * Carrega disciplinas do professor
+         */
+        function disciplineGetNew(anolectivo) {
+            console.log("Carregando disciplinas para ano:", anolectivo);
+
+            $.ajax({
+                url: `/pt/avaliations/disciplines_teacher/${anolectivo}`,
+                type: "GET",
+                data: { _token: '{{ csrf_token() }}' },
+                cache: false,
+                dataType: 'json',
+                beforeSend: function() {
+                    console.log("Carregando as disciplinas...");
                 }
-            }
-            //fim da funcção de Mundaça de frame
-            //Função de pegar disciplina do professor frame
-            // url: "/pt/avaliations/disciplines_teacher",
-            function discipline_get_new(anolectivo) {
-                $.ajax({
-                    url: "/pt/avaliations/disciplines_teacher/" + anolectivo,
-                    type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    beforeSend: function() {
-                        console.log("Carregando as disciplinas...")
-                    }
-                }).done(function(data) {
-                    if (data['disciplina'].length) {
-                        $("#students_new").empty();
-                        Disciplina_id_Select.prop('disabled', true);
-                        Disciplina_id_Select.empty();
-                        $("#Disciplina_id_Select").append(
-                            '<option selected="" value="00">Selecione a disciplina</option>');
-                        $.each(data['disciplina'], function(index, row) {
-                            $("#Disciplina_id_Select").append('<option  value="' + data['whoIs'] +
-                                ',' + row.course_id + ',' + row.discipline_id + ' ">#' + row
-                                .code + '  ' + row.dt_display_name + '</option>');
-                        });
-
-                        Disciplina_id_Select.prop('disabled', false);
-                        Disciplina_id_Select.selectpicker('refresh');
-
-                    } else {
-                        Disciplina_id_Select.empty();
-                        Disciplina_id_Select.prop('disabled', true);
-                    }
-                });
-            }
-
-            function Turma(id_plano, anolectivo) {
-                var re = /\s*,\s*/;
-                console.log("id do palano e ano lectivo",id_plano, anolectivo);
-                var Planno_disciplina = id_plano.split(re);
-                let url = "/pt/avaliations/turma_teacher/" + id_plano + "/" + anolectivo;
-
-                @if ($segunda_chamada)
-                    url += "?segunda_chamada=true";
-                @endif
-
-                console.log(url);
-
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    beforeSend: function() {
-                        if (id_plano == 00) return false;
-                    },
-                }).done(function(data) {
-
-                    if (data == 500) {
-                        Turma_id_Select.empty();
-                        Turma_id_Select.prop('disabled', true);
-                        avaliacao_id_Select.empty();
-                        avaliacao_id_Select.hide();
-                        $("#textoAviso").text("");
-                        $("#textoAviso").text(
-                            "Atenção! esta disciplina não está associada a nenhuma avaliação no ano lectivo selecionado, verifique a edição de plano de estudo da mesma."
+            }).done(function(data) {
+                if (data.disciplina && data.disciplina.length) {
+                    elements.studentsNew.empty();
+                    elements.disciplinaSelect.prop('disabled', true).empty();
+                    
+                    elements.disciplinaSelect.append('<option selected value="00">Selecione a disciplina</option>');
+                    
+                    $.each(data.disciplina, function(index, row) {
+                        elements.disciplinaSelect.append(
+                            `<option value="${data.whoIs},${row.course_id},${row.discipline_id}">
+                                #${row.code}  ${row.dt_display_name}
+                            </option>`
                         );
-                        $("#modalAviso").modal('show');
-                    } else {
-                        if (data['whoIs'] == "super") {
-                            //chama o metodo para trazer o tratamento do loop da turma
-                            TurmaLoop(data, "coordenador")
-                            //para trazer outra select na avaliacao de notas
-                            $("#caixaAvalicao").show();
-                            //avaliacao_id_Select.prop('disabled', true);
-                            $("#avaliacao_id_Select").append(
-                                '<option value="">Selecione a avaliação</option>')
-                            $.each(data['avaliacao'], function(index, row) {
-                                $("#avaliacao_id_Select").append('<option value="' + row.avl_id +
-                                    '">' + row.avl_nome + '</option>');
-                            });
-                            avaliacao_id_Select.selectpicker('refresh');
-                            //Termina as avaliações do coordenador
-                            whoIs = '';
-                            whoIs = data['whoIs'];
-                        } else {
-                            //Validar existência de calendario geral
-                            if (data['avaliacao'] == null) {
-                                $("#textoAviso").text("");
-                                $("#textoAviso").text(
-                                    "Caro docente, verificou-se que não há calendário de prova disponível, razão pela qual não pode fazer o lançamento de notas. Contacte o superior hierárquico para habilitar ou extender a data do calendáro de prova."
-                                );
-                                $("#modalAviso").modal('show');
-                                $("#btn-Enviar").hide();
-                            } else {
-                                $("#btn-Enviar").show();
-                            }
-                            //Automático teacher.
-                            whoIs = '';
-                            var FIla = '';
-                            whoIs = data['whoIs'];
-                            $("#caixaAvalicao").hide();
-                            avaliacao_id_Select.empty();
-                            //Prencher variaveis para trazer depois os alunos.
-                            id_avaliacao = data['avaliacao'].avl_id;
-                            metrica_id_teacher = data['metrica'].length > 0 ? data['metrica'][0].mtrc_id :
-                                "Sem métrica no intervalo";
-                            //metrica_id_teacher=data['metrica'][0].mtrc_id;
-                            metrica_code_dev = data['metrica'][0].code_dev || null;
+                    });
 
-                            discipline_id = data['disciplina'];
-                            id_planoEstudo = data['plano_estudo'];
+                    elements.disciplinaSelect.prop('disabled', false).selectpicker('refresh');
+                } else {
+                    elements.disciplinaSelect.empty().prop('disabled', true);
+                    console.warn("Nenhuma disciplina encontrada");
+                }
+            }).fail(function(error) {
+                console.error("Erro ao carregar disciplinas:", error);
+            });
+        }
 
-                            TurmaLoop(data, "teacher")
-                            setar_pauta("teacher");
-                            $("#tabela_new").hide();
-                        }
-                    }
+        /**
+         * Carrega turmas baseado na disciplina selecionada
+         */
+        function Turma(idPlano, anolectivo) {
+            console.log("Carregando turmas para plano:", idPlano, "ano:", anolectivo);
+            
+            if (!idPlano || idPlano === "00") {
+                console.warn("ID do plano inválido");
+                return false;
+            }
 
+            const planoDisciplina = idPlano.split(/\s*,\s*/);
+            let url = `/pt/avaliations/turma_teacher/${idPlano}/${anolectivo}`;
 
+            @if ($segunda_chamada)
+                url += "?segunda_chamada=true";
+            @endif
 
+            console.log("URL da turma:", url);
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: { _token: '{{ csrf_token() }}' },
+                cache: false,
+                dataType: 'json'
+            }).done(function(data) {
+                if (data === 500) {
+                    handleTurmaError();
+                } else {
+                    handleTurmaSuccess(data);
+                }
+            }).fail(function(error) {
+                console.error("Erro ao carregar turmas:", error);
+                handleTurmaError();
+            });
+        }
+
+        function handleTurmaError() {
+            elements.turmaSelect.empty().prop('disabled', true);
+            elements.avaliacaoSelect.empty().hide();
+            elements.textoAviso.text(
+                "Atenção! Esta disciplina não está associada a nenhuma avaliação no ano lectivo selecionado, verifique a edição de plano de estudo da mesma."
+            );
+            elements.modalAviso.modal('show');
+        }
+
+        function handleTurmaSuccess(data) {
+            if (data.whoIs === "super") {
+                turmaLoop(data, "coordenador");
+                elements.caixaAvalicao.show();
+                
+                elements.avaliacaoSelect.append('<option value="">Selecione a avaliação</option>');
+                $.each(data.avaliacao, function(index, row) {
+                    elements.avaliacaoSelect.append(`<option value="${row.avl_id}">${row.avl_nome}</option>`);
                 });
+                elements.avaliacaoSelect.selectpicker('refresh');
+                
+                state.whoIs = data.whoIs;
+            } else {
+                handleTeacherTurma(data);
             }
-            //Selecionar_avaliacao_pega_metrica
-            avaliacao_id_Select.change(function() {
-                $("#description").val('');
-                if (avaliacao_id_Select.val() != "") {
-                    $("#caixaMatrica").show();
-                    // $("#metrica_id_Select").hide();
-                    var id = avaliacao_id_Select.val();
-                    metricasCoordenador(id)
-                } else {
-                    $("#caixaMatrica").hide();
-                    $("#metrica_id_Select").empty();
-                }
-            });
-            //Selecionar_avaliacao_pega_metrica
-            metrica_id_Select.change(function() {
-                $("#description").val('');
-                if (metrica_id_Select.val() != "") {
-                    setar_pauta("super");
+        }
 
-                    studentCourse_coordenador(id_planoEstudo);
-
-                } else {
-                    $("#description").val('');
-                    $("#students_new").hide();
-                }
-            });
-            //Metodo para trazer a turma array
-            function TurmaLoop(data, titulo) {
-                if (data['turma'].length) {
-                    id_planoEstudo = data['plano_estudo'];
-                    $('plano_estudo').val(id_planoEstudo);
-                    discipline_id = data['disciplina'];
-                    if (titulo == "teacher") {
-                        console.log(data['turma']);
-                        $("#Titulo_Avalicao").empty();
-                        metrica_id = data['metrica'].length > 0 ? data['metrica'][0].mtrc_id :
-                            "Sem métrica no intervalo";
-                        metrica_name = data['metrica'].length > 0 ? data['metrica'][0].mtrc_nome :
-                            "Sem nome da métrica no intervalo";
-                        validar_metrica = data['metrica'].length > 0 ? data['metrica'][0].mtrc_nome : "";
-                        //console.log(data['metrica'][0].mtrc_nome+" : id da métrica ou sem métrica ");
-                        if (validar_metrica == "") {
-                            //alert("Sem métrica")
-                            $("#textoAviso").text("");
-                            $("#textoAviso").text(
-                                "Caro docente, verificou-se que não há calendário de prova disponível, razão pela qual não pode fazer o lançamento de notas. Contacte o superior hierárquico para habilitar ou extender a data do calendáro de prova."
-                            );
-                            $("#modalAviso").modal('show');
-                            $("#btn-Enviar").hide();
-                        } else {
-                            $("#btn-Enviar").show();
-                        }
-                        $("#Titulo_Avalicao").text(metrica_name);
-                    }
-                    $("#tabela_new").show();
-                    Turma_id_Select.prop('disabled', true);
-                    Turma_id_Select.empty();
-
-                    Turma_id_Select.append('<option selected="" value="">Selecione a turma</option>');
-                    $.each(data['turma'], function(index, row) {
-                        $("#Turma_id_Select").append('<option value="' + row.id + '">' + row.display_name +
-                            '</option>');
-                    });
-                    Turma_id_Select.prop('disabled', false);
-                    Turma_id_Select.selectpicker('refresh');
-                } else {
-                    Turma_id_Select.empty();
-                    Turma_id_Select.prop('disabled', true);
-                    avaliacao_id_Select.prop('disabled', true);
-                }
-
+        function handleTeacherTurma(data) {
+            if (!data.avaliacao) {
+                elements.textoAviso.text(
+                    "Caro docente, verificou-se que não há calendário de prova disponível, razão pela qual não pode fazer o lançamento de notas. Contacte o superior hierárquico para habilitar ou extender a data do calendáro de prova."
+                );
+                elements.modalAviso.modal('show');
+                elements.btnEnviar.hide();
+            } else {
+                elements.btnEnviar.show();
             }
-            //Metrodo de trazer as metricas --de forma manual.
-            function metricasCoordenador(id_avaliacao) {
-                $.ajax({
-                    url: "/pt/avaliations/metrica_ajax_coordenador/" + id_avaliacao,
-                    type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    beforeSend: function() {},
-                }).done(function(data) {
-                    if (data['metricas'].length) {
-                        $("#metrica_id_Select").empty();
-                        metrica_id_Select.append(
-                            '<option selected="" value="">Selecione a métrica</option>');
-                        $.each(data['metricas'], function(index, row) {
-                            $("#metrica_id_Select").append('<option value="' + row.id +
-                                '" data-metric ="' + row.code_dev + '">' + row
-                                .nome + '</option>');
-                        });
-                        metrica_id_Select.prop('disabled', false);
-                        metrica_id_Select.selectpicker('refresh');
+
+            state.whoIs = data.whoIs;
+            elements.caixaAvalicao.hide();
+            elements.avaliacaoSelect.empty();
+
+            state.idAvaliacao = data.avaliacao.avl_id;
+            state.metricaIdTeacher = data.metrica && data.metrica.length > 0 ? data.metrica[0].mtrc_id : "Sem métrica no intervalo";
+            state.metricaCodeDev = data.metrica && data.metrica.length > 0 ? data.metrica[0].code_dev : null;
+            state.disciplineId = data.disciplina;
+            state.idPlanoEstudo = data.plano_estudo;
+
+            turmaLoop(data, "teacher");
+            setarPauta("teacher");
+            elements.tabelaNew.hide();
+        }
+
+        /**
+         * Preenche o select de turmas
+         */
+        function turmaLoop(data, tipo) {
+            if (data.turma && data.turma.length) {
+                state.idPlanoEstudo = data.plano_estudo;
+                state.disciplineId = data.disciplina;
+
+                if (tipo === "teacher") {
+                    console.log("Turmas do professor:", data.turma);
+                    elements.tituloAvalicao.empty();
+                    
+                    state.metricaId = data.metrica && data.metrica.length > 0 ? data.metrica[0].mtrc_id : "Sem métrica no intervalo";
+                    const metricaName = data.metrica && data.metrica.length > 0 ? data.metrica[0].mtrc_nome : "Sem nome da métrica no intervalo";
+                    const validarMetrica = data.metrica && data.metrica.length > 0 ? data.metrica[0].mtrc_nome : "";
+
+                    if (!validarMetrica) {
+                        elements.textoAviso.text(
+                            "Caro docente, verificou-se que não há calendário de prova disponível, razão pela qual não pode fazer o lançamento de notas. Contacte o superior hierárquico para habilitar ou extender a data do calendáro de prova."
+                        );
+                        elements.modalAviso.modal('show');
+                        elements.btnEnviar.hide();
                     } else {
-                        console.log(data['metricas'].length)
-                        metrica_id_Select.prop('disabled', true);
-                        metrica_id_Select.empty();
+                        elements.btnEnviar.show();
                     }
+                    
+                    elements.tituloAvalicao.text(metricaName);
+                }
+
+                elements.tabelaNew.show();
+                elements.turmaSelect.prop('disabled', true).empty();
+                elements.turmaSelect.append('<option selected value="">Selecione a turma</option>');
+                
+                $.each(data.turma, function(index, row) {
+                    elements.turmaSelect.append(`<option value="${row.id}">${row.display_name}</option>`);
                 });
+                
+                elements.turmaSelect.prop('disabled', false).selectpicker('refresh');
+            } else {
+                elements.turmaSelect.empty().prop('disabled', true);
+                elements.avaliacaoSelect.prop('disabled', true);
+                console.warn("Nenhuma turma encontrada");
             }
-            //Fim do método
+        }
 
-            //Pegar os alunos de forma manual coordenador
-            function studentCourse_coordenador() {
-                var turma = Turma_id_Select.val();
-                var lective_year_select = $("#lective_year").val();
-                cargo = Disciplina_id_Select.val().split(",")[0];
-                console.log(cargo);
-                let url = "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id_Select.val() + "/" + id_planoEstudo + "/" + avaliacao_id_Select.val() + "/" + turma + "/" + lective_year_select + "?whoIs=" + cargo;
+        /**
+         * Carrega métricas para coordenador
+         */
+        function metricasCoordenador(idAvaliacao) {
+            console.log("Carregando métricas para avaliação:", idAvaliacao);
 
-                @if ($segunda_chamada)
-                    url += "&segunda_chamada=true";
-                @endif
-                console.log(url);
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    beforeSend: function() {},
-                }).done(function(data) {
-                    //Limpar a tabela sempre que for inicializada (Aberto o Modal)
-
-
-                    $("#students_new").empty();
-
-                    // var resultGrades = dataResult.data;
-                    var resultStudents = data.students;
-                    var students_segunda_chamada = data.students_segunda_chamada;
-                    var metricas = data.metricas;
-                    var config = data.config;
-                    // var metricArePlublished = dataResult.metricArePlublished;
-                    var bodyData = '';
-                    var i = 1;
-                    var flag = true;
-                    version = data.version;
-                    estado_pauta_lancar = data.estado_pauta_lancar;
-                    pauta_id = data.pauta_id;
-                    pauta_path = data.pauta_path;
-
-                    getHistoric();
-                    if (pauta_path != null) {
-                        $('#btn_pdf').attr('href', pauta_path);
-                        $('#btn_pdf').find('span').removeClass('btn-danger');
-                        $('#btn_pdf').find('span').addClass('btn-primary');
-                    }
-
-                    var open_url = '/pt/avaliations/open-pauta/' + pauta_id;
-
-                    $('#lock').val(pauta_id);
-                    $('#version').val(version);
-
-                    if (estado_pauta_lancar == 1) {
-
-                        showOpenPauta();
-
-                        $('#btn_open_pauta').attr('href', open_url);
-
-                        ElementoBTN_salvar = $("#div_btn_save").html();
-                        callSumit = $("#ocultar_btn").html();
-                        $("#btn-Enviar").remove();
-                        $("#btn-callSubmit").remove();
-                        $(".notaCampo").attr("disabled", true);
-                    } else {
-                        hideOpenPauta();
-
-                        if (ElementoBTN_salvar.length) {
-                            $("#div_btn_save").html(ElementoBTN_salvar);
-                            $("#ocultar_btn").html(callSumit);
-                        }
-                    }
-
-                    if (estado_pauta_lancar != 1 && data.grades.length > 0) {
-                        showLockPauta();
-                    } else {
-                        hideLockPauta();
-                    }
-
-                    if (resultStudents.length > 0) {
-                        var dd = 0;
-                        resultStudents.forEach(function(student) {
-                            Nota_aluno = '';
-                            data['grades'].forEach(function(nota) {
-
-                                if (student.user_id == nota.user_id) {
-                                    Nota_aluno = nota.aanota;
-                                    presencaClass = nota.aanota;
-                                    ausente = nota.presence;
-                                }
-                            });
-                            regime = student.e_f == 0 ? "Frequência" : "Exame";
-                            console.log('xjahs:' + presencaClass, ausente, pauta_path)
-                            //validação se faltou ou não na prova
-                            if ((presencaClass == null && ausente == 1) || (presencaClass == null &&
-                                    ausente == null && pauta_path != null)) {
-                                //essa linhas é dos alunos que faltaram
-                                linha = "Linha_checado";
-                                bodyData += '<tr style="background-color:#f4f4f4;" id=' + linha +
-                                    student.user_id + '>'
-                                bodyData += "<td>" + i++ +
-                                    "</td><td width='120'><input name='inputCheckBox[]' checked value='falta," +
-                                    student.user_id + "'  id='" + student.user_id +
-                                    "' onclick='verChecagem(this);'  type='checkbox'> <span id='span_checado" +
-                                    student.user_id +
-                                    "' style='background: red; padding: 2px; color: #fff;'>AUSENTE</span></td> <td class='regime'>" +
-                                    regime + "</td><td width='120'>" + student.n_student +
-                                    "</td> <td style='font-size:0.9pc'>" + student.user_name +
-                                    "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value=" +
-                                    student.user_id +
-                                    "><input type='number' readonly id='nota_checado" +
-                                    student.user_id +
-                                    "'  min='0' max='20' name='notas[]' class='form-control' value=" +
-                                    Nota_aluno +
-                                    "><input type='hidden' min='0' max='20' name='whoIs' class='form-control' value='super'><input type='hidden' min='0' max='20' name='metrica_teacher'  class='form-control' value=" +
-                                    metrica_id_teacher +
-                                    " >  <input type='hidden' name='id_plano_estudo' class='form-control' value=" +
-                                    id_planoEstudo + "> ";
-                                bodyData += '</tr>'
-                            } else {
-                                linha = "Linha_checado";
-                                bodyData += '<tr id=' + linha + student.user_id + '>'
-                                bodyData += "<td>" + i++ +
-                                    "</td><td width='120'><input name='inputCheckBox[]' value='falta," +
-                                    student.user_id + "'  id='" + student.user_id +
-                                    "' onclick='verChecagem(this);'  type='checkbox'> <span id='span_checado" +
-                                    student.user_id +
-                                    "' style='background: #38C172; padding: 2px; color: #fff;'>PRESENTE</span></td> <td class='regime'>" +
-                                    regime + "</td><td width='120'>" + student.n_student +
-                                    "</td> <td style='font-size:0.9pc'>" + student.user_name +
-                                    "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value=" +
-                                    student.user_id + "><input type='number' id='nota_checado" +
-                                    student.user_id +
-                                    "'  min='0' max='20' name='notas[]' class='form-control' value=" +
-                                    Nota_aluno +
-                                    "><input type='hidden' min='0' max='20' name='whoIs' class='form-control' value='super'><input type='hidden' min='0' max='20' name='metrica_teacher' class='form-control' value=" +
-                                    metrica_id_teacher +
-                                    ">  <input type='hidden' name='id_plano_estudo' class='form-control' value=" +
-                                    id_planoEstudo + "> ";
-                                bodyData += '</tr>'
-                            }
-                        });
-                        Nota_aluno = '';
-                        console.log('ola' + estado_pauta_lancar);
-                        if (estado_pauta_lancar != null) {
-                            setarDesc();
-                        }
-
-                    } else {
-                        bodyData += '<tr>'
-                        bodyData +=
-                            "<td class='text-center fs-2'>Nenhum estudante foi encontrado nesta turma.</td>";
-                        bodyData += '</tr>'
-                    }
-                    $("#students_new").append(bodyData);
-
-
-
-                    resultStudents.forEach(function(student) {
-
-                        if (students_segunda_chamada.length > 0 && students_segunda_chamada
-                            .includes(student.user_id)) {
-                            $("#nota_checado" + student.user_id).prop('readonly', true);
-                            $("#" + student.user_id).prop('readonly', true);
-                        }
+            $.ajax({
+                url: `/pt/avaliations/metrica_ajax_coordenador/${idAvaliacao}`,
+                type: "GET",
+                data: { _token: '{{ csrf_token() }}' },
+                cache: false,
+                dataType: 'json'
+            }).done(function(data) {
+                if (data.metricas && data.metricas.length) {
+                    elements.metricaSelect.empty();
+                    elements.metricaSelect.append('<option selected value="">Selecione a métrica</option>');
+                    
+                    $.each(data.metricas, function(index, row) {
+                        elements.metricaSelect.append(
+                            `<option value="${row.id}" data-metric="${row.code_dev}">${row.nome}</option>`
+                        );
                     });
+                    
+                    elements.metricaSelect.prop('disabled', false).selectpicker('refresh');
+                } else {
+                    console.warn("Nenhuma métrica encontrada");
+                    elements.metricaSelect.prop('disabled', true).empty();
+                }
+            }).fail(function(error) {
+                console.error("Erro ao carregar métricas:", error);
+            });
+        }
 
+        /**
+         * Carrega estudantes para coordenador
+         */
+        function studentCourseCoordenador() {
+            const turma = elements.turmaSelect.val();
+            const lectiveYearSelect = elements.lectiveYear.val();
+            state.cargo = elements.disciplinaSelect.val().split(",")[0];
+            
+            console.log("Carregando estudantes para coordenador, cargo:", state.cargo);
 
+            let url = `/avaliations/student_ajax/${state.disciplineId}/${elements.metricaSelect.val()}/${state.idPlanoEstudo}/${elements.avaliacaoSelect.val()}/${turma}/${lectiveYearSelect}?whoIs=${state.cargo}`;
 
+            @if ($segunda_chamada)
+                url += "&segunda_chamada=true";
+            @endif
+
+            console.log("URL estudantes coordenador:", url);
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: { _token: '{{ csrf_token() }}' },
+                cache: false,
+                dataType: 'json'
+            }).done(function(data) {
+                renderStudentsTable(data, "coordenador");
+            }).fail(function(error) {
+                console.error("Erro ao carregar estudantes coordenador:", error);
+            });
+        }
+
+        /**
+         * Carrega notas dos estudantes
+         */
+        function StudantGrade(disciplineId, metricaId, idPlanoEstudo, idAvaliacao, lectiveYear) {
+            state.cargo = elements.disciplinaSelect.val().split(",")[0];
+            const turma = elements.turmaSelect.val();
+            
+            console.log("Carregando notas, cargo:", state.cargo);
+
+            let url = `/avaliations/student_ajax/${disciplineId}/${metricaId}/${idPlanoEstudo}/${idAvaliacao}/${turma}/${lectiveYear}?whoIs=${state.cargo}`;
+
+            @if ($segunda_chamada)
+                url += "&segunda_chamada=true";
+            @endif
+
+            console.log("URL notas:", url);
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: { _token: '{{ csrf_token() }}' },
+                cache: false,
+                dataType: 'json',
+                success: function(dataResult) {
+                    renderStudentsTable(dataResult, "teacher");
+                },
+                error: function(error) {
+                    console.error('Erro ao carregar notas:', error);
+                }
+            });
+        }
+
+        /**
+         * Renderiza a tabela de estudantes
+         */
+        function renderStudentsTable(data, tipo) {
+            console.log(`Renderizando tabela para: ${tipo}`, data);
+
+            // Atualizar estado da pauta
+            updatePautaState(data);
+
+            // Limpar tabela
+            elements.studentsNew.empty();
+
+            const resultStudents = data.students || [];
+            const studentsSegundaChamada = data.students_segunda_chamada || [];
+            const grades = data.grades || [];
+            let bodyData = '';
+            let i = 1;
+
+            state.version = data.version || '';
+            $('#version').val(state.version);
+
+            if (resultStudents.length > 0) {
+                resultStudents.forEach(function(student) {
+                    const studentGrade = findStudentGrade(grades, student.user_id);
+                    const regime = student.e_f == 0 ? "Frequência" : "Exame";
+                    
+                    bodyData += createStudentRow(student, studentGrade, i++, regime, tipo);
                 });
+            } else {
+                bodyData = '<tr><td class="text-center fs-2">Nenhum estudante foi encontrado nesta turma.</td></tr>';
             }
 
-            function showLockPauta() {
-                $("#nav-lock-pauta").html(elementLockPauta);
+            elements.studentsNew.append(bodyData);
+
+            // Aplicar restrições para segunda chamada
+            applySegundaChamadaRestrictions(resultStudents, studentsSegundaChamada);
+        }
+
+        function updatePautaState(data) {
+            state.estadoPautaLancar = data.estado_pauta_lancar;
+            state.pautaId = data.pauta_id;
+            state.pautaPath = data.pauta_path;
+
+            getHistoric();
+
+            // Atualizar botão PDF
+            if (state.pautaPath) {
+                elements.btnPdf.attr('href', state.pautaPath)
+                    .find('span').removeClass('btn-danger').addClass('btn-primary');
             }
 
-            function hideLockPauta() {
-                elementLockPauta = $("#nav-lock-pauta").html();
-                $("#btn_lock_pauta").remove();
-            }
+            $('#lock').val(state.pautaId);
+            const openUrl = `/pt/avaliations/open-pauta/${state.pautaId}`;
 
-            function showOpenPauta() {
-                $("#nav-open-pauta").html(elementOpenPauta);
-            }
-
-            function hideOpenPauta() {
-                elementOpenPauta = $("#nav-open-pauta").html();
-
-            }
-
-            function setarDesc() {
-
-                $('description').text('');
-                $("#caixaDesc").attr('style', '');
-
-            }
-
-            function StudantGrade(discipline_id, metrica_id, id_planoEstudo, id_avaliacao, lective_year) {
-                cargo = Disciplina_id_Select.val().split(",")[0];
-                console.log(cargo);
-                var turma = Turma_id_Select.val();
-                let url = "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" + id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year + "?whoIs=" + cargo;
-                @if ($segunda_chamada)
-                    url += "&segunda_chamada=true";
-                @endif
-                console.log(url)
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    success: function(dataResult) {
-
-
-                        //Estado da publish
-                        var estado_pauta = dataResult.estado_pauta;
-                        estado_pauta_lancar = dataResult.estado_pauta_lancar;
-                        pauta_id = dataResult.pauta_id;
-                        pauta_path = dataResult.pauta_path;
-                        getHistoric();
-
-                        if (pauta_path != null) {
-                            $('#btn_pdf').attr('href', pauta_path);
-                            $('#btn_pdf').find('span').removeClass('btn-danger');
-                            $('#btn_pdf').find('span').addClass('btn-primary');
-                        }
-
-
-
-                        $('#lock').val(pauta_id);
-                        var open_url = '/pt/avaliations/open-pauta/' + pauta_id;
-
-                        if (estado_pauta_lancar == 1 && whoIs != "teacher") {
-                            showOpenPauta();
-                            $('#btn_open_pauta').attr('href', open_url);
-                        } else {
-                            hideOpenPauta();
-                        }
-
-                        if (estado_pauta_lancar != 1 && dataResult.grades.length > 0) {
-                            showLockPauta();
-                        } else {
-                            hideLockPauta();
-                        }
-
-
-                        if (estado_pauta == 1) {
-                            $("#textoAviso").text("");
-                            $("#textoAviso").text(
-                                "Atenção! detetamos que a pauta desta disciplina já se encontra publicada, com base nesta situação não lhe é permitido fazer o lançamento de nota. Em caso de dúvida, cantacte a coordenação."
-                            );
-                            $("#modalAviso").modal('show');
-                            ElementoBTN_salvar = $("#div_btn_save").html();
-                            callSumit = $("#ocultar_btn").html();
-                            $("#btn-Enviar").remove();
-                            $("#btn-callSubmit").remove();
-                            $(".notaCampo").attr("disabled", true);
-                        } else if (estado_pauta == 0) {
-                            if (ElementoBTN_salvar.length) {
-                                $("#div_btn_save").html(ElementoBTN_salvar);
-                                $("#ocultar_btn").html(callSumit);
-                            }
-                        }
-
-                        // Estado lançar pauta
-
-                        if (estado_pauta_lancar == 1 && cargo == 'teacher') {
-                            $("#textoAviso").text("");
-                            $("#textoAviso").text(
-                                "Atenção! detetamos que a pauta desta disciplina já se encontra fechada, com base nesta situação não lhe é permitido fazer o lançamento de nota. Em caso de dúvida, cantacte a coordenação."
-                            );
-                            $("#modalAviso").modal('show');
-                            ElementoBTN_salvar = $("#div_btn_save").html();
-                            callSumit = $("#ocultar_btn").html();
-                            $("#btn-Enviar").remove();
-                            $("#btn-callSubmit").remove();
-                            $(".notaCampo").attr("disabled", true);
-
-                        } else if (estado_pauta_lancar == 0) {
-                            if (ElementoBTN_salvar.length) {
-                                $("#div_btn_save").html(ElementoBTN_salvar);
-                                $("#ocultar_btn").html(callSumit);
-                            }
-                        }
-
-
-
-                        $("#students_new tr").empty();
-
-                        // var resultGrades = dataResult.data;
-                        var resultStudents = dataResult.students;
-                        var grades = dataResult.grades;
-                        // var metricArePlublished = dataResult.metricArePlublished;
-                        var bodyData = '';
-                        var i = 1;
-                        var flag = true;
-                        version = dataResult.version;
-                        $('#version').val(version);
-                        var students_segunda_chamada = dataResult.students_segunda_chamada;
-                        //Compara o utilizador e tras automático ou manual
-                        if (whoIs == "teacher") {
-                            console.log(resultStudents.length > 0)
-                            //validar notas
-                            if (resultStudents.length > 0) {
-                                resultStudents.forEach(function(student) {
-                                    var count = 0;
-                                    Nota_aluno = '';
-                                    dataResult['grades'].forEach(function(nota) {
-                                        if (student.user_id == nota.user_id) {
-                                            Nota_aluno = nota.aanota;
-                                            presencaClass = nota.aanota;
-                                            ausente = nota.presence;
-                                        }
-                                    });
-                                    regime = "";
-                                    regime = student.e_f == 0 ? "Frequência" : "Exame";
-                                    //validação se faltou ou não na prova
-                                    console.log('zkjd' + pauta_path)
-                                    if ((presencaClass == null && ausente == 1) || (
-                                            presencaClass == null && ausente == null &&
-                                            pauta_path != null)) {
-
-                                        //essa linhas é dos alunos que faltaram
-                                        linha = "Linha_checado";
-                                        bodyData +=
-                                            '<tr  style="background-color:#f4f4f4;" id=' +
-                                            linha + student.user_id + '>'
-                                        bodyData += "<td>" + i++ +
-                                            "</td><td width='120'><input name='inputCheckBox[]' checked value='falta," +
-                                            student.user_id + "'  id='" + student.user_id +
-                                            "' onclick='verChecagem(this);'  type='checkbox'> <span id='span_checado" +
-                                            student.user_id +
-                                            "' style='background: red; padding: 2px; color: #fff;'>AUSENTE</span></td>  <td class='regime'>" +
-                                            regime + "</td><td width='120'>" + student
-                                            .n_student + "</td> <td style='font-size:0.9pc'>" +
-                                            student.user_name +
-                                            "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value=" +
-                                            student.user_id +
-                                            "><input type='number'  readonly id='nota_checado" +
-                                            student
-                                            .user_id +
-                                            "'  min='0' max='20' name='notas[]' class='form-control notaCampo' value=" +
-                                            Nota_aluno +
-                                            "><input type='hidden' min='0' max='20' name='whoIs' class='form-control' value='teachear'><input type='hidden' min='0' max='20' name='metrica_teacher' class='form-control' value=" +
-                                            metrica_id_teacher +
-                                            ">  <input type='hidden' name='id_plano_estudo' class='form-control' value=" +
-                                            id_planoEstudo + "> ";
-                                        bodyData += '</tr>'
-                                    } else {
-                                        linha = "Linha_checado";
-                                        bodyData += '<tr id=' + linha + student.user_id + '>'
-                                        bodyData += "<td>" + i++ +
-                                            "</td><td width='120'><input name='inputCheckBox[]' value='falta," +
-                                            student.user_id + "'  id='" + student.user_id +
-                                            "' onclick='verChecagem(this);'  type='checkbox'> <span id='span_checado" +
-                                            student.user_id +
-                                            "' style='background: #38C172; padding: 2px; color: #fff;'>PRESENTE</span> </td> <td class='regime' >" +
-                                            regime + "</td><td width='120'>" + student
-                                            .n_student + "</td> <td style='font-size:0.9pc'>" +
-                                            student.user_name +
-                                            "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value=" +
-                                            student.user_id +
-                                            "><input type='number' id='nota_checado" + student
-                                            .user_id +
-                                            "'  min='0' max='20' name='notas[]' class='form-control notaCampo' value=" +
-                                            Nota_aluno +
-
-                                            "><input  id='whoIs' type='hidden' min='0' max='20' name='whoIs' class='form-control' value='teachear'><input type='hidden' min='0' max='20' name='metrica_teacher' class='form-control' value=" +
-                                            metrica_id_teacher +
-                                            ">  <input type='hidden' name='id_plano_estudo' class='form-control' value=" +
-                                            id_planoEstudo + "> ";
-                                        bodyData += '</tr>'
-                                    }
-                                });
-                            } else {
-                                bodyData += '<tr>'
-                                bodyData +=
-                                    "<td class='text-center fs-2'>Nenhum estudante foi encontrado nesta turma.</td>";
-                                bodyData += '</tr>'
-                            }
-
-                        } else {
-
-                        }
-                        $("#students_new").append(bodyData);
-
-                        resultStudents.forEach(function(student) {
-                            if (students_segunda_chamada.length > 0 && students_segunda_chamada
-                                .includes(student.user_id)) {
-                                $("#nota_checado" + student.user_id).prop('readonly', true);
-                                $("#" + student.user_id).prop('readonly', true);
-                            }
-                        });
-
-
-                    },
-                    error: function(dataResult) {
-                        console.log('error' + result);
-                    }
-                });
-            }
-            //Fim do Cláudio JS
-
-
-            $("#btn-callSubmit").click(function() {
-
-                if ($("#description").val() == "" && whoIs == "super" && estado_pauta_lancar != null)
-                    alert("O campo de descrição é obrigatório!");
-                else {
-                    $("#id_form_Nota").submit();
+            // Controlar visibilidade dos botões de pauta
+            if (state.estadoPautaLancar == 1) {
+                showOpenPauta();
+                $('#btn_open_pauta').attr('href', openUrl);
+                
+                state.elementoBtnSalvar = $("#div_btn_save").html();
+                state.callSubmit = $("#ocultar_btn").html();
+                elements.btnEnviar.remove();
+                elements.btnCallSubmit.remove();
+                $(".notaCampo").attr("disabled", true);
+            } else {
+                hideOpenPauta();
+                if (state.elementoBtnSalvar) {
+                    $("#div_btn_save").html(state.elementoBtnSalvar);
+                    $("#ocultar_btn").html(state.callSubmit);
                 }
-
-
-            });
-
-            $("#btn-callLock").click(function() {
-
-                $("#id_form_lock").submit();
-
-
-            });
-            var selectStudyPlan = $("#course_id");
-            var selectDiscipline = $("#discipline_id");
-            var selectAvaliation = $("#avaliacao_id");
-            var selectClass = $("#class_id");
-            var selectMetrica = $("#metrica_id");
-
-            getAllStudyPlanEdition();
-
-            function getAllStudyPlanEdition() {
-                $.ajax({
-                    url: "/avaliations/plano_estudo_ajax/",
-                    type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'json',
-                }).done(function(data) {
-                    selectStudyPlan.prop('disabled', true);
-                    selectStudyPlan.empty();
-                    selectStudyPlan.append('<option selected="" value="" style="color:black;"></option>');
-                    $.each(data, function(index, row) {
-                        selectStudyPlan.append('<option value="' + row.spea_id + '">' + row
-                            .spea_nome + '</option>');
-                    });
-                    selectStudyPlan.prop('disabled', false);
-                    selectStudyPlan.selectpicker('refresh');
-                });
             }
 
-            $("#class_id").prop('disabled', true);
-            //Buscar Disciplinas apartir do curso associados ao Plano estudo Avaliacao
-            $('#course_id').change(function() {
-                var course_id = $(this).children("option:selected").val();
-                console.log(course_id);
-                $("#class_id").empty();
-                $("#avaliacao_id").empty();
-                $("#metrica_id").empty();
-                $("#students tr").empty();
-                $('#avaliacao_id').prop('disabled', true);
-                $('#class_id').prop('disabled', true);
-                $('#metrica_id').prop('disabled', true);
+            if (state.estadoPautaLancar != 1 && data.grades && data.grades.length > 0) {
+                showLockPauta();
+            } else {
+                hideLockPauta();
+            }
+        }
 
-                if (course_id == "") {
-                    console.log("Empty");
-                    $('#discipline_id').prop('disabled', true);
-                    $("#discipline_id").empty();
-                    $('#avaliacao_id').prop('disabled', true);
-                    $("#class_id").prop('disabled', true);
-                    $("#avaliacao_id").empty();
-                    $('#metrica_id').prop('disabled', true);
-                    $('#class_id').empty("");
-                    $("#metrica_id").empty();
-                    $("#students tr").empty();
-                } else {
-                    console.log(course_id)
-                    $.ajax({
-                        url: "/avaliations/disciplines_ajax/" + course_id,
-                        type: "GET",
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        cache: false,
-                        dataType: 'json',
-                        success: function(dataResult) {
-                            //Limpar a tabela sempre que for inicializada (Aberto o Modal)
-                            $("#discipline_id").empty();
-                            var resultData = dataResult.data;
-                            var resultClasses = dataResult.classes;
-                            var bodyData = '';
-                            var bodyClassData = '';
-                            var i = 1;
-                            console.log(dataResult.data);
-                            selectDiscipline.prop('disabled', true);
-                            selectDiscipline.empty();
-                            selectClass.empty();
-                            selectDiscipline.append('<option selected="" value=""></option>');
-                            selectClass.append('<option selected="" value=""></option>');
-                            $.each(resultData, function(index, row) {
-                                selectDiscipline.append('<option value="' + row
-                                    .discipline_id + '">' + row.dt_display_name +
-                                    '</option>');
-                            });
-                            $.each(resultClasses, function(index, row) {
-                                selectClass.append('<option value="' + row.id + '">' +
-                                    row.display_name + '</option>');
-                            });
-                            selectDiscipline.prop('disabled', false);
-                            selectDiscipline.selectpicker('refresh');
-                            selectClass.prop('disabled', false);
-                            selectClass.selectpicker('refresh');
+        function findStudentGrade(grades, userId) {
+            return grades.find(nota => nota.user_id == userId) || {};
+        }
 
-                        },
-                        error: function(dataResult) {
+        function createStudentRow(student, grade, index, regime, tipo) {
+            const notaAluno = grade.aanota || '';
+            const ausente = grade.presence;
+            const isAusente = (notaAluno === null && ausente == 1) || (notaAluno === null && ausente === null && state.pautaPath !== null);
+            
+            const linhaId = `Linha_checado${student.user_id}`;
+            const spanId = `span_checado${student.user_id}`;
+            const notaId = `nota_checado${student.user_id}`;
+            
+            const bgColor = isAusente ? 'style="background-color:#f4f4f4;"' : '';
+            const spanStyle = isAusente ? 
+                'style="background: red; padding: 2px; color: #fff;"' : 
+                'style="background: #38C172; padding: 2px; color: #fff;"';
+            const spanText = isAusente ? 'AUSENTE' : 'PRESENTE';
+            const checked = isAusente ? 'checked' : '';
+            const readonly = isAusente ? 'readonly' : '';
 
-                        }
-                    });
+            return `
+                <tr ${bgColor} id="${linhaId}">
+                    <td>${index}</td>
+                    <td width="120">
+                        <input name="inputCheckBox[]" value="falta,${student.user_id}" 
+                               id="${student.user_id}" onclick="verChecagem(this);" 
+                               type="checkbox" ${checked}>
+                        <span id="${spanId}" ${spanStyle}>${spanText}</span>
+                    </td>
+                    <td class="regime">${regime}</td>
+                    <td width="120">${student.n_student}</td>
+                    <td style="font-size:0.9pc">${student.user_name}</td>
+                    <td width="100">
+                        <input type="hidden" name="estudantes[]" value="${student.user_id}">
+                        <input type="number" id="${notaId}" min="0" max="20" 
+                               name="notas[]" class="form-control ${tipo === 'teacher' ? 'notaCampo' : ''}" 
+                               value="${notaAluno}" ${readonly}>
+                        <input type="hidden" name="whoIs" value="${tipo === 'teacher' ? 'teachear' : 'super'}">
+                        <input type="hidden" name="metrica_teacher" value="${state.metricaIdTeacher}">
+                        <input type="hidden" name="id_plano_estudo" value="${state.idPlanoEstudo}">
+                    </td>
+                </tr>`;
+        }
+
+        function applySegundaChamadaRestrictions(students, studentsSegundaChamada) {
+            students.forEach(function(student) {
+                if (studentsSegundaChamada.includes(student.user_id)) {
+                    $(`#nota_checado${student.user_id}`).prop('readonly', true);
+                    $(`#${student.user_id}`).prop('readonly', true);
                 }
             });
-            //Buscar Avaliações apartir do curso e disciplina associados ao Plano estudo Avaliacao
-            $('#discipline_id').change(function() {
-                var discipline_id = $(this).children("option:selected").val();
-                $("#students tr").empty();
-                $('#metrica_id').prop('disabled', true);
-                $("#metrica_id").empty();
-                $("#avaliacao_id").empty();
-                $('#class_id').val("");
-                $('#class_id').prop('disabled', true);
+        }
 
-                if (discipline_id == "") {
-                    console.log("Empty");
-                    $('#avaliacao_id').prop('disabled', true);
-                    $("#class_id").prop('disabled', true);
-                    $("#avaliacao_id").empty();
-                    $('#metrica_id').prop('disabled', true);
-                    $('#class_id').val("");
-                    $("#metrica_id").empty();
-                    $("#students tr").empty();
-                } else {
-                    let url = "/avaliations/avaliacao_ajax/" + discipline_id;
-                    @if ($segunda_chamada)
-                        url += "?segunda_chamada=true";
-                    @endif
-                    $.ajax({
-                        url: url,
-                        type: "GET",
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        cache: false,
-                        dataType: 'json',
-                        success: function(dataResult) {
-                            //Limpar a tabela sempre que for inicializada (Aberto o Modal)
-                            $("#avaliacao_id").empty();
-                            var resultData = dataResult.data;
-                            var bodyData = '';
-                            var i = 1;
-                            console.log(dataResult.data);
-                            selectAvaliation.prop('disabled', true);
-                            selectAvaliation.empty();
-                            selectAvaliation.append('<option selected="" value=""></option>');
-                            $.each(resultData, function(index, row) {
-                                selectAvaliation.append('<option value="' + row.avl_id +
-                                    '">' + row.avl_nome + '</option>');
-                            });
-                            selectAvaliation.prop('disabled', false);
-                            selectAvaliation.selectpicker('refresh');
-                        },
-                        error: function(dataResult) {
+        // ========== FUNÇÕES DE CONTROLE DE PAUTA ==========
 
-                        }
-                    });
-                }
-            });
-            //Buscar Metricas apartir do curso da disciplina e da avaliacao associados ao Plano estudo Avaliacao
-            $('#avaliacao_id').change(function() {
-                var avaliacao_id = $(this).children("option:selected").val();
-                var discipline_id = $('#discipline_id').val();
-                var course_id = $('#course_id').val();
-                $("#students tr").empty();
-                $("#metrica_id").empty();
-                $('#class_id').val("");
-                if (avaliacao_id == "") {
-                    console.log("Empty");
-                    $('#metrica_id').prop('disabled', true);
-                    $("#class_id").prop('disabled', true);
-                    $("#class_id").val("");
-                    $("#metrica_id").empty();
-                    $("#students tr").empty();
-                } else {
-                    $.ajax({
-                        url: "/avaliations/metrica_ajax/" + avaliacao_id + "/" + discipline_id +
-                            "/" + course_id,
-                        type: "GET",
-                        data: {
-                            _token: '{{ csrf_token() }}'
+        function showLockPauta() {
+            elements.navLockPauta.html(state.elementLockPauta);
+        }
 
-                        },
-                        cache: false,
-                        dataType: 'json',
-                        success: function(dataResult) {
-                            //Limpar a tabela sempre que for inicializada (Aberto o Modal)
-                            $("#metrica_id").empty();
-                            console.log(" Teste básico " + dataResult);
-                            var resultData = dataResult.data;
-                            var bodyData = '';
-                            var i = 1;
-                            console.log(dataResult.data);
-                            selectMetrica.prop('disabled', true);
-                            selectMetrica.empty();
-                            selectMetrica.append('<option selected="" value=""></option>');
-                            //Limpar a tabela sempre que for
-                            $.each(resultData, function(index, row) {
-                                selectMetrica.append('<option value="' + row.mtrc_id +
-                                    '">' + row.mtrc_nome + '</option>');
-                            });
-                            selectMetrica.prop('disabled', false);
-                            selectMetrica.selectpicker('refresh');
-                            //$("#class_id").prop('disabled', false)//
+        function hideLockPauta() {
+            state.elementLockPauta = elements.navLockPauta.html();
+            $("#btn_lock_pauta").remove();
+        }
 
-                            selectClass.prop('disabled', false);
-                        },
-                        error: function(dataResult) {
+        function showOpenPauta() {
+            elements.navOpenPauta.html(state.elementOpenPauta);
+        }
 
-                        }
-                    });
-                }
-            });
+        function hideOpenPauta() {
+            state.elementOpenPauta = elements.navOpenPauta.html();
+            $("#btn_open_pauta").remove();
+        }
 
-            $("#class_id").change(function() {
-                if ($("#class_id").val() == "") {
-                    $("#metrica_id").val("");
-                    $("#students tr").empty();
-                    $('#metrica_id').prop('disabled', true);
-                } else {
-                    var avaliacao_id = $("#avaliacao_id").val();
-                    var discipline_id = $('#discipline_id').val();
-                    var course_id = $('#course_id').val();
-                    $.ajax({
+        function setarDesc() {
+            elements.description.text('');
+            elements.caixaDesc.attr('style', '');
+        }
 
-                        url: "/avaliations/metrica_ajax/" + avaliacao_id + "/" + discipline_id +
-                            "/" + course_id,
-                        type: "GET",
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        cache: false,
-                        dataType: 'json',
-                        success: function(dataResult) {
-                            //Limpar a tabela sempre que for inicializada (Aberto o Modal)
-                            var resultData = dataResult.data;
-                            var bodyData = '';
-                            var i = 1;
-                            selectMetrica.prop('disabled', true);
-                            selectMetrica.empty();
+        // ========== EVENT HANDLERS ==========
 
-                            selectMetrica.append('<option selected="" value=""></option>');
-                            $.each(resultData, function(index, row) {
-                                selectMetrica.append('<option value="' + row.mtrc_id +
-                                    '">' + row.mtrc_nome + '</option>');
-                            });
-                            selectMetrica.prop('disabled', false);
-                            selectMetrica.selectpicker('refresh');
-                            selectClass.prop('disabled', false);
-                        },
-                        error: function(dataResult) {}
-                    });
-                    $("#students tr").empty();
-                }
-            });
-            //Listar estudante que tem a determinada disciplina e determinada turma.
-            $("#metrica_id").change(function() {
-                console.log('iu')
-                if ($("#metrica_id").val() == "") {
-                    $("#students tr").empty();
-                } else {
-                    console.log('tu')
-                    var discipline_id = $('#discipline_id').val();
-                    var metrica_id = $('#metrica_id').val();
-                    var course_id = $('#course_id').val();
-                    var avaliacao_id = $('#avaliacao_id').val();
-                    var class_id = $('#class_id').val();
-                    console.log('course_id' + $course_id)
-                    cargo = Disciplina_id_Select.val().split(",")[0];
-                    console.log(cargo);
-                    $.ajax({
-                        url: "/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" +
-                            course_id + "/" + avaliacao_id + "/" + class_id + "?whoIs=" + cargo,
-                        type: "GET",
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        cache: false,
-                        dataType: 'json',
-                        success: function(dataResult) {
-                            //Limpar a tabela sempre que for inicializada (Aberto o Modal)
-
-
-                            $("#students tr").empty();
-                            var resultGrades = dataResult.data;
-                            var resultStudents = dataResult.students;
-                            var metricArePlublished = dataResult.metricArePlublished;
-                            var bodyData = '';
-                            var i = 1;
-                            var flag = true;
-                            var a;
-                            version = dataResult.version;
-                            $('#version').val(version);
-                            var students_segunda_chamada = dataResult.students_segunda_chamada;
-
-                            for (a = 0; a < resultStudents.length; a++) {
-                                var dd = a;
-                                flag = true;
-                                //Verifica se o Array das notas está vazio
-                                if (resultGrades == '') {
-                                    checkInputEmpty(dd);
-                                    bodyData += '<tr>'
-                                    bodyData += "<td>" + i++ +
-                                        "</td><td width='120'><input type='checkbox' id='check" +
-                                        dd + "' onclick='disbleInput(" + dd +
-                                        ");' checked> <input id='input" + dd +
-                                        "' value='true' name='inputCheckBox[]' hidden> <span id='span" +
-                                        dd +
-                                        "' style='background: #38C172; padding: 2px; color: #fff;'>PRESENTE</span></td><td width='120'>" +
-                                        resultStudents[a].n_student + "</td><td>" +
-                                        resultStudents[a].user_name +
-                                        "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value=" +
-                                        resultStudents[a].user_id + ">";
-                                    if (metrica_id == 53 ||
-                                        metricArePlublished
-                                    ) //se a metrica for igual a OA ou a metrica ja for publicada bloquear o campo (disabled)
-                                    {
-                                        bodyData +=
-                                            "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' step='0.01' id=" +
-                                            dd + " readOnly></td>"
-                                    } else {
-                                        bodyData +=
-                                            "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' step='0.01' id=" +
-                                            dd + "></td>"
-                                    }
-                                    bodyData += '</tr>'
-                                } else {
-                                    checkInputEmpty(dd);
-                                    bodyData += '<tr>'
-                                    bodyData += "<td>" + i++ + "</td><td width='120'>"
-                                    bodyData += "<input type='checkbox' id='check" + dd +
-                                        "' onclick='disbleInput(" + dd +
-                                        ");' checked> <input id='input" + dd +
-                                        "' value='true' name='inputCheckBox[]' hidden> <span id='span" +
-                                        dd +
-                                        "' style='background: #38C172; padding: 2px; color: #fff;'>PRESENTE</span></td>"
-                                    bodyData += "<td width='120'>" + resultStudents[a]
-                                        .n_student + "<td>" + resultStudents[a].user_name +
-                                        "</td><td width='100'><input type='hidden' name='estudantes[]' class='form-control' value=" +
-                                        resultStudents[a].user_id + ">";
-
-                                    if (metrica_id == 53 ||
-                                        metricArePlublished
-                                    ) //se a metrica for igual a OA bloquear o campo (disabled)
-                                    {
-
-                                        for (var b = 0; b < resultGrades.length; b++) {
-                                            if (resultGrades[b].user_id == resultStudents[a]
-                                                .user_id) {
-                                                flag = false;
-                                                bodyData +=
-                                                    "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value=" +
-                                                    resultGrades[b].aanota +
-                                                    " step='0.01' id=" + dd + " readOnly></td>"
-                                            }
-                                        }
-                                        if (flag) {
-                                            bodyData +=
-                                                "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value='' step='0.01' id=" +
-                                                dd + " readOnly></td>"
-                                        }
-                                    } else {
-                                        for (var b = 0; b < resultGrades.length; b++) {
-                                            if (resultGrades[b].user_id == resultStudents[a]
-                                                .user_id) {
-                                                flag = false;
-                                                if (avaliacao_id ==
-                                                    22) //caso for recurso input (max = 12)
-                                                {
-                                                    bodyData +=
-                                                        "<input type='number' name='notas[]' min='0' max='12' class='form-control notas' value=" +
-                                                        resultGrades[b].aanota +
-                                                        " step='0.01' id=" + dd + "></td>"
-                                                } else {
-                                                    bodyData +=
-                                                        "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value=" +
-                                                        resultGrades[b].aanota +
-                                                        " step='0.01' id=" + dd + "></td>"
-                                                }
-                                            }
-                                        }
-                                        if (flag) {
-                                            if (avaliacao_id ==
-                                                22) //caso for recurso input (max = 12)
-                                            {
-                                                bodyData +=
-                                                    "<input type='number' name='notas[]' min='0' max='12' class='form-control notas' value='' step='0.01' id=" +
-                                                    dd + "></td>"
-                                            } else {
-                                                bodyData +=
-                                                    "<input type='number' name='notas[]' min='0' max='20' class='form-control notas' value='' step='0.01' id=" +
-                                                    dd + "></td>"
-                                            }
-                                        }
-                                    }
-
-                                    // }
-                                    bodyData += '</tr>'
-                                }
-                            }
-                            $("#students").append(bodyData);
-
-                            resultStudents.forEach(function(student) {
-                                if (students_segunda_chamada.length > 0 &&
-                                    students_segunda_chamada.includes(student.user_id)
-                                    ) {
-                                    $("#nota_checado" + student.user_id).prop(
-                                        'readonly', true);
-                                    $("#" + student.user_id).prop('readonly', true);
-                                }
-                            });
-
-                        },
-                        error: function(dataResult) {}
-                    });
-                }
-            });
+        // Evento de mudança no ano lectivo
+        elements.lectiveYear.change(function() {
+            ambiente();
+            state.selectedLective = elements.lectiveYear.val();
+            $('#selectedLective').val(state.selectedLective);
         });
 
-        function disbleInput(dd) {
-            console.log('wsda')
-            var checkStatus = document.getElementById("check" + dd + "").checked;
-            var inputGrade = document.getElementById(dd);
-            var span = document.getElementById("span" + dd + "");
-
-            if (checkStatus == true) {
-                inputGrade.readOnly = false;
-                document.getElementById("input" + dd + "").value = "";
-                document.getElementById("input" + dd + "").value = true;
-                span.style.backgroundColor = "#38C172";
-                span.innerHTML = "PRESENTE";
-            } else {
-                inputGrade.readOnly = true
-                document.getElementById("input" + dd + "").value = "";
-                document.getElementById("input" + dd + "").value = false;
-                span.style.backgroundColor = "red";
-                span.innerHTML = "AUSENTE";
+        // Evento de mudança na disciplina
+        elements.disciplinaSelect.change(function() {
+            elements.avaliacaoSelect.empty();
+            elements.description.val('');
+            elements.tabelaNew.hide();
+            elements.studentsNew.empty();
+            
+            const id = elements.disciplinaSelect.val();
+            if (id) {
+                Turma(id, elements.lectiveYear.val());
             }
-        }
+        });
 
-        function checkInputEmpty(dd) {
-            var inputGrade = document.getElementById(dd);
-            Console.log("Realidade Virtual");
-            console.log(inputGrade);
-        }
-
-        function verChecagem(element) {
-            console.log(element);
-            var linha1 = $("#Linha_checado" + element.id);
-            var span = $("#span_checado" + element.id);
-            var inputNota = $("#nota_checado" + element.id);
-            let checkbox = document.getElementById('' + element.id);
-            console.log(checkbox.checked)
-            if (checkbox.checked) {
-
-                linha1.css("background-color", "#f4f4f4");
-                span.css("background-color", "red")
-                span.text("AUSENTE");
-                inputNota.val("");
-                inputNota.prop("readonly", true);
+        // Evento de mudança na turma
+        elements.turmaSelect.change(function() {
+            elements.description.val('');
+            const lectiveYear = elements.lectiveYear.val();
+            const id = elements.disciplinaSelect.val();
+            
+            if (elements.turmaSelect.val() === "") {
+                console.log('Turma não selecionada');
+                elements.avaliacaoSelect.prop('disabled', true);
             } else {
-                linha1.css("background-color", "#fff");
-                span.css("background-color", "#38C172")
-                span.text("PRESENTE");
-                inputNota.val("");
-                inputNota.prop('disabled', false);
-                inputNota.prop("readonly", false);
-                checkbox.value = "";
+                StudantGrade(state.disciplineId, state.metricaId, state.idPlanoEstudo, state.idAvaliacao, lectiveYear);
+                elements.avaliacaoSelect.prop('disabled', false);
+                elements.tabelaNew.show();
             }
+        });
+
+        // Evento de mudança na avaliação (coordenador)
+        elements.avaliacaoSelect.change(function() {
+            elements.description.val('');
+            if (elements.avaliacaoSelect.val() !== "") {
+                elements.caixaMatrica.show();
+                const id = elements.avaliacaoSelect.val();
+                metricasCoordenador(id);
+            } else {
+                elements.caixaMatrica.hide();
+                elements.metricaSelect.empty();
+            }
+        });
+
+        // Evento de mudança na métrica (coordenador)
+        elements.metricaSelect.change(function() {
+            elements.description.val('');
+            if (elements.metricaSelect.val() !== "") {
+                setarPauta("super");
+                studentCourseCoordenador();
+            } else {
+                elements.description.val('');
+                elements.studentsNew.hide();
+            }
+        });
+
+        // Eventos de submit
+        elements.btnCallSubmit.click(function() {
+            if (elements.description.val() === "" && state.whoIs === "super" && state.estadoPautaLancar !== null) {
+                alert("O campo de descrição é obrigatório!");
+            } else {
+                elements.formNota.submit();
+            }
+        });
+
+        $("#btn-callLock").click(function() {
+            $("#id_form_lock").submit();
+        });
+
+        // ========== INICIALIZAÇÃO ==========
+        ambiente();
+    });
+
+    // ========== FUNÇÕES GLOBAIS ==========
+
+    /**
+     * Controla o estado de desabilitação dos inputs
+     */
+    function disbleInput(dd) {
+        console.log('Alternando estado do input:', dd);
+        
+        const checkElement = document.getElementById("check" + dd);
+        const inputGrade = document.getElementById(dd);
+        const span = document.getElementById("span" + dd);
+        const hiddenInput = document.getElementById("input" + dd);
+
+        if (!checkElement || !inputGrade || !span || !hiddenInput) {
+            console.error("Elementos não encontrados para:", dd);
+            return;
         }
-    </script>
+
+        const checkStatus = checkElement.checked;
+
+        if (checkStatus) {
+            inputGrade.readOnly = false;
+            hiddenInput.value = "true";
+            span.style.backgroundColor = "#38C172";
+            span.innerHTML = "PRESENTE";
+        } else {
+            inputGrade.readOnly = true;
+            hiddenInput.value = "false";
+            span.style.backgroundColor = "red";
+            span.innerHTML = "AUSENTE";
+        }
+    }
+
+    /**
+     * Verifica se input está vazio (função de utilidade)
+     */
+    function checkInputEmpty(dd) {
+        const inputGrade = document.getElementById(dd);
+        console.log("Verificando input:", dd, "Valor:", inputGrade ? inputGrade.value : "Elemento não encontrado");
+    }
+
+    /**
+     * Controla a checagem de presença/ausência
+     */
+    function verChecagem(element) {
+        console.log("Verificando checagem:", element);
+        
+        if (!element || !element.id) {
+            console.error("Elemento inválido");
+            return;
+        }
+
+        const linha = $("#Linha_checado" + element.id);
+        const span = $("#span_checado" + element.id);
+        const inputNota = $("#nota_checado" + element.id);
+        const checkbox = document.getElementById(element.id);
+
+        if (!linha.length || !span.length || !inputNota.length || !checkbox) {
+            console.error("Elementos da linha não encontrados para ID:", element.id);
+            return;
+        }
+
+        if (checkbox.checked) {
+            // Marcar como AUSENTE
+            linha.css("background-color", "#f4f4f4");
+            span.css("background-color", "red").text("AUSENTE");
+            inputNota.val("").prop("readonly", true);
+        } else {
+            // Marcar como PRESENTE
+            linha.css("background-color", "#fff");
+            span.css("background-color", "#38C172").text("PRESENTE");
+            inputNota.val("").prop("readonly", false);
+            checkbox.value = "";
+        }
+    }
+</script>
 @endsection
