@@ -109,6 +109,7 @@ class SpecialCourseEditionsController extends Controller {
 
  
     public function storeEdition(Request $request){
+        dd($request);
       
         if(strtotime($request->get('start_date')) > strtotime($request->get('end_date'))){
             return response()->json(['error'=>'Data inicial inválida! digite uma data menor ou igual que a data final! ']);
