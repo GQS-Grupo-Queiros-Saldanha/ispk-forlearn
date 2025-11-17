@@ -218,6 +218,7 @@
                            
                            $province = null;
                            $province = matchProvince(substr($studentInfo->bi,-5,2));
+                           $anoAcademico = ['2023/2024'=>'8','2024/2025'=>'9''2024/2025'=>'10']
                        @endphp
                     <p> 
                      {{ $direitor->grau_academico ?? 'Grau Académico' }}, <b>{{ $direitor->nome_completo ?? 'Nome completo' }}</b>,{{ $direitor->cargo ?? 'cargo' }}  
@@ -227,7 +228,7 @@
                     {{ $nascimento }}, portador(a) do B.I nº {{ $studentInfo->bi }}, passado pelo Arquivo de Identificação de {{ $province }}, aos
                     {{ \Carbon\Carbon::parse($studentInfo->emitido)->format('d/m/Y') }},
                     é estudante do<b> {{ $studentInfo->year }}º Ano</b>, no curso de Licenciatura em<b> {{ $studentInfo->course }},
-                    </b> matriculado(a) com o nº<b> {{ $studentInfo->number }}.</b></p>
+                    </b> matriculado(a) com o nº<b> {{ $studentInfo->number }}.</b> no ano academico {{ $anoAcademico }} </p>
                    
 
                

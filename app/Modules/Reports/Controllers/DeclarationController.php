@@ -3005,7 +3005,7 @@ return $pdf->stream($pdf_name . '.pdf');
             ->get();
 
 
-
+            dd($lectivo);
 
 
         $data = [
