@@ -228,7 +228,7 @@
                     {{ $nascimento }}, portador(a) do B.I nº {{ $studentInfo->bi }}, passado pelo Arquivo de Identificação de {{ $province }}, aos
                     {{ \Carbon\Carbon::parse($studentInfo->emitido)->format('d/m/Y') }},
                     é estudante do<b> {{ $studentInfo->year }}º Ano</b>, no curso de Licenciatura em<b> {{ $studentInfo->course }},
-                    </b> matriculado(a) com o nº<b> {{ $studentInfo->number }}.</b> no ano académico {{  dd($lectivo) }} </p>
+                    </b> matriculado(a) com o nº<b> {{ $studentInfo->number }}.</b> no ano académico {{  $lectivo->ano }} </p>
                    
 
                
