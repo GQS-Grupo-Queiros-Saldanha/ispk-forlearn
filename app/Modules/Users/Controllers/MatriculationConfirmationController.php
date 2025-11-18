@@ -417,7 +417,6 @@ class MatriculationConfirmationController extends Controller
            $data=$this->equivalence_Student($studentId,$lectiveYearSelected);
            Log::info("Equivalência", ['data' => $data,'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected]);
                             
-        
      
            if($data!=0){
                 $view = view("Users::confirmations-matriculations.disciplines_equivalencia")->with($data)->render();
@@ -437,6 +436,13 @@ class MatriculationConfirmationController extends Controller
                     Log::warning('Data vazio ou inválido antes de chamar aproveStatus', ['data' => $data]);
                     $status = ['error' => 'Nenhum estudante para processar'];
                 } else {
+                    Log::info('Antes de chamar aproveStatus', [
+                        'class' => get_class($matriculationStrategyConfigUtil),
+                        'temMetodo' => method_exists($matriculationStrategyConfigUtil, 'aproveStatus') ? 'sim' : 'não',
+                        'students_type' => gettype($data),
+                        'students_is_array' => is_array($data),
+                        'students_primeiro' => isset($data[0]) ? get_class($data[0]) : 'não definido'
+                    ]);
                     $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
                 }
 

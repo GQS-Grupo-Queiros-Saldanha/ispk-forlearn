@@ -52,23 +52,37 @@ class MatriculationStrategyConfigUtil
 
     public function aproveStatus($students, $lectiveYear){
     
-        Log::info('aproveStatus chamado', ['tipo_students' => gettype($students), 'eh_array' => is_array($students), 'primeiro_elemento' => isset($students[0]) ? get_class($students[0]) : 'não definido']);
+        Log::info('aproveStatus chamado', [
+            'tipo_students' => gettype($students),
+            'eh_array' => is_array($students),
+            'primeiro_elemento' => isset($students[0]) ? get_class($students[0]) : 'não definido',
+            'lectiveYear' => $lectiveYear
+        ]);
 
         if (empty($students)) {
             Log::warning('Nenhum estudante válido passado para aproveStatus');
             return ['error' => 'Nenhum estudante'];
         }
 
-        Log::info('Estratégia de matrícula ativa: ' . $this->Strategy_apply);
+        if (!isset($this->Strategy_apply)) {
+            Log::error('Strategy_apply não está definido na classe');
+            return ['error' => 'Estratégia não definida'];
+        }
+
+        Log::info('Estratégia de matrícula ativa', ['Strategy_apply' => $this->Strategy_apply]);
 
         switch ($this->Strategy_apply) {
             case "inspunyl":
+                Log::info("Chamando inspunyl()");
                 return $this->inspunyl($students, $lectiveYear);
             case "ispk":
+                Log::info("Chamando ispk()");
                 return $this->ispk($students, $lectiveYear);
             default:
+                Log::error("Estratégia inválida", ['Strategy_apply' => $this->Strategy_apply]);
                 return "sem dados activo na estratégia";
         }
+
     }
 
 
