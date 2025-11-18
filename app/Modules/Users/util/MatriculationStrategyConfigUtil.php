@@ -206,196 +206,179 @@ class MatriculationStrategyConfigUtil
         return $data;
     }
 
-
-   private function ispk($studant, $lectiveYear){
-        // Verificar se o estudante é um modelo Eloquent válido
-        $studentId = null;
+    private function ispk($studant, $lectiveYear){
+        // Normalizar o ID do ano lectivo
         if (is_object($lectiveYear) && property_exists($lectiveYear, 'id')) {
             $lectiveYear = $lectiveYear->id;
         }
 
+        // Extrair o ID do estudante
+        $studentId = $this->extractStudentId($studant);
 
-        if (is_array($studant) && isset($studant[0])) {
-            $s = $studant[0];
-
-            if (is_object($s)) {
-                // Caso 1: é um modelo Eloquent (User)
-                if (property_exists($s, 'id_user') && !empty($s->id_user)) {
-                    $studentId = $s->id_user;
-                }
-                // Caso 2: pode ser um modelo normal com 'id'
-                elseif (property_exists($s, 'id')) {
-                    $studentId = $s->id;
-                }
-            }
-        }
-
-        // Verificação de segurança
-        if (empty($studentId)) {
+        if (!$studentId) {
             Log::error('ID do estudante não encontrado ou inválido.', ['studant' => $studant]);
             return ['error' => 'Estudante inválido'];
         }
 
-        Log::info('Iniciando função ispk para estudante ID: ' . $studentId);
+        Log::info("Iniciando função ispk para estudante ID: {$studentId}");
 
-        // Daqui em diante, substitui todas as ocorrências de
-        // $studentId por $studentId
+        // Buscar configurações de matrícula
         $rules_matriculation = DB::table('matriculation_aprove_roles_config as aprove')
             ->select(['aprove.*'])
             ->where('aprove.id_lective', $lectiveYear)
             ->get();
 
-
-        //Pegar dados do TRANSFERIDO 
-        $studentInfo = User::where('users.id', $studentId)
-            ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
-            ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
-            ->leftJoin('courses_translations as ct', function ($join) {
-                $join->on('ct.courses_id', '=', 'courses.id');
-                $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('ct.active', '=', DB::raw(true));
-            })
-            ->select(['courses.id as course_id'])
-            ->first();
+        // Buscar informação principal do estudante (curso, turma etc.)
+        $studentInfo = $this->getStudentInfo($studentId);
 
         if (!$studentInfo) {
             Log::error('studentInfo não encontrado para estudante ID: ' . $studentId);
-            return [
-                'error' => 'studentInfo não encontrado',
-                'student_id' => $studentId
-            ];
+            return ['error' => 'studentInfo não encontrado', 'student_id' => $studentId];
         }
 
-        //Turma do estundante
+        // Buscar turma do estudante
         $classes = Classes::whereCoursesId($studentInfo->course_id)
             ->where('lective_year_id', $lectiveYear)
             ->get();
 
+        // Buscar disciplinas do histórico
+        $disciplinesInOldGrades = $this->getOldGradesDisciplines($studentId);
 
-        //trazer todas as disciplinas (do estudante)  armazenadas no historico
-        $disciplinesInOldGrades = DB::table('new_old_grades')
+        // Buscar disciplinas já realizadas agrupadas por ano curricular
+        $anoCurricular = $this->getAnoCurricularDisciplines($studentInfo, $disciplinesInOldGrades, $studentId);
+
+        // Buscar todas as disciplinas restantes do plano curricular
+        $curricularPlanDisciplines = $this->getRemainingCurricularDisciplines($studentInfo, $disciplinesInOldGrades);
+
+        // Determinar aproveitamento por ano curricular
+        $evaluationResult = $this->evaluateAproveitamento($rules_matriculation, $anoCurricular);
+
+        // Disciplinas com ids e outros metadados
+        $disciplinesResult = $this->getDisciplinesWithIds($studentInfo, $evaluationResult['estado'], $evaluationResult['badGrades']);
+
+        return [
+            'curricularPlanDisciplines' => $curricularPlanDisciplines,
+            'classes' => $classes,
+            'estado' => $evaluationResult['estado'],
+            'disciplinesReproved' => $disciplinesResult['APROVADO_ATRASO'],
+            'DADOS_DISCIPLINA' => $disciplinesResult,
+            'disciplinesInOldGrades' => $disciplinesInOldGrades,
+            'rules_matriculation' => $rules_matriculation
+        ];
+    }
+
+    private function extractStudentId($studant)
+    {
+        if (is_array($studant) && isset($studant[0])) {
+            $s = $studant[0];
+
+            if (is_object($s)) {
+                return $s->id_user ?? $s->id ?? null;
+            }
+        }
+        return null;
+    }
+
+    private function getStudentInfo($studentId)
+    {
+        return User::where('users.id', $studentId)
+            ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
+            ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
+            ->leftJoin('courses_translations as ct', function ($join) {
+                $join->on('ct.courses_id', '=', 'courses.id')
+                    ->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()))
+                    ->on('ct.active', '=', DB::raw(true));
+            })
+            ->select(['courses.id as course_id'])
+            ->first();
+    }
+
+    private function getOldGradesDisciplines($studentId)
+    {
+        return DB::table('new_old_grades')
             ->where('user_id', $studentId)
             ->join('disciplines', 'disciplines.id', '=', 'new_old_grades.discipline_id')
             ->get();
+    }
 
-
-        $matriculation = Matriculation::whereUserId($studentId)
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-
-        $anoCurricular = StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
+    private function getAnoCurricularDisciplines($studentInfo, $disciplinesInOldGrades, $studentId)
+    {
+        return StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
             ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
             ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
             ->join('new_old_grades', 'new_old_grades.discipline_id', '=', 'disciplines.id')
             ->join('disciplines_translations as dt', function ($join) {
-                $join->on('dt.discipline_id', '=', 'disciplines.id');
-                $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('dt.active', '=', DB::raw(true));
+                $join->on('dt.discipline_id', '=', 'disciplines.id')
+                    ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()))
+                    ->on('dt.active', '=', DB::raw(true));
             })
-            ->select(['disciplines.id','disciplines.mandatory_discipline', 'new_old_grades.grade', 'dt.display_name', 'study_plans_has_disciplines.years'])
+            ->select(['disciplines.id', 'disciplines.mandatory_discipline', 'new_old_grades.grade', 'dt.display_name', 'study_plans_has_disciplines.years'])
             ->whereIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))
             ->where('new_old_grades.user_id', $studentId)
             ->get()
             ->groupBy('years');
+    }
 
-
-        $curricularPlanDisciplines = StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
+    private function getRemainingCurricularDisciplines($studentInfo, $disciplinesInOldGrades)
+    {
+        return StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
             ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
             ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
             ->join('disciplines_translations as dt', function ($join) {
-                $join->on('dt.discipline_id', '=', 'disciplines.id');
-                $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('dt.active', '=', DB::raw(true));
+                $join->on('dt.discipline_id', '=', 'disciplines.id')
+                    ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()))
+                    ->on('dt.active', '=', DB::raw(true));
             })
             ->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))
             ->get()
             ->groupBy('years');
+    }
 
-
-
-        $aproveStatus = collect();
-        $aproveDirect = collect();
-        $countBadGrade = collect();
+    private function evaluateAproveitamento($rules_matriculation, $anoCurricular)
+    {
+        $estado = collect();
+        $badGrades = collect();
         $counterDiscipline = collect();
-
         $containsReproved = false;
-        $reproved_year = null;
+        $reprovedYear = null;
 
         foreach ($rules_matriculation as $regras) {
-            foreach ($anoCurricular as $year => $disciplines) {
+            foreach ($anoCurricular as $year => $disciplinas) {
                 if ($regras->currular_year == $year) {
-                    foreach ($disciplines as $discipline) {
-                        if ($discipline->grade < 10) {
-                            if (!isset($countBadGrade[$year])) {
-                                $countBadGrade[$year] = collect();
-                            }
-                            $countBadGrade[$year]->push($discipline->id);
-                            $counterDiscipline->push($discipline->id);
-                                 
-                            
-                            if ($countBadGrade[$year]->count() > $regras->discipline_in_delay
-                                 || $discipline->mandatory_discipline !== null 
-                                 || $counterDiscipline->count() > 2 && $year > 2
-                                )
-                                
-                            {   
+                    foreach ($disciplinas as $disciplina) {
+                        if ($disciplina->grade < 10) {
+                            $badGrades[$year] = $badGrades[$year] ?? collect();
+                            $badGrades[$year]->push($disciplina->id);
 
-                                $aproveStatus[$year] = 'Reprovado';
+                            $counterDiscipline->push($disciplina->id);
+
+                            if (
+                                $badGrades[$year]->count() > $regras->discipline_in_delay ||
+                                $disciplina->mandatory_discipline !== null ||
+                                $counterDiscipline->count() > 2 && $year > 2
+                            ) {
+                                $estado[$year] = 'Reprovado';
                                 $containsReproved = true;
-                                $reproved_year = $year;
+                                $reprovedYear = $year;
                             } else {
-                                $aproveStatus[$year] = 'Aprovado';
+                                $estado[$year] = 'Aprovado';
                             }
-                        } else if ($discipline->grade > 9) {
-                            $aproveDirect[$year] = $discipline->id;
                         }
                     }
                 }
             }
         }
-        if($containsReproved){
-            $aproveStatus[$reproved_year] = 'Reprovado';
+
+        if ($containsReproved) {
+            $estado[$reprovedYear] = 'Reprovado';
         }
-       
-        //Generation 
-        $Result =  $this->getDisciplinesWithIds($studentInfo, $aproveStatus, $countBadGrade);
-        // return ["APROVADO_DIRECT"=>$aproveDirect,"APROVE_YEAR_STATUS"=>$aproveStatus,"REPROVE_YEAR_DISCIPLINE"=> $countBadGrade];
 
-     
-        $curricularPlanDisciplines_dados = $curricularPlanDisciplines;
-
-        $data = [
-
-                    'curricularPlanDisciplines' =>  $curricularPlanDisciplines_dados,
-                    'classes' => $classes,
-                    'estado' => $aproveStatus,
-                    'disciplinesReproved' => $Result['APROVADO_ATRASO'],
-                    'DADOS_DISCIPLINA' => $Result,
-                    'disciplinesInOldGrades' => $disciplinesInOldGrades,
-                    'rules_matriculation' => $rules_matriculation,
-                    'info' => $info ?? ""
-
-                ];
-            /*Log::info('Resultado da função ispk:', [
-                'estado' => $aproveStatus,
-                'containsReproved' => $containsReproved,
-                'reproved_year' => $reproved_year,
-                'countBadGrade' => $countBadGrade,
-                'DADOS_DISCIPLINA' => $Result,
-                'curricularPlanDisciplines' => $curricularPlanDisciplines_dados,
-            ]);*/
-
-        return $data;
+        return ['estado' => $estado, 'badGrades' => $badGrades];
     }
 
 
 
-
-
-private function getDisciplinesWithIds($studentInfo, $currricular_year_status, $reprove_disciplines)
-  
-{
+    private function getDisciplinesWithIds($studentInfo, $currricular_year_status, $reprove_disciplines){
 
    
         $reprovado_Discipline_displey = [];
@@ -433,8 +416,7 @@ private function getDisciplinesWithIds($studentInfo, $currricular_year_status, $
         return [
             "APROVADO_ATRASO" => $aprove_Discipline_displey,
             "REPROVADO_ATRASO" => $reprovado_Discipline_displey
-        ];
-}
+        ];}
 
 private function getDisciplines($course_id, $disciplines)
 {
