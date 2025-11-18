@@ -443,7 +443,16 @@ class MatriculationConfirmationController extends Controller
                         'students_is_array' => is_array($data),
                         'students_primeiro' => isset($data[0]) ? get_class($data[0]) : 'não definido'
                     ]);
-                    $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
+                   try {
+                        Log::info("Chamada a aproveStatus iniciada");
+                        $status = $matriculationStrategyConfigUtil->aproveStatus($data, $lectiveYearSelected->id);
+                        Log::info("Chamada a aproveStatus concluída", ['status' => $status]);
+                    } catch (\Throwable $e) {
+                        Log::error("Erro ao chamar aproveStatus: " . $e->getMessage(), [
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                    }
+
                 }
 
                  Log::info('Status retornado de aproveStatus', ['status' => $status]);
