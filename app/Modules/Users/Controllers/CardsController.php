@@ -389,7 +389,7 @@ class CardsController extends Controller
                 //   $cartao_pago = $this->verify_status_all_cards($classe);
                     
                   
-                   $model=DB::table('matriculation_classes as mat_class')
+                $model=DB::table('matriculation_classes as mat_class')
                   ->join("matriculations as mat",'mat.id','mat_class.matriculation_id')
                   ->join("matriculation_disciplines as mat_disc",'mat.id','mat_disc.matriculation_id')
                   ->join("classes as turma",'mat_class.class_id','turma.id')
@@ -420,7 +420,7 @@ class CardsController extends Controller
                     $join->on('user.id', '=', 'picture.users_id')
                     ->where('picture.parameters_id', 25);
                })
-                ->whereIn('code_dev.code', ["confirm","p_matricula"])
+                ->where('code_dev.code', "cartao_estudante")
                 ->where('user_emolumento.status', "total")
                 ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
                 ->select([
