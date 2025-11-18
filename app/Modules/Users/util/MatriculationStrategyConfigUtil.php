@@ -12,6 +12,7 @@ use App\Modules\Users\Models\Matriculation;
 use App\Helpers\LanguageHelper;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Support\Facades\Log;
 
 class MatriculationStrategyConfigUtil
 {
