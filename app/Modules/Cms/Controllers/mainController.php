@@ -106,7 +106,8 @@ class mainController extends Controller
                 $config = DB::table('avalicao_config')->where('lective_year',$lective->id)->first();
                 $student = auth()->user()->id;
                 $matriculations = $this->get_matriculation_student($student);
-                //dd($matriculations);
+
+                dd($matriculations);
                 $melhoria_notas = get_melhoria_notas($student, $lective->id, 0);
                 $d = $this->schedule();
 
@@ -1095,13 +1096,11 @@ class mainController extends Controller
 }
     public function matriculation_classes($matriculation_id)
     {
-        $dados = DB::table('matriculation_classes')
+        return DB::table('matriculation_classes')
             ->where('matriculation_id', $matriculation_id)
             ->join('classes', 'classes.id', 'matriculation_classes.class_id')
             ->get();
-        dd($dados);
-
-        return $dados;
+        
     }
 
     public function get_matriculation_id($whatsapp)
