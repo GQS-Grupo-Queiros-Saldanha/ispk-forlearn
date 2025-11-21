@@ -106,8 +106,7 @@ class mainController extends Controller
                 $config = DB::table('avalicao_config')->where('lective_year',$lective->id)->first();
                 $student = auth()->user()->id;
                 $matriculations = $this->get_matriculation_student($student);
-
-                dd($matriculations);
+                //dd($matriculations);
                 $melhoria_notas = get_melhoria_notas($student, $lective->id, 0);
                 $d = $this->schedule();
 
@@ -717,7 +716,7 @@ class mainController extends Controller
             ->where('art_requests.deleted_at', null)
             ->groupBy('u_p.value')
             ->where('matriculations.user_id', $student)
-            ->where('matriculations.lective_year', 9)//$lectiveYearSelected->id
+            ->whereIn('matriculations.lective_year', [9,11])//$lectiveYearSelected->id
 
             ->distinct('id')
             ->first();
