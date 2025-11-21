@@ -137,8 +137,7 @@ class mainController extends Controller
                 ];
             }
             else {
-              $classIdMatricula $this->matriculation_classes($matriculations->id);
-              dd($classIdMatricula);
+              
                 $data = [
                     "notification" => $this->get_notification(),
                     "articles" => $this->get_payments(),
@@ -147,7 +146,7 @@ class mainController extends Controller
                     "tempo" => $this->times(),
                     "plano" => $this->study_plain(),
                     "matriculations"=>$matriculations,
-                    "classes"=>$classIdMatricula,
+                    "classes"=>$this->matriculation_classes($matriculations->id),
                     "logotipo"=>$logotipo,
                     "semestre" => $semestre,
                     "config" => $config,
@@ -1096,10 +1095,12 @@ class mainController extends Controller
 }
     public function matriculation_classes($matriculation_id)
     {
-        return DB::table('matriculation_classes')
+        $dados = DB::table('matriculation_classes')
             ->where('matriculation_id', $matriculation_id)
             ->join('classes', 'classes.id', 'matriculation_classes.class_id')
             ->get();
+            
+        return $dados
     }
 
     public function get_matriculation_id($whatsapp)
