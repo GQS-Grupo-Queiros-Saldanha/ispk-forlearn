@@ -1099,8 +1099,8 @@ class mainController extends Controller
             ->where('matriculation_id', $matriculation_id)
             ->join('classes', 'classes.id', 'matriculation_classes.class_id')
             ->get();
-            
-        return $dados
+
+        return $dados;
     }
 
     public function get_matriculation_id($whatsapp)
