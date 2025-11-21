@@ -247,9 +247,9 @@ class CardsController extends Controller
             $student->photo = $this->getSafePhotoPath($student);
             Log::info('Foto do estudante: ' . $student->photo);
 
-    } else {
-        $student->photo = public_path('images/sem_foto.png');
-    }
+        } else {
+            $student->photo = public_path('images/sem_foto.png');
+        }
 
 
 
