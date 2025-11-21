@@ -208,13 +208,24 @@ function EmolumentCodeV($search, $lective_year_id)
 function EmolumentCodevLective($search, $lective_year_id)
 {
     Log::info($search, ['lective_year_id' => $lective_year_id]);
+
+    // Verifica se é objeto ou número
+    if (is_object($lective_year_id) && isset($lective_year_id->id)) {
+        $lective_year_value = $lective_year_id->id;
+    } elseif (is_numeric($lective_year_id)) {
+        $lective_year_value = $lective_year_id;
+    } else {
+        // Se não for nenhum dos dois, lança um log e retorna vazio
+        Log::error('lective_year_id inválido', ['value' => $lective_year_id]);
+        return collect(); // retorna coleção vazia
+    }
+
     $Consulta = DB::table('articles as art')
         ->join('code_developer as code', 'code.id', '=', 'art.id_code_dev')
         ->select(['art.code', 'art.id as id_emolumento', 'art.anoLectivo as lectiveYear', 'code.code as codigo_dev'])
         ->where('code.code', $search)
-        //->where('art.anoLectivo', 9)
-        ->whereIn('art.anoLectivo', [$lective_year_id->id]) 
+        ->where('art.anoLectivo', $lective_year_value)
         ->get();
-    //Log::info($Consulta);
+
     return $Consulta;
 }
