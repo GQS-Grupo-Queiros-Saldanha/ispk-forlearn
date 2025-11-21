@@ -137,7 +137,8 @@ class mainController extends Controller
                 ];
             }
             else {
-              
+              $classIdMatricula $this->matriculation_classes($matriculations->id);
+              dd($classIdMatricula);
                 $data = [
                     "notification" => $this->get_notification(),
                     "articles" => $this->get_payments(),
@@ -146,7 +147,7 @@ class mainController extends Controller
                     "tempo" => $this->times(),
                     "plano" => $this->study_plain(),
                     "matriculations"=>$matriculations,
-                    "classes"=>$this->matriculation_classes($matriculations->id),
+                    "classes"=>$classIdMatricula,
                     "logotipo"=>$logotipo,
                     "semestre" => $semestre,
                     "config" => $config,
