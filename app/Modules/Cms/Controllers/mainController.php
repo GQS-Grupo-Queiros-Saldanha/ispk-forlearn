@@ -1099,6 +1099,7 @@ class mainController extends Controller
             ->where('matriculation_id', $matriculation_id)
             ->join('classes', 'classes.id', 'matriculation_classes.class_id')
             ->get();
+        dd($dados);
 
         return $dados;
     }
