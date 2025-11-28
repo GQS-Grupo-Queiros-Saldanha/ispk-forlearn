@@ -201,7 +201,9 @@
                                     <div class="col-6" id="caixaDesc" style="display: none">
                                         <div class="form-group col">
                                             <label>Adicione uma descrição da pauta</label>
-                                            <textarea class="form-control" name="description" id="description"></textarea>
+                                            <textarea class="form-control" name="description" id="description">
+
+                                            </textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -1049,8 +1051,8 @@
 
         // Eventos de submit
         elements.btnCallSubmit.click(function() {
-            if (elements.description.val() === "" && state.whoIs === "super" && state.estadoPautaLancar !== null) {
-                alert("O campo de descrição é obrigatório!");
+            if (state.whoIs === "super" && state.estadoPautaLancar !== null) {
+                alert("desbloquear a pauta antes de submeter novas notas.");
             } else {
                 elements.formNota.submit();
             }
