@@ -191,7 +191,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 if($config->percentagem_mac > 0){
                                     $mac_percentagem = $config->percentagem_mac / 100;    
                                 }
-                                elase{
+                                else{
                                     $mac_percentagem = 0;
                                 }
                                 if($config->percentagem_oral > 0){
@@ -201,6 +201,7 @@ use App\Modules\Cms\Controllers\mainController;
                                     $neen_percentagem = 0;
                                 }
                                 $id_turma = $classes->filter(function($item)use($item_DISC){
+                            
                             return $item_DISC->code_disciplina[2] == $item->display_name[2];
                                 })->first()->id;
                                 $aprovado = false;
