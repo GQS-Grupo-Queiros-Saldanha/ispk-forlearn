@@ -203,7 +203,7 @@ use App\Modules\Cms\Controllers\mainController;
                             
                                     return $item_DISC->code_disciplina[2] == $item->display_name[2];
                                         })->first()->id;
-                                        dump($turma_item);
+                                        dump($id_turma);
                                         $aprovado = false;
                                         $recurso = false;
                                         $exame = false;
