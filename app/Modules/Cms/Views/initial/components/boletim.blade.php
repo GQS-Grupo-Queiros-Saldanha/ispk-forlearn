@@ -188,6 +188,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 $last_exame = 0;
                                 $nota_final = '-';
                                 $color_final = '';
+                                dd($config);
                                 if ($config && $config->percentagem_mac > 0) {
                                     $mac_percentagem = $config->percentagem_mac / 100;
                                 } else {
@@ -203,7 +204,7 @@ use App\Modules\Cms\Controllers\mainController;
                             
                                     return $item_DISC->code_disciplina[2] == $item->display_name[2];
                                         })->first()->id;
-                                        dump($id_turma);
+                                      
                                         $aprovado = false;
                                         $recurso = false;
                                         $exame = false;
