@@ -1051,11 +1051,9 @@
 
         // Eventos de submit
         elements.btnCallSubmit.click(function() {
-            if (state.whoIs === "super" && state.estadoPautaLancar !== null) {
-                alert("desbloquear a pauta antes de submeter novas notas.");
-            } else {
+         
                 elements.formNota.submit();
-            }
+            
         });
 
         $("#btn-callLock").click(function() {
