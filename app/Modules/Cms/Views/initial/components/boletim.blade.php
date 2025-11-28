@@ -188,18 +188,17 @@ use App\Modules\Cms\Controllers\mainController;
                                 $last_exame = 0;
                                 $nota_final = '-';
                                 $color_final = '';
-                                if (($config?->percentagem_mac ?? 0) > 0) {
+                                if ($config && $config->percentagem_mac > 0) {
                                     $mac_percentagem = $config->percentagem_mac / 100;
                                 } else {
                                     $mac_percentagem = 0;
                                 }
 
-                                if (($config?->percentagem_oral ?? 0) > 0) {
+                                if ($config && $config->percentagem_oral > 0) {
                                     $neen_percentagem = $config->percentagem_oral / 100;
                                 } else {
                                     $neen_percentagem = 0;
                                 }
-
                                 $id_turma = $classes->filter(function($item)use($item_DISC){
                             
                             return $item_DISC->code_disciplina[2] == $item->display_name[2];
