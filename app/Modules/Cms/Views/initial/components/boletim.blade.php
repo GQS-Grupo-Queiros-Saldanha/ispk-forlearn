@@ -1,6 +1,5 @@
 <?php
 
- dd("dd",$config);
 use App\Modules\Cms\Controllers\mainController;
 ?>
 
@@ -98,6 +97,9 @@ use App\Modules\Cms\Controllers\mainController;
     
 </style>
 
+@php
+    dd($config);
+@endphp
 
 @if (isset($articles['dividas']['pending']) && $articles['dividas']['pending'] > 0)
     <div class="alert alert-warning text-dark font-bold">Para visualizar as notas lançadas, dirija-se a Tesouraria para
