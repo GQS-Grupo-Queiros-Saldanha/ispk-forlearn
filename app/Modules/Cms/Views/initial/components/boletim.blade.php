@@ -201,9 +201,6 @@ use App\Modules\Cms\Controllers\mainController;
                                 } else {
                                     $neen_percentagem = 0;
                                 }
-                                $id_turma = $classes->filter(function($item)use($item_DISC){
-                            
-                                  
                                       
                                         $aprovado = false;
                                         $recurso = false;
