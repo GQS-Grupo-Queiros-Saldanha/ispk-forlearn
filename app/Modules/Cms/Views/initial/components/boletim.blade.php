@@ -188,7 +188,8 @@ use App\Modules\Cms\Controllers\mainController;
                                 $last_exame = 0;
                                 $nota_final = '-';
                                 $color_final = '';
-                                dd("dd",$config);
+                                <h1>$config</h1>;
+
                                 if ($config && $config->percentagem_mac > 0) {
                                     $mac_percentagem = $config->percentagem_mac / 100;
                                 } else {
