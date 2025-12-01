@@ -131,7 +131,7 @@ use App\Modules\Cms\Controllers\mainController;
                         </td>
                         <td colspan="2" class="text-center bg1 p-top">EXAME</td>
                         <td class="text-center cf1 bo1 p-top" colspan="2">CLASSIFICAÇÃO</td>
-                        <td class="rec bo1 text-center p-top" colspan="7">EXAME</td>
+                        <td class="rec bo1 text-center p-top" colspan="4">EXAME</td>
                         <td class="fn bo1 text-center p-top" colspan="2">CLASSIFICAÇÃO</td>
                     </tr>
                     <tr style="text-align: center">
@@ -147,72 +147,62 @@ use App\Modules\Cms\Controllers\mainController;
                         <th class="cf1 bo1" colspan="2">MAC + EXAME</th>
                         <th class="rec bo1" colspan="2">RECURSO</th>
                         <th class="rec bo1" colspan="2">ESPECIAL</th>
-                        <th class="rec bo1" colspan="2">EXTRAORDINÁRIO</th>
-                        <th class="rec bo1">MELHORIA</th>
                         <th class="fn bo1" colspan="2">FINAL</th>
                     </tr>
             </thead>
             @foreach ($disciplines as $index => $item_DISC)
              
-                    @if($index[3] == $semestreActual)
-                    @php
-                        // Normaliza $config para objecto, mesmo que venha como string
-                        if ($config) {
-                            if (is_string($config)) {
-                                // Extrai percentagens usando regex
-                                preg_match('/"percentagem_mac":(\d+)/', $config, $mac);
-                                preg_match('/"percentagem_oral":(\d+)/', $config, $oral);
+                    @if($index[4] == $semestreActual)
+                    @php 
+            $disciplina_count++;
 
-                                $config = (object)[
-                                    'percentagem_mac'  => isset($mac[1]) ? (int)$mac[1] : 0,
-                                    'percentagem_oral' => isset($oral[1]) ? (int)$oral[1] : 0
-                                ];
-                            }
-                        }
+            $par = null;
 
-                        // Depois continua com a lógica normal
-                        $disciplina_count++;
-                        $par = ($disciplina_count % 2 == 0) ? 'bg-white' : null;
+            if ($disciplina_count % 2 == 0) {
+                 $par = 'bg-white';
+            }
 
-                        $disciplina_nome = $index;
-                        $avalicao_nome = null;
-                        $avaliacao_nota = 0;
-                        $code_disc = false;
-                        $avaliacao_count = 0;
-                        $pf1_nota = null;
-                        $pf1_percentagem = 0;
-                        $pf2_nota = null;
-                        $pf2_percentagem = 0;
-                        $oa_nota = null;
-                        $oa_percentagem = 0;
-                        $neen_nota = null;
-                        $oral_nota = null;
-                        $recurso_nota = null;
-                        $especial_nota = null;
-                        $classificacao = 0;
-                        $aval_mac = null;
-                        $mac_nota = 0;
-                        $estado_final = '';
-                        $count_exame = 0;
-                        $last_exame = 0;
-                        $nota_final = '-';
-                        $color_final = '';
 
-                        $mac_percentagem = ($config && $config->percentagem_mac > 0) ? $config->percentagem_mac / 100 : 0;
-                        $neen_percentagem = ($config && $config->percentagem_oral > 0) ? $config->percentagem_oral / 100 : 0;
+            $disciplina_nome = $index;
+            $avalicao_nome = null;
+            $avaliacao_nota = 0;
+            $code_disc = false;
+                                $avaliacao_count = 0;
+                                $pf1_nota = null;
+                                $pf1_percentagem = 0;
+                                $pf2_nota = null;
+                                $pf2_percentagem = 0;
+                                $oa_nota = null;
+                                $oa_percentagem = 0;
+                                $neen_nota = null;
+                                $oral_nota = null;
+                                $recurso_nota = null;
+                                $especial_nota = null;
+                                $classificacao = 0;
+                                $aval_mac = null;
+                                $mac_nota = 0;
+                                $estado_final = '';
+                                $count_exame = 0;
+                                $last_exame = 0;
+                                $nota_final = '-';
+                                $color_final = '';
+                                $mac_percentagem = $config->percentagem_mac / 100;
+                                $neen_percentagem = $config->percentagem_oral / 100;
+                                $id_turma = $classes->filter(function($item)use($item_DISC){
+                                    return $item_DISC->code_disciplina[3] == $item->display_name[3] || ($item_DISC->code_disciplina[3] == $item->code[3]);
+                                })->first()->id;
+                                $aprovado = false;
+                                $recurso = false;
+                                $exame = false;
+                                $exame_oral = false;
+                                $exam_only = $item_DISC->e_f;
+                                
 
-                        $id_turma = $classes->filter(function($item) use ($item_DISC) {
-                            return $item_DISC->code_disciplina[2] == $item->display_name[2];
-                        })->first()->id;
+                               
 
-                        $aprovado = false;
-                        $recurso = false;
-                        $exame = false;
-                        $exame_oral = false;
-                        $melhoria_nota = null;
-                        $extra_nota = null;
-                    @endphp
-
+         
+             
+            @endphp
 
             <tbody>
                 <tr class="{{'semestre'.$semestreActual}} {{ $par ?? '' }}">
@@ -280,22 +270,7 @@ use App\Modules\Cms\Controllers\mainController;
                                             $especial_nota = floatval($itemNotas->nota_anluno);
                                         }
                                     }
-
-                                    if ($itemNotas->MT_CodeDV == 'Extraordinario') {
-                                        if ($itemNotas->nota_anluno == null) {
-                                            $extra_nota = 0;
-                                        } else {
-                                            $extra_nota = floatval($itemNotas->nota_anluno);
-                                        }
-                                    }
                                 
-                                }
-
-                                if($melhoria_notas->contains('discipline_id',$item_DISC->id_disciplina)){
-                                    $m = $melhoria_notas->where('discipline_id',$item_DISC->id_disciplina)->first();
-                
-                                    $melhoria_nota = !is_null($m->new_grade) ? $m->new_grade : null;
-                                    
                                 }
                             }
                     @endphp
@@ -310,7 +285,7 @@ use App\Modules\Cms\Controllers\mainController;
                             $id_turma,
                             $item_DISC->id_disciplina,
                             $item_DISC->id_anoLectivo,
-                                    'Pauta Frequência',
+                                    'Pauta Frequência'
                                 );
 
                                 // Caso tenha a nota de MAC lançada!
@@ -321,8 +296,12 @@ use App\Modules\Cms\Controllers\mainController;
                                     $mac_nota = (($pf1_nota * $pf1_percentagem) + ($pf2_nota * $pf2_percentagem) + ($oa_nota * $oa_percentagem));
                                     $mac_nota = round($mac_nota);
                                     $classificacao = $mac_nota;
-                                    
-                                    if ($classificacao >= 0 && $classificacao <= $config->mac_nota_recurso) {
+
+                                    if($exam_only == 1){
+                                        $exame = true;
+                                    }
+                                    else{
+                                        if ($classificacao >= 0 && $classificacao <= $config->mac_nota_recurso) {
                                         $estado_final = 'Recurso';
                                         $color_final = 'for-red';
                                         $recurso = true;
@@ -340,10 +319,13 @@ use App\Modules\Cms\Controllers\mainController;
                                        
                                     }
                                     $nota_final = $classificacao;
+                                    }
+                                    
+                                    
                                 }
                     @endphp
                     @if ($p_mac > 0)
-                    <td class='text-bold text-center'>{{ $mac_nota }}</td>
+                    <td class='text-bold text-center'>{{ $nota_final }}</td>
                     <td class="{{'text-bold text-center ' .$color_final }}"> {{$estado_final}} </td>
                     @else
                     <td style='text-align: center'>-</td>
@@ -354,15 +336,15 @@ use App\Modules\Cms\Controllers\mainController;
                     <td style='text-align: center'> - </td>
                     @else 
                   
-                     
-                                         @if ($estado_final == 'Aprovado(a)') 
+                       
+                            
+                                        @if ($estado_final == 'Aprovado(a)') 
                                             <td style='text-align: center'>-</td>
                                         
                                         @elseif ($estado_final == 'Recurso')
                                             <td style='text-align: center'>-</td>
                                         @else
                                             <td style='text-align: center'>{{ round($neen_nota) }}</td>
-
                                         @endif
 
                     @endif
@@ -377,21 +359,35 @@ use App\Modules\Cms\Controllers\mainController;
                                     else 
                                     $neen_nota = round($neen_nota);
 
-                                    $last_exame = $neen_nota;
-
-                                    $classificacao = ($mac_nota * $mac_percentagem) + ($neen_nota * $neen_percentagem);
-                                    $classificacao = round($classificacao);
-                                    if ($classificacao >= 0 && $classificacao < $config->exame_nota) {
-                                        $estado_final = 'Recurso';
-                                        $color_final = 'for-red';
+                                    if(!is_null($config->exame_oral_final) && ($neen_nota > $config->mac_nota_recurso && $neen_nota <= round($config->exame_oral_final)))
+                                    {
+                                        $exame_oral = true;
                                     }
+                                    else{
+                                        if($exam_only == 1){
+                                            $classificacao = $neen_nota;
+                                        }
+                                        else
+                                        {
+                                            $classificacao = ($mac_nota * $mac_percentagem) + ($neen_nota * $neen_percentagem);
+                                        }
+                                       
 
-                                    if ($classificacao >= $config->exame_nota && $classificacao <= 20) {
-                                        $estado_final = 'Aprovado(a)';
-                                        $color_final = 'for-green';
+
+                                        $classificacao = round($classificacao);
+                                        if ($classificacao >= 0 && $classificacao < $config->exame_nota) {
+                                            $estado_final = 'Recurso';
+                                            $color_final = 'for-red';
+                                        }
+
+                                        if ($classificacao >= $config->exame_nota && $classificacao <= 20) {
+                                            $estado_final = 'Aprovado(a)';
+                                            $color_final = 'for-green';
+                                         }
+                                            $nota_final = round($classificacao);
+                                         }
+                                   
                                     }
-                                        $nota_final = round($classificacao);
-                            }
                      @endphp
     
                             @if ($oral_nota == null)
@@ -408,10 +404,10 @@ use App\Modules\Cms\Controllers\mainController;
                        
                                 @if ($p_exame_oral > 0) 
                                         @if ($estado_final == 'Aprovado(a)') 
-                                            <td style='text-align: center'>-</td>
+                                            <td style='text-align: center'>---</td>
                                         
                                         @elseif ($estado_final == 'Recurso')
-                                            <td style='text-align: center'>-</td>
+                                            <td style='text-align: center'>--</td>
                                         @else
                                         <td style='text-align: center'>{{$oral_nota}}</td>
                                         @endif
@@ -423,7 +419,7 @@ use App\Modules\Cms\Controllers\mainController;
                             @endif
 
                             @php
-                    if($exame_oral){
+                            if($exame_oral){
                               
      
                                     ++$count_exame;
@@ -432,12 +428,16 @@ use App\Modules\Cms\Controllers\mainController;
                                             else
                                             $oral_nota = round($oral_nota);
 
-                                            $last_exame = $oral_nota;
+                                            if($exam_only == 1){
+                                                $classificacao = $neen_nota;
+                                            }
+                                            else{
+                                                $classificacao = ($mac_nota * $mac_percentagem) + ($oral_nota * $neen_percentagem);
+                                                $classificacao = round($classificacao);
+                                            }
 
-                                            $classificacao = ($mac_nota * 0.4 + $oral_nota * 0.6) / (0.4 + 0.6);
-
-                                            $classificacao = round($classificacao);
-
+                                            
+                        
                                             if ($classificacao >= 0 && $classificacao < 10) {
                                                 $estado_final = 'Recurso';
                                                 $color_final = 'for-red';
@@ -446,6 +446,7 @@ use App\Modules\Cms\Controllers\mainController;
                                                 $estado_final = 'Aprovado(a)';
                                                 $color_final = 'for-green';
                                             }
+                                           
                                             $nota_final = $classificacao;
                                     
                                 }
@@ -523,7 +524,7 @@ use App\Modules\Cms\Controllers\mainController;
                         
                     @endif
 
-                            @if ($especial_nota == null)
+                    @if ($especial_nota == null)
                                 <td style='text-align: center'> - </td>
                                 <td style='text-align: center'> - </td>
                             @else
@@ -567,61 +568,9 @@ use App\Modules\Cms\Controllers\mainController;
                                 @endif
                             @endif
 
-                               
-                            @if ($extra_nota == null)
-                                <td style='text-align: center'> - </td>
-                                <td style='text-align: center'> - </td>
-                            @else
-                                @php
-
-                                $p_extra = mainController::verificar_pauta(
-                                        $id_turma,
-                                         $item_DISC->id_disciplina,
-                                        $item_DISC->id_anoLectivo,
-                                        'Pauta Exame Extraordinário',
-                                    );
-
-                                @endphp
-
-                                @if ($p_extra > 0)
-                                    @if ($estado_final == 'Aprovado(a)') 
-                                        <td style='text-align: center'>-</td>
-                                        <td style='text-align: center'>-</td>
-                                    @else
-                                        @php
-                                            $classificacao = round($extra_nota);
-
-                                            if ($classificacao >= 0 && $classificacao < 10) {
-                                                $estado_final = 'Reprovado(a)';
-                                                $color_final = 'for-red';
-                                            }
-
-                                            if ($classificacao >= 10 && $classificacao <= 20) {
-                                                $estado_final = 'Aprovado(a)';
-                                                $color_final = 'for-green';
-                                            }
-                                            $nota_final = $classificacao;
-                                        @endphp
-
-                                        <td style='text-align: center'>{{ $extra_nota }}</td>
-                                        <td class="{{'text-bold text-center ' . $color_final}}">{{ $estado_final }}</td>
-                                    @endif
-
-                                @else
-                                <td style='text-align: center'>-</td>
-                                @endif
-                            @endif
-                               
+                         
 
                           
-                            @if ($melhoria_nota == null)
-                                <td style='text-align: center'> - </td>
-                            @else
-                            <td style='text-align: center'>{{ $melhoria_nota }}</td>
-                                @php 
-                                    $nota_final  = $melhoria_nota > $nota_final ? $melhoria_nota : $nota_final;
-                                @endphp
-                            @endif
 
                             @if ($p_final > 0)
                                 @if ($estado_final == 'Aprovado(a)')
