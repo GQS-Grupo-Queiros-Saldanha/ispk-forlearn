@@ -103,6 +103,7 @@ class mainController extends Controller
                 }
 
                 $config = DB::table('avalicao_config')->where('lective_year',$lective->id)->first();
+                 Log::info('CONFIG DEBUG3', ['config' => $config]);
                 $student = auth()->user()->id;
                 $matriculations = $this->get_matriculation_student($student);
                 //dd($matriculations);
@@ -134,7 +135,7 @@ class mainController extends Controller
                     'teacher_discipline' => $d['teacher_discipline'],
                     "melhoria_notas" => $melhoria_notas
                 ];
-            }
+            } Log::info('CONFIG DEBUG1.1', ['config' => $config]);
             else {
               
                 $data = [
@@ -153,6 +154,7 @@ class mainController extends Controller
                     "melhoria_notas" => $melhoria_notas
                 ];
             }
+             Log::info('CONFIG DEBUG1', ['config' => $config]);
                 return view('Cms::initial.student',$data);
 
         } catch (Exception | Throwable $e) {
@@ -1060,7 +1062,7 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
-        Log::info('CONFIG DEBUG1', ['config' => $config]);
+        Log::info('CONFIG DEBUG1.2', ['config' => $config]);
         $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
 
         return response()->json($html);
@@ -1435,6 +1437,7 @@ class mainController extends Controller
      ->where('nog.user_id',$student)
      ->whereIn('discipline_id',$disciplines->pluck('id_disciplina'))
      ->get();
+      Log::info('CONFIG DEBUG2.1', ['config' => $config]);
 
 
       $semestres = ['1'];
@@ -1458,6 +1461,7 @@ class mainController extends Controller
                   $config,
                   $notas_percurso
               );
+               Log::info('CONFIG DEBUG2.2', ['config' => $config]);
 
 
 
@@ -1494,6 +1498,7 @@ if (
           'final' => '-', 'final_estado' => '-', 'final_cor' => '',
           'cf' => '-', "melhoria_nota" => null,'extra_nota' => null
       ];
+       Log::info('CONFIG DEBUG2.3', ['config' => $config]);
 
       if($melhoria_notas->contains('discipline_id',$disciplina->id_disciplina)){
         $m = $melhoria_notas->where('discipline_id',$disciplina->id_disciplina)->first();
