@@ -1060,7 +1060,7 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
-        Log::info('CONFIG DEBUG', ['config' => $config]);
+        Log::info('CONFIG DEBUG1', ['config' => $config]);
         $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
 
         return response()->json($html);
@@ -1175,7 +1175,7 @@ class mainController extends Controller
         $classes = $this->matriculation_classes($matriculations->id);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-
+        Log::info('CONFIG DEBUG2', ['config' => $config]);
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
             "percurso", "articles", "plano", "matriculations",
             "disciplines", "student_info", "institution", "config",
@@ -1287,7 +1287,7 @@ class mainController extends Controller
             $data = [];
             foreach($matriculations as $key=>$item){
               $result = $this->get_boletim_student_new($lectiveYearSelected, $item->user_id);
-
+                 Log::info('CONFIG DEBUG3', ['config' => $result]);
               if(!empty($result))
               $data[$key] = [
                 "user_id"=> $item->user_id,
