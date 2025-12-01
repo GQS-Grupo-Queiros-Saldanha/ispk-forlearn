@@ -96,7 +96,6 @@ use App\Modules\Cms\Controllers\mainController;
     
 </style>
 
-<h1>$config</h1>;
 @if (isset($articles['dividas']['pending']) && $articles['dividas']['pending'] > 0)
     <div class="alert alert-warning text-dark font-bold">Para visualizar as notas lançadas, dirija-se a Tesouraria para
         regularizar os seus pagamentos!</div>
@@ -201,6 +200,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 } else {
                                     $neen_percentagem = 0;
                                 }
+                                $id_turma = $classes->filter(function($item)use($item_DISC){return $item_DISC->code_disciplina[2] == $item->display_name[2]; })->first()->id;
                                       
                                         $aprovado = false;
                                         $recurso = false;
