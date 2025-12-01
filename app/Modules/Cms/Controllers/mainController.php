@@ -134,8 +134,8 @@ class mainController extends Controller
                     'lectiveYears' => $d['lectiveYears'],
                     'teacher_discipline' => $d['teacher_discipline'],
                     "melhoria_notas" => $melhoria_notas
-                ];
-            } Log::info('CONFIG DEBUG1.1', ['config' => $config]);
+                ];Log::info('CONFIG DEBUG1.1', ['config' => $config]);
+            } 
             else {
               
                 $data = [
