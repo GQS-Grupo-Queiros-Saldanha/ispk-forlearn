@@ -96,7 +96,7 @@ use App\Modules\Cms\Controllers\mainController;
     
 </style>
 
-
+<h1>$config</h1>;
 @if (isset($articles['dividas']['pending']) && $articles['dividas']['pending'] > 0)
     <div class="alert alert-warning text-dark font-bold">Para visualizar as notas lançadas, dirija-se a Tesouraria para
         regularizar os seus pagamentos!</div>
@@ -151,6 +151,7 @@ use App\Modules\Cms\Controllers\mainController;
                         <th class="rec bo1">MELHORIA</th>
                         <th class="fn bo1" colspan="2">FINAL</th>
                     </tr>
+                    
             </thead>
             @foreach ($disciplines as $index => $item_DISC)
              
@@ -188,7 +189,6 @@ use App\Modules\Cms\Controllers\mainController;
                                 $last_exame = 0;
                                 $nota_final = '-';
                                 $color_final = '';
-                                <h1>$config</h1>;
 
                                 if ($config && $config->percentagem_mac > 0) {
                                     $mac_percentagem = $config->percentagem_mac / 100;
