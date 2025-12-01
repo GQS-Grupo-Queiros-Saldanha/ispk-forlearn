@@ -203,8 +203,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 }
                                 $id_turma = $classes->filter(function($item)use($item_DISC){
                             
-                                    return $item_DISC->code_disciplina[2] == $item->display_name[2];
-                                        })->first()->id;
+                                  
                                       
                                         $aprovado = false;
                                         $recurso = false;
