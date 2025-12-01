@@ -41,12 +41,11 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Log;
+use Illuminate\Support\Facades\Log;
 use PDF;
 use Throwable;
 use Toastr;
 use App\Modules\GA\Controllers\SchedulesController;
-
 
 class mainController extends Controller
 {
@@ -1061,7 +1060,7 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
-        dd($config);
+        Log::info('CONFIG DEBUG', ['config' => $config]);
         $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
 
         return response()->json($html);
