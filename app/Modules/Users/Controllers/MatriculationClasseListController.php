@@ -192,13 +192,14 @@ class MatriculationClasseListController extends Controller
                 'turma.lective_year_id'
             )
             ->orderBy('student', 'ASC')
+            ->orderBy('mc.class_id', 'DESC')
             ->get();
 
         if ($model->isEmpty()) {
             Toastr::error(__('Não foram encontrados alunos matriculados na turma selecionada.'), __('toastr.error'));
             return redirect()->back();
         }
-        dd($model);
+        //dd($model);
 
         // 💰 Filtro de dívidas e bolsas (mantido)
         if (isset($request->status) && $request->status == "0") {
