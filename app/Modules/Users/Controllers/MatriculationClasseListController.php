@@ -198,6 +198,7 @@ class MatriculationClasseListController extends Controller
             Toastr::error(__('Não foram encontrados alunos matriculados na turma selecionada.'), __('toastr.error'));
             return redirect()->back();
         }
+        dd($model)
 
         // 💰 Filtro de dívidas e bolsas (mantido)
         if (isset($request->status) && $request->status == "0") {
