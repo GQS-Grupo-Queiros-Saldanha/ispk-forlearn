@@ -139,14 +139,15 @@ class MatriculationClasseListController extends Controller
                     ->where('up_bi.parameters_id', 14);
             })
             // Apenas verificar se o aluno tem disciplinas válidas
-            ->whereExists(function ($q) use ($request) {
+           ->whereExists(function ($q) {
                 $q->select(DB::raw(1))
                 ->from('matriculation_disciplines as md')
-                ->join('study_plans_has_disciplines as st', 'st.disciplines_id', '=', 'md.discipline_id')
-                ->whereRaw('md.matriculation_id = mat.id')
-                ->where('md.exam_only', $request->regime ?? 0)
-                ->where('st.years', $request->curricular_year);
+                ->join('study_plans_has_disciplines as st', 'st.disciplines_id', 'md.discipline_id')
+                ->whereColumn('md.matriculation_id', 'mat.id')  
+                ->where('md.exam_only', 0)
+                ->where('st.years', 1);
             })
+
             // Verificar se existe pagamento confirm/p_matricula (ou nenhum)
             ->where(function ($q) use ($lectiveYear) {
                 $q->whereExists(function ($sub) use ($lectiveYear) {
@@ -197,7 +198,6 @@ class MatriculationClasseListController extends Controller
             ->get();
 
 
-        
         if ($model->isEmpty()) {
             Toastr::error(__('Não foram encontrados alunos matriculados na turma selecionada.'), __('toastr.error'));
             return redirect()->back();
