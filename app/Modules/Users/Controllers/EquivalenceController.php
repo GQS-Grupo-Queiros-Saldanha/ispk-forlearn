@@ -298,8 +298,7 @@ class EquivalenceController extends Controller
     
             //Pegar equivalência já marcadas
             $Disci_Eq=DB::table('tb_equivalence_studant_discipline')
-            ->where('id_transference_user',$consulta->id)->whereNull('deleted_by')->get()
-            ;
+            ->where('id_transference_user',$consulta->id)->whereNull('deleted_by')->get();
             $currentData = Carbon::now();
     
             $lectiveYearSelected = DB::table('lective_years')
