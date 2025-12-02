@@ -124,8 +124,6 @@ class estatisticaMatriculationController extends Controller
 
         $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYears->id);
 
-
-
         $new_model = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
@@ -194,7 +192,7 @@ class estatisticaMatriculationController extends Controller
             ->groupBy('id_usuario')
             ->distinct('matriculations.id')
             ->get();
-
+        dd($new_model);
 
         $mod = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
@@ -399,8 +397,8 @@ class estatisticaMatriculationController extends Controller
 
 
         // Primeiro, vamos fazer um diagnóstico detalhado dos dados
-        function diagnosticEnrollmentData($new_model, $courses)
-        {
+        function diagnosticEnrollmentData($new_model, $courses){
+            
             $diagnostics = [
                 'total_registros' => $new_model->count(),
                 'alunos_unicos' => $new_model->unique('id_usuario')->count(),
@@ -531,7 +529,6 @@ class estatisticaMatriculationController extends Controller
             return $cursos;
 
         });
-
 
         $institution = Institution::latest()->first();
         $cordenador = isset($cordenador->value) ? ($cordenador->value) : "";

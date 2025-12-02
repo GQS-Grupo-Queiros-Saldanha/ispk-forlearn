@@ -247,49 +247,45 @@ class EquivalenceController extends Controller
     public function edit($id){
 
         try {
-     //Pegar ano lectivo corrente.
+            //Pegar ano lectivo corrente.
             $lectiveYears = LectiveYear::with(['currentTranslation'])
-            ->get();
+                ->get();
     
             $consulta = DB::table('tb_transference_studant as transf')
-            ->join('users as u0', 'u0.id', '=', 'transf.user_id')
-            ->join('users as u1', 'u1.id', '=', 'transf.created_by')
+                ->join('users as u0', 'u0.id', '=', 'transf.user_id')
+                ->join('users as u1', 'u1.id', '=', 'transf.created_by')
         
-            ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'u0.id')
-            ->join('courses_translations as ct', function ($join) {
+                ->leftJoin('user_courses as uc', 'uc.users_id', '=', 'u0.id')
+                ->join('courses_translations as ct', function ($join) {
                 $join->on('ct.courses_id', '=', 'uc.courses_id');
                 $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 $join->on('ct.active', '=', DB::raw(true));
-            })
-            ->leftJoin('user_parameters as u_p', function ($join) {
+                })
+                ->leftJoin('user_parameters as u_p', function ($join) {
                     $join->on('u0.id', '=', 'u_p.users_id')
                     ->where('u_p.parameters_id', 1);
-            })
-            ->leftJoin('user_parameters as up_meca', function ($join) {
+                })
+                ->leftJoin('user_parameters as up_meca', function ($join) {
                     $join->on('u0.id', '=', 'up_meca.users_id')
                     ->where('up_meca.parameters_id', 19);
-            })
-            ->where('transf.id',$id)
-          ->whereIn('transf.type_transference',[1,3])
+                })
+                ->where('transf.id',$id)
+                ->whereIn('transf.type_transference',[1,3])
         
-            ->select([
-                'transf.*',
-                'u0.id as id_usuario',
-                'u_p.value as student',
-                'u0.email as email',
-                'u1.name as criado_por',
-                'ct.display_name as course',
-                'uc.courses_id as course_id',
-            ])
+                ->select([
+                    'transf.*',
+                    'u0.id as id_usuario',
+                    'u_p.value as student',
+                    'u0.email as email',
+                    'u1.name as criado_por',
+                    'ct.display_name as course',
+                    'uc.courses_id as course_id',
+                ])
         
+                ->groupBy('u_p.value')
+                ->distinct('id')
+                ->first(); 
         
-        ->groupBy('u_p.value')
-        ->distinct('id')
-        ->first(); 
-        
-    
-    
-    
             if(!$consulta){
                 Toastr::warning(__('A forLEARN detectou um argumento invalido , por favor tente novamente'), __('toastr.warning'));
                 return redirect()->back();
@@ -300,20 +296,18 @@ class EquivalenceController extends Controller
             $Disci_Eq=DB::table('tb_equivalence_studant_discipline')
             ->where('id_transference_user',$consulta->id)->whereNull('deleted_by')->get();
             $currentData = Carbon::now();
-    
             $lectiveYearSelected = DB::table('lective_years')
-            ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-            ->first();
+                ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
+                ->first();
     
-             $data = [
-                        'action' => 'create',
-                        'languages' => Language::whereActive(true)->get(),
-                        'dados_geral'=>$consulta,
-                        'dados_discipline'=>$Disci_Eq,
-                        'lectiveYears'=>$lectiveYears,
-                        'lectiveYearSelected'=>$lectiveYearSelected->id
-                
-                    ];
+            $data = [
+                'action' => 'create',
+                'languages' => Language::whereActive(true)->get(),
+                'dados_geral'=>$consulta,
+                'dados_discipline'=>$Disci_Eq,
+                'lectiveYears'=>$lectiveYears,
+                'lectiveYearSelected'=>$lectiveYearSelected->id
+            ];
             
     
             return view('Users::equivalence.discipline_student_equivalence')->with($data);
