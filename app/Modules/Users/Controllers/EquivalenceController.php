@@ -414,19 +414,48 @@ public function equivalence_student_store(Request $request){
     }
 
     //Estado de há disciplina adicionada ou não
-
     $affected_status = DB::table('tb_transference_studant')
-    ->where('id', $users_transf_id)
-    ->where('user_id', $id_user)
-    ->update(['status_disc' => 1 ]);
+        ->where('id', $users_transf_id)
+        ->where('user_id', $id_user)
+        ->update(['status_disc' => 1 ]);
     
     //Faz a deleção de todos que já fizeram parte parte e nessa nova edição já não !
     $affected_delete = DB::table('tb_equivalence_studant_discipline')
-    ->where('id_transference_user', $users_transf_id)
-    ->whereNotIn('id_discipline_equivalence', $disciplines)
-    ->delete();
+        ->where('id_transference_user', $users_transf_id)
+        ->whereNotIn('id_discipline_equivalence', $disciplines)
+        ->delete();
 
+     
+    $Oldgrades = DB::table('new_old_grades')
+        ->where('user_id', $id_user)
+        ->select('discipline_id','grade')
+        ->get();
 
+    foreach($disciplines as $disciplina_equivalente){
+        $grade_value=0;
+        foreach($Oldgrades as $old_grade){
+            if($old_grade->discipline_id == $disciplina_equivalente){
+                $grade_value=$old_grade->grade;
+            }
+        }
+        if($grade_value > 0){
+            //Inserir na tabela de notas equivalentes
+            $insert_old_grade=DB::table('old_grades_new')->insert([
+                'user_id' => $id_user,
+                'discipline_id' => $disciplina_equivalente,
+                'grade' => $grade_value,
+                'created_by' => Auth::user()->id, 
+                'updated_by' => Auth::user()->id, 
+                'created_at' =>$currentData,
+            ]);
+        }
+        
+
+    }
+
+    $resetgrades = DB::table('new_old_grades')
+        ->where('user_id', $id_user)
+        ->delete();
 
     Toastr::success(__('Equivalência de disciplina foi efectuada com sucesso.'), __('toastr.success'));
     return back();
