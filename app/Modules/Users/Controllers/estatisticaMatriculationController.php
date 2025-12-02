@@ -175,7 +175,7 @@ class estatisticaMatriculationController extends Controller
                 'matriculations.*',
 
             ])
-            ->groupBy('id_usuario')
+            //->groupBy('id_usuario')
             ->distinct('matriculations.id')
             ->get();
             
