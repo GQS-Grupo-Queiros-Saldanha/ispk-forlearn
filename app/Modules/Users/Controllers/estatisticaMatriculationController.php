@@ -487,20 +487,28 @@ class estatisticaMatriculationController extends Controller
                 $shift = substr($enrollment->classe, 2);
 
                 // Determinar o turno principal
-                if ($shift === 'M') {
+                if (strpos($shift, 'M') !== false) {
                     $estatisticas[$rKey]['m']++;
-                    if ($enrollment->sexo == 'M') $estatisticas[$rKey]['sm']['m']++;
-                    if ($enrollment->sexo == 'F') $estatisticas[$rKey]['sm']['f']++;
-                } elseif ($shift === 'T') {
+                    if ($enrollment->sexo == 'M') {
+                        $estatisticas[$rKey]['sm']['m']++;
+                    } elseif ($enrollment->sexo == 'F') {
+                        $estatisticas[$rKey]['sm']['f']++;
+                    }
+                } elseif (strpos($shift, 'T') !== false) {
                     $estatisticas[$rKey]['t']++;
-                    if ($enrollment->sexo == 'M') $estatisticas[$rKey]['st']['m']++;
-                    if ($enrollment->sexo == 'F') $estatisticas[$rKey]['st']['f']++;
-                } elseif ($shift === 'N') {
+                    if ($enrollment->sexo == 'M') {
+                        $estatisticas[$rKey]['st']['m']++;
+                    } elseif ($enrollment->sexo == 'F') {
+                        $estatisticas[$rKey]['st']['f']++;
+                    }
+                } elseif (strpos($shift, 'N') !== false) {
                     $estatisticas[$rKey]['n']++;
-                    if ($enrollment->sexo == 'M') $estatisticas[$rKey]['sn']['m']++;
-                    if ($enrollment->sexo == 'F') $estatisticas[$rKey]['sn']['f']++;
+                    if ($enrollment->sexo == 'M') {
+                        $estatisticas[$rKey]['sn']['m']++;
+                    } elseif ($enrollment->sexo == 'F') {
+                        $estatisticas[$rKey]['sn']['f']++;
+                    }
                 }
-
             }
             return $estatisticas;
         });

@@ -781,37 +781,20 @@
                 <tr>
                   <td class="bg-white"></td>
                 </tr>
-               @php
-                $total_turno = $t1 + $t2 + $t3 + $t4 + $t5;
+                @php 
+                  $total_turno = $t1 + $t2 + $t3 + $t4 + $t5;
+                  $p_turno_manha = round(($total_turno_M_geral / $total_turno) * 100, 0);
+                  $p_turno_tarde = round(($total_turno_T_geral / $total_turno) * 100, 0);
+                  $p_turno_noite = round(($total_turno_N_geral / $total_turno) * 100, 0);
+                  $p_turno_geral = round(($total_turno / $total_turno) * 100, 0);
 
-                if ($total_turno > 0) {
-                    $p_turno_manha = round(($total_turno_M_geral / $total_turno) * 100, 0);
-                    $p_turno_tarde = round(($total_turno_T_geral / $total_turno) * 100, 0);
-                    $p_turno_noite = round(($total_turno_N_geral / $total_turno) * 100, 0);
-                    $p_turno_geral = 100;
-
-                    $p_turno_1 = round(($t1 / $total_turno) * 100, 0);
-                    $p_turno_2 = round(($t2 / $total_turno) * 100, 0);
-                    $p_turno_3 = round(($t3 / $total_turno) * 100, 0);
-                    $p_turno_4 = round(($t4 / $total_turno) * 100, 0);
-                    $p_turno_5 = round(($t5 / $total_turno) * 100, 0);
-                    $p_turno_total = 100;
-                } else {
-                    // Quando não há dados, coloca tudo a zero
-                    $p_turno_manha = 0;
-                    $p_turno_tarde = 0;
-                    $p_turno_noite = 0;
-                    $p_turno_geral = 0;
-
-                    $p_turno_1 = 0;
-                    $p_turno_2 = 0;
-                    $p_turno_3 = 0;
-                    $p_turno_4 = 0;
-                    $p_turno_5 = 0;
-                    $p_turno_total = 0;
-                }
-            @endphp
-
+                  $p_turno_1 = round(($t1 / $total_turno) * 100, 0);
+                  $p_turno_2 = round(($t2 / $total_turno) * 100, 0);
+                  $p_turno_3 = round(($t3 / $total_turno) * 100, 0);
+                  $p_turno_4 = round(($t4 / $total_turno) * 100, 0);
+                  $p_turno_5 = round(($t5 / $total_turno) * 100, 0);
+                  $p_turno_total = round(($total_turno / $total_turno) * 100, 0);
+                @endphp
                 <tr>
                   <td class="bg-white"></td>
                 </tr>
