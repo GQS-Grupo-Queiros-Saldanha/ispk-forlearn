@@ -173,25 +173,6 @@ class estatisticaMatriculationController extends Controller
             ->where('matriculations.deleted_at', null)
             ->select([
                 'matriculations.*',
-                'u0.id as id_usuario',
-                'matriculations.code as code_matricula',
-                'up_meca.value as matricula',
-                'art_requests.status as state',
-                'up_bi.value as n_bi',
-                'cl.display_name as classe',
-                'u_p.value as student',
-                'u0.email as email',
-                'u1.name as criado_por',
-                'u2.name as actualizado_por',
-                'u3.name as deletador_por',
-                'ct.display_name as course',
-                //sedrac
-                'uc.courses_id as id_course',
-                'matriculations.deleted_by as deleted_by',
-                'articles.id_code_dev as id_code_dev',
-                'u_p1.value as sexo',
-                'art_requests.id as id',
-                'articles.id_code_dev as id_code_dev',
 
             ])
             ->groupBy('id_usuario')
