@@ -371,139 +371,123 @@ public function edit($id){
 
 
 
-    public function store(Request $request){
-      try{
-          //Tabela
-        
-        $currentData = Carbon::now();
+  public function store(Request $request){
+        try {
 
-        $data = [
-            'disciplines'=> $request->discipline_id,
-            'user_student' => $request->Studants,
-            'nota' => $request->nota
-           ];
-        //tb_transference_studant
-         $validar=DB::table('tb_transference_studant')
-         ->where('user_id',$data['user_student'])
-         ->whereIn('type_transference',[1, 3])
-         ->get();
-         
-        //  tb_avaliation_equivalence
+            $currentData = Carbon::now();
 
-        if(!$validar->isEmpty()){
+            $data = [
+                'disciplines'   => $request->discipline_id,
+                'user_student'  => $request->Studants,
+                'nota'          => $request->nota
+            ];
 
-         $lectiveYearPercurso = DB::table('lective_years as lt')
-            ->join('lective_year_translations as yearLEctive', function ($join) {
-                $join->on('yearLEctive.lective_years_id', '=', 'lt.id');
-                $join->on('yearLEctive.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('yearLEctive.active', '=', DB::raw(true));
-            })
-            ->where('lt.id',$validar[0]->lectiveYear)
-            ->first(); 
-          
-            
-            for($i=0 ; $i<count( $data['nota']);$i++){
-                //não gurdar nota nula
-                if($data['nota'][$i]!=null){
-                    //Guardar nota na tabla suplente.   
-                    $suplente= DB::table('tb_avaliation_equivalence')
+            // Validar transferência do estudante
+            $validar = DB::table('tb_transference_studant')
+                ->where('user_id', $data['user_student'])
+                ->whereIn('type_transference', [1, 3])
+                ->get();
+
+            if ($validar->isEmpty()) {
+                Toastr::warning(__('A forLEARN detectou uma anomalia ao localizar o dado de pedido de transferência do utilizador seleccionado. Tente novamente.'), __('toastr.warning'));
+                return redirect()->back();
+            }
+
+            $lectiveYearPercurso = DB::table('lective_years as lt')
+                ->join('lective_year_translations as yearLective', function ($join) {
+                    $join->on('yearLective.lective_years_id', '=', 'lt.id');
+                    $join->on('yearLective.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('yearLective.active', '=', DB::raw(true));
+                })
+                ->where('lt.id', $validar[0]->lectiveYear)
+                ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 1. COPIAR NOTAS ANTIGAS PARA old_grades_new (APENAS UMA VEZ)
+            |--------------------------------------------------------------------------
+            */
+            $oldGrades = DB::table('new_old_grades')
+                ->where('user_id', $data['user_student'])
+                ->get();
+
+            foreach ($oldGrades as $g) {
+                DB::table('old_grades_new')->insert([
+                    'user_id'        => $data['user_student'],
+                    'discipline_id'  => $g->discipline_id,
+                    'grade'          => $g->grade,
+                    'created_by'     => Auth::user()->id,
+                    'updated_by'     => Auth::user()->id,
+                    'created_at'     => $currentData,
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 2. ELIMINAR TODAS AS NOTAS ACTUAIS DE new_old_grades
+            |--------------------------------------------------------------------------
+            */
+            DB::table('new_old_grades')
+                ->where('user_id', $data['user_student'])
+                ->delete();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3. LOOP PARA INSERIR AS NOVAS NOTAS NO PERCURSO + EQUIVALÊNCIA
+            |--------------------------------------------------------------------------
+            */
+            for ($i = 0; $i < count($data['nota']); $i++) {
+
+                if ($data['nota'][$i] == null) {
+                    continue;
+                }
+
+                // Guardar nota na tabela suplente (tb_avaliation_equivalence)
+                DB::table('tb_avaliation_equivalence')
                     ->updateOrInsert(
                         [
-                            'id_discipline' =>  $data['disciplines'][$i],
-                            'id_transference_user' =>  $validar[0]->id
+                            'id_discipline'        => $data['disciplines'][$i],
+                            'id_transference_user' => $validar[0]->id
                         ],
                         [
-                            'grade' =>  $data['nota'][$i],
+                            'grade'      => $data['nota'][$i],
                             'created_by' => Auth::user()->id,
                             'updated_by' => Auth::user()->id
                         ]
                     );
 
+                // Inserir nota no percurso actual (new_old_grades)
+                DB::table('new_old_grades')->updateOrInsert(
+                    [
+                        'user_id'       => $data['user_student'],
+                        'discipline_id' => $data['disciplines'][$i],
+                    ],
+                    [
+                        'lective_year' => $lectiveYearPercurso->display_name,
+                        'grade'        => $data['nota'][$i],
+                        'created_at'   => $currentData,
+                        'updated_at'   => $currentData
+                    ]
+                );
 
-                    //Actualizar o percurso
-
-                     //Condicao para eliminar a mesma disciplina no percurso >2
-                    $consulta=DB::table('new_old_grades')
-                    ->where('user_id',$data['user_student'])
-                    ->where('discipline_id',$data['disciplines'][$i])
-                    ->get();
-                    
-                    if(count($consulta)>1){
-                        $consulta=DB::table('new_old_grades')
-                        ->where('user_id',$data['user_student'])
-                        ->where('discipline_id',$data['disciplines'][$i])
-                        ->delete();
-                    } 
-                    $Oldgrades = DB::table('new_old_grades')
-                        ->where('user_id',$data['user_student'])
-                        ->select('discipline_id','grade')
-                        ->get();
-                     
-
-                    foreach($Oldgrades as $old_grade){
-                        //Inserir na tabela de notas equivalentes
-                        $insert_old_grade=DB::table('old_grades_new')->insert([
-                            'user_id' => $data['user_student'],
-                            'discipline_id' => $old_grade->discipline_id,
-                            'grade' => $old_grade->grade,
-                            'created_by' => Auth::user()->id, 
-                            'updated_by' => Auth::user()->id, 
-                            'created_at' =>$currentData,
-                        ]);
-                    }
-                
-                    $resetgrades = DB::table('new_old_grades')
-                        ->where('user_id',$data['user_student'])
-                        ->delete();   
-
-                    $Percurso = DB::table('new_old_grades')->updateOrInsert(
-                        [
-                            'user_id' => $data['user_student'],
-                            'discipline_id' => $data['disciplines'][$i],
-                        
-                        ]
-                        ,
-                        [
-                            'lective_year' =>  $lectiveYearPercurso->display_name,
-                            'grade' => $data['nota'][$i],
-                            'created_at' => $currentData,
-                            'updated_at' => $currentData
-                            
-                            ]
-                
-                        ); 
-
-             }
-             //Fim do if de verificação se é null
-             
-             
-            }
-            
-            //Fim do for
-            
+            } // fim do for
 
 
-
-        }
-        else{
-          Toastr::warning(__('A forLEARN detectou uma anomalia ao localizar o dado de pedido de transferência do usuário selecionario! Tente novamente.'), __('toastr.warning'));
-          return redirect()->back();
-        }
-        
-         
+            Toastr::success(__('As nota(s) foram gravadas com sucesso!'), __('toastr.success'));
+            return redirect()->back();
 
 
-          Toastr::success(__('As nota(s) foram gravadas com sucesso!'), __('toastr.success'));
-          return redirect()->back();
-
-      } catch (Exception | Throwable $e) {
+        } catch (Exception | Throwable $e) {
             return $e;
             logError($e);
-            return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
-      }
-        
-
+            return request()->ajax()
+                ? response()->json($e->getMessage(), 500)
+                : abort(500);
+        }
     }
+
 
 
 
