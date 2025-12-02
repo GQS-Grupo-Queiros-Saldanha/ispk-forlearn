@@ -113,18 +113,31 @@ class MatriculationClasseListController extends Controller
             Toastr::error(__('Ano lectivo inválido.'), __('toastr.error'));
             return redirect()->back();
         }
-        $classeReal = DB::table('matriculation_classes as mc2')
-            ->select('mc2.*')
-            ->whereColumn('mc2.matriculation_id', 'mat.id')
-            ->orderBy('mc2.class_id', 'DESC') // escolher a classe real
-            ->limit(1);
+       // Subconsulta: obter a classe real (class_id mais alto) de cada matrícula
+        $classeReal = DB::table('matriculation_classes')
+            ->selectRaw('matriculation_id, MAX(class_id) as class_id')
+            ->groupBy('matriculation_id');
 
+        // Consulta principal
         $model = DB::table('matriculations as mat')
+
+            // Junta o resultado (matriculation_id + class_id real)
             ->joinSub($classeReal, 'mc', function ($join) {
                 $join->on('mc.matriculation_id', '=', 'mat.id');
             })
-            ->join('classes as turma', 'mc.class_id', '=', 'turma.id')
+
+            // Junta novamente à tabela original para obter os dados completos da classe
+            ->join('matriculation_classes as mc2', function ($join) {
+                $join->on('mc2.matriculation_id', '=', 'mc.matriculation_id')
+                    ->on('mc2.class_id', '=', 'mc.class_id');
+            })
+
+            // Junta a turma correspondente
+            ->join('classes as turma', 'mc2.class_id', '=', 'turma.id')
+
+            // Junta o utilizador
             ->join('users as user', 'mat.user_id', '=', 'user.id')
+
             // Parâmetros do utilizador
             ->leftJoin('user_parameters as u_p', function ($join) {
                 $join->on('user.id', '=', 'u_p.users_id')
@@ -138,14 +151,15 @@ class MatriculationClasseListController extends Controller
                 $join->on('user.id', '=', 'up_bi.users_id')
                     ->where('up_bi.parameters_id', 14);
             })
-            // Apenas verificar se o aluno tem disciplinas válidas
-           ->whereExists(function ($q) {
+
+            // Verificar se o aluno tem disciplinas válidas
+            ->whereExists(function ($q) use ($request) {
                 $q->select(DB::raw(1))
-                ->from('matriculation_disciplines as md')
-                ->join('study_plans_has_disciplines as st', 'st.disciplines_id', 'md.discipline_id')
-                ->whereColumn('md.matriculation_id', 'mat.id')  
-                ->where('md.exam_only', 0)
-                ->where('st.years', 1);
+                    ->from('matriculation_disciplines as md')
+                    ->join('study_plans_has_disciplines as st', 'st.disciplines_id', 'md.discipline_id')
+                    ->whereColumn('md.matriculation_id', 'mat.id')
+                    ->where('md.exam_only', $request->regime ?? 0)
+                    ->where('st.years', $request->curricular_year);
             })
 
             // Verificar se existe pagamento confirm/p_matricula (ou nenhum)
@@ -155,20 +169,22 @@ class MatriculationClasseListController extends Controller
                         ->from('article_requests as ar')
                         ->join('articles as art', 'art.id', '=', 'ar.article_id')
                         ->join('code_developer as cd', 'cd.id', '=', 'art.id_code_dev')
-                        ->whereRaw('ar.user_id = user.id')
+                        ->whereColumn('ar.user_id', 'user.id')
                         ->whereIn('cd.code', ['confirm', 'p_matricula', 'pedido_t_entrada'])
                         ->where('ar.status', 'total')
-                        ->whereBetween('art.created_at', [
+                        ->whereBetween('ar.created_at', [
                             $lectiveYear->start_date,
                             $lectiveYear->end_date
                         ]);
                 })
                 ->orWhereRaw('NOT EXISTS (SELECT 1 FROM article_requests WHERE user_id = user.id)');
             })
+
             ->where('mat.lective_year', $lectiveYear->id)
             ->where('turma.lective_year_id', $request->AnoLectivo)
             ->where('turma.id', $request->classe)
             ->whereNull('mat.deleted_at')
+
             ->select([
                 'user.id as user_id',
                 'u_p.value as student',
@@ -181,6 +197,7 @@ class MatriculationClasseListController extends Controller
                 'turma.display_name as turma',
                 'turma.lective_year_id as id_anoLectivo'
             ])
+
             ->groupBy(
                 'user.id',
                 'u_p.value',
@@ -193,9 +210,12 @@ class MatriculationClasseListController extends Controller
                 'turma.display_name',
                 'turma.lective_year_id'
             )
+
             ->orderBy('student', 'ASC')
             ->orderBy('mc.class_id', 'DESC')
+
             ->get();
+
 
 
         if ($model->isEmpty()) {
