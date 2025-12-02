@@ -83,7 +83,7 @@ class estatisticaMatriculationController extends Controller
         }
     }
 
-        public function relatorios(){
+    public function relatorios(){
 
         $courses = Course::with([
             'currentTranslation'
@@ -113,16 +113,23 @@ class estatisticaMatriculationController extends Controller
 
     public function relatoriosPDF(Request $request){
 
+        //dd($request);
+       
         $tranf_type = 'payment';
 
         $lectiveYears = DB::table('lective_years')
             ->where("id", $request->lective_year)
             ->first();
+        //dd($lectiveYears);
+
         $lt = DB::table('lective_year_translations')
             ->where("lective_years_id", $request->lective_year)
             ->first();
 
         $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYears->id);
+        //dd($emolumento_confirma_prematricula);
+
+
 
         $new_model = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
@@ -157,16 +164,14 @@ class estatisticaMatriculationController extends Controller
                 $join->on('u0.id', '=', 'u_p1.users_id')
                     ->where('u_p1.parameters_id', 2);
             })
-            ->leftJoin('parameter_options as sexo_value', 'sexo_value.id', '=', 'u_p1.value')
             ->join('article_requests as art_requests', 'art_requests.user_id', '=', 'matriculations.user_id')
             ->join('articles', function ($join) {
                 $join->on('art_requests.article_id', '=', 'articles.id')
                     ->whereNull('articles.deleted_by')
                     ->whereNull('articles.deleted_at');
             })
-            ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)
-            ->where('matriculations.lective_year', $lectiveYears->id)
-            ->whereNull('matriculations.deleted_at')
+            ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)// dados 372,383
+            ->where('matriculations.lective_year', $lectiveYears->id) //13
             ->select([
                 'matriculations.*',
                 'u0.id as id_usuario',
@@ -185,7 +190,7 @@ class estatisticaMatriculationController extends Controller
                 'uc.courses_id as id_course',
                 'matriculations.deleted_by as deleted_by',
                 'articles.id_code_dev as id_code_dev',
-                'sexo_value.code as sexo',
+                'u_p1.value as sexo',
                 'art_requests.id as id',
                 'articles.id_code_dev as id_code_dev',
 
@@ -193,7 +198,7 @@ class estatisticaMatriculationController extends Controller
             ->groupBy('id_usuario')
             ->distinct('matriculations.id')
             ->get();
-        dd($new_model);
+
 
         $mod = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
@@ -299,17 +304,6 @@ class estatisticaMatriculationController extends Controller
                 ->select(['users_id', 'value as nome'])
                 ->first();
 
-            if ($staff[$i]) {
-                $nome = explode(" ", $staff[$i]->nome);
-                $staff[$i]->nome = $nome[0] . " " . $nome[count($nome) - 1];
-            } else {
-                // fallback se não tiver nome definido
-                $staff[$i] = (object)[
-                    'users_id' => $keys[$i],
-                    'nome' => 'Sem Nome'
-                ];
-            }
-
             $nome = explode(" ", $staff[$i]->nome);
             $staff[$i]->nome = $nome[0] . " " . $nome[count($nome) - 1];
         }
@@ -398,8 +392,8 @@ class estatisticaMatriculationController extends Controller
 
 
         // Primeiro, vamos fazer um diagnóstico detalhado dos dados
-        function diagnosticEnrollmentData($new_model, $courses){
-            
+        function diagnosticEnrollmentData($new_model, $courses)
+        {
             $diagnostics = [
                 'total_registros' => $new_model->count(),
                 'alunos_unicos' => $new_model->unique('id_usuario')->count(),
@@ -443,9 +437,10 @@ class estatisticaMatriculationController extends Controller
 
             return $diagnostics;
         }
-
+        
+        $usuarios = [];
         // Agora vamos corrigir o código de contagem
-        $confirmados = collect($courses)->groupBy("name")->map(function ($cursos) use ($new_model) {
+        $confirmados = collect($courses)->groupBy("name")->map(function ($cursos) use ($new_model, $usuarios) {
             $estatisticas = [
                 "ano1" => 0,
                 "ano2" => 0,
@@ -472,45 +467,44 @@ class estatisticaMatriculationController extends Controller
                     // Pegar o registro mais recente do aluno
                     return $studentRecords->sortByDesc('created_at')->first();
                 });
-
+              
             // Processar cada aluno único
-            foreach ($courseStudents as $enrollment) {
-                $year = $enrollment->course_year;
-                $yearKey = "ano{$year}";
-                $rKey = "r{$year}";
+           foreach ($courseStudents as $enrollment) {
+            $year = $enrollment->course_year;
+            $yearKey = "ano{$year}";
+            $rKey = "r{$year}";
 
-                // Incrementar contagem do ano
-                $estatisticas[$yearKey]++;
+            // Incrementar contagem do ano
+            $estatisticas[$yearKey]++;
 
-                // Processar turno
-                $shift = substr($enrollment->classe, 2);
-
-                // Determinar o turno principal
-                if (strpos($shift, 'M') !== false) {
-                    $estatisticas[$rKey]['m']++;
-                    if ($enrollment->sexo == 'M') {
-                        $estatisticas[$rKey]['sm']['m']++;
-                    } elseif ($enrollment->sexo == 'F') {
-                        $estatisticas[$rKey]['sm']['f']++;
-                    }
-                } elseif (strpos($shift, 'T') !== false) {
-                    $estatisticas[$rKey]['t']++;
-                    if ($enrollment->sexo == 'M') {
-                        $estatisticas[$rKey]['st']['m']++;
-                    } elseif ($enrollment->sexo == 'F') {
-                        $estatisticas[$rKey]['st']['f']++;
-                    }
-                } elseif (strpos($shift, 'N') !== false) {
-                    $estatisticas[$rKey]['n']++;
-                    if ($enrollment->sexo == 'M') {
-                        $estatisticas[$rKey]['sn']['m']++;
-                    } elseif ($enrollment->sexo == 'F') {
-                        $estatisticas[$rKey]['sn']['f']++;
-                    }
-                }
+            // Processar turno usando regex
+            if (preg_match('/([MTN])/', $enrollment->classe, $matches)) {
+                $shift = $matches[1]; // Extrai M, T ou N
+            } else {
+                $shift = null; // fallback caso não consiga extrair
             }
+
+            // Determinar o turno principal
+            if ($shift === 'M') {
+                $estatisticas[$rKey]['m']++;
+                if ($enrollment->sexo == 'M') $estatisticas[$rKey]['sm']['m']++;
+                if ($enrollment->sexo == 'F') $estatisticas[$rKey]['sm']['f']++;
+            } elseif ($shift === 'T') {
+                $estatisticas[$rKey]['t']++;
+                if ($enrollment->sexo == 'M') $estatisticas[$rKey]['st']['m']++;
+                if ($enrollment->sexo == 'F') $estatisticas[$rKey]['st']['f']++;
+            } elseif ($shift === 'N') {
+                $estatisticas[$rKey]['n']++;
+                if ($enrollment->sexo == 'M') $estatisticas[$rKey]['sn']['m']++;
+                if ($enrollment->sexo == 'F') $estatisticas[$rKey]['sn']['f']++;
+            }
+        }
+
+        
             return $estatisticas;
         });
+       
+       
         $total_new_model = $new_model->unique('id_usuario')->count();
         $total_confirmados = 0;
 
@@ -531,15 +525,28 @@ class estatisticaMatriculationController extends Controller
 
         });
 
+
         $institution = Institution::latest()->first();
         $cordenador = isset($cordenador->value) ? ($cordenador->value) : "";
         $titulo_documento = "Relatório: Confirmação de Matrículas";
         $anoLectivo_documento = "Ano ACADÊMICO: ";
         $documentoGerado_documento = "Documento gerado a";
         $documentoCode_documento = 5;
-        $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/instituicao-arquivo/" . $institution->logotipo;
+        $logotipo = "https://" . $_SERVER['HTTP_HOST'] . "/storage/" . $institution->logotipo;
         $date_generated = date("Y/m/d");
 
+        // Debug para ver a estrutura completa
+        /*dd([
+            'confirmados' => $confirmados,
+            'courses' => $courses,
+            'departamentos' => $departamentos,
+            'datas_inscricao' => $datas_inscricao,
+            'matriculas_staff' => $matriculas_staff,
+            'total_matriculas' => $total_matriculas,
+            'staff' => $staff,
+            'p_matriculas' => $p_matriculas,
+            'cf_matriculas' => $cf_matriculas,
+        ]);*/
 
         $pdf = PDF::loadView(
             "Users::matriculations.pdf-relatorios",
@@ -588,7 +595,7 @@ class estatisticaMatriculationController extends Controller
     }
 
 
-        private function pre_matricula_confirma_emolumento($lectiveYearSelected){
+    private function pre_matricula_confirma_emolumento($lectiveYearSelected){
      
         $confirm=EmolumentCodevLective("confirm",$lectiveYearSelected)->first();
         $Prematricula=EmolumentCodevLective("p_matricula",$lectiveYearSelected)->first() ;   
@@ -603,7 +610,7 @@ class estatisticaMatriculationController extends Controller
         return $emolumentos;
 
 
-        }
+    }
 
 
 
