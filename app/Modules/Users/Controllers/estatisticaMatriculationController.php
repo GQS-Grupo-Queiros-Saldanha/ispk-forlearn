@@ -129,8 +129,6 @@ class estatisticaMatriculationController extends Controller
         $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYears->id);
         //dd($emolumento_confirma_prematricula);
 
-
-
         $new_model = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
@@ -170,8 +168,9 @@ class estatisticaMatriculationController extends Controller
                     ->whereNull('articles.deleted_by')
                     ->whereNull('articles.deleted_at');
             })
-            ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)// dados 372,383
-            ->where('matriculations.lective_year', $lectiveYears->id) //13
+            ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)
+            ->where('matriculations.lective_year', $lectiveYears->id)
+            ->where('matriculations.deleted_at', null)
             ->select([
                 'matriculations.*',
                 'u0.id as id_usuario',
@@ -198,6 +197,8 @@ class estatisticaMatriculationController extends Controller
             ->groupBy('id_usuario')
             ->distinct('matriculations.id')
             ->get();
+            
+            dd($new_model);
 
 
         $mod = DB::table('matriculations')
