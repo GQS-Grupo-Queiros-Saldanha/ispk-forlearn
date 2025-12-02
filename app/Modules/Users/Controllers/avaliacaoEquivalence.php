@@ -371,8 +371,7 @@ public function edit($id){
 
 
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
       try{
           //Tabela
         
@@ -434,7 +433,28 @@ public function edit($id){
                         ->where('user_id',$data['user_student'])
                         ->where('discipline_id',$data['disciplines'][$i])
                         ->delete();
-                    }    
+                    } 
+                    $Oldgrades = DB::table('new_old_grades')
+                        ->where('user_id',$data['user_student'])
+                        ->select('discipline_id','grade')
+                        ->get();
+                     
+
+                    foreach($Oldgrades as $old_grade){
+                        //Inserir na tabela de notas equivalentes
+                        $insert_old_grade=DB::table('old_grades_new')->insert([
+                            'user_id' => $data['user_student'],
+                            'discipline_id' => $old_grade->discipline_id,
+                            'grade' => $old_grade->grade,
+                            'created_by' => Auth::user()->id, 
+                            'updated_by' => Auth::user()->id, 
+                            'created_at' =>$currentData,
+                        ]);
+                    }
+                
+                    $resetgrades = DB::table('new_old_grades')
+                        ->where('user_id',$data['user_student'])
+                        ->delete();   
 
                     $Percurso = DB::table('new_old_grades')->updateOrInsert(
                         [
