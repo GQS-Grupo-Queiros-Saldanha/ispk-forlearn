@@ -192,8 +192,8 @@ class estatisticaMatriculationController extends Controller
             ->groupBy('id_usuario')
             ->distinct('matriculations.id')
             ->get();
-        dd($new_model);
-
+        dd($emolumento_confirma_prematricula);
+        
         $mod = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('article_requests as art_requests', 'art_requests.user_id', '=', 'matriculations.user_id')
