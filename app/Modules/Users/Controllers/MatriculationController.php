@@ -1943,6 +1943,7 @@ class MatriculationController extends Controller
                 ->first();
             
             $emolumento_confirma_prematricula= self::pre_matricula_confirma_emolumento( $lectiveYearSelected->id);
+            Log::info('emolumento_confirma_prematricula', ['emolumento_confirma_prematricula' => $emolumento_confirma_prematricula]);
             
                 $model = Matriculation::join('users as u0', 'u0.id', '=', 'matriculations.user_id')
                 ->where('matriculations.lective_year', $lectiveYearSelected->id)
