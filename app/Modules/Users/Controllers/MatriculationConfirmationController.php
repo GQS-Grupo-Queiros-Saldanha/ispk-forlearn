@@ -2216,31 +2216,40 @@ public function colocar_emolumento($id_user){
           
               //Estudantes por Equivalência
 
-             $equivalente_studant = User::whereHas('roles', function ($q) {
+              $equivalente_studant = User::whereHas('roles', function ($q) {
                     $q->whereIn('id', [6]);
                 })
                 ->whereHas('courses')
                 ->whereDoesntHave('matriculation')
-                ->whereHas('transference', function($q) {
-                    $q->where('type_transference', 1)
-                    ->where('status_disc', 1);
-                })
-                ->with([
-                    'parameters' => function ($q) {
-                        $q->whereIn('code', ['nome', 'n_mecanografico']);
-                    },
-                    'transference'
-                ])
-                ->whereHas('article_requests', function($q){
-                    $q->where('status','total');
-                })
+                ->join('tb_transference_studant as transf','transf.user_id','users.id')
+                ->leftJoin('article_requests', 'article_requests.user_id', '=', 'transf.user_id')
+                ->where('article_requests.status','total')
+                ->where('transf.type_transference',1)
+                ->where('transf.status_disc',1)
+                ->with(['parameters' => function ($q) {
+                    $q->whereIn('code', ['nome', 'n_mecanografico']);
+                }])
+                ->select(['users.*', 'transf.*']) // importante: pegar os campos do user
                 ->get()
                 ->map(function ($user) {
-                    $displayName = $this->formatUserName($user);
-                    return ['id' => $user->id, 'display_name' => $displayName];
+                    // Ajuste: usa os campos vindos do join ou parameters
+                    $fullNameParameter = $user->parameters->firstWhere('code', 'nome');
+                    $fullName = $fullNameParameter && $fullNameParameter->pivot->value
+                                ? $fullNameParameter->pivot->value
+                                : $user->name;
+
+                    $studentNumberParameter = $user->parameters->firstWhere('code', 'n_mecanografico');
+                    $studentNumber = $studentNumberParameter && $studentNumberParameter->pivot->value
+                                    ? $studentNumberParameter->pivot->value
+                                    : ($user->code ?? '000');
+
+                    return [
+                        'id' => $user->id,
+                        'display_name' => "$fullName #$studentNumber ($user->email)"
+                    ];
                 });
 
-                                
+                    
                     //Importados estudantes
                   $StudentImported = User::whereHas('roles', function ($q) {
                         $q->whereIn('id', [6]);
