@@ -1923,8 +1923,8 @@ class MatriculationController extends Controller
         if($Prematricula!=null){
             $emolumentos[]=$Prematricula->id_emolumento;
         }
-        if($$confirmTardia!=null){
-            $emolumentos[]=$$confirmTardia->id_emolumento;
+        if($confirmTardia!=null){
+            $emolumentos[]=$confirmTardia->id_emolumento;
         }
         return $emolumentos;
 
