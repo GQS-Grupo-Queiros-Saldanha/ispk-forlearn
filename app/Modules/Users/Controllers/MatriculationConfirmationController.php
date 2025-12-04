@@ -70,6 +70,7 @@ class MatriculationConfirmationController extends Controller
                      'languages' => Language::whereActive(true)->get(),
                      'users' => $this->studentsWithCourseAndMatriculationSelectList()
                   ];
+            dd($data);
             
                   
             // return $data['users'];
