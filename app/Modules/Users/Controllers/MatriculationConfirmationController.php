@@ -2218,25 +2218,21 @@ public function colocar_emolumento($id_user){
               $equivalente_studant = User::whereHas('roles', function ($q) {
                     $q->whereIn('id', [6]);
                 })
-                    ->whereHas('courses')
-                    ->whereDoesntHave('matriculation')
-                    ->with(['parameters' => function ($q) {
-                      $q->whereIn('code', ['nome', 'n_mecanografico']);
-                    }])
-                    
-                    ->join('tb_transference_studant as transf' ,'transf.user_id','users.id')
-                    ->leftJoin('article_requests', 'article_requests.user_id', '=', 'transf.user_id')
-                    ->where('article_requests.status','total')
-                    
-                    ->where('transf.type_transference',1)
-                    ->where('transf.status_disc',1)
+                ->whereHas('courses')
+                ->whereDoesntHave('matriculation')
+                ->whereHas('transference', function ($q) {
+                    $q->where('type_transference', 1)
+                    ->where('status_disc', 1);
+                })
+                ->with(['parameters' => function ($q) {
+                    $q->whereIn('code', ['nome', 'n_mecanografico']);
+                }])
+                ->get()
+                ->map(function ($user) {
+                    $displayName = $this->formatUserName($user);
+                    return ['id' => $user->id, 'display_name' => $displayName];
+                });
 
-                    ->select(['transf.*','users.*'])
-                    ->get()
-                    ->map(function ($user) {
-                        $displayName = $this->formatUserName($user);
-                        return ['id' => $user->id, 'display_name' => $displayName];
-                    });
                     
                     //Importados estudantes
                   $StudentImported = User::whereHas('roles', function ($q) {
