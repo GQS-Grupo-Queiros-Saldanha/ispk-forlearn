@@ -2,7 +2,7 @@
 
 
 
-@if (isset($estado['error']) && $estado['error']=="yes")
+@if (isset($estado['error']) && $estado['error']=="yess")
 <h3>Atenção!</h3><br>
 <div class="alert-warning p-3">
     <p>A <b>forLEARN</b> detectou que este é um estudante vindo por equivalência. No entanto existe alguns paramêtros que possivelmente não foram compridos ao rigor
@@ -26,7 +26,6 @@
 
 
 @elseif(!empty($disciplinesReproved) && !empty($curricularPlanDisciplines))
-@elseif(!empty($curricularPlanDisciplines))
 
     {{-- @php $years = []; (int)$countDiscipline = 0; $especialidade=[]; $basta=0; $condi=0;  $countReprovad=count($disciplinesReproved);   @endphp --}}
     @isset($info)
@@ -42,8 +41,7 @@
     @endif 
 @endisset 
 
-@foreach ($disciplinesReproved as $year => $disciplines)
-
+@foreach ($disciplinesReproved as $year => $disciplinesReproved)
     
         <h5 class="card-title mb-2">{{ $year }}º Ano</h5>
         @php array_push($years, $year); @endphp
@@ -93,8 +91,7 @@
     <div id="ContainerSeguinte">
      @if (isset($estado['pontos']) < 5 && isset($estado['curso'])!="CEE" && $nextYear==3  || $estado['Obs']=="normal" &&  isset($estado['curso'])!="CEE" ||$estado['Obs']=="normal" && isset($estado['curso'])!="CEE" && $estado['pontos'] == 0 && $nextYear==4 ||  $estado['pontos'] >= 5 && $estado['estado']=="aprovado" && isset($estado['curso'])=="RI" || isset($estado['curso'])=="CEE" && $nextYear==3 &&  $countDiscipline<1 )
   
-    @foreach ($curricularPlanDisciplines as $year => $planDisciplines)
-
+    @foreach ($curricularPlanDisciplines as $year => $curricularPlanDisciplines)
     @if ($year <= $nextYear) 
        {{-- Ano curricular: {{$year}}º - {{$nextYear }}º Ano - Estado: {{$estado['pontos'] }}  curso:{{$estado['curso']}} --}}
         <h5 class="card-title mb-2">{{$year}}º Ano</h5>
