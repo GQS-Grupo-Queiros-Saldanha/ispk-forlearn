@@ -70,8 +70,6 @@ class MatriculationConfirmationController extends Controller
                      'languages' => Language::whereActive(true)->get(),
                      'users' => $this->studentsWithCourseAndMatriculationSelectList()
                   ];
-           // dd($data);
-            
                   
             // return $data['users'];
             return view('Users::confirmations-matriculations.confirmation')->with($data);
@@ -2161,19 +2159,19 @@ public function colocar_emolumento($id_user){
           
  
         $Id_Matriculados_confirmados = DB::table('matriculations as mat')
-            ->join('users','mat.user_id','=','users.id')
-            ->select(['mat.id as id_matricula','users.id','users.name'])
-            ->whereNull('mat.deleted_at')
-            ->where('mat.lective_year', $lectiveYearSelected->id)
-            ->where('mat.course_year','!=',1)
-            ->get()
-            ->map(function ($user) {
-                return ['id' => $user->id];
-            });
+         ->join('users','mat.user_id','=','users.id')
+         ->select(['mat.id as id_matricula','users.id','users.name'])
+         ->whereNull('mat.deleted_at')
+         ->where('mat.lective_year', $lectiveYearSelected->id)
+         ->where('mat.course_year','!=',1)
+         ->get()
+         ->map(function ($user) {
+             return ['id' => $user->id];
+         });
  
   
       
-        $users = User::whereHas('roles', function ($q) {
+     $users = User::whereHas('roles', function ($q) {
              $q->whereIn('id', [6]);
          })
              ->whereHas('courses')
@@ -2193,49 +2191,51 @@ public function colocar_emolumento($id_user){
             
         //trazer com notas de exame de acesso.
           $candidates = User::whereHas('roles', function ($q) {
-                $q->whereIn('id', [15]);
-            })
-                // ->whereHas('courses')
-                // //->whereHas('matriculation')
-                    ->with(['parameters' => function ($q) {
-                    $q->whereIn('code', ['nome', 'n_mecanografico']);
-                    }])
-                ->whereBetween('users.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                ->leftJoin('user_candidate as u_cand' ,'u_cand.user_id','users.id')
-                ->leftJoin('article_requests', 'article_requests.user_id', '=', 'u_cand.user_id')
-                ->join('exame_candidates_status as status_exame_candidate' ,'status_exame_candidate.user_id','users.id')
-                ->where('article_requests.status','total')
-                ->where('status_exame_candidate.status' ,'1')
-                ->select(['u_cand.*','users.*'])
-                ->get()
-                ->map(function ($user) {
-                    $displayName = $this->formatUserName($user);
-                    return ['id' => $user->id, 'display_name' => $displayName];
-                });
-
+                        $q->whereIn('id', [15]);
+                    })
+                        // ->whereHas('courses')
+                        // //->whereHas('matriculation')
+                         ->with(['parameters' => function ($q) {
+                          $q->whereIn('code', ['nome', 'n_mecanografico']);
+                         }])
+                        ->whereBetween('users.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                        ->leftJoin('user_candidate as u_cand' ,'u_cand.user_id','users.id')
+                        ->leftJoin('article_requests', 'article_requests.user_id', '=', 'u_cand.user_id')
+                        ->join('exame_candidates_status as status_exame_candidate' ,'status_exame_candidate.user_id','users.id')
+                        ->where('article_requests.status','total')
+                        ->where('status_exame_candidate.status' ,'1')
+                        ->select(['u_cand.*','users.*'])
+                        ->get()
+                        ->map(function ($user) {
+                            $displayName = $this->formatUserName($user);
+                            return ['id' => $user->id, 'display_name' => $displayName];
+                        });
+    
           
               //Estudantes por Equivalência
 
               $equivalente_studant = User::whereHas('roles', function ($q) {
-        $q->whereIn('id', [6]);
-    })
-    ->whereHas('courses')
-    ->whereDoesntHave('matriculation')
-    ->whereHas('transference', function($q) {
-        $q->where('type_transference', 1)
-          ->where('status_disc', 1);
-    })
-    ->with(['parameters' => function ($q) {
-        $q->whereIn('code', ['nome', 'n_mecanografico']);
-    }])
-    ->get()
-    ->map(function ($user) {
-        return [
-            'id' => $user->id,
-            'display_name' => $this->formatUserName($user)
-        ];
-    });
+                    $q->whereIn('id', [6]);
+                })
+                    ->whereHas('courses')
+                    ->whereDoesntHave('matriculation')
+                    ->with(['parameters' => function ($q) {
+                      $q->whereIn('code', ['nome', 'n_mecanografico']);
+                    }])
+                    
+                    ->join('tb_transference_studant as transf' ,'transf.user_id','users.id')
+                    ->leftJoin('article_requests', 'article_requests.user_id', '=', 'transf.user_id')
+                    ->where('article_requests.status','total')
+                    
+                    ->where('transf.type_transference',1)
+                    ->where('transf.status_disc',1)
 
+                    ->select(['transf.*','users.*'])
+                    ->get()
+                    ->map(function ($user) {
+                        $displayName = $this->formatUserName($user);
+                        return ['id' => $user->id, 'display_name' => $displayName];
+                    });
                     
                     //Importados estudantes
                   $StudentImported = User::whereHas('roles', function ($q) {
