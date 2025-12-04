@@ -1913,7 +1913,8 @@ class MatriculationController extends Controller
     public static function pre_matricula_confirma_emolumento($lectiveYearSelected){
      
         $confirm=EmolumentCodevLective("confirm",$lectiveYearSelected)->first();
-        $Prematricula=EmolumentCodevLective("p_matricula",$lectiveYearSelected)->first() ;   
+        $Prematricula=EmolumentCodevLective("p_matricula",$lectiveYearSelected)->first() ;
+        $$confirmTardia=EmolumentCodevLective("confirm_tardia",$lectiveYearSelected)->first() ;   
         $emolumentos=[];
 
         if($confirm!=null){
@@ -1921,6 +1922,9 @@ class MatriculationController extends Controller
         }
         if($Prematricula!=null){
             $emolumentos[]=$Prematricula->id_emolumento;
+        }
+        if($$confirmTardia!=null){
+            $emolumentos[]=$$confirmTardia->id_emolumento;
         }
         return $emolumentos;
 
