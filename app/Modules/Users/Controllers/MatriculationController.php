@@ -1914,7 +1914,7 @@ class MatriculationController extends Controller
      
         $confirm=EmolumentCodevLective("confirm",$lectiveYearSelected)->first();
         $Prematricula=EmolumentCodevLective("p_matricula",$lectiveYearSelected)->first() ;
-        $$confirmTardia=EmolumentCodevLective("confirm_tardia",$lectiveYearSelected)->first() ;   
+        $confirmTardia=EmolumentCodevLective("confirm_tardia",$lectiveYearSelected)->first() ;   
         $emolumentos=[];
 
         if($confirm!=null){
