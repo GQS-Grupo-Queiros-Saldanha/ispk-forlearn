@@ -671,7 +671,7 @@ class MatriculationController extends Controller
                 ->leftJoin('article_requests as art_requests',function ($join) use( $emolumento_confirma_prematricula)
                 {
                         $join->on('art_requests.user_id', '=',   'u0.id')
-                        ->whereIn('art_requests.article_id',   $emolumento_confirma_prematricula    );
+                        ->whereIn('art_requests.article_id',   $emolumento_confirma_prematricula );
                 
                 })
             

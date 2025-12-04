@@ -155,6 +155,7 @@ class MatriculationConfirmationController extends Controller
             ->first();
 
             if(!$transfere_studant){
+                Log::warning('Estudante não encontrado na lista de equivalência', ['studentId' => $studentId]);
                 return 0;
             }
 
@@ -237,17 +238,17 @@ class MatriculationConfirmationController extends Controller
             //Esse array traz as disciplinas que este estudante não tem feita nas equivalências
             //Serve para saber o estado de aprovação
             $disciplinesReproved = StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
-                                ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
-                                ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
-                                ->join('disciplines_translations as dt', function ($join) {
-                                    $join->on('dt.discipline_id', '=', 'disciplines.id');
-                                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                                    $join->on('dt.active', '=', DB::raw(true));
-                                })
-                                ->whereNotIn('disciplines.id', $disciplinesAll)
-                                ->whereIn('study_plans_has_disciplines.years',$years)
-                                ->get()
-                                ->groupBy('years');
+                ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
+                ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
+                ->join('disciplines_translations as dt', function ($join) {
+                    $join->on('dt.discipline_id', '=', 'disciplines.id');
+                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('dt.active', '=', DB::raw(true));
+                })
+                ->whereNotIn('disciplines.id', $disciplinesAll)
+                ->whereIn('study_plans_has_disciplines.years',$years)
+                ->get()
+                ->groupBy('years');
                                            
             $disciplinesReprovedYEAR= collect(); 
             $Matriculation_year=0 ; 
@@ -261,8 +262,6 @@ class MatriculationConfirmationController extends Controller
                     $disciplinesReprovedYEAR[$curricularYear]=collect($disciplinesReproved[$curricularYear]);
                     $qrd_aprovate[$curricularYear] =  $this->verificarAprovacao($disciplinesReprovedYEAR,$studentInfo->course_id); 
                    
-                    
-
                     $estadoT= $qrd_aprovate[$curricularYear]['estado'];
                     $estadoP= $qrd_aprovate[$curricularYear]['pontos'];
                     $estadoC= $qrd_aprovate[$curricularYear]['curso'];
@@ -290,21 +289,20 @@ class MatriculationConfirmationController extends Controller
         
         
         $curricularPlanDisciplines = StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
-                                    ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
-                                    ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
-                                    ->join('disciplines_translations as dt', function ($join) {
-                                        $join->on('dt.discipline_id', '=', 'disciplines.id');
-                                        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                                        $join->on('dt.active', '=', DB::raw(true));
-                                        })
-                                //->whereNotIn('')
-                                    ->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))
-                                //Uma mão Lava à outra
-                                    ->where('study_plans_has_disciplines.years', '>=', $equivalencia['year'])
-                                    ->get()
-                                    ->groupBy('years');
+            ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
+            ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
+            ->join('disciplines_translations as dt', function ($join) {
+                $join->on('dt.discipline_id', '=', 'disciplines.id');
+                $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                $join->on('dt.active', '=', DB::raw(true));
+                })
+                //->whereNotIn('')
+                    ->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))
+                //Uma mão Lava à outra
+                    ->where('study_plans_has_disciplines.years', '>=', $equivalencia['year'])
+                    ->get()
+                    ->groupBy('years');
 
-            
             $code_curso=DB::table('courses')->select(['code'])->whereId($studentInfo->course_id)->get();
             //Este código de baixo é por causa da espcialidade do curso CEE 4º que não aparece
             //Para ser confirmada porque identifica que falta outras cadeiras para o aluno fazer.^

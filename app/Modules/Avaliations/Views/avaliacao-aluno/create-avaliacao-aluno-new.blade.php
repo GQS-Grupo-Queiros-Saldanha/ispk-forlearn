@@ -177,8 +177,7 @@
                                 <input type='hidden' id="version" value="" name="version" class="form-control">
 
                                 @if ($segunda_chamada)
-                                    <input type='hidden' value="{{ $segunda_chamada }}" name="segunda_chamada"
-                                        class="form-control">
+                                    <input type='hidden' value="{{ $segunda_chamada }}" name="segunda_chamada" class="form-control">
                                 @endif
 
                                 <div class="col-6" id="caixaAvalicao" style="display: none">
@@ -189,6 +188,7 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="col-6" id="caixaMatrica" style="display: none">
                                     <div class="form-group col">
                                         <label>Selecione a métrica</label>
@@ -197,6 +197,7 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-6" id="caixaDesc" style="display: none">
                                         <div class="form-group col">
@@ -271,6 +272,7 @@
                             </span>
                         </a>
                     </div>
+                    
                     <div class="col-12" id="nav-open-pauta">
                         <a id="btn_open_pauta" class=" float-right" href="">
                             <span class="btn btn-warning mb-3 ml-3">
@@ -279,7 +281,6 @@
                             </span>
                         </a>
                     </div>
-
 
                 </div>
             </div>

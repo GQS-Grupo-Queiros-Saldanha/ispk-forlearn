@@ -356,17 +356,17 @@ if($segunda_chamada)
              console.log(whoIs)
 
              const  pauta_status=  {
-  'PF1': '40',
-  'PF2': '40',
-  'OA': '40',
-  'Recurso': '10',
-  'Neen': '20',
-  'oral': '25',
-  'Exame_especial': '35',
-  'Trabalho': '50',
-  'Defesa': '50',
-  'TESP': '60'
-};
+                'PF1': '40',
+                'PF2': '40',
+                'OA': '40',
+                'Recurso': '10',
+                'Neen': '20',
+                'oral': '25',
+                'Exame_especial': '35',
+                'Trabalho': '50',
+                'Defesa': '50',
+                'TESP': '60'
+                };
 
             var pauta_tipo = "";
             var tipo = 0;
