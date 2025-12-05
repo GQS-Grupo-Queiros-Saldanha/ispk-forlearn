@@ -1236,7 +1236,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             //Consultar os estudantes matriculados
             $id_curso = $this->students_matriculado($id, $lectiveYearSelected->id)->first();
             $consulta_aluno = $this->students_matriculado($id, $lectiveYearSelected->id);
-            dd($consultar_aluno);
+            dd($consulta_aluno);
             //$consulta_aluno->where('mc.class_id', $class_id)->get();
             $consulta_aluno = $consulta_aluno->where('mc.class_id', $class_id);
 
