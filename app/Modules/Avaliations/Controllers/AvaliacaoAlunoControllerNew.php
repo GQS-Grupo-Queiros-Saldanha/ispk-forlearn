@@ -1985,7 +1985,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'users.id')
             ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
             ->join("code_developer as code_dev", 'code_dev.id', 'article_emolumento.id_code_dev')
-            ->whereIn('code_dev.code', ["confirm", "p_matricula"])
+            ->whereIn('code_dev.code', ["confirm", "p_matricula", "confirm_tardia"])
             ->where('user_emolumento.status', "total")
             ///->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
             ///->whereBetween('mt.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
