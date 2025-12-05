@@ -104,11 +104,6 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Course::class, 'user_courses', 'users_id', 'courses_id');
     }
-    public function transference()
-    {
-        return $this->hasMany(\App\Modules\Users\Models\TransferenceStudant::class, 'user_id', 'id');
-    }
-
 
     public function disciplines()
     {

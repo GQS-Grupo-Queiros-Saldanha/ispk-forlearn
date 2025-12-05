@@ -901,11 +901,11 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
           
           //barrar se não tem emolumento Pago - ano passado
            $ConfirmaPagamento= DB::table('article_requests')
-          ->where('user_id',$request->user)
-          ->where('status','!=','total')
-          ->whereNull('deleted_at')
-          ->whereNull('deleted_by')
-          ->get();
+            ->where('user_id',$request->user)
+            ->where('status','!=','total')
+            ->whereNull('deleted_at')
+            ->whereNull('deleted_by')
+            ->get();
 
           
           if(!$ConfirmaPagamento->isEmpty()){
