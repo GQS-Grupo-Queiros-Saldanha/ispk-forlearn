@@ -1236,11 +1236,11 @@ class AvaliacaoAlunoControllerNew extends Controller
             //Consultar os estudantes matriculados
             $id_curso = $this->students_matriculado($id, $lectiveYearSelected->id)->first();
             $consulta_aluno = $this->students_matriculado($id, $lectiveYearSelected->id);
-
+            dd($consultar_aluno);
             //$consulta_aluno->where('mc.class_id', $class_id)->get();
             $consulta_aluno = $consulta_aluno->where('mc.class_id', $class_id);
 
-            //Metrica única -- ver se é de exame obrigatório ) obs. o Code_Dev é atribuido na metríca que é considerada a neen
+            //Metrica única -- ver se é de exame obrigatório  obs. o Code_Dev é atribuido na metríca que é considerada a neen
             //Disciplnaha has mandatory exame
             $Discipline_exame_mandatory = DB::table('discipline_has_exam as dhe')
                 ->join('disciplines as disc', 'disc.id', '=', 'dhe.discipline_id')
