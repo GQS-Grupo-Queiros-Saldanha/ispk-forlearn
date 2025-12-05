@@ -871,6 +871,11 @@ class TransactionsArticleRequestController extends Controller
                 ->render();
 
             $fileName = 'recibo-' . Carbon::now()->format('y') . '-' . $receipt->code . '.pdf';
+            $pathTemp = storage_path('app/public/receipts-temp/' . $fileName);
+            // Se já existir, elimina
+            if (file_exists($pathTemp)) {
+                unlink($pathTemp);
+            }
 
             // Guardar o PDF
             $pdf = SnappyPdf::loadView('Payments::transactions.pdf_recibo', $data)
