@@ -2985,7 +2985,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                             ->where('mtrc.avaliacaos_id', $id_avl)
                             ->where('mtrc.calendario', '!=', 1)
                             ->where('c_m.id_periodo_simestre', $Simestre)
-                            ->where('avl.nome', 'Frequência') 
+                            ->where('avl.avalicao', 'Frequência') 
                             ->whereDate('c_m.data_inicio', '<=', date("Y-m-d"))
                             ->whereDate('c_m.data_fim', '>=', date("Y-m-d"))
                             ->orderBy('c_m.data_inicio', 'DESC');
