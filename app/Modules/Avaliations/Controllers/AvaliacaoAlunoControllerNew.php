@@ -2987,7 +2987,7 @@ class AvaliacaoAlunoControllerNew extends Controller
                             ->where('c_m.id_periodo_simestre', $Simestre)
                             ->whereDate('c_m.data_inicio', '<=', date("Y-m-d"))
                             ->whereDate('c_m.data_fim', '>=', date("Y-m-d"))
-                            ->orderBy('c_m.data_inicio', 'DESC');
+                            ->orderByRaw("CASE WHEN c_m.data_inicio = '2025-11-20' THEN 1 ELSE 0 END ASC, c_m.data_inicio ASC");
 
                         Log::info('Consulta Metrica_calendario construída', [
                             'query' => $Metrica_calendario->toSql(),
