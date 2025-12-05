@@ -1144,11 +1144,7 @@ private function verificarAprovacao($disciplinesReproved,$id_curso){
                   $emolumentoFolha=['folha_de_prova'];
                   $emolumentoFolha2=['folha_de_prova2'];
 
-                Log::info('Emolumentos a serem processados', [
-                    'emolumento_confirmacao' => $emolumento[$index],
-                    'emolumento_folha_de_prova' => $emolumentoFolha,
-                    'emolumento_folha_de_prova2' => $emolumentoFolha2
-                ]);
+              
                   $emolumento_confirmacao  = EmolumentCodeV($emolumento[$index],$lectiveYearSelected[0]->id); //adicionar emolumento de confirmação da matricula
                   $emolumento_folha_de_prova = EmolumentCodeV($emolumentoFolha,$lectiveYearSelected[0]->id); //adiconar emolumento folha de prova 1 semestre
                   $emolumento_folha_de_prova2 = EmolumentCodeV($emolumentoFolha2,$lectiveYearSelected[0]->id); // adicionar emolumento folha de prova 2 semestre

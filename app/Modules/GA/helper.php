@@ -193,7 +193,7 @@ function reorderSummaries(Summary $summary, $newOrder)
 function EmolumentCodeV($search, $lective_year_id)
 {
 
-    Log::info($search, ['lective_year_id' => $lective_year_id]);
+    Log::info("emoluementos em GA/helper.php",$search, ['lective_year_id' => $lective_year_id]);
     $Consulta = DB::table('emolument_codev_matriculation as emo')
         ->join('articles as art', 'art.id', '=', 'emo.id_article')
         ->join('code_developer as code', 'code.id', '=', 'emo.id_codev')

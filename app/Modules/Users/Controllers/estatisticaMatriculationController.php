@@ -198,7 +198,7 @@ class estatisticaMatriculationController extends Controller
             ->distinct('matriculations.id')
             ->get();
             
-            dd($new_model);
+            //dd($new_model);
 
 
         $mod = DB::table('matriculations')
