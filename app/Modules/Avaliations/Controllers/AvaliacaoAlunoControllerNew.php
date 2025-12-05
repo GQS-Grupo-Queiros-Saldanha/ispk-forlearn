@@ -3312,7 +3312,6 @@ class AvaliacaoAlunoControllerNew extends Controller
             'mtrc.code_dev as code_dev',
             'c_m.id as cm_id'
         ])
-        ->orderBy('c_m.data_inicio', 'ASC')
         ->distinct();
 
     Log::info('Consulta construída', [
