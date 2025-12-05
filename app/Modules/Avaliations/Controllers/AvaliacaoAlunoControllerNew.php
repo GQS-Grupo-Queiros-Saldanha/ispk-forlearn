@@ -2788,274 +2788,157 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-    public function getTurmasDisciplina(Request $request, $id_edicao_plain, $anoLectivo){
-        try {
-            Log::info('Iniciando getTurmasDisciplina', [
-                'id_edicao_plain' => $id_edicao_plain,
-                'anoLectivo' => $anoLectivo,
-                'segunda_chamada' => $request->query('segunda_chamada', null)
-            ]);
+   public function getTurmasDisciplina(Request $request, $id_edicao_plain, $anoLectivo) {
+    try {
+        Log::info('Iniciando getTurmasDisciplina', [
+            'id_edicao_plain' => $id_edicao_plain,
+            'anoLectivo' => $anoLectivo,
+            'segunda_chamada' => $request->query('segunda_chamada', null)
+        ]);
 
-            $segunda_chamada = $request->query('segunda_chamada', null);
-            $id = explode(",", $id_edicao_plain);
+        $segunda_chamada = $request->query('segunda_chamada', null);
+        $id = explode(",", $id_edicao_plain);
 
-            $cargo = $id[0];
-            $id_curso = $id[1];
-            $id_disciplina = trim($id[2]);
-            $currentData = Carbon::now();
-            $teacher_id = Auth::id();
+        $cargo = $id[0];
+        $id_curso = $id[1];
+        $id_disciplina = trim($id[2]);
+        $currentData = Carbon::now();
+        $teacher_id = Auth::id();
 
-            Log::info('Parâmetros extraídos', [
-                'cargo' => $cargo,
-                'id_curso' => $id_curso,
-                'id_disciplina' => $id_disciplina,
-                'teacher_id' => $teacher_id,
-                'currentData' => $currentData->toDateTimeString()
-            ]);
+        Log::info('Parâmetros extraídos', compact('cargo', 'id_curso', 'id_disciplina', 'teacher_id', 'currentData'));
 
-            // Pega o ano curricular da disciplina e o id_plano_estudo
-            $courseYear = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
-                ->where('plano_estudo_avaliacaos.disciplines_id', $id_disciplina)
-                ->where('stpeid.lective_years_id', $anoLectivo)
-                ->select(['plano_estudo_avaliacaos.*', 'stpeid.*']);
+        // Pega o ano curricular da disciplina e o id_plano_estudo
+        $courseYear = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
+            ->where('plano_estudo_avaliacaos.disciplines_id', $id_disciplina)
+            ->where('stpeid.lective_years_id', $anoLectivo)
+            ->select(['plano_estudo_avaliacaos.*', 'stpeid.*'])
+            ->get();
 
-            Log::info('Consulta courseYear construída', [
-                'query' => $courseYear->toSql(),
-                'bindings' => $courseYear->getBindings()
-            ]);
-
-            $courseYear = $courseYear->get();
-
-            Log::info('Resultado courseYear', [
-                'count' => $courseYear->count(),
-                'data' => $courseYear->toArray()
-            ]);
-
-            // Verifica se a associação entre disciplina e plano de estudo existe
-            if (!$courseYear->isEmpty()) {
-                $id_plano_estudo = $courseYear[0]['study_plan_editions_id'];
-
-                Log::info('id_plano_estudo extraído', ['id_plano_estudo' => $id_plano_estudo]);
-
-                $verificarDisciplina = new VerificarDisciplina($id_disciplina);
-                if ($cargo == "todos") {
-                    $verifyCoordenador = $verificarDisciplina->verifyIsCoordernador($teacher_id);
-                    $verificarDisciplina->user_type = $verifyCoordenador ? "coordenador" : "teacher";
-
-                    Log::info('Cargo "todos" verificado', [
-                        'verifyCoordenador' => $verifyCoordenador,
-                        'user_type' => $verificarDisciplina->user_type
-                    ]);
-                }
-
-                if ($cargo == "coordenador" || $verificarDisciplina->user_type == "coordenador") {
-                    Log::info('Entrando no bloco de coordenador');
-
-                    // Pega avaliações para coordenador
-                    $avaliacao = $this->avaliacaoes_coordenador($id_disciplina, $anoLectivo);
-
-                    if (isset($segunda_chamada)) {
-                        $avaliacao = $avaliacao->whereNotIn('avl.nome', ['Recursos']);
-                    }
-
-                    Log::info('Consulta avaliacao (coordenador) construída', [
-                        'query' => $avaliacao->toSql(),
-                        'bindings' => $avaliacao->getBindings()
-                    ]);
-
-                    // Pega turmas do coordenador
-                    $turmas = $this->turmas_coordenador($courseYear, $id_plano_estudo, $id_curso, $anoLectivo);
-
-                    $avaliacaoResult = $avaliacao->get();
-
-                    Log::info('Resultados do bloco coordenador', [
-                        'turmas_count' => count($turmas),
-                        'avaliacao_count' => $avaliacaoResult->count(),
-                        'avaliacao_data' => $avaliacaoResult->toArray()
-                    ]);
-
-                    // Verifica campos nulos em avaliacao
-                    foreach ($avaliacaoResult as $row) {
-                        if (is_null($row->avl_id) || is_null($row->avl_nome)) {
-                            Log::warning('Campos nulos detectados em avaliacao (coordenador)', [
-                                'row' => $row->toArray()
-                            ]);
-                        }
-                    }
-
-                    return response()->json([
-                        'turma' => $turmas,
-                        'avaliacao' => $avaliacaoResult,
-                        'whoIs' => "super",
-                        'plano_estudo' => $id_plano_estudo,
-                        'disciplina' => $id_disciplina
-                    ]);
-                } else if ($cargo == "teacher" || $verificarDisciplina->user_type == "teacher") {
-                    Log::info('Entrando no bloco de teacher');
-
-                    // Pega o período da disciplina
-                    $period_disciplina = DB::table('disciplines')
-                        ->where('id', $id_disciplina)
-                        ->get();
-
-                    Log::info('Resultado period_disciplina', [
-                        'count' => $period_disciplina->count(),
-                        'data' => $period_disciplina->toArray()
-                    ]);
-
-                    $Simestre = $period_disciplina->map(function ($item, $key) {
-                        $periodo = substr($item->code, -3, 1);
-                        if ($periodo == "1") {
-                            return 1;
-                        }
-                        if ($periodo == "2") {
-                            return 4;
-                        }
-                        if ($periodo == "A") {
-                            return 2;
-                        }
-                        return 0;
-                    });
-
-                    Log::info('Semestre calculado', ['Simestre' => $Simestre->toArray()]);
-
-                    // Pega avaliações no intervalo de data
-                    $avaliacao_time = $this->avaliacaoes($id_disciplina, $anoLectivo);
-
-                    Log::info('Consulta avaliacao_time construída', [
-                        'query' => $avaliacao_time->toSql(),
-                        'bindings' => $avaliacao_time->getBindings()
-                    ]);
-
-                    $avaliacao = $avaliacao_time
-                        ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
-                        ->where('simestre', $Simestre)
-                        ->first();
-
-                    Log::info('Resultado avaliacao (teacher)', [
-                        'avaliacao' => $avaliacao ? (array)$avaliacao : null
-                    ]);
-
-                    if (!$avaliacao) {
-                        Log::warning('Nenhuma avaliação encontrada para o teacher', [
-                            'id_disciplina' => $id_disciplina,
-                            'anoLectivo' => $anoLectivo,
-                            'Simestre' => $Simestre->toArray(),
-                            'current_date' => date("Y-m-d")
-                        ]);
-                    }
-
-                    $id_avl = $avaliacao ? $avaliacao['avl_id'] : null;
-
-                    Log::info('ID da avaliação', ['id_avl' => $id_avl]);
-
-                    // Pega turmas do professor
-                    $turmas = $this->turmas_teacher($teacher_id, $courseYear, $id_plano_estudo, $anoLectivo);
-
-                    Log::info('Turmas do teacher', ['turmas_count' => count($turmas)]);
-
-                    // Pega métricas
-                    $metrica = $this->metricas_avaliacoes($currentData);
-
-                    Log::info('Consulta metrica construída', [
-                        'query' => $metrica->toSql(),
-                        'bindings' => $metrica->getBindings()
-                    ]);
-
-                    if (isset($segunda_chamada)) {
-                        $Metrica_calendario = $metrica
-                            ->join('calendarie_metrica_segunda_chamada as sc', 'sc.id_calendarie_metrica', 'c_m.id')
-                            ->where('mtrc.avaliacaos_id', $id_avl)
-                            ->where('mtrc.calendario', '!=', 1)
-                            ->where('c_m.id_periodo_simestre', $Simestre)
-                            ->whereDate('sc.data_inicio', '<=', date("Y-m-d"))
-                            ->whereDate('sc.data_fim', '>=', date("Y-m-d"))
-                            ->orderBy('sc.data_inicio', 'DESC');
-
-                        Log::info('Consulta Metrica_calendario (segunda chamada) construída', [
-                            'query' => $Metrica_calendario->toSql(),
-                            'bindings' => $Metrica_calendario->getBindings()
-                        ]);
-
-                        $Metrica_calendario = $Metrica_calendario->get();
-
-                        $avaliacao = $avaliacao && $avaliacao->avl_nome == 'Recursos' ? null : $avaliacao;
-                    } else {
-                        $Metrica_calendario = $metrica
-                            ->where('mtrc.avaliacaos_id', $id_avl)
-                            ->where('mtrc.calendario', '!=', 1)
-                            ->where('c_m.id_periodo_simestre', $Simestre)
-                            ->whereDate('c_m.data_inicio', '<=', date("Y-m-d"))
-                            ->whereDate('c_m.data_fim', '>=', date("Y-m-d"))
-                            ->orderBy('c_m.data_inicio', 'ASC');//antes estava DESC
-
-                        Log::info('Consulta Metrica_calendario construída', [
-                            'query' => $Metrica_calendario->toSql(),
-                            'bindings' => $Metrica_calendario->getBindings()
-                        ]);
-
-                        $Metrica_calendario = $Metrica_calendario->get();
-                        // Determina a prova ativa no dia de hoje
-                        $hoje = date("Y-m-d");
-                        $prova_ativa = $Metrica_calendario->first(function($item) use ($hoje) {
-                            return $item->c_m_inicio <= $hoje && $item->c_m_fim >= $hoje;
-                        });
-
-                        // Se precisar, pode logar a prova ativa
-                        Log::info('Prova ativa do dia', [
-                            'prova_ativa' => $prova_ativa ? $prova_ativa->mtrc_nome : null
-                        ])
-                    }
-
-                    Log::info('Resultado Metrica_calendario', [
-                        'count' => $Metrica_calendario->count(),
-                        'data' => $Metrica_calendario->toArray()
-                    ]);
-
-                    // Verifica campos nulos em Metrica_calendario
-                    foreach ($Metrica_calendario as $row) {
-                        if (is_null($row->mtrc_id) || is_null($row->mtrc_nome) || is_null($row->c_m_inicio) || is_null($row->c_m_fim)) {
-                            Log::warning('Campos nulos detectados em Metrica_calendario', [
-                                'row' => $row->toArray()
-                            ]);
-                        }
-                    }
-                    Log::info('Retorno da função turma_teacher', [
-                        'total_turmas' => isset($turmas) ? count($turmas) : 0,
-                        'turmas' => $turmas,
-                        'avaliacao' => $avaliacao,
-                        'metrica' => $Metrica_calendario,
-                        'whoIs' => 'teacher',
-                        'plano_estudo' => $id_plano_estudo,
-                        'disciplina' => $id_disciplina
-                    ]);
-
-
-                    return response()->json([
-                        'turma' => $turmas->toArray(),   // <-- converte Collection para array
-                        'avaliacao' => $avaliacao ? $avaliacao->toArray() : null,
-                        'metrica' => $Metrica_calendario->toArray(),
-                        'whoIs' => 'teacher',
-                        'plano_estudo' => $id_plano_estudo,
-                        'disciplina' => $id_disciplina
-                    ]);
-
-                }
-            } else {
-                Log::warning('Nenhum courseYear encontrado', [
-                    'id_disciplina' => $id_disciplina,
-                    'anoLectivo' => $anoLectivo
-                ]);
-                return response()->json(500);
-            }
-        } catch (Exception | Throwable $e) {
-            Log::error('Erro em getTurmasDisciplina', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+        if ($courseYear->isEmpty()) {
+            Log::warning('Nenhum courseYear encontrado', compact('id_disciplina', 'anoLectivo'));
+            return response()->json(500);
         }
+
+        $id_plano_estudo = $courseYear[0]['study_plan_editions_id'];
+        Log::info('id_plano_estudo extraído', ['id_plano_estudo' => $id_plano_estudo]);
+
+        // Determina o tipo de usuário
+        $verificarDisciplina = new VerificarDisciplina($id_disciplina);
+        if ($cargo == "todos") {
+            $verificarDisciplina->user_type = $verificarDisciplina->verifyIsCoordernador($teacher_id) ? "coordenador" : "teacher";
+        }
+
+        // --------------------------- BLOCO COORDENADOR --------------------------- //
+        if ($cargo == "coordenador" || $verificarDisciplina->user_type == "coordenador") {
+            Log::info('Entrando no bloco de coordenador');
+
+            $avaliacao = $this->avaliacaoes_coordenador($id_disciplina, $anoLectivo);
+            if ($segunda_chamada) {
+                $avaliacao = $avaliacao->whereNotIn('avl.nome', ['Recursos']);
+            }
+
+            $avaliacaoResult = $avaliacao->get();
+            $turmas = $this->turmas_coordenador($courseYear, $id_plano_estudo, $id_curso, $anoLectivo);
+
+            // Verifica campos nulos em avaliação
+            foreach ($avaliacaoResult as $row) {
+                if (is_null($row->avl_id) || is_null($row->avl_nome)) {
+                    Log::warning('Campos nulos detectados em avaliacao (coordenador)', ['row' => $row->toArray()]);
+                }
+            }
+
+            return response()->json([
+                'turma' => $turmas,
+                'avaliacao' => $avaliacaoResult,
+                'whoIs' => "super",
+                'plano_estudo' => $id_plano_estudo,
+                'disciplina' => $id_disciplina
+            ]);
+        }
+
+        // --------------------------- BLOCO TEACHER --------------------------- //
+        if ($cargo == "teacher" || $verificarDisciplina->user_type == "teacher") {
+            Log::info('Entrando no bloco de teacher');
+
+            // Pega o período da disciplina
+            $period_disciplina = DB::table('disciplines')->where('id', $id_disciplina)->get();
+
+            $Simestre = $period_disciplina->map(function ($item) {
+                $periodo = substr($item->code, -3, 1);
+                if ($periodo == "1") return 1;
+                if ($periodo == "2") return 4;
+                if ($periodo == "A") return 2;
+                return 0;
+            })->first(); // Pega o primeiro semestre válido
+
+            Log::info('Semestre calculado', ['Simestre' => $Simestre]);
+
+            // Avaliação válida no período atual
+            $avaliacao_time = $this->avaliacaoes($id_disciplina, $anoLectivo);
+            $avaliacao = $avaliacao_time
+                ->whereRaw('"' . date("Y-m-d") . '" between `date_start` and `data_end`')
+                ->where('simestre', $Simestre)
+                ->first();
+
+            $id_avl = $avaliacao ? $avaliacao['avl_id'] : null;
+
+            // Pega turmas do professor
+            $turmas = $this->turmas_teacher($teacher_id, $courseYear, $id_plano_estudo, $anoLectivo);
+
+            // Pega métricas
+            $metrica = $this->metricas_avaliacoes($currentData);
+
+            // Construção do calendário
+            if ($segunda_chamada) {
+                $Metrica_calendario = $metrica
+                    ->join('calendarie_metrica_segunda_chamada as sc', 'sc.id_calendarie_metrica', 'c_m.id')
+                    ->where('mtrc.avaliacaos_id', $id_avl)
+                    ->where('mtrc.calendario', '!=', 1)
+                    ->where('c_m.id_periodo_simestre', $Simestre)
+                    ->whereDate('sc.data_inicio', '<=', date("Y-m-d"))
+                    ->whereDate('sc.data_fim', '>=', date("Y-m-d"))
+                    ->orderBy('sc.data_inicio', 'ASC')
+                    ->get();
+            } else {
+                $Metrica_calendario = $metrica
+                    ->where('mtrc.avaliacaos_id', $id_avl)
+                    ->where('mtrc.calendario', '!=', 1)
+                    ->where('c_m.id_periodo_simestre', $Simestre)
+                    ->whereDate('c_m.data_inicio', '<=', date("Y-m-d"))
+                    ->whereDate('c_m.data_fim', '>=', date("Y-m-d"))
+                    ->orderBy('c_m.data_inicio', 'ASC')
+                    ->get();
+            }
+
+            // Determina a prova ativa
+            $hoje = date("Y-m-d");
+            $prova_ativa = $Metrica_calendario->first(function($item) use ($hoje) {
+                return $item->c_m_inicio <= $hoje && $item->c_m_fim >= $hoje;
+            });
+
+            Log::info('Prova ativa do dia', [
+                'prova_ativa' => $prova_ativa ? $prova_ativa->mtrc_nome : null
+            ]);
+
+            return response()->json([
+                'turma' => $turmas->toArray(),
+                'avaliacao' => $avaliacao ? $avaliacao->toArray() : null,
+                'metrica' => $prova_ativa ? [$prova_ativa] : [],
+                'whoIs' => 'teacher',
+                'plano_estudo' => $id_plano_estudo,
+                'disciplina' => $id_disciplina
+            ]);
+        }
+
+    } catch (Exception | Throwable $e) {
+        Log::error('Erro em getTurmasDisciplina', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
     }
+}
+
 
 
 
