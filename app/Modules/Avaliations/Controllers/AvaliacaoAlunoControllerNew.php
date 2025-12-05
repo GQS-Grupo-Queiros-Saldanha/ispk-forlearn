@@ -3313,7 +3313,7 @@ class AvaliacaoAlunoControllerNew extends Controller
             'c_m.id as cm_id'
         ])
         ->distinct()
-        ->orderBy('c_m.data_inicio', 'asc');
+        ->orderByRaw("CASE WHEN c_m.data_inicio = '2025-11-20' THEN 1 ELSE 0 END, c_m.data_inicio ASC");
 
     Log::info('Consulta construída', [
         'query' => $metricas->toSql(),
