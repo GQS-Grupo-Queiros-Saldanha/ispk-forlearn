@@ -2983,7 +2983,6 @@ class AvaliacaoAlunoControllerNew extends Controller
                     } else {
                         $Metrica_calendario = $metrica
                             ->where('mtrc.avaliacaos_id', $id_avl)
-                            ->where('avl.nome', 'Frequência')
                             ->where('mtrc.calendario', '!=', 1)
                             ->where('c_m.id_periodo_simestre', $Simestre)
                             ->whereDate('c_m.data_inicio', '<=', date("Y-m-d"))
