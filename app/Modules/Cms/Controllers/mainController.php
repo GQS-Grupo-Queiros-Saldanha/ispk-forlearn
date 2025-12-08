@@ -1049,8 +1049,8 @@ class mainController extends Controller
 
         $disciplines = $this->get_disciplines($lectiveYearSelected_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
-        dd($percurso);
-        $percurso =  $percurso->map(function ($grupo) {
+        //dd($percurso);
+        /*$percurso =  $percurso->map(function ($grupo) {
 
             return $grupo->reject(function ($avl) use ($grupo) {
                 $faltou =  isset($avl->presence);
@@ -1066,7 +1066,7 @@ class mainController extends Controller
 
                 return $sai;
             });
-        });
+        });*/
 
         $articles = $this->get_payments($lective_year);
         $plano = $this->study_plain($lective_year);
@@ -1074,10 +1074,6 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
-        
-        /*if($student == 461){
-            dd($melhoria_notas, $plano);
-        }*/
 
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
         $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
