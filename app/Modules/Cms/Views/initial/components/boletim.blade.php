@@ -188,6 +188,8 @@ use App\Modules\Cms\Controllers\mainController;
  $color_final = '';
  $mac_percentagem = $config->percentagem_mac / 100;
  $neen_percentagem = $config->percentagem_oral / 100;
+
+ $id_turma = 39;
  
  $aprovado = false;
  $recurso = false;
