@@ -1075,10 +1075,11 @@ class mainController extends Controller
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
 
+
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
         $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
-       
-        return $html;
+
+        return response()->json($html);
     }
 
     public function get_schedule_student($lective_year){
