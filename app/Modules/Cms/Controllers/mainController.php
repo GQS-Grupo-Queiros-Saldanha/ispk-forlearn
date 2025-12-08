@@ -1050,25 +1050,26 @@ class mainController extends Controller
         $disciplines = $this->get_disciplines($lectiveYearSelected_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
         //dd($percurso);
-        $percurso = $percurso->map(function ($grupo) {
+        $percurso =  $percurso->map(function ($grupo) {
 
-    $grupo = $grupo->reject(function ($avl) use ($grupo) {
-        $faltou = isset($avl->presence);
-        $nota_normal = !isset($avl->segunda_chamada);
+            return $grupo->reject(function ($avl) use ($grupo) {
+                $faltou =  isset($avl->presence);
+                $nota_normal = !isset($avl->segunda_chamada);
 
-        $fez_segunda_chamada = $grupo->where('user_id', $avl->user_id)
-            ->where('Disciplia_id', $avl->Disciplia_id)
-            ->where('Avaliacao_aluno_Metrica', $avl->Avaliacao_aluno_Metrica)
-            ->where('Avaliacao_aluno_turma', $avl->Avaliacao_aluno_turma)
-            ->where('segunda_chamada', 1)
-            ->isNotEmpty();
+                $fez_segunda_chamada = $grupo->where('user_id', $avl->user_id)
+                    ->where('Disciplia_id', $avl->Disciplia_id)
+                    ->where('Avaliacao_aluno_Metrica', $avl->Avaliacao_aluno_Metrica)
+                    ->where('Avaliacao_aluno_turma', $avl->Avaliacao_aluno_turma)
+                    ->where('segunda_chamada', 1)
+                    ->isNotEmpty();
 
-        return $faltou && $nota_normal && $fez_segunda_chamada;
-    });
 
-    return $grupo->values(); // <-- ESSENCIAL
-});
+                $sai =  $faltou && $nota_normal && $fez_segunda_chamada;
 
+
+                return $sai;
+            });
+        });
 
         $articles = $this->get_payments($lective_year);
         $plano = $this->study_plain($lective_year);
