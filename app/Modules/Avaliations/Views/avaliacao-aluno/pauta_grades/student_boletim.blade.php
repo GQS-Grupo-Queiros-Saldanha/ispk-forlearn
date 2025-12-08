@@ -63,7 +63,7 @@
                         _token: '{{ csrf_token() }}'
                     },
                     cache: false,
-                    dataType: 'json',
+                    dataType: 'html',
                 }).done(function(data) {
 
                     console.log(data);
