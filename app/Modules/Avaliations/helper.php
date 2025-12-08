@@ -170,7 +170,7 @@ function boletim_notas_alunos($id_anoLectivo, $id_curso, $mat_id, $id_disciplina
             //->where('artR.month', $mesActual)
             ->where('mc.matriculation_id', $mat_id)
             //->whereNull('artR.deleted_at')    
-            ->whereBetween('matricula.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+            //->whereBetween('matricula.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
             //->whereBetween('artR.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])  
             ->orderBy('dp.code', 'asc')
             ->orderBy('full_name.value', 'asc')
