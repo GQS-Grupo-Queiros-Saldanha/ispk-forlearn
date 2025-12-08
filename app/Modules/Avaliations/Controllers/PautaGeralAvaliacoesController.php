@@ -426,7 +426,7 @@ class PautaGeralAvaliacoesController extends Controller
             $lectiveYearSelected = DB::table('lective_years')
                 ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
                 ->first();
-            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 11;
 
             $id_user = auth()->user()->id;
 
