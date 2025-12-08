@@ -66,7 +66,7 @@
                     dataType: 'html',
                 }).done(function(data) {
 
-                    console.log(data);
+                    //console.log(data);
                     $("#table_student").html(data);
 
                     // let thead = $('#thead-semestre1');
