@@ -656,6 +656,7 @@ class mainController extends Controller
         if (!isset($student)) {
             $student = auth()->user()->id;
         }
+        dd($student, $lectiveYearSelected);
        
         //dd($lectiveYearSelected);
         $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
