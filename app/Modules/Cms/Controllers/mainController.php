@@ -103,12 +103,11 @@ class mainController extends Controller
                 }
 
                 $config = DB::table('avalicao_config')->where('lective_year',$lective->id)->first();
-                 Log::info('CONFIG DEBUG3', ['config' => $config]);
+                Log::info('CONFIG DEBUG3', ['config' => $config]);
                 $student = auth()->user()->id;
                 $matriculations = $this->get_matriculation_student(student: $student); //$this->get_matriculation_student($student);
-                
-
                 dd($matriculations);
+
                 $melhoria_notas = get_melhoria_notas($student, $lective->id, 0);
                 $d = $this->schedule();
 
