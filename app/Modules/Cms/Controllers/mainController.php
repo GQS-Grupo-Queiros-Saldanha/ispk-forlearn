@@ -643,10 +643,16 @@ class mainController extends Controller
     {
 
         $currentData = Carbon::now();
-        $lectiveYearSelected = DB::table('lective_years')
+        
+        if($lective_year == null){
+            $lectiveYearSelected = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
             ->first();
-
+        }
+        else{
+            $lectiveYearSelected = $lective_year;
+        }
+        
         if (!isset($student)) {
             $student = auth()->user()->id;
         }
@@ -1059,7 +1065,7 @@ class mainController extends Controller
 
         $articles = $this->get_payments($lective_year);
         $plano = $this->study_plain($lective_year);
-        $matriculations = $this->get_matriculation_student($lective_year);
+        $matriculations = $this->get_matriculation_student($lectiveYearSelected_id);
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
