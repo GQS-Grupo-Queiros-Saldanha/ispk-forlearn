@@ -645,10 +645,11 @@ class mainController extends Controller
     
         // Verifica correctamente se falta o ano lectivo
         if ($lective_year === null) {
-            $lectiveYearSelected = DB::table('lective_years')
+            $lectiveYear = DB::table('lective_years')
                 ->whereDate('start_date', '<=', $currentDate)
                 ->whereDate('end_date', '>=', $currentDate)
                 ->first();
+            $lectiveYearSelected = $lectiveYear->id
         } else {
             // Já foi passado um ano lectivo, utiliza-o tal como está
             $lectiveYearSelected = $lective_year;
