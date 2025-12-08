@@ -1074,9 +1074,9 @@ class mainController extends Controller
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
         
-        if($student == 461){
+        /*if($student == 461){
             dd($melhoria_notas, $plano);
-        }
+        }*/
 
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
         $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
