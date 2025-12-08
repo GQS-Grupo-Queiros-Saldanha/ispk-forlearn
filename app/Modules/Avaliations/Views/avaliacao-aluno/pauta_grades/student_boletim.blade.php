@@ -63,7 +63,7 @@
     }).done(function(data) {
         let percurso = data.percurso; // Collection de disciplinas e notas
         let student = data.student;
-        console.log(studente);
+        console.log(student);
 
         // Adiciona o style fixo
         let styleHTML = `<style>
