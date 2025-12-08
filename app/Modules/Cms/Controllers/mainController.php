@@ -1006,72 +1006,57 @@ class mainController extends Controller
         return count($pautas);
     }
 
-    public function get_boletim_student(Request $request, $lective_year = null)
+   public function get_boletim_student(Request $request, $lective_year = null)
     {
-        $currentData = Carbon::now();
-        $lectiveYearSelected = DB::table('lective_years')
-            ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
-            ->first();
-        $lectiveYearSelected_id = $lectiveYearSelected->id ?? 11;
-
-        if (isset($lective_year)) {
-            $lectiveYearSelected_id = $lective_year;
-        }
-
         $student = auth()->user()->id;
 
-        $matriculations = DB::table("matriculations")
-            ->where("user_id", $student)
-            ->whereNull("deleted_at")
-            ->where("lective_year", $lectiveYearSelected_id)
-            ->select(["lective_year", "id"])
-            ->orderBy("lective_year", "asc")
+        // Pega ano letivo selecionado
+        $lectiveYearSelected = $lective_year ?? DB::table('lective_years')
+            ->whereRaw('"' . now() . '" between `start_date` and `end_date`')
+            ->first()->id ?? 11;
+
+        // Pega matrícula do estudante
+        $matriculation = DB::table('matriculations')
+            ->where('user_id', $student)
+            ->whereNull('deleted_at')
+            ->where('lective_year', $lectiveYearSelected)
             ->first();
 
-        if (!isset($matriculations->lective_year)) {
-            return response()->json(['error' => 'Nenhuma matrícula encontrada neste ano lectivo'], 404);
+        if (!$matriculation) {
+            return response()->json(['error' => 'Nenhuma matrícula encontrada neste ano lectivo']);
         }
 
-        $courses = DB::table("user_courses")
-            ->where("users_id", $student)
-            ->select(["courses_id"])
-            ->first();
+        // Pega disciplinas e avaliações do estudante
+        $percurso = BoletimNotas_Student($lectiveYearSelected, auth()->user()->courses_id, $matriculation->id);
 
-        if (!isset($courses->courses_id)) {
-            return response()->json(['error' => 'Nenhum curso associado'], 404);
-        }
-
-        $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
-
-        // Estrutura os dados para enviar ao front
         $semestres = [];
+
         foreach ($percurso as $codigo => $grupo) {
             foreach ($grupo as $avl) {
-                $semestre = $avl->semestre ?? 1; // ou como estiver definido no teu model
+                $semestre = $avl->ano_curricular ?? 1; // ou outro campo para semestre
                 $semestres[$semestre][] = [
                     'code_disciplina' => $avl->code_disciplina,
                     'display_name' => $avl->display_name,
-                    'PF1' => $avl->PF1 ?? null,
-                    'PF2' => $avl->PF2 ?? null,
-                    'OA' => $avl->OA ?? null,
-                    'media' => $avl->media ?? null,
-                    'escrito' => $avl->escrito ?? null,
-                    'oral' => $avl->oral ?? null,
-                    'mac_exame' => $avl->mac_exame ?? null,
-                    'recurso' => $avl->recurso ?? null,
-                    'especial' => $avl->especial ?? null,
-                    'final' => $avl->final ?? null,
+                    'PF1' => $avl->Avaliacao_nome == 'PF1' ? $avl->nota_anluno : null,
+                    'PF2' => $avl->Avaliacao_nome == 'PF2' ? $avl->nota_anluno : null,
+                    'OA' => $avl->Avaliacao_nome == 'OA' ? $avl->nota_anluno : null,
+                    'media' => $avl->Avaliacao_nome == 'Média' ? $avl->nota_anluno : null,
+                    'escrito' => $avl->Avaliacao_nome == 'Exame Escrito' ? $avl->nota_anluno : null,
+                    'oral' => $avl->Avaliacao_nome == 'Exame Oral' ? $avl->nota_anluno : null,
+                    'mac_exame' => $avl->Avaliacao_nome == 'MAC+Exame' ? $avl->nota_anluno : null,
+                    'recurso' => $avl->Avaliacao_nome == 'Recurso' ? $avl->nota_anluno : null,
+                    'especial' => $avl->Avaliacao_nome == 'Especial' ? $avl->nota_anluno : null,
+                    'final' => $avl->Avaliacao_nome == 'Final' ? $avl->nota_anluno : null,
                 ];
             }
         }
 
         return response()->json([
             'student' => $student,
-            'lective_year' => $lectiveYearSelected_id,
-            'semestres' => $semestres
+            'lective_year' => $lectiveYearSelected,
+            'semestres' => $semestres,
         ]);
     }
-
 
     public function get_schedule_student($lective_year){
 
