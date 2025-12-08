@@ -639,7 +639,7 @@ class mainController extends Controller
     }
 
 
-    public static function get_matriculation_student($lective_year = null, $student = null)
+    public static function get_matriculation_student($lective_year, $student = null)
     {
 
         $currentData = Carbon::now();
@@ -1069,6 +1069,7 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
+        
         if($student == 461){
             dd($matriculations,  $classes, $articles);
         }
