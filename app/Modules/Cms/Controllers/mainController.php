@@ -1008,7 +1008,6 @@ class mainController extends Controller
 
     public function get_boletim_student(Request $request, $lective_year = null)
     {
-
         $currentData = Carbon::now();
         $lectiveYearSelected = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
@@ -1021,8 +1020,6 @@ class mainController extends Controller
 
         $student = auth()->user()->id;
 
-
-
         $matriculations = DB::table("matriculations")
             ->where("user_id", $student)
             ->whereNull("deleted_at")
@@ -1031,9 +1028,8 @@ class mainController extends Controller
             ->orderBy("lective_year", "asc")
             ->first();
 
-            
         if (!isset($matriculations->lective_year)) {
-            return "Nenhuma matrícula encontrada neste ano lectivo";
+            return response()->json(['error' => 'Nenhuma matrícula encontrada neste ano lectivo'], 404);
         }
 
         $courses = DB::table("user_courses")
@@ -1042,45 +1038,40 @@ class mainController extends Controller
             ->first();
 
         if (!isset($courses->courses_id)) {
-            return "Nenhum curso associado";
+            return response()->json(['error' => 'Nenhum curso associado'], 404);
         }
 
-
-
-        $disciplines = $this->get_disciplines($lectiveYearSelected_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
-        //dd($percurso);
-        /*$percurso =  $percurso->map(function ($grupo) {
 
-            return $grupo->reject(function ($avl) use ($grupo) {
-                $faltou =  isset($avl->presence);
-                $nota_normal = !isset($avl->segunda_chamada);
+        // Estrutura os dados para enviar ao front
+        $semestres = [];
+        foreach ($percurso as $codigo => $grupo) {
+            foreach ($grupo as $avl) {
+                $semestre = $avl->semestre ?? 1; // ou como estiver definido no teu model
+                $semestres[$semestre][] = [
+                    'code_disciplina' => $avl->code_disciplina,
+                    'display_name' => $avl->display_name,
+                    'PF1' => $avl->PF1 ?? null,
+                    'PF2' => $avl->PF2 ?? null,
+                    'OA' => $avl->OA ?? null,
+                    'media' => $avl->media ?? null,
+                    'escrito' => $avl->escrito ?? null,
+                    'oral' => $avl->oral ?? null,
+                    'mac_exame' => $avl->mac_exame ?? null,
+                    'recurso' => $avl->recurso ?? null,
+                    'especial' => $avl->especial ?? null,
+                    'final' => $avl->final ?? null,
+                ];
+            }
+        }
 
-                $fez_segunda_chamada = $grupo->where('user_id', $avl->user_id)
-                    ->where('Disciplia_id', $avl->Disciplia_id)
-                    ->where('Avaliacao_aluno_Metrica', $avl->Avaliacao_aluno_Metrica)
-                    ->where('Avaliacao_aluno_turma', $avl->Avaliacao_aluno_turma)
-                    ->where('segunda_chamada', 1)
-                    ->isNotEmpty();
-                $sai =  $faltou && $nota_normal && $fez_segunda_chamada;
-
-                return $sai;
-            });
-        });*/
-
-        $articles = $this->get_payments($lective_year);
-        $plano = $this->study_plain($lective_year);
-        $matriculations = $this->get_matriculation_student($lectiveYearSelected_id);
-        $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
-        $classes = $this->matriculation_classes($matriculations->id);
-        $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
-
-
-        Log::info('CONFIG DEBUG1.2', ['config' => $config]);
-        $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
-
-        return response()->json($html);
+        return response()->json([
+            'student' => $student,
+            'lective_year' => $lectiveYearSelected_id,
+            'semestres' => $semestres
+        ]);
     }
+
 
     public function get_schedule_student($lective_year){
 
