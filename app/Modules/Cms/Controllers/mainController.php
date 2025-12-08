@@ -1075,7 +1075,7 @@ class mainController extends Controller
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
         
         if($student == 461){
-            dd($melhoria_notas);
+            dd($melhoria_notas, $plano);
         }
 
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
