@@ -55,31 +55,69 @@
             });
             
             function getStudentBoletim(lective_year) {
-                   $("#table_student").html("");
+                $("#table_student").html(""); // limpa antes
                 $.ajax({
-                   url: "/pt/get_boletim_student/"+lective_year,
+                    url: "/pt/get_boletim_student/" + lective_year,
                     type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'html',
+                    dataType: "json"
                 }).done(function(data) {
+                    let percurso = data.percurso;
 
-                    //console.log(data);
-                    $("#table_student").html(data);
+                    let tableHTML = `<table class="table tabela_pauta table-striped table-hover" id="tabela_pauta_student1">
+                        <thead>
+                            <tr>
+                                <td colspan="3" class="boletim_text"><b>Engenharia em Pesquisa e Produção de Petróleo</b> | Ano: <b>1º</b> | Semestre: <b>1º</b> | Turma: <b>EP1M01</b></td>
+                                <td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>
+                                <td colspan="2" class="text-center bg1 p-top">EXAME</td>
+                                <td class="text-center cf1 bo1 p-top" colspan="2">CLASSIFICAÇÃO</td>
+                                <td class="rec bo1 text-center p-top" colspan="4">EXAME</td>
+                                <td class="fn bo1 text-center p-top" colspan="2">CLASSIFICAÇÃO</td>
+                            </tr>
+                            <tr style="text-align:center">
+                                <th class="bg1 bo1">#</th>
+                                <th class="text-center small bg1 bo1">CÓDIGO</th>
+                                <th class="bg1 bo1">DISCIPLINA</th>
+                                <th class="bgmac bo1">PF1</th>
+                                <th class="bgmac bo1">PF2</th>
+                                <th class="bgmac bo1">OA</th>
+                                <th colspan="2" class="bgmac bo1">MÉDIA</th>
+                                <th class="bg1 bo1">ESCRITO</th>
+                                <th class="bg1 bo1">ORAL</th>
+                                <th class="cf1 bo1" colspan="2">MAC + EXAME</th>
+                                <th class="rec bo1" colspan="2">RECURSO</th>
+                                <th class="rec bo1" colspan="2">ESPECIAL</th>
+                                <th class="fn bo1" colspan="2">FINAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
 
-                    // let thead = $('#thead-semestre1');
-                    // let tbody = $('#tbody-semestre1');
-                    
-                    // $('#thead-semestre1,#tbody-semestre1').remove(); 
-                    /*$('#tabela_pauta_student').append('<tbody><tr style="background-color: white!important;"><td  style="background-color: white!important;" colspan="22"><hr style="margin-top: 2px!important;margin-bottom: 2px!important;background-color: ##FF9800 !important;color: #da8500;font-size: 6px;border: 4px solid #e79411;"></td></tr></tbody>'); 
-                     $('#tabela_pauta_student').append(thead);
-                     $('#tabela_pauta_student').append(tbody); **/
-                     
-                    
+                    let counter = 1;
+                    $.each(percurso, function(codigo, grupo) {
+                        $.each(grupo, function(i, avl) {
+                            tableHTML += `<tr>
+                                <td>${counter++}</td>
+                                <td>${avl.code_disciplina}</td>
+                                <td>${avl.display_name}</td>
+                                <td>${avl.PF1 ?? '-'}</td>
+                                <td>${avl.PF2 ?? '-'}</td>
+                                <td>${avl.OA ?? '-'}</td>
+                                <td colspan="2">${avl.media ?? '-'}</td>
+                                <td>${avl.escrito ?? '-'}</td>
+                                <td>${avl.oral ?? '-'}</td>
+                                <td colspan="2">${avl.mac_exame ?? '-'}</td>
+                                <td colspan="2">${avl.recurso ?? '-'}</td>
+                                <td colspan="2">${avl.especial ?? '-'}</td>
+                                <td colspan="2">${avl.final ?? '-'}</td>
+                            </tr>`;
+                        });
+                    });
+
+                    tableHTML += `</tbody></table>`;
+
+                    $("#table_student").html(tableHTML);
                 });
             }
+
 
            
         })
