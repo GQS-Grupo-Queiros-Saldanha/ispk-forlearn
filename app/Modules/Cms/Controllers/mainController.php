@@ -644,7 +644,7 @@ class mainController extends Controller
 
         $currentData = Carbon::now();
         
-        if($lective_year == null){
+        if(!isset($lective_year)){
             $lectiveYearSelected = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
             ->first();
@@ -656,6 +656,7 @@ class mainController extends Controller
         if (!isset($student)) {
             $student = auth()->user()->id;
         }
+        dd()
         //dd($lectiveYearSelected);
         $emolumento_confirma_prematricula = mainController::pre_matricula_confirma_emolumento($lectiveYearSelected);
 
