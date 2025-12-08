@@ -1013,7 +1013,7 @@ class mainController extends Controller
             ->whereNull("deleted_at")
             ->where("lective_year", $lectiveYearSelected_id)
             ->select(["lective_year", "id"])
-            ->orderBy("lective_year", "asc")
+            ->orderBy("lective_year", "desc")
             ->first();
 
         if (!isset($matriculations->lective_year)) {
