@@ -1077,7 +1077,7 @@ class mainController extends Controller
 
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
         $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
-        dd($percurso);
+       
         return $html;
     }
 
