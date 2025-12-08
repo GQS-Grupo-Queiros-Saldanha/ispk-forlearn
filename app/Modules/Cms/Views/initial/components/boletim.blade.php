@@ -151,9 +151,9 @@ use App\Modules\Cms\Controllers\mainController;
                     </tr>
             </thead>
             @foreach ($disciplines as $index => $item_DISC)
-                    {{ dd($index) }}
+                   
 
-                    @if($index[3] == $semestreActual)
+                    @if($index[5] == $semestreActual)
                     @php 
             $disciplina_count++;
 
