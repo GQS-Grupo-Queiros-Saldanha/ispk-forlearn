@@ -64,6 +64,7 @@ function BoletimNotas_Student($id_anoLectivo, $id_curso, $mat_id, $id_disciplina
 function boletim_notas_alunos($id_anoLectivo, $id_curso, $mat_id, $id_disciplina, $id_turma)
 {
 
+    dd($id_anoLectivo, $id_curso, $mat_id, $id_disciplina, $id_turma);
     // PEGA O LIMITE DE PAGAMENTO DA PROPINA
     $validacao_proprina = DB::table('pauta_avaliation_student_shows')
         ->where('lective_year_id', $id_anoLectivo)
