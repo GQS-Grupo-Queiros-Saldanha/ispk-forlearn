@@ -998,7 +998,7 @@ class mainController extends Controller
         $lectiveYearSelected = DB::table('lective_years')
             ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
             ->first();
-        $lectiveYearSelected_id = $lectiveYearSelected->id ?? 6;
+        $lectiveYearSelected_id = $lectiveYearSelected->id ?? 11;
 
         if (isset($lective_year)) {
             $lectiveYearSelected_id = $lective_year;
