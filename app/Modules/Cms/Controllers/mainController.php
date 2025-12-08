@@ -1015,7 +1015,10 @@ class mainController extends Controller
             ->select(["lective_year", "id"])
             ->orderBy("lective_year", "desc")
             ->first();
-
+        if($student == 467){
+            dd($matriculations);
+        }
+            
         if (!isset($matriculations->lective_year)) {
             return "Nenhuma matrícula encontrada neste ano lectivo";
         }
