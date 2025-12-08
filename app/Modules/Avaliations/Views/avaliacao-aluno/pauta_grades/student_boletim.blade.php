@@ -73,9 +73,9 @@
                     // let tbody = $('#tbody-semestre1');
                     
                     // $('#thead-semestre1,#tbody-semestre1').remove(); 
-                    $('#tabela_pauta_student').append('<tbody><tr style="background-color: white!important;"><td  style="background-color: white!important;" colspan="22"><hr style="margin-top: 2px!important;margin-bottom: 2px!important;background-color: ##FF9800 !important;color: #da8500;font-size: 6px;border: 4px solid #e79411;"></td></tr></tbody>'); 
+                    /*$('#tabela_pauta_student').append('<tbody><tr style="background-color: white!important;"><td  style="background-color: white!important;" colspan="22"><hr style="margin-top: 2px!important;margin-bottom: 2px!important;background-color: ##FF9800 !important;color: #da8500;font-size: 6px;border: 4px solid #e79411;"></td></tr></tbody>'); 
                      $('#tabela_pauta_student').append(thead);
-                     $('#tabela_pauta_student').append(tbody); 
+                     $('#tabela_pauta_student').append(tbody); **/
                      
                     
                 });
