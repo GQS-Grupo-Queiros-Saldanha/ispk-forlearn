@@ -151,7 +151,7 @@ use App\Modules\Cms\Controllers\mainController;
                     </tr>
             </thead>
             @foreach ($disciplines as $index => $item_DISC)
-                    {{ dd($index[4]) }}
+                    {{ dd($index[3]) }}
 
                     @if($index[4] == $semestreActual)
                     @php 
@@ -168,41 +168,36 @@ use App\Modules\Cms\Controllers\mainController;
             $avalicao_nome = null;
             $avaliacao_nota = 0;
             $code_disc = false;
-                                $avaliacao_count = 0;
-                                $pf1_nota = null;
-                                $pf1_percentagem = 0;
-                                $pf2_nota = null;
-                                $pf2_percentagem = 0;
-                                $oa_nota = null;
-                                $oa_percentagem = 0;
-                                $neen_nota = null;
-                                $oral_nota = null;
-                                $recurso_nota = null;
-                                $especial_nota = null;
-                                $classificacao = 0;
-                                $aval_mac = null;
-                                $mac_nota = 0;
-                                $estado_final = '';
-                                $count_exame = 0;
-                                $last_exame = 0;
-                                $nota_final = '-';
-                                $color_final = '';
-                                $mac_percentagem = $config->percentagem_mac / 100;
-                                $neen_percentagem = $config->percentagem_oral / 100;
-                                $id_turma = $classes->filter(function($item)use($item_DISC){
-                                    return $item_DISC->code_disciplina[3] == $item->display_name[3] || ($item_DISC->code_disciplina[3] == $item->code[3]);
-                                })->first()->id;
-                                $aprovado = false;
-                                $recurso = false;
-                                $exame = false;
-                                $exame_oral = false;
-                                $exam_only = $item_DISC->e_f;
-                                
-
-                               
-
-         
-             
+            $avaliacao_count = 0;
+            $pf1_nota = null;
+            $pf1_percentagem = 0;
+            $pf2_nota = null;
+            $pf2_percentagem = 0;
+            $oa_nota = null;
+            $oa_percentagem = 0;
+            $neen_nota = null;
+            $oral_nota = null;
+            $recurso_nota = null;
+            $especial_nota = null;
+            $classificacao = 0;
+            $aval_mac = null;
+            $mac_nota = 0;
+            $estado_final = '';
+            $count_exame = 0;
+            $last_exame = 0;
+            $nota_final = '-';
+            $color_final = '';
+            $mac_percentagem = $config->percentagem_mac / 100;
+            $neen_percentagem = $config->percentagem_oral / 100;
+            $id_turma = $classes->filter(function($item)use($item_DISC){
+                return $item_DISC->code_disciplina[3] == $item->display_name[3] || ($item_DISC->code_disciplina[3] == $item->code[3]);
+            })->first()->id;
+            $aprovado = false;
+            $recurso = false;
+            $exame = false;
+            $exame_oral = false;
+            $exam_only = $item_DISC->e_f;
+            
             @endphp
 
             <tbody>
