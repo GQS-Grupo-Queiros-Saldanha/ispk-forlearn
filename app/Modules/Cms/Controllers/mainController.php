@@ -723,7 +723,7 @@ class mainController extends Controller
             ->where('art_requests.deleted_at', null)
             ->groupBy('u_p.value')
             ->where('matriculations.user_id', $student)
-            ->whereIn('matriculations.lective_year', [9,11])//$lectiveYearSelected->id
+            ->where('matriculations.lective_year', $lectiveYearSelected)//$lectiveYearSelected->id
 
             ->distinct('id')
             ->first();
@@ -733,8 +733,9 @@ class mainController extends Controller
     {
 
         $confirm = EmolumentCodevLective("confirm", $lectiveYearSelected)->first();
-        //dd($confirm);
         $Prematricula = EmolumentCodevLective("p_matricula", $lectiveYearSelected)->first();
+        $confirm_tardia = EmolumentCodevLective("confirm_tardia", $lectiveYearSelected)->first();
+
         $emolumentos = [];
 
         if ($confirm != null) {
@@ -742,6 +743,9 @@ class mainController extends Controller
         }
         if ($Prematricula != null) {
             $emolumentos[] = $Prematricula->id_emolumento;
+        }
+        if ($confirm_tardia != null) {
+            $emolumentos[] = $confirm_tardia->id_emolumento;
         }
         return $emolumentos;
     }
