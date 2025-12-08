@@ -1013,12 +1013,9 @@ class mainController extends Controller
             ->whereNull("deleted_at")
             ->where("lective_year", $lectiveYearSelected_id)
             ->select(["lective_year", "id"])
-            ->orderBy("lective_year", "desc")
+            ->orderBy("lective_year", "asc")
             ->first();
 
-        if($student == 461){
-            dd($matriculations);
-        }
             
         if (!isset($matriculations->lective_year)) {
             return "Nenhuma matrícula encontrada neste ano lectivo";
@@ -1066,6 +1063,10 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
+        if($student == 461){
+            dd($matriculations,  $classes, $articles);
+        }
+
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
         $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
 
