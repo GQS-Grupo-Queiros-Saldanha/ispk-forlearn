@@ -177,7 +177,7 @@ function boletim_notas_alunos($id_anoLectivo, $id_curso, $mat_id, $id_disciplina
             ->orderBy('full_name.value', 'asc')
             ->distinct()
             ->get();
-        dd($avaliacaos_student);
+    
         return $avaliacaos_student;
     } catch (\Exception $e) {
         dd($e);
