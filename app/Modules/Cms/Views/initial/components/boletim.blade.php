@@ -151,7 +151,7 @@ use App\Modules\Cms\Controllers\mainController;
                     </tr>
             </thead>
             @foreach ($disciplines as $index => $item_DISC)
-                   
+                    {{ dd($index[4]) }}
 
                     @if($index[5] == $semestreActual)
                     @php 
