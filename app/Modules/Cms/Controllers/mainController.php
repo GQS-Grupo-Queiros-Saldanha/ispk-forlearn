@@ -1078,7 +1078,7 @@ class mainController extends Controller
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
         
-        if($student == 461){
+        if($student ==000){
              dd([
                 'percurso' => $percurso,
                 'articles' => $articles,
