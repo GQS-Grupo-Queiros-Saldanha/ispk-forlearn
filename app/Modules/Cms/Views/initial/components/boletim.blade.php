@@ -188,9 +188,11 @@ use App\Modules\Cms\Controllers\mainController;
  $color_final = '';
  $mac_percentagem = $config->percentagem_mac / 100;
  $neen_percentagem = $config->percentagem_oral / 100;
-
- $id_turma = 39;
  
+$id_turma = $classes->first(function($item) use ($item_DISC) {
+    return $item_DISC->turma == $item->display_name; // ou $item->code
+})->id;
+
  $aprovado = false;
  $recurso = false;
  $exame = false;
