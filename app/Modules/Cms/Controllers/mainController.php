@@ -1049,6 +1049,7 @@ class mainController extends Controller
 
         $disciplines = $this->get_disciplines($lectiveYearSelected_id);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);
+        dd($percurso);
         $percurso =  $percurso->map(function ($grupo) {
 
             return $grupo->reject(function ($avl) use ($grupo) {
@@ -1061,12 +1062,7 @@ class mainController extends Controller
                     ->where('Avaliacao_aluno_turma', $avl->Avaliacao_aluno_turma)
                     ->where('segunda_chamada', 1)
                     ->isNotEmpty();
-
-
-
-
                 $sai =  $faltou && $nota_normal && $fez_segunda_chamada;
-
 
                 return $sai;
             });
