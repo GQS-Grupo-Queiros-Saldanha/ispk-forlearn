@@ -66,7 +66,7 @@
                     dataType: 'json',
                 }).done(function(data) {
 
-                    
+                    console.log(data);
                     $("#table_student").html(data);
 
                     // let thead = $('#thead-semestre1');
