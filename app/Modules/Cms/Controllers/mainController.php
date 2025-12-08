@@ -650,7 +650,7 @@ class mainController extends Controller
                 ->whereDate('end_date', '>=', $currentDate)
                 ->first();
             dd($lectiveYear);
-            $lectiveYearSelected = $lectiveYear->id
+            $lectiveYearSelected = $lectiveYear->id;
         } else {
             // Já foi passado um ano lectivo, utiliza-o tal como está
             $lectiveYearSelected = $lective_year;
