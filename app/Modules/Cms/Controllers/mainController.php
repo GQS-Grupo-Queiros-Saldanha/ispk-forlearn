@@ -106,7 +106,6 @@ class mainController extends Controller
                 Log::info('CONFIG DEBUG3', ['config' => $config]);
                 $student = auth()->user()->id;
                 $matriculations = $this->get_matriculation_student(null, $student);
-                dd($matriculations);
 
                 $melhoria_notas = get_melhoria_notas($student, $lective->id, 0);
                 $d = $this->schedule();
