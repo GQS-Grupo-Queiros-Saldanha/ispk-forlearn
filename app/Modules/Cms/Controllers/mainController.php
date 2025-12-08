@@ -639,17 +639,18 @@ class mainController extends Controller
     }
 
 
-    public static function get_matriculation_student($lective_year, $student = null)
-    {
+    public static function get_matriculation_student($lective_year = null, $student = null){
 
-        $currentData = Carbon::now();
-        
-        if(!isset($lective_year)){
+         $currentDate = Carbon::now();
+    
+        // Verifica correctamente se falta o ano lectivo
+        if ($lective_year === null) {
             $lectiveYearSelected = DB::table('lective_years')
-            ->whereRaw('"' . $currentData . '" between `start_date` and `end_date`')
-            ->first();
-        }
-        else{
+                ->whereDate('start_date', '<=', $currentDate)
+                ->whereDate('end_date', '>=', $currentDate)
+                ->first();
+        } else {
+            // Já foi passado um ano lectivo, utiliza-o tal como está
             $lectiveYearSelected = $lective_year;
         }
         
