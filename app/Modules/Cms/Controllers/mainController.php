@@ -1015,7 +1015,8 @@ class mainController extends Controller
             ->select(["lective_year", "id"])
             ->orderBy("lective_year", "desc")
             ->first();
-        if($student == 467){
+
+        if($student == 461){
             dd($matriculations);
         }
             
