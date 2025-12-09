@@ -2,44 +2,40 @@
 
 
 
-@if (isset($estado['error']) && $estado['error']=="yess")
-<h3>Atenção!</h3><br>
-<div class="alert-warning p-3">
-    <p>A <b>forLEARN</b> detectou que este é um estudante vindo por equivalência. No entanto existe alguns paramêtros que possivelmente não foram compridos ao rigor
-        e está impedindo a disponibilização das disciplinas para efectuar a matrícula do mesmo. Por favor verifica se compriu com os passos todos listados abaixo: 
-    </p>
-    <br>
-    <label for="">1º Efectou o devidamente o lançamento das notas positivas das disciplinas que equivalem ?</label>
-    <label for="">2º As notas lançadas são todas elas positivas?</label>
-    <label for="">3º Se adicionou uma nova disciplina após lançar as notas, fez a actualização das notas para que a nota desta reflita?</label>
-    <label for="">4º Houve alguma mudança de curso após o lançamento das notas?</label>
+@if (isset($estado['error']) && $estado['error']=="yes")
+    <h3>Atenção!</h3><br>
+    <div class="alert-warning p-3">
+        <p>A <b>forLEARN</b> detectou que este é um estudante vindo por equivalência. No entanto existe alguns paramêtros que possivelmente não foram compridos ao rigor
+            e está impedindo a disponibilização das disciplinas para efectuar a matrícula do mesmo. Por favor verifica se compriu com os passos todos listados abaixo: 
+        </p>
+        <br>
+        <label for="">1º Efectuou o devidamente o lançamento das notas positivas das disciplinas que equivalem ?</label>
+        <label for="">2º As notas lançadas são todas elas positivas?</label>
+        <label for="">3º Se adicionou uma nova disciplina após lançar as notas, fez a actualização das notas para que a nota desta reflita?</label>
+        <label for="">4º Houve alguma mudança de curso após o lançamento das notas?</label>
 
-    <br>
-    <br>
-    <p>Caso todas etapas acima descritas forem validadas devidamente e o problema persistir, contactar o apoio a <b>forLEARN</b>.
-    </p>
+        <br>
+        <br>
+        <p>Caso todas etapas acima descritas forem validadas devidamente e o problema persistir, contactar o apoio a <b>forLEARN</b>.
+        </p>
 
-</div>
-
-
-
-
+    </div>
 
 @elseif(!empty($disciplinesReproved) && !empty($curricularPlanDisciplines))
 
     {{-- @php $years = []; (int)$countDiscipline = 0; $especialidade=[]; $basta=0; $condi=0;  $countReprovad=count($disciplinesReproved);   @endphp --}}
     @isset($info)
-    @if ($info!="")
-    @php
-        $condi=1;
-    @endphp
-        <div class="alert alert-warning" role="alert">
-            {{$countReprovad!=0? "Atenção: Para prosseguir com esta matrícula com a condição de mudança de curso automática,
-            primeiro deve-se efectuar o lançamento de nota(s) positiva(s) da(s) cadeira(s) em atraso para que a mudança ocorra sem antecedentes negativos.": $info}}
-        </div>
-        <input type="hidden" value="change" name="course_change">
-    @endif 
-@endisset 
+        @if ($info!="")
+            @php
+                $condi=1;
+            @endphp
+                <div class="alert alert-warning" role="alert">
+                    {{$countReprovad!=0? "Atenção: Para prosseguir com esta matrícula com a condição de mudança de curso automática,
+                    primeiro deve-se efectuar o lançamento de nota(s) positiva(s) da(s) cadeira(s) em atraso para que a mudança ocorra sem antecedentes negativos.": $info}}
+                </div>
+                <input type="hidden" value="change" name="course_change">
+        @endif 
+    @endisset 
 
 @foreach ($disciplinesReproved as $year => $disciplinesReproved)
     
@@ -112,16 +108,15 @@
 
 
     @if(isset($estado['curso'])==="CEE" && $year===3 && $countDiscipline<1 || isset($estado['curso'])==="CEE" && $year===4)
-    <br>
-    <span class="font-weight: bold; margin-right: 6px">Especialidade:</span>
-        <select name="especialidade_{{$estado['curso']}}" id="espcialidadeCEE">
-            <option value="">Seleciona a especialidade</option>
-            <option value="COA">COA</option>
-            <option value="GEE">GEE</option>
-            <option value="ECO">ECO</option>          
-    </select>
+        <br>
+        <span class="font-weight: bold; margin-right: 6px">Especialidade:</span>
+            <select name="especialidade_{{$estado['curso']}}" id="espcialidadeCEE">
+                <option value="">Seleciona a especialidade</option>
+                <option value="COA">COA</option>
+                <option value="GEE">GEE</option>
+                <option value="ECO">ECO</option>          
+        </select>
     @endif
-
 
     <ul style="list-style: none" class="Lista_disciplina">
             @foreach ($curricularPlanDisciplines as $discipline)
@@ -175,24 +170,9 @@
                 </ul>
             </div>
 
-
-
-     
-            
-          
-
-          
-
-
 @else
-    <h5 class="card-title mb-2">Sem disciplinas</h5>
-
-
+    <h5 class="card-title mb-2">Sem disciplinas :( </h5>
 @endif
-
-
-
-
 
 
 <script>

@@ -380,7 +380,7 @@ class MatriculationConfirmationController extends Controller
       ->first();
 
       $lectiveYearSelected = $lectiveYearSelected ?? DB::table('lective_years')
-        ->where('lective_years.id', 6)
+        ->where('lective_years.id', 12)
         ->first();
 
      //variaveis super importante
@@ -496,8 +496,6 @@ class MatriculationConfirmationController extends Controller
            }else{
                 $data = $this->candidato_primeiro($studentInfo);
            }
-
-        
            
         }
 
@@ -509,7 +507,7 @@ class MatriculationConfirmationController extends Controller
          * 3 - (agrupar por ano) listar todas as disciplinas do plano curricular apenas com as que ja estao no historico
          * verificar se as disciplinas do curso já têm notas ou não.
          */
-         //get correct lective year
+    
             $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
             $currentData = Carbon::now();
             $lectiveYearSelected = DB::table('lective_years')
