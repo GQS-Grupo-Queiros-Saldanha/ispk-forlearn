@@ -86,53 +86,49 @@ class MatriculationConfirmationController extends Controller
     //metodo privado para pegar
     //carregar todas as disciplinas em atraso do estudante
     //carregar todas as disciplinas do curso
-    private function candidato_primeiro($studentInfo)
-    
-    {
+    private function candidato_primeiro($studentInfo){
         //Pegar ano lectivo corrente.
-        $lectiveYears = LectiveYear::with(['currentTranslation'])
-        ->get();
+        $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
         $currentData = Carbon::now();
         $lectiveYearSelected = DB::table('lective_years')
-        ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-        ->first();
+            ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
+            ->first();
 
-
-        $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+        $lectiveYearSelected = $lectiveYearSelected->id ?? 12;
 
         $disciplinesReproved = collect();
         $classes = Classes::whereCoursesId($studentInfo->course_id)
-        ->where('lective_year_id',$lectiveYearSelected)
-        ->get();
-        //Fim Pegar Turma Por ano lectivo.
+            ->where('lective_year_id',$lectiveYearSelected)
+            ->get();
 
+        //Fim Pegar Turma Por ano lectivo.
         $curricularPlanDisciplines = StudyPlan::where('study_plans.courses_id', $studentInfo->course_id)
-                                ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
-                                ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
-                                ->join('disciplines_translations as dt', function ($join) {
-                                    $join->on('dt.discipline_id', '=', 'disciplines.id');
-                                    $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                                    $join->on('dt.active', '=', DB::raw(true));
-                                })
-                                //->whereNotIn('')
-                                //->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))//array_column($allApprovedDisciplines, 'id')
-                                //->whereNotIn('disciplines.id', )//array_column($allReprovedDisciplines, 'id')
-                                ->where('study_plans_has_disciplines.years', 1)
-                                ->get()
-                                ->groupBy('years');
+            ->join('study_plans_has_disciplines', 'study_plans_has_disciplines.study_plans_id', '=', 'study_plans.id')
+            ->join('disciplines', 'disciplines.id', '=', 'study_plans_has_disciplines.disciplines_id')
+            ->join('disciplines_translations as dt', function ($join) {
+                $join->on('dt.discipline_id', '=', 'disciplines.id');
+                $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                $join->on('dt.active', '=', DB::raw(true));
+            })
+            //->whereNotIn('')
+            //->whereNotIn('disciplines.id', $disciplinesInOldGrades->pluck('discipline_id'))//array_column($allApprovedDisciplines, 'id')
+            //->whereNotIn('disciplines.id', )//array_column($allReprovedDisciplines, 'id')
+            ->where('study_plans_has_disciplines.years', 1)
+            ->get()
+            ->groupBy('years');
       
          //Regras do 5 pontos (saber sobre aprovação ou não)         
-      $code_curso=DB::table('courses')->select(['code'])->whereId($studentInfo->course_id)->get();
-      $estado= $this->verificarAprovacao($disciplinesReproved,$studentInfo->course_id);                           
+        $code_curso=DB::table('courses')->select(['code'])->whereId($studentInfo->course_id)->get();
+        $estado= $this->verificarAprovacao($disciplinesReproved,$studentInfo->course_id);                           
 
-      $data = [
-            'curricularPlanDisciplines' => $curricularPlanDisciplines,
-            'classes' => $classes,
-            'estado'=>$estado,
-            'nextYear' => 1,
-            'disciplinesReproved' => $disciplinesReproved
-        ];
-        return  $data;
+        $data = [
+                'curricularPlanDisciplines' => $curricularPlanDisciplines,
+                'classes' => $classes,
+                'estado'=>$estado,
+                'nextYear' => 1,
+                'disciplinesReproved' => $disciplinesReproved
+            ];
+            return  $data;
     }
 
 
@@ -428,8 +424,9 @@ class MatriculationConfirmationController extends Controller
             $data = $this->Imported_Student($studentId, $lectiveYearSelected);
             Log::info('Importado', ['data' => var_export($data,true), 'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected]);
 
-             if ($data != 0) {
+            if ($data != 0) {
                 Log::info("Função chamada para importado", ['data' => var_export($data, true),'estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected->id]);
+                
                 if (!is_array($data)) {
                     $data = [$data];
                 }
@@ -459,25 +456,27 @@ class MatriculationConfirmationController extends Controller
                  Log::info('Status retornado de aproveStatus', ['status' => $status]);
                  $view = view("Users::confirmations-matriculations.disciplines_news_trategy")->with($status)->render();
                  return response()->json(array('html' => $view));
-             }
+            }
 
            
-           $studentInfo = User::where('users.id', $studentId)
-            ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
-            ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
-            ->leftJoin('courses_translations as ct', function ($join) {
-                $join->on('ct.courses_id', '=', 'courses.id');
-                $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                $join->on('ct.active', '=', DB::raw(true));
-            })
-            ->join('matriculations', 'matriculations.user_id', '=', 'users.id')
-            ->select(['matriculations.course_year as year','courses.id as course_id','courses.code as code'])
-            ->firstOrFail();
+           
+            $studentInfo = User::where('users.id', $studentId)
+                ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
+                ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
+                ->leftJoin('courses_translations as ct', function ($join) {
+                    $join->on('ct.courses_id', '=', 'courses.id');
+                    $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
+                    $join->on('ct.active', '=', DB::raw(true));
+                })
+                ->join('matriculations', 'matriculations.user_id', '=', 'users.id')
+                ->select(['matriculations.course_year as year','courses.id as course_id','courses.code as code'])
+                ->firstOrFail();
 
             //se o estudante for candidato exibir apenas as disciplinas do 1º ano
             //return response()->json($studentInfo);
             $status=0;
             Log::info('studentInfo: ' . json_encode($studentInfo, JSON_PRETTY_PRINT));
+            
             if($studentInfo->hasRole('candidado-a-estudante')) {  
                 $data = $this->candidato_primeiro($studentInfo);
             }
@@ -666,93 +665,92 @@ class MatriculationConfirmationController extends Controller
     
 
 
-private function verificarAprovacao($disciplinesReproved,$id_curso){
+    private function verificarAprovacao($disciplinesReproved, $id_curso){
+        Log::info("Verificar aprovação - disciplinas reprovadas", ['disciplinas' => $disciplinesReproved, 'curso_id' => $id_curso]);
         //Pegar o curso 
-         $curso=DB::table('courses')->whereId($id_curso)->get();
-        
+        $curso = DB::table('courses')->whereId($id_curso)->get();
+
         //Processamento de encontrar as anuais e as simestrais.
         //variavel global para analizar as cadeiras.
-         $Observacao=[];
-        
-        $resultado=[];
-        $anual=[]; $simestral=[];
-        $reprovadas_estado = $disciplinesReproved->map(function($item,$key) use($disciplinesReproved,$simestral,$anual,$resultado){
-           for ($i=0; $i <count($disciplinesReproved[$key]) ; $i++) { 
-             $periodo=substr($item[$i]['code'],-3, 1);
-             if($periodo=="1" || $periodo=="2"){$simestral[]="S";}
-             else if($periodo=="A"){ $anual[]="A";}  
-         }
-             $resultado['Anual']=count($anual);
-             $resultado['Simestral']=count($simestral);
-             return $resultado;
-         });
+        $Observacao = [];
+
+        $resultado = [];
+        $anual = [];
+        $simestral = [];
+        $reprovadas_estado = $disciplinesReproved->map(function ($item, $key) use ($disciplinesReproved, $simestral, $anual, $resultado) {
+            for ($i = 0; $i < count($disciplinesReproved[$key]); $i++) {
+                $periodo = substr($item[$i]['code'], -3, 1);
+                if ($periodo == "1" || $periodo == "2") {
+                    $simestral[] = "S";
+                } else if ($periodo == "A") {
+                    $anual[] = "A";
+                }
+            }
+            $resultado['Anual'] = count($anual);
+            $resultado['Simestral'] = count($simestral);
+            return $resultado;
+        });
         //Processamento somatório agrupar as anuais e as simestrais
-        $anual_total=0;   
-        $simestral_total=0;   
-        foreach ($reprovadas_estado as $key=>$item ){
-            $anual_total+=$reprovadas_estado[$key]['Anual'];  
-            $simestral_total+=$reprovadas_estado[$key]['Simestral'];  
+        $anual_total = 0;
+        $simestral_total = 0;
+        foreach ($reprovadas_estado as $key => $item) {
+            $anual_total += $reprovadas_estado[$key]['Anual'];
+            $simestral_total += $reprovadas_estado[$key]['Simestral'];
         }
 
         //Criar as condições finais possiveis.
-        if($anual_total+$simestral_total >=5){
+        if ($anual_total + $simestral_total >= 5) {
 
-            $A_pontos=$anual_total*2;
+            $A_pontos = $anual_total * 2;
             return  $Observacao = [
-                        'Obs'=>'regra01',
-                        'confirmacao'=>1,
-                        'qtd_disciplina'=>$anual_total+$simestral_total,
-                        'emolumento'=>'P_normais',
-                        'estado'=> $curso[0]->code =="RI" && $A_pontos+$simestral_total>=5 && $A_pontos+$simestral_total< 7 ? 'aprovado':'reprovado',
-                        'curso'=>$curso[0]->code,
-                        'pontos'=>$A_pontos+$simestral_total,
-                        'atencao'=>"Se as disciplinas em atraso forem >= 5,gerar as 10 propinas e a confirmação de matrícula"
-                    ];
+                'Obs' => 'regra01',
+                'confirmacao' => 1,
+                'qtd_disciplina' => $anual_total + $simestral_total,
+                'emolumento' => 'P_normais',
+                'estado' => $curso[0]->code == "RI" && $A_pontos + $simestral_total >= 5 && $A_pontos + $simestral_total < 7 ? 'aprovado' : 'reprovado',
+                'curso' => $curso[0]->code,
+                'pontos' => $A_pontos + $simestral_total,
+                'atencao' => "Se as disciplinas em atraso forem >= 5,gerar as 10 propinas e a confirmação de matrícula"
+            ];
+        } else if ($anual_total + $simestral_total <= 4 & $anual_total + $simestral_total > 0) {
 
-         }
-       else if($anual_total+$simestral_total <=4 & $anual_total+$simestral_total>0 ){
-                    
-         $anual_pontos=$anual_total*2;
+            $anual_pontos = $anual_total * 2;
 
-        if($anual_pontos > 2 & $simestral_total > 0 ) {
-                    
-                        
-                    return $Observacao = [
-                            'Obs'=>'regra02',
-                            'confirmacao'=>1,
-                            'qtd_disciplina'=>$anual_total+$simestral_total,
-                            'emolumento'=>'inscricao_frenquencia',
-                            'estado'=>$simestral_total+$anual_pontos >=5 ?'com cadeira':'',
-                            'curso'=>$curso[0]->code,
-                            'pontos'=>$simestral_total+$anual_pontos,
-                            'atencao'=>"Se as disciplinas em atraso forem <= 4,gerar emolumentos 'Inscricao por frequencia' e a confirmação de matrícula(Ex: gerar o nº de emolumento por mês ...4 por mês dependendo das disciplinas em atraso) "
-                    ];
+            if ($anual_pontos > 2 & $simestral_total > 0) {
 
-               }
-                    
-         else if($simestral_total+$anual_pontos >4){
-                        return  $Observacao = [
-                            'Obs'=>'regra02',
-                            'confirmacao'=>1,
-                            'curso'=>'test',
-                            'qtd_disciplina'=>$anual_total+$simestral_total,
-                            'emolumento'=>'inscricao_frenquencia',
-                            'estado'=>$simestral_total+$anual_pontos >= 5 ?'com cadeira':'',
-                            'curso'=>$curso[0]->code,
-                            'pontos'=>$simestral_total+$anual_pontos,
-                            'atencao'=>"Se as disciplinas em atraso forem <= 4,gerar emolumentos 'Inscricao por frequencia' e a confirmação de matrícula(Ex: gerar o nº de emolumento por mês ...4 por mês dependendo das disciplinas em atraso) "
-                        ];
-                }
 
+                return $Observacao = [
+                    'Obs' => 'regra02',
+                    'confirmacao' => 1,
+                    'qtd_disciplina' => $anual_total + $simestral_total,
+                    'emolumento' => 'inscricao_frenquencia',
+                    'estado' => $simestral_total + $anual_pontos >= 5 ? 'com cadeira' : '',
+                    'curso' => $curso[0]->code,
+                    'pontos' => $simestral_total + $anual_pontos,
+                    'atencao' => "Se as disciplinas em atraso forem <= 4,gerar emolumentos 'Inscricao por frequencia' e a confirmação de matrícula(Ex: gerar o nº de emolumento por mês ...4 por mês dependendo das disciplinas em atraso) "
+                ];
+            } else if ($simestral_total + $anual_pontos > 4) {
+                return  $Observacao = [
+                    'Obs' => 'regra02',
+                    'confirmacao' => 1,
+                    'curso' => 'test',
+                    'qtd_disciplina' => $anual_total + $simestral_total,
+                    'emolumento' => 'inscricao_frenquencia',
+                    'estado' => $simestral_total + $anual_pontos >= 5 ? 'com cadeira' : '',
+                    'curso' => $curso[0]->code,
+                    'pontos' => $simestral_total + $anual_pontos,
+                    'atencao' => "Se as disciplinas em atraso forem <= 4,gerar emolumentos 'Inscricao por frequencia' e a confirmação de matrícula(Ex: gerar o nº de emolumento por mês ...4 por mês dependendo das disciplinas em atraso) "
+                ];
+            }
         }
 
-         return $Observacao = [
-                    'Obs'=>'normal',
-                    'curso'=>$curso[0]->code,
-                    'pontos'=>isset($simestral_total)+isset($anual_pontos)??0,
-                    'estado'=>"FOI"
-                   ];
-}
+        return $Observacao = [
+            'Obs' => 'normal',
+            'curso' => $curso[0]->code,
+            'pontos' => isset($simestral_total) + isset($anual_pontos) ?? 0,
+            'estado' => "FOI"
+        ];
+    }
 
 
 
