@@ -588,10 +588,10 @@ class MatriculationConfirmationController extends Controller
               
                //Pegar a regra dos cursos com mudança de forma dinâmica.
               $curso_mudanca_status=DB::table('tb_courses_change')
-              ->where('course_id_primary',$studentInfo->course_id)
-              ->where('status',1)
-              ->where('lective_year_id',$lectiveYearSelected)
-              ->first();
+                ->where('course_id_primary',$studentInfo->course_id)
+                ->where('status',1)
+                ->where('lective_year_id',$lectiveYearSelected)
+                ->first();
             
      
               if($curso_mudanca_status){
