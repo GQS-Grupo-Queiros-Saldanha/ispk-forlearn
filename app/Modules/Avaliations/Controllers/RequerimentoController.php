@@ -3716,8 +3716,9 @@ class RequerimentoController extends Controller
             //codev dos emolumentos
             $codev = "trabalho_fim_curso";
             //dd($request->anoLectivo);
+
             //Emolumento com base no ano lectivo
-            $emolumento = EmolumentCodevLective($codev, $request->anoLectivo);
+            /*$emolumento = EmolumentCodevLective($codev, $request->anoLectivo);
             
             if ($emolumento->isEmpty()) {
                 Toastr::warning(__('A forLEARN não encontrou um emolumento de trabalho de fim de curso (inscrição) configurado[ configurado no ano lectivo selecionado].'), __('toastr.warning'));
@@ -3728,25 +3729,14 @@ class RequerimentoController extends Controller
 
             $article_id = $emolumento[0]->id_emolumento;
 
-
-
             $article_request_id = createAutomaticArticleRequest($request->students, $article_id, null, null);
 
             if (!$article_request_id) {
                 Toastr::error(__(' Não foi possivel criar o emolumento de  trabalho de fim de curso (inscrição), por favor tente novamente'), __('toastr.error'));
                 return redirect()->back();
-            }
+            }*/
 
             // GUARDAR REQUERIMENTO
-
-            DB::table('requerimento')->insert(
-                [
-                    'article_id' => $article_request_id,
-                    "user_id" => $request->students,
-                    'year' => $request->anoLectivo
-                ]
-            );
-
 
               //codev dos emolumentos
               $codev = "trabalho_fim_curso";
