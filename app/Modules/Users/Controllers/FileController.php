@@ -41,7 +41,7 @@ class FileController extends Controller
     }
 
     public function getAvatar($filename)
-    { {
+    { 
             try {
                 /*   if (!$user || $user->avatar !== $filename) {
             abort(403, 'Acesso negado');
@@ -58,6 +58,6 @@ class FileController extends Controller
                 Log::error("Erro ao buscar avatar: " . $e->getMessage());
                 abort(500, 'Erro interno ao carregar a imagem');
             }
-        }
+        
     }
 }

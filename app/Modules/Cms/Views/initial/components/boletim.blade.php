@@ -277,114 +277,111 @@ $id_turma = $classes->first(function($item) use ($item_DISC) {
  <td class='text-bold text-center'>{{ isset($oa_nota) ? number_format($oa_nota, 2) : '-' }}</td>
 
  @php
- 
- $p_mac = mainController::verificar_pauta(
- $id_turma,
- $item_DISC->id_disciplina,
- $item_DISC->id_anoLectivo,
- 'Pauta Frequência'
- );
+    
+    $p_mac = mainController::verificar_pauta(
+        $id_turma,
+        $item_DISC->id_disciplina,
+        $item_DISC->id_anoLectivo,
+        'Pauta Frequência'
+    );
 
- // Caso tenha a nota de MAC lançada!
+    // Caso tenha a nota de MAC lançada!
 
- if ($p_mac > 0) {
- 
- 
- $mac_nota = (($pf1_nota * $pf1_percentagem) + ($pf2_nota * $pf2_percentagem) + ($oa_nota * $oa_percentagem));
- $mac_nota = round($mac_nota);
- $classificacao = $mac_nota;
+    if ($p_mac > 0) {
+        
+            $mac_nota = (($pf1_nota * $pf1_percentagem) + ($pf2_nota * $pf2_percentagem) + ($oa_nota * $oa_percentagem));
+            $mac_nota = round($mac_nota);
+            $classificacao = $mac_nota;
 
- if($exam_only == 1){
- $exame = true;
- }
- else{
- if ($classificacao >= 0 && $classificacao <= $config->mac_nota_recurso) {
- $estado_final = 'Recurso';
- $color_final = 'for-red';
- $recurso = true;
- }
- if ($classificacao >= $config->exame_nota_inicial && $classificacao <= $config->exame_nota_final) {
- $estado_final = 'Exame';
- $color_final = 'for-yellow';
- $exame = true;
- }
- if ($classificacao >= $config->mac_nota_dispensa && $classificacao <= 20) {
- $estado_final = 'Aprovado(a)';
- $color_final = 'for-green';
- $aprovado = true;
- 
- 
- }
- $nota_final = $classificacao;
- }
- 
- 
- }
+            if($exam_only == 1){
+                $exame = true;
+            }
+            else{
+                if ($classificacao >= 0 && $classificacao <= $config->mac_nota_recurso) {
+                $estado_final = 'Recurso';
+                $color_final = 'for-red';
+                $recurso = true;
+            }
+
+            if ($classificacao >= $config->exame_nota_inicial && $classificacao <= $config->exame_nota_final) {
+                $estado_final = 'Exame';
+                $color_final = 'for-yellow';
+                $exame = true;
+            }
+
+            if ($classificacao >= $config->mac_nota_dispensa && $classificacao <= 20) {
+                $estado_final = 'Aprovado(a)';
+                $color_final = 'for-green';
+                $aprovado = true;
+                
+            }
+
+            $nota_final = $classificacao;
+        }
+        
+    }
  @endphp
+
  @if ($p_mac > 0)
- <td class='text-bold text-center'>{{ $nota_final }}</td>
- <td class="{{'text-bold text-center ' .$color_final }}"> {{$estado_final}} </td>
+    <td class='text-bold text-center'>{{ $nota_final }}</td>
+    <td class="{{'text-bold text-center ' .$color_final }}"> {{$estado_final}} </td>
  @else
- <td style='text-align: center'>-</td>
- <td style='text-align: center'>-</td>
+    <td style='text-align: center'>-</td>
+    <td style='text-align: center'>-</td>
  @endif
 
  @if ($neen_nota == null || $aprovado) 
- <td style='text-align: center'> - </td>
+    <td style='text-align: center'> - </td>
  @else 
  
- 
- 
  @if ($estado_final == 'Aprovado(a)') 
- <td style='text-align: center'>-</td>
+    <td style='text-align: center'>-</td>
  
  @elseif ($estado_final == 'Recurso')
- <td style='text-align: center'>-</td>
+    <td style='text-align: center'>-</td>
  @else
- <td style='text-align: center'>{{ round($neen_nota) }}</td>
+    <td style='text-align: center'>{{ round($neen_nota) }}</td>
  @endif
 
  @endif
 
- @php
- if($exame){
- 
+@php
+    if($exame){
+    ++$count_exame;
+    if ($neen_nota == null)
+    $neen_nota = 0;
+    else 
+    $neen_nota = round($neen_nota);
 
- ++$count_exame;
- if ($neen_nota == null)
- $neen_nota = 0;
- else 
- $neen_nota = round($neen_nota);
-
- if(!is_null($config->exame_oral_final) && ($neen_nota > $config->mac_nota_recurso && $neen_nota <= round($config->exame_oral_final)))
- {
- $exame_oral = true;
- }
- else{
- if($exam_only == 1){
- $classificacao = $neen_nota;
- }
- else
- {
- $classificacao = ($mac_nota * $mac_percentagem) + ($neen_nota * $neen_percentagem);
- }
- 
+    if(!is_null($config->exame_oral_final) && ($neen_nota > $config->mac_nota_recurso && $neen_nota <= round($config->exame_oral_final)))
+    {
+    $exame_oral = true;
+    }
+    else{
+    if($exam_only == 1){
+    $classificacao = $neen_nota;
+    }
+    else
+    {
+    $classificacao = ($mac_nota * $mac_percentagem) + ($neen_nota * $neen_percentagem);
+    }
+    
 
 
- $classificacao = round($classificacao);
- if ($classificacao >= 0 && $classificacao < $config->exame_nota) {
- $estado_final = 'Recurso';
- $color_final = 'for-red';
- }
+    $classificacao = round($classificacao);
+    if ($classificacao >= 0 && $classificacao < $config->exame_nota) {
+    $estado_final = 'Recurso';
+    $color_final = 'for-red';
+    }
 
- if ($classificacao >= $config->exame_nota && $classificacao <= 20) {
- $estado_final = 'Aprovado(a)';
- $color_final = 'for-green';
- }
- $nota_final = round($classificacao);
- }
- 
- }
+    if ($classificacao >= $config->exame_nota && $classificacao <= 20) {
+    $estado_final = 'Aprovado(a)';
+    $color_final = 'for-green';
+    }
+    $nota_final = round($classificacao);
+    }
+    
+    }
  @endphp
  
  @if ($oral_nota == null)
