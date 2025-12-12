@@ -1221,320 +1221,418 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-    public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo)
-    {
+public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo)
+{
+    Log::info('=== studentAjax INICIO ===');
+    Log::info('Parâmetros recebidos:', [
+        'discipline_id' => $id,
+        'metrica_id' => $metrica_id,
+        'study_plan_id' => $study_plan_id,
+        'avaliacao_id' => $avaliacao_id,
+        'class_id' => $class_id,
+        'id_anoLectivo' => $id_anoLectivo,
+        'query_params' => $request->query()
+    ]);
 
-        try {
-            // echo $metrica_id;
-            //avaliar se a metrica ja foi concluida, se retornar algo é porque já foi concluida
-            $lectiveYearSelected = DB::table('lective_years')
-                ->where('id', $id_anoLectivo)
-                ->first();
-            $whoIs = $request->query('whoIs', null);
-            $segunda_chamada = $request->query('segunda_chamada', null);
-
-            //Consultar os estudantes matriculados
-            $id_curso = $this->students_matriculado($id, $lectiveYearSelected->id)->first();
-            $consulta_aluno = $this->students_matriculado($id, $lectiveYearSelected->id);
+    try {
+        // echo $metrica_id;
+        //avaliar se a metrica ja foi concluida, se retornar algo é porque já foi concluida
+        $lectiveYearSelected = DB::table('lective_years')
+            ->where('id', $id_anoLectivo)
+            ->first();
+        
+        Log::info('Ano letivo selecionado:', ['lectiveYearSelected' => $lectiveYearSelected]);
             
-            //$consulta_aluno->where('mc.class_id', $class_id)->get();
-            $consulta_aluno = $consulta_aluno->where('mc.class_id', $class_id);
+        $whoIs = $request->query('whoIs', null);
+        $segunda_chamada = $request->query('segunda_chamada', null);
+        
+        Log::info('Flags:', ['whoIs' => $whoIs, 'segunda_chamada' => $segunda_chamada]);
 
-            //Metrica única -- ver se é de exame obrigatório  obs. o Code_Dev é atribuido na metríca que é considerada a neen
-            //Disciplnaha has mandatory exame
-            $Discipline_exame_mandatory = DB::table('discipline_has_exam as dhe')
-                ->join('disciplines as disc', 'disc.id', '=', 'dhe.discipline_id')
-                ->where('disc.id', $id)
-                ->where('dhe.id_plain_study', $study_plan_id)
-                ->get();
+        //Consultar os estudantes matriculados
+        $id_curso = $this->students_matriculado($id, $lectiveYearSelected->id)->first();
+        Log::info('Curso encontrado:', ['id_curso' => $id_curso]);
+        
+        $consulta_aluno = $this->students_matriculado($id, $lectiveYearSelected->id);
+        
+        //$consulta_aluno->where('mc.class_id', $class_id)->get();
+        $consulta_aluno = $consulta_aluno->where('mc.class_id', $class_id);
+        
+        Log::info('Consulta aluno (após filtro class):', ['count' => $consulta_aluno->count() ?? 'N/A']);
 
+        //Metrica única -- ver se é de exame obrigatório  obs. o Code_Dev é atribuido na metríca que é considerada a neen
+        //Disciplnaha has mandatory exame
+        $Discipline_exame_mandatory = DB::table('discipline_has_exam as dhe')
+            ->join('disciplines as disc', 'disc.id', '=', 'dhe.discipline_id')
+            ->where('disc.id', $id)
+            ->where('dhe.id_plain_study', $study_plan_id)
+            ->get();
+        
+        Log::info('Disciplina tem exame obrigatório?', [
+            'count' => $Discipline_exame_mandatory->count(),
+            'data' => $Discipline_exame_mandatory->toArray()
+        ]);
 
-            $metrics_analise_exame = Metrica::where('id', $metrica_id)->where('code_dev', 'Neen')->get();
-            $metrics_analise_Recurso_Ou_exame_especial_oral = Metrica::where('id', $metrica_id)->first();
-            //Condição Para ver se a disciplina não tem exame obrigatório e a metrica em questão é NEEN
-            //Trazer apenas os alunos que na MAC têm nota maior >= 7 e Menor < 14
+        $metrics_analise_exame = Metrica::where('id', $metrica_id)->where('code_dev', 'Neen')->get();
+        $metrics_analise_Recurso_Ou_exame_especial_oral = Metrica::where('id', $metrica_id)->first();
+        
+        Log::info('Métrica análise:', [
+            'metrics_analise_exame_count' => $metrics_analise_exame->count(),
+            'metrics_analise_Recurso_Ou_exame_especial_oral' => $metrics_analise_Recurso_Ou_exame_especial_oral
+        ]);
+        
+        //Condição Para ver se a disciplina não tem exame obrigatório e a metrica em questão é NEEN
+        //Trazer apenas os alunos que na MAC têm nota maior >= 7 e Menor < 14
 
-            //atribuir exame padrao , quando a disciplina não tem o exame obrigatório marcado
-            $obrigatorioExame = $Discipline_exame_mandatory->isNotEmpty() ? $Discipline_exame_mandatory[0]->has_mandatory_exam : 0;
+        //atribuir exame padrao , quando a disciplina não tem o exame obrigatório marcado
+        $obrigatorioExame = $Discipline_exame_mandatory->isNotEmpty() ? $Discipline_exame_mandatory[0]->has_mandatory_exam : 0;
+        
+        Log::info('Obrigatório exame:', ['obrigatorioExame' => $obrigatorioExame]);
 
+        if ($metrics_analise_exame->isNotEmpty()) {
+            Log::info('Entrou no bloco NEEN');
+            //Chamar o método que trás todos os alunos com suas notas.
+            //O último parametro ano lectivo é apenas para trazer a matricula recente.
+            //O id da métrica é para difinir o intervalo de notas que deve trazer ou seja != NEE (PF1,PF2,OA).
 
-            if ($metrics_analise_exame->isNotEmpty()) {
-                //Chamar o método que trás todos os alunos com suas notas.
-                //O último parametro ano lectivo é apenas para trazer a matricula recente.
-                //O id da métrica é para difinir o intervalo de notas que deve trazer ou seja != NEE (PF1,PF2,OA).
+            if ($obrigatorioExame == 0) {
+                Log::info('Exame NÃO obrigatório - Processando NEEN');
 
-                if ($obrigatorioExame == 0) {
+                $config = DB::table('avalicao_config')->first();
+                Log::info('Config avaliação:', ['config' => $config]);
 
-                    $config = DB::table('avalicao_config')->first();
+                $Ids_da_User_exame = $this->EstudanteMac($class_id, $id_curso->id_curso, $id_anoLectivo, $id, $lectiveYearSelected, $metrics_analise_exame, $config);
+                Log::info('IDs usuários exame NEEN:', ['count' => count($Ids_da_User_exame), 'ids' => $Ids_da_User_exame]);
 
-                    $Ids_da_User_exame = $this->EstudanteMac($class_id, $id_curso->id_curso, $id_anoLectivo, $id, $lectiveYearSelected, $metrics_analise_exame, $config);
+                //echo "não obigatório: class={$class_id} <br>";
 
-                    //echo "não obigatório: class={$class_id} <br>";
+                $reprovados = $consulta_aluno
+                    ->whereIn('users.id', $Ids_da_User_exame)
+                    ->distinct()
+                    ->get();
+                
+                Log::info('Reprovados encontrados:', ['count' => $reprovados->count()]);
 
-                    $reprovados = $consulta_aluno
-                        ->whereIn('users.id', $Ids_da_User_exame)
-                        ->distinct()
-                        ->get();
+                $dados = $reprovados->unique('user_id');
+                Log::info('Dados após unique:', ['count' => $dados->count()]);
+            } else {
+                Log::info('Exame obrigatório - Trazendo todos alunos');
+                //$consulta_alunoG=$this->students_matriculado($id,$lectiveYearSelected);
+                //$consulta_alunoG->where('mc.class_id', $class_id)->where('md.exam_only',1) ->get();
+                $dados = $consulta_aluno->where('mc.class_id', $class_id)->get();
+                Log::info('Dados (exame obrigatório):', ['count' => $dados->count()]);
+                //$dados=$Colection;
 
-                    $dados = $reprovados->unique('user_id');
+            }
+        } else {
+            Log::info('NÃO é métrica NEEN');
+
+            if ($metrics_analise_Recurso_Ou_exame_especial_oral != null) {
+                Log::info('Métrica especial encontrada:', ['code_dev' => $metrics_analise_Recurso_Ou_exame_especial_oral->code_dev]);
+
+                if ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Recurso") {
+                    Log::info('Processando RECURSO');
+
+                    $consulta_alunoR = $this->students_matriculado($id, $lectiveYearSelected->id);
+                    $id_matriculation_users = $consulta_alunoR->where('mc.class_id', $class_id)
+                        ->get()
+                        ->map(function ($item, $key) {
+                            return $item->id_mat;
+                        });
+                    
+                    Log::info('IDs matrícula para recurso:', ['count' => $id_matriculation_users->count()]);
+                    
+                    //Pegar todos que marcaram o recurso e Pagaram o Emolumento exame de recurso.
+
+                    $Id_Users_exame_recurso = $this->EstudanteRecurso($id, $id_matriculation_users, $lectiveYearSelected);
+                    Log::info('IDs usuários recurso:', ['count' => count($Id_Users_exame_recurso), 'ids' => $Id_Users_exame_recurso]);
+                    
+                    $dados = $consulta_alunoR->whereIn('mt.id', $Id_Users_exame_recurso)->get();
+                    Log::info('Dados recurso:', ['count' => $dados->count()]);
+                    
+                } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "oral") {
+                    Log::info('Processando EXAME ORAL');
+
+                    $consulta_alunoExameOral = $this->students_matriculado($id, $lectiveYearSelected->id);
+                    $id_matriculation_users = $consulta_alunoExameOral->where('mc.class_id', $class_id)
+                        ->get()
+                        ->map(function ($item, $key) {
+                            return $item->id_mat;
+                        });
+                    
+                    Log::info('IDs matrícula para oral:', ['count' => $id_matriculation_users->count()]);
+                    
+                    //Pegar todos que marcaram o recurso e Pagaram o Emolumento exame de recurso.
+
+                    $Id_Users_exame_recurso = $this->EstudanteExameOral($id, $id_matriculation_users, $lectiveYearSelected);
+                    Log::info('IDs usuários oral:', ['count' => count($Id_Users_exame_recurso), 'ids' => $Id_Users_exame_recurso]);
+                    
+                    $dados = $consulta_alunoExameOral->whereIn('mt.id', $Id_Users_exame_recurso)->get();
+                    Log::info('Dados oral:', ['count' => $dados->count()]);
+
+                    // return "oral entrou aqui";
+                } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Exame_especial") {
+                    Log::info('Processando EXAME ESPECIAL');
+                    $dados = $this->EstudanteExameEspecial($id, $class_id, $lectiveYearSelected);
+                    Log::info('Dados exame especial:', ['count' => is_countable($dados) ? $dados->count() : 'N/A']);
+                    // return "Exame especial";
+                } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Extraordinario") {
+                    Log::info('Processando EXAME EXTRAORDINÁRIO');
+                    $dados = $this->EstudanteExameExtraordinario($id, $class_id, $lectiveYearSelected);
+                    Log::info('Dados extraordinário:', ['count' => is_countable($dados) ? $dados->count() : 'N/A']);
                 } else {
-                    //$consulta_alunoG=$this->students_matriculado($id,$lectiveYearSelected);
-                    //$consulta_alunoG->where('mc.class_id', $class_id)->where('md.exam_only',1) ->get();
-                    $dados = $consulta_aluno->where('mc.class_id', $class_id)->get();
-                    //$dados=$Colection;
+                    Log::info('Métrica padrão (PF1, PF2, OA, etc)');
 
+                    //Dados dos estudantes matriculados na disciplina selecionada no formulario de atribuir nota.
+                    $dados = $consulta_aluno->distinct()->where('md.exam_only', 0)->get();
+                    Log::info('Dados métrica padrão:', ['count' => $dados->count()]);
                 }
             } else {
-
-
-                if ($metrics_analise_Recurso_Ou_exame_especial_oral != null) {
-
-                    if ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Recurso") {
-
-                        $consulta_alunoR = $this->students_matriculado($id, $lectiveYearSelected->id);
-                        $id_matriculation_users = $consulta_alunoR->where('mc.class_id', $class_id)
-                            ->get()
-                            ->map(function ($item, $key) {
-                                return $item->id_mat;
-                            });
-                        //Pegar todos que marcaram o recurso e Pagaram o Emolumento exame de recurso.
-
-                        $Id_Users_exame_recurso = $this->EstudanteRecurso($id, $id_matriculation_users, $lectiveYearSelected);
-                        $dados = $consulta_alunoR->whereIn('mt.id', $Id_Users_exame_recurso)->get();
-                    } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "oral") {
-
-                        $consulta_alunoExameOral = $this->students_matriculado($id, $lectiveYearSelected->id);
-                        $id_matriculation_users = $consulta_alunoExameOral->where('mc.class_id', $class_id)
-                            ->get()
-                            ->map(function ($item, $key) {
-                                return $item->id_mat;
-                            });
-                        //Pegar todos que marcaram o recurso e Pagaram o Emolumento exame de recurso.
-
-                        $Id_Users_exame_recurso = $this->EstudanteExameOral($id, $id_matriculation_users, $lectiveYearSelected);
-                        $dados = $consulta_alunoExameOral->whereIn('mt.id', $Id_Users_exame_recurso)->get();
-
-
-                        // return "oral entrou aqui";
-                    } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Exame_especial") {
-                        $dados = $this->EstudanteExameEspecial($id, $class_id, $lectiveYearSelected);
-                        // return "Exame especial";
-                    } elseif ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Extraordinario") {
-                        $dados = $this->EstudanteExameExtraordinario($id, $class_id, $lectiveYearSelected);
-                    } else {
-
-
-                        //Dados dos estudantes matriculados na disciplina selecionada no formulario de atribuir nota.
-
-                        $dados = $consulta_aluno->distinct()->where('md.exam_only', 0)->get();
-                    }
-                }
+                Log::warning('Métrica não encontrada para ID: ' . $metrica_id);
             }
+        }
 
-            $metrics = Metrica::whereAvaliacaosId($avaliacao_id)->get();
-            //________________________________________________________________________________________//
+        $metrics = Metrica::whereAvaliacaosId($avaliacao_id)->get();
+        Log::info('Métricas da avaliação:', ['count' => $metrics->count(), 'avaliacao_id' => $avaliacao_id]);
+        //________________________________________________________________________________________//
 
-            $grades = AvaliacaoAluno::leftJoin('plano_estudo_avaliacaos as pea', 'pea.id', '=', 'avaliacao_alunos.plano_estudo_avaliacaos_id')
-                ->leftJoin('matriculations as mt', 'mt.user_id', '=', 'avaliacao_alunos.users_id')
-                ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'mt.id')
-                ->leftJoin('matriculation_disciplines as mat_disc', 'mat_disc.matriculation_id', '=', 'mt.id')
+        $grades = AvaliacaoAluno::leftJoin('plano_estudo_avaliacaos as pea', 'pea.id', '=', 'avaliacao_alunos.plano_estudo_avaliacaos_id')
+            ->leftJoin('matriculations as mt', 'mt.user_id', '=', 'avaliacao_alunos.users_id')
+            ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'mt.id')
+            ->leftJoin('matriculation_disciplines as mat_disc', 'mat_disc.matriculation_id', '=', 'mt.id')
+            ->leftJoin('user_parameters as u_p', function ($join) {
+                $join->on('mt.user_id', '=', 'u_p.users_id')
+                    ->where('u_p.parameters_id', 1);
+            })
+            ->when($segunda_chamada, function ($join) {
+                $join->where('avaliacao_alunos.segunda_chamada', 1);
+            })
+            ->when(!$segunda_chamada, function ($join) {
+                $join->where('avaliacao_alunos.segunda_chamada', null);
+            })
+            ->select(
+                'avaliacao_alunos.id as aaid',
+                'avaliacao_alunos.nota as aanota',
+                'avaliacao_alunos.users_id as user_id',
+                'mc.class_id as class_id',
+                'u_p.value as user_name',
+                'mat_disc.exam_only as e_f',
+                'avaliacao_alunos.presence as presence',
+                'pea.id as pea_id'
+            )
+            // Aqui não seria o ID do Plano Estudo Avaliacaos?
+            ->where('pea.study_plan_editions_id', $study_plan_id)
+            ->where('avaliacao_alunos.metricas_id', $metrica_id)
+            ->where('pea.disciplines_id', $id)
+            ->where('mc.class_id', $class_id)
+            ->where('avaliacao_alunos.id_turma', $class_id)
+            ->orderBy('user_name', 'ASC')
+            ->distinct()
+            ->get();
+        
+        Log::info('Notas encontradas:', ['count' => $grades->count()]);
+
+        if ($metrics_analise_Recurso_Ou_exame_especial_oral && $metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Exame_especial") {
+            Log::info('Processando grades para Exame Especial');
+
+            $grades = false;
+            $grades = AvaliacaoAluno::leftJoin('plano_estudo_avaliacaos as pea', 'pea.id', '=',  'avaliacao_alunos.plano_estudo_avaliacaos_id')
                 ->leftJoin('user_parameters as u_p', function ($join) {
-                    $join->on('mt.user_id', '=', 'u_p.users_id')
+                    $join->on('avaliacao_alunos.users_id', '=', 'u_p.users_id')
                         ->where('u_p.parameters_id', 1);
-                })
-                ->when($segunda_chamada, function ($join) {
-                    $join->where('avaliacao_alunos.segunda_chamada', 1);
-                })
-                ->when(!$segunda_chamada, function ($join) {
-                    $join->where('avaliacao_alunos.segunda_chamada', null);
                 })
                 ->select(
                     'avaliacao_alunos.id as aaid',
                     'avaliacao_alunos.nota as aanota',
                     'avaliacao_alunos.users_id as user_id',
-                    'mc.class_id as class_id',
                     'u_p.value as user_name',
-                    'mat_disc.exam_only as e_f',
-                    'avaliacao_alunos.presence as presence',
-                    'pea.id as pea_id'
+                    'avaliacao_alunos.presence as presence'
                 )
                 // Aqui não seria o ID do Plano Estudo Avaliacaos?
                 ->where('pea.study_plan_editions_id', $study_plan_id)
                 ->where('avaliacao_alunos.metricas_id', $metrica_id)
                 ->where('pea.disciplines_id', $id)
-                ->where('mc.class_id', $class_id)
                 ->where('avaliacao_alunos.id_turma', $class_id)
                 ->orderBy('user_name', 'ASC')
                 ->distinct()
                 ->get();
-
-
-            if ($metrics_analise_Recurso_Ou_exame_especial_oral->code_dev == "Exame_especial") {
-
-                $grades = false;
-                $grades = AvaliacaoAluno::leftJoin('plano_estudo_avaliacaos as pea', 'pea.id', '=',  'avaliacao_alunos.plano_estudo_avaliacaos_id')
-                    ->leftJoin('user_parameters as u_p', function ($join) {
-                        $join->on('avaliacao_alunos.users_id', '=', 'u_p.users_id')
-                            ->where('u_p.parameters_id', 1);
-                    })
-                    ->select(
-                        'avaliacao_alunos.id as aaid',
-                        'avaliacao_alunos.nota as aanota',
-                        'avaliacao_alunos.users_id as user_id',
-                        'u_p.value as user_name',
-                        'avaliacao_alunos.presence as presence'
-                    )
-                    // Aqui não seria o ID do Plano Estudo Avaliacaos?
-                    ->where('pea.study_plan_editions_id', $study_plan_id)
-                    ->where('avaliacao_alunos.metricas_id', $metrica_id)
-                    ->where('pea.disciplines_id', $id)
-                    ->where('avaliacao_alunos.id_turma', $class_id)
-                    ->orderBy('user_name', 'ASC')
-                    ->distinct()
-                    ->get();
-            }
-
-            $metrics_Pauta = Metrica::where('id', $metrica_id)->first();
-
-            $pauta_status = [
-                'PF1' => "40",
-                'PF2' => "40",
-                'OA' => "40",
-                'Recurso' => "10",
-                'Neen' => "20",
-                'oral' => "25",
-                'Exame_especial' => "35",
-                'Extraordinario' => "45",
-                'Trabalho' => "50",
-                'Defesa' => "50",
-                'TESP' => "60",
-            ];
-
-            //Estado da Publicação da pauta
-            $estado_publicar = DB::table('publicar_pauta')
-                ->where(['id_turma' => $class_id, 'id_ano_lectivo' => $id_anoLectivo, 'id_disciplina' => $id, 'tipo' => $pauta_status[$metrics_Pauta->code_dev]])
-                ->first();
-
-            $estado_p = $estado_publicar != "" ? $estado_publicar->estado : Null;
-            $estado_l  = Null;
-
-
-            $estado_lancar = DB::table('lancar_pauta')
-                ->where(['id_turma' => $class_id, 'id_ano_lectivo' => $id_anoLectivo, 'id_disciplina' => $id, 'pauta_tipo' => $metrics_Pauta->code_dev])
-                ->when($segunda_chamada, function ($query) {
-                    return $query->where('segunda_chamada', 1);
-                })
-                ->when(!$segunda_chamada, function ($query) {
-                    return $query->where('segunda_chamada', null);
-                })
-                ->orderBy('version', 'DESC')
-                ->first();
-
-            // dd($estado_lancar,$metrics_Pauta->code_dev);
-
-
-            $estado_l = isset($estado_lancar) && isset($estado_lancar->path) ? $estado_lancar->estado : Null;
-            $pauta_id = isset($estado_lancar) ? $estado_lancar->id : Null;
-            $pauta_version = isset($estado_lancar) && isset($estado_lancar->version) ? $estado_lancar->version : 0;
-            $pauta_path = isset($estado_lancar) ? $estado_lancar->path : Null;
-
-            $object = new MatriculationDisciplineListController();
-
-            $students_segunda_chamada = null;
-
-
-
-
-            if (!$segunda_chamada) {
-
-                $students_segunda_chamada = DB::table("matriculations as mat")
-                    ->join("users as user", 'mat.user_id', 'user.id')
-                    ->join("tb_segunda_chamada_prova_parcelar as sc", 'sc.matriculation_id', 'mat.id')
-                    ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'user.id')
-                    ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
-                    ->join("code_developer as code_dev", 'code_dev.id', 'article_emolumento.id_code_dev')
-                    ->where('code_dev.code', 'prova_parcelar')
-                    ->where('user_emolumento.status', "total")
-                    ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
-                    ->where('sc.discipline_id', $id)
-                    ->where('sc.id_class', $class_id)
-                    ->where('sc.metric_id', $metrica_id)
-                    ->where('sc.lectiveYear_id', $id_anoLectivo)
-                    ->select('user.id as user_id')
-                    ->get()
-                    ->pluck('user_id');
-            }
-
-            if ($segunda_chamada) {
-                /*$estudantesimportados = DB::table('Import_data_forlearn as import')
-                    ->join('user_classes as uc', 'uc.user_id', 'import.id_user')
-                    ->join('article_requests as ar', 'ar.user_id', 'import.id_user')
-                    ->where('uc.class_id', $class_id)
-                    ->where('import.ano_curricular', 5)*/
-
-                $dado = collect();
-                $dados = $dados->whereIn(
-                    'id_mat',
-                    DB::table('article_requests as art')
-                        ->join('matriculations as mat', 'mat.user_id', 'art.user_id')
-                        ->join('tb_segunda_chamada_prova_parcelar as sc', 'mat.id', 'sc.matriculation_id')
-                        ->where('sc.discipline_id', $id)
-                        ->where('sc.metric_id', $metrica_id)
-                        ->where('sc.id_class', $class_id)
-                        ->where('sc.lectiveYear_id', $id_anoLectivo)
-                        ->where('mat.lective_year', $id_anoLectivo)
-
-                        ->join('articles', 'art.article_id', 'articles.id')
-                        //->where('articles.id_code_dev', 35)
-                        //->where('art.status', 'total')
-                        ->select(['sc.*'])
-                        ->get()
-                        ->pluck('matriculation_id')
-                        ->toArray()
-                );
-                $dados->each(
-                    function ($item) use ($dado) {
-                        $dado->push($item);
-                    }
-                );
-
-
-                $dados = $dado;
-
-                // $grades = $grades->whereNotIn('user_id',$dados->pluck('user_id')->toArray());
-                $grade = collect();
-                $grades->each(function ($item) use ($grade) {
-                    $grade->push($item);
-                });
-                $grades = $grade;
-            }
-
-
-
-
-            $config = DB::table('avalicao_config')->first();
-
-            return json_encode(
-                array(
-                    'metricas' => $metrics,
-                    'students' => $dados,
-                    'grades' => $grades,
-                    'estado_pauta' => $estado_p,
-                    'config' => $config,
-                    'estado_pauta_lancar' => $estado_l,
-                    'students_segunda_chamada' => $students_segunda_chamada,
-                    'version' => $pauta_version,
-                    'pauta_id' => $pauta_id,
-                    'pauta_path' => $pauta_path
-                )
-            );
-        } catch (Exception | Throwable $e) {
-            return $e;
-            logError($e);
-            return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+            
+            Log::info('Notas exame especial:', ['count' => $grades->count()]);
         }
-    }
 
+        $metrics_Pauta = Metrica::where('id', $metrica_id)->first();
+        Log::info('Métrica para pauta:', ['metrics_Pauta' => $metrics_Pauta]);
+
+        $pauta_status = [
+            'PF1' => "40",
+            'PF2' => "40",
+            'OA' => "40",
+            'Recurso' => "10",
+            'Neen' => "20",
+            'oral' => "25",
+            'Exame_especial' => "35",
+            'Extraordinario' => "45",
+            'Trabalho' => "50",
+            'Defesa' => "50",
+            'TESP' => "60",
+        ];
+
+        //Estado da Publicação da pauta
+        $estado_publicar = DB::table('publicar_pauta')
+            ->where(['id_turma' => $class_id, 'id_ano_lectivo' => $id_anoLectivo, 'id_disciplina' => $id, 'tipo' => $pauta_status[$metrics_Pauta->code_dev]])
+            ->first();
+        
+        Log::info('Estado publicar pauta:', [
+            'estado_publicar' => $estado_publicar,
+            'tipo' => $metrics_Pauta->code_dev,
+            'valor_tipo' => $pauta_status[$metrics_Pauta->code_dev] ?? 'N/A'
+        ]);
+
+        $estado_p = $estado_publicar != "" ? $estado_publicar->estado : Null;
+        $estado_l  = Null;
+
+        $estado_lancar = DB::table('lancar_pauta')
+            ->where(['id_turma' => $class_id, 'id_ano_lectivo' => $id_anoLectivo, 'id_disciplina' => $id, 'pauta_tipo' => $metrics_Pauta->code_dev])
+            ->when($segunda_chamada, function ($query) {
+                return $query->where('segunda_chamada', 1);
+            })
+            ->when(!$segunda_chamada, function ($query) {
+                return $query->where('segunda_chamada', null);
+            })
+            ->orderBy('version', 'DESC')
+            ->first();
+
+        Log::info('Estado lançar pauta:', ['estado_lancar' => $estado_lancar]);
+
+        // dd($estado_lancar,$metrics_Pauta->code_dev);
+
+        $estado_l = isset($estado_lancar) && isset($estado_lancar->path) ? $estado_lancar->estado : Null;
+        $pauta_id = isset($estado_lancar) ? $estado_lancar->id : Null;
+        $pauta_version = isset($estado_lancar) && isset($estado_lancar->version) ? $estado_lancar->version : 0;
+        $pauta_path = isset($estado_lancar) ? $estado_lancar->path : Null;
+        
+        Log::info('Variáveis pauta:', [
+            'estado_l' => $estado_l,
+            'pauta_id' => $pauta_id,
+            'pauta_version' => $pauta_version,
+            'pauta_path' => $pauta_path
+        ]);
+
+        $object = new MatriculationDisciplineListController();
+
+        $students_segunda_chamada = null;
+
+        if (!$segunda_chamada) {
+            Log::info('Processando estudantes para segunda chamada');
+
+            $students_segunda_chamada = DB::table("matriculations as mat")
+                ->join("users as user", 'mat.user_id', 'user.id')
+                ->join("tb_segunda_chamada_prova_parcelar as sc", 'sc.matriculation_id', 'mat.id')
+                ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'user.id')
+                ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
+                ->join("code_developer as code_dev", 'code_dev.id', 'article_emolumento.id_code_dev')
+                ->where('code_dev.code', 'prova_parcelar')
+                ->where('user_emolumento.status', "total")
+                ->whereBetween('article_emolumento.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])
+                ->where('sc.discipline_id', $id)
+                ->where('sc.id_class', $class_id)
+                ->where('sc.metric_id', $metrica_id)
+                ->where('sc.lectiveYear_id', $id_anoLectivo)
+                ->select('user.id as user_id')
+                ->get()
+                ->pluck('user_id');
+            
+            Log::info('Estudantes segunda chamada:', ['count' => $students_segunda_chamada->count()]);
+        }
+
+        if ($segunda_chamada) {
+            Log::info('Modo SEGUNDA CHAMADA ativo');
+            
+            $dado = collect();
+            $dados = $dados->whereIn(
+                'id_mat',
+                DB::table('article_requests as art')
+                    ->join('matriculations as mat', 'mat.user_id', 'art.user_id')
+                    ->join('tb_segunda_chamada_prova_parcelar as sc', 'mat.id', 'sc.matriculation_id')
+                    ->where('sc.discipline_id', $id)
+                    ->where('sc.metric_id', $metrica_id)
+                    ->where('sc.id_class', $class_id)
+                    ->where('sc.lectiveYear_id', $id_anoLectivo)
+                    ->where('mat.lective_year', $id_anoLectivo)
+
+                    ->join('articles', 'art.article_id', 'articles.id')
+                    ->where('articles.id_code_dev', 35)
+                    ->where('art.status', 'total')
+                    ->select(['sc.*'])
+                    ->get()
+                    ->pluck('matriculation_id')
+                    ->toArray()
+            );
+            
+            Log::info('Filtro segunda chamada aplicado:', ['count_antes' => $dados->count()]);
+            
+            $dados->each(
+                function ($item) use ($dado) {
+                    $dado->push($item);
+                }
+            );
+
+            $dados = $dado;
+            Log::info('Dados após processamento segunda chamada:', ['count' => $dados->count()]);
+
+            // $grades = $grades->whereNotIn('user_id',$dados->pluck('user_id')->toArray());
+            $grade = collect();
+            $grades->each(function ($item) use ($grade) {
+                $grade->push($item);
+            });
+            $grades = $grade;
+            Log::info('Grades após segunda chamada:', ['count' => $grades->count()]);
+        }
+
+        $config = DB::table('avalicao_config')->first();
+        
+        Log::info('=== studentAjax FIM - Preparando resposta ===');
+        Log::info('Resumo final:', [
+            'metrics_count' => $metrics->count(),
+            'students_count' => is_countable($dados) ? $dados->count() : 'N/A',
+            'grades_count' => is_countable($grades) ? $grades->count() : 'N/A',
+            'estado_p' => $estado_p,
+            'estado_l' => $estado_l
+        ]);
+
+        return json_encode(
+            array(
+                'metricas' => $metrics,
+                'students' => $dados,
+                'grades' => $grades,
+                'estado_pauta' => $estado_p,
+                'config' => $config,
+                'estado_pauta_lancar' => $estado_l,
+                'students_segunda_chamada' => $students_segunda_chamada,
+                'version' => $pauta_version,
+                'pauta_id' => $pauta_id,
+                'pauta_path' => $pauta_path
+            )
+        );
+    } catch (Exception | Throwable $e) {
+        Log::error('=== ERRO em studentAjax ===');
+        Log::error('Mensagem: ' . $e->getMessage());
+        Log::error('Arquivo: ' . $e->getFile());
+        Log::error('Linha: ' . $e->getLine());
+        Log::error('Trace: ' . $e->getTraceAsString());
+        Log::error('Parâmetros no erro:', [
+            'discipline_id' => $id,
+            'metrica_id' => $metrica_id,
+            'study_plan_id' => $study_plan_id,
+            'avaliacao_id' => $avaliacao_id,
+            'class_id' => $class_id,
+            'id_anoLectivo' => $id_anoLectivo
+        ]);
+        
+        return $e;
+        logError($e);
+        return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
+    }
+}
 
 
 

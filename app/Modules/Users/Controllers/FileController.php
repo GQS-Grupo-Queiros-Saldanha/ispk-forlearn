@@ -40,7 +40,7 @@ class FileController extends Controller
         }
     }
 
-    public function getAvatar($filename)
+    public function getAvatar($filename = null)
     { 
             try {
                 /*   if (!$user || $user->avatar !== $filename) {
