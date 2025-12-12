@@ -1485,8 +1485,8 @@ class AvaliacaoAlunoControllerNew extends Controller
                         ->where('mat.lective_year', $id_anoLectivo)
 
                         ->join('articles', 'art.article_id', 'articles.id')
-                        ->where('articles.id_code_dev', 35)
-                        ->where('art.status', 'total')
+                        //->where('articles.id_code_dev', 35)
+                        //->where('art.status', 'total')
                         ->select(['sc.*'])
                         ->get()
                         ->pluck('matriculation_id')
