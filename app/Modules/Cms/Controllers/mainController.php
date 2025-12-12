@@ -1166,11 +1166,11 @@ class mainController extends Controller
 
         // Verifica se o usuário está autenticado
         $matriculations = DB::table("matriculations")
-        ->where("id", $matriculation)
-        ->whereNull("deleted_at")
-        ->select(["lective_year", "id", "user_id"])
-        ->orderBy("lective_year", "asc")
-        ->first();
+            ->where("id", $matriculation)
+            ->whereNull("deleted_at")
+            ->select(["lective_year", "id", "user_id"])
+            ->orderBy("lective_year", "asc")
+            ->first();
 
         if (!isset($matriculations->lective_year)) {
             return response("Nenhuma matrícula encontrada neste ano lectivo", 404);
@@ -1207,7 +1207,9 @@ class mainController extends Controller
         $classes = $this->matriculation_classes($matriculations->id);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+        
         Log::info('CONFIG DEBUG2', ['config' => $config]);
+        
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
             "percurso", "articles", "plano", "matriculations",
             "disciplines", "student_info", "institution", "config",

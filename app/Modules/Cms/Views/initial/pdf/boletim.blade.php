@@ -19,7 +19,6 @@
                 <div class="col-12 mb-4">
                     <table class="table_te">
 
-
                         <tr class="bg1">
                             <th class="text-center">Estudante</th>
                             <th class="text-center">Matrícula</th>
@@ -28,6 +27,7 @@
                             <th class="text-center">Curso</th>
                             <th class="text-center">Ano Lectivo</th>
                         </tr>
+                        
                         <tr class="bg2">
                             <td class="text-center bg2">{{ $student_info->full_name }}</td>
                             <td class="text-center bg2">{{ $student_info->matricula }}</td>
