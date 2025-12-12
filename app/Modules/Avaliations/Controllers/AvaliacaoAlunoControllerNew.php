@@ -1221,8 +1221,7 @@ class AvaliacaoAlunoControllerNew extends Controller
 
 
 
-public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo)
-{
+public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, $avaliacao_id, $class_id, $id_anoLectivo){
     Log::info('=== studentAjax INICIO ===');
     Log::info('Parâmetros recebidos:', [
         'discipline_id' => $id,
@@ -1383,7 +1382,11 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
                     Log::info('Métrica padrão (PF1, PF2, OA, etc)');
 
                     //Dados dos estudantes matriculados na disciplina selecionada no formulario de atribuir nota.
-                    $dados = $consulta_aluno->distinct()->where('md.exam_only', 0)->get();
+                    $dados = $consulta_aluno
+                        ->where('md.discipline_id',$id)
+                        ->where('md.exam_only', 0)
+                        ->get();
+
                     Log::info('Dados métrica padrão:', ['count' => $dados->count()]);
                 }
             } else {
