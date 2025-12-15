@@ -189,11 +189,9 @@ use App\Modules\Cms\Controllers\mainController;
  $mac_percentagem = $config->percentagem_mac / 100;
  $neen_percentagem = $config->percentagem_oral / 100;
  
-$turma = $classes->first(function($item) use ($item_DISC) {
+$id_turma = $classes->first(function($item) use ($item_DISC) {
     return $item_DISC->turma == $item->display_name; // ou $item->code
 })->id;
-
-$id_turma = $turma ? $turma->id : null;
 
  $aprovado = false;
  $recurso = false;
