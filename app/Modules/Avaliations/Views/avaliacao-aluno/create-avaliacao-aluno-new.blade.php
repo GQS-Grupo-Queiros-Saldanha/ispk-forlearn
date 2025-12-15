@@ -909,8 +909,16 @@
         }
 
         function findStudentGrade(grades, userId) {
-            return grades.find(nota => nota.user_id == userId) || {};
+            // Filtra todas as notas do estudante
+            const studentGrades = grades.filter(nota => nota.user_id == userId);
+
+            // Retorna a primeira nota válida (não null), ou um objeto vazio se não houver
+            if (studentGrades.length > 0) {
+                return studentGrades.find(nota => nota.aanota !== null) || studentGrades[0];
+            }
+            return {};
         }
+
 
         function createStudentRow(student, grade, index, regime, tipo) {
             const notaAluno = grade.aanota || '';
