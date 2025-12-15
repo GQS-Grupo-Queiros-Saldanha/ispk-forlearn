@@ -3446,7 +3446,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
             ]);
         }
     }
-
+    dd($metricas);
     return $metricas;
 }
 
