@@ -299,10 +299,10 @@ class estatisticaMatriculationController extends Controller
         $keys = array_keys($matriculas_staff->toArray());
 
         for ($i = 0; $i < count($keys); $i++) {
-            $staff[$i] = DB::table('user_parameters')
+            $staff[$i] = DB::table('user_parameters as up')
                 ->where('parameters_id', 1)
                 ->where('users_id', $keys[$i])
-                ->select(['users_id', 'value as nome'])
+                ->select(['up.users_id', 'up.value as nome'])
                 ->first();
 
             $nome = explode(" ", $staff[$i]->nome);
