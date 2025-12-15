@@ -3385,9 +3385,8 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
    private function metricas_avaliacoes(Carbon $data){
     Log::info('Iniciando metricas_avaliacoes', ['data' => $data]);
 
+    $contextDate = $data->toDateString();
     
-    $contextDate = Carbon::parse($data['data'])->toDateString();
-
     $metricas = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
         ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
         ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
