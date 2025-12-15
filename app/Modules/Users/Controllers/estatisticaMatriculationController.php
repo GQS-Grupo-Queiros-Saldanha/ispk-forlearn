@@ -595,21 +595,24 @@ class estatisticaMatriculationController extends Controller
     }
 
 
-    private function pre_matricula_confirma_emolumento($lectiveYearSelected){
-     
-        $confirm=EmolumentCodevLective("confirm",$lectiveYearSelected)->first();
-        $Prematricula=EmolumentCodevLective("p_matricula",$lectiveYearSelected)->first() ;   
-        $emolumentos=[];
+       public static function pre_matricula_confirma_emolumento($lectiveYearSelected){
 
-        if($confirm!=null){
-            $emolumentos[]=$confirm->id_emolumento;
+        $confirm = EmolumentCodevLective("confirm", $lectiveYearSelected)->first();
+        $Prematricula = EmolumentCodevLective("p_matricula", $lectiveYearSelected)->first();
+        $confirm_tardia = EmolumentCodevLective("confirm_tardia", $lectiveYearSelected)->first();
+
+        $emolumentos = [];
+
+        if ($confirm != null) {
+            $emolumentos[] = $confirm->id_emolumento;
         }
-        if($Prematricula!=null){
-            $emolumentos[]=$Prematricula->id_emolumento;
+        if ($Prematricula != null) {
+            $emolumentos[] = $Prematricula->id_emolumento;
+        }
+        if ($confirm_tardia != null) {
+            $emolumentos[] = $confirm_tardia->id_emolumento;
         }
         return $emolumentos;
-
-
     }
 
 
