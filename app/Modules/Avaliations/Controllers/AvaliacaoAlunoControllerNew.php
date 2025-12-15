@@ -3057,6 +3057,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
 
                     // Pega métricas
                     $metrica = $this->metricas_avaliacoes($currentData);
+                    dd($metricas);
 
                     Log::info('Consulta metrica construída', [
                         'query' => $metrica->toSql(),
@@ -3446,7 +3447,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
             ]);
         }
     }
-    dd($metricas);
+  
     return $metricas;
 }
 
