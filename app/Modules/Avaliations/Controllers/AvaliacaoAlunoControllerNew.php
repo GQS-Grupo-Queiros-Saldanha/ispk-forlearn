@@ -3022,7 +3022,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
 
                     // Pega avaliações no intervalo de data
                     $avaliacao_time = $this->avaliacaoes($id_disciplina, $anoLectivo);
-                    dd($avaliacao_time)
+                    dd($avaliacao_time);
 
                     Log::info('Consulta avaliacao_time construída', [
                         'query' => $avaliacao_time->toSql(),
