@@ -3056,7 +3056,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
                     Log::info('Turmas do teacher', ['turmas_count' => count($turmas)]);
 
                     // Pega métricas
-                    $metrica = $this->metricas_avaliacoes(Carbon $currentData);
+                    $metrica = $this->metricas_avaliacoes($currentData);
                     //dd($metrica);
 
                     Log::info('Consulta metrica construída', [
