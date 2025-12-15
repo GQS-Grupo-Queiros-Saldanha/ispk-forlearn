@@ -591,6 +591,19 @@ class estatisticaMatriculationController extends Controller
         // $footer_html = view()->make('Users::users.partials.pdf_footer', compact('institution'))->render();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
         $pdf->setOption('footer-html', $footer_html);
+
+        // Debug universal
+        dd([
+            'total_registros_brutos' => $new_model->count(),
+            'primeiros_10_registros' => $new_model->take(10), // amostra
+            'course_years_disponiveis' => $new_model->pluck('course_year')->unique(),
+            'estados_disponiveis' => $new_model->pluck('state')->unique(),
+            'classes_disponiveis' => $new_model->pluck('classe')->unique(),
+            'sexos_disponiveis' => $new_model->pluck('sexo')->unique(),
+            'usuarios_unicos' => $new_model->pluck('id_usuario')->unique()->count(),
+        ]);
+
+
         return $pdf->stream($pdf_name . '.pdf');
     }
 
