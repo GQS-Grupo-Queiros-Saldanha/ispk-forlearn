@@ -189,9 +189,11 @@ use App\Modules\Cms\Controllers\mainController;
  $mac_percentagem = $config->percentagem_mac / 100;
  $neen_percentagem = $config->percentagem_oral / 100;
  
-$id_turma = $classes->first(function($item) use ($item_DISC) {
+$turma = $classes->first(function($item) use ($item_DISC) {
     return $item_DISC->turma == $item->display_name; // ou $item->code
 })->id;
+
+$id_turma = $turma ? $turma->id : null;
 
  $aprovado = false;
  $recurso = false;
@@ -259,9 +261,9 @@ $id_turma = $classes->first(function($item) use ($item_DISC) {
  }
  @endphp
 
- <td class='text-bold text-center'>{{ isset($pf1_nota) ? number_format($pf1_nota, 2) : '-' }}</td>
- <td class='text-bold text-center'>{{ isset($pf2_nota) ? number_format($pf2_nota, 2) : '-' }}</td>
- <td class='text-bold text-center'>{{ isset($oa_nota) ? number_format($oa_nota, 2) : '-' }}</td>
+ <td class='text-bold text-center'>{{ $pf1_nota !== null ? number_format($pf1_nota, 2) : '-' }}</td>
+ <td class='text-bold text-center'>{{ $pf2_nota !== null ? number_format($pf2_nota, 2) : '-' }}</td>
+ <td class='text-bold text-center'>{{ $oa_nota !== null ? number_format($oa_nota, 2) : '-' }}</td>
 
  @php
     
@@ -362,8 +364,8 @@ $id_turma = $classes->first(function($item) use ($item_DISC) {
         ++$count_exame;
         
         // CORREÇÃO: Verificar se $neen_nota não é null antes de usar
-        if($neen_nota === null) {
-            $neen_nota_valor = 0;
+        if ($neen_nota === null) {
+            return;
         } else {
             $neen_nota_valor = round($neen_nota);
         }
@@ -443,7 +445,7 @@ $id_turma = $classes->first(function($item) use ($item_DISC) {
     
     // CORREÇÃO: Verificar se $oral_nota não é null
     if($oral_nota === null) {
-        $oral_nota_valor = 0;
+        return;
     } else {
         $oral_nota_valor = round($oral_nota);
     }
