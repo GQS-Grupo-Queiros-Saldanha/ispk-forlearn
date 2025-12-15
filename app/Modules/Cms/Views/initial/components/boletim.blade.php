@@ -363,7 +363,7 @@ $id_turma = $classes->first(function($item) use ($item_DISC) {
         
         // CORREÇÃO: Verificar se $neen_nota não é null antes de usar
         if ($neen_nota === null) {
-            $exame = false;
+           //calculo
         } else {
             $neen_nota_valor = round($neen_nota);
         }
@@ -443,7 +443,7 @@ $id_turma = $classes->first(function($item) use ($item_DISC) {
     
     // CORREÇÃO: Verificar se $oral_nota não é null
     if($oral_nota === null) {
-       $exame = false;
+      //calculo
     } else {
         $oral_nota_valor = round($oral_nota);
     }
