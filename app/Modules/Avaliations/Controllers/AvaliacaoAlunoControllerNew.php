@@ -3057,7 +3057,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
 
                     // Pega métricas
                     $metrica = $this->metricas_avaliacoes($currentData);
-                    dd($metrica);
+                    //dd($metrica);
 
                     Log::info('Consulta metrica construída', [
                         'query' => $metrica->toSql(),
@@ -3385,24 +3385,32 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
    private function metricas_avaliacoes($data){
     Log::info('Iniciando metricas_avaliacoes', ['data' => $data]);
 
+    
+    $contextDate = Carbon::parse($data['data'])->toDateString();
+
     $metricas = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
         ->leftJoin('study_plans as stp', 'stp.id', '=', 'stpeid.study_plans_id')
         ->leftJoin('courses as crs', 'crs.id', '=', 'stp.courses_id')
         ->leftJoin('courses_translations as ct', function ($join) {
-            $join->on('ct.courses_id', '=', 'crs.id');
-            $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-            $join->on('ct.active', '=', DB::raw(true));
+            $join->on('ct.courses_id', '=', 'crs.id')
+                ->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()))
+                ->on('ct.active', '=', DB::raw(true));
         })
         ->leftJoin('disciplines as dp', 'dp.id', '=', 'plano_estudo_avaliacaos.disciplines_id')
         ->leftJoin('disciplines_translations as dt', function ($join) {
-            $join->on('dt.discipline_id', '=', 'dp.id');
-            $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-            $join->on('dt.active', '=', DB::raw(true));
+            $join->on('dt.discipline_id', '=', 'dp.id')
+                ->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()))
+                ->on('dt.active', '=', DB::raw(true));
         })
         ->leftJoin('avaliacaos as avl', 'avl.id', '=', 'plano_estudo_avaliacaos.avaliacaos_id')
         ->leftJoin('metricas as mtrc', 'mtrc.avaliacaos_id', '=', 'avl.id')
         ->leftJoin('calendarie_metrica as c_m', 'mtrc.id', '=', 'c_m.id_metrica')
         ->whereNull('c_m.deleted_at')
+
+        // 🔹 DATA DE CONTEXTO (não now())
+        ->whereDate('c_m.data_inicio', '<=', $contextDate)
+        ->whereDate('c_m.data_fim', '>=', $contextDate)
+
         ->select([
             'mtrc.id as mtrc_id',
             'mtrc.avaliacaos_id as mtrc_avaliacaos_id',
@@ -3415,8 +3423,18 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
             'c_m.id as cm_id'
         ])
         ->distinct()
-        ->orderByRaw("CASE WHEN c_m.data_inicio = '2025-11-20' THEN 1 ELSE 0 END ASC, c_m.data_inicio ASC");
 
+        // 🔹 PRIORIDADE ACADÉMICA
+        ->orderByRaw("
+            CASE
+                WHEN mtrc.code_dev IN ('PF1','PF2','OA') THEN 1
+                WHEN mtrc.code_dev = 'Neen' THEN 2
+                WHEN mtrc.code_dev IN ('Recurso','Extraordinario','Exame_especial') THEN 3
+                ELSE 4
+            END
+        ")
+
+        ->orderBy('c_m.data_inicio', 'ASC');
 
 
     Log::info('Consulta construída', [
