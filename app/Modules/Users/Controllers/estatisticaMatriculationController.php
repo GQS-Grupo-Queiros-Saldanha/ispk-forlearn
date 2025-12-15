@@ -296,8 +296,7 @@ class estatisticaMatriculationController extends Controller
             }
         );
         $keys = array_keys($matriculas_staff->toArray());
-        dd($keys);
-
+      
         for ($i = 0; $i < count($keys); $i++) {
             $staff[$i] = DB::table('user_parameters')
                 ->where('parameters_id', 1)
