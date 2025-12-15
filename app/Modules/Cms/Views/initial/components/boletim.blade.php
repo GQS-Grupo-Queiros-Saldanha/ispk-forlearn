@@ -166,16 +166,36 @@ use App\Modules\Cms\Controllers\mainController;
 
             $valor = round($nota->nota_anluno, 2);
 
-            match ($nota->MT_CodeDV) {
-                'PF1' => $pf1 = $valor,
-                'PF2' => $pf2 = $valor,
-                'OA' => $oa = $valor,
-                'Neen' => $exame = $valor,
-                'oral' => $oral = $valor,
-                'Recurso' => $recurso = $valor,
-                'Exame_especial' => $especial = $valor,
-                default => null
-            };
+            switch ($nota->MT_CodeDV) {
+                case 'PF1':
+                    $pf1 = $valor;
+                    break;
+
+                case 'PF2':
+                    $pf2 = $valor;
+                    break;
+
+                case 'OA':
+                    $oa = $valor;
+                    break;
+
+                case 'Neen':
+                    $exame = $valor;
+                    break;
+
+                case 'oral':
+                    $oral = $valor;
+                    break;
+
+                case 'Recurso':
+                    $recurso = $valor;
+                    break;
+
+                case 'Exame_especial':
+                    $especial = $valor;
+                    break;
+            }
+
         }
     }
 
