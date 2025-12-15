@@ -115,10 +115,19 @@ use App\Modules\Cms\Controllers\mainController;
 <thead>
 <tr>
     <td colspan="3" class="boletim_text">
-        <b>{{ $matriculations->course }}</b>
-        <span class="barra">|</span> Ano: <b>{{ $matriculations->course_year }}º</b>
+       @if (isset($matriculations->course))
+            <b>{{ $matriculations->course }}</b>
+        @endif
+
+        @if (isset($matriculations->course_year))
+            <span class="barra">|</span> Ano: <b>{{ $matriculations->course_year }}º</b>
+        @endif
+
         <span class="barra">|</span> Semestre: <b>{{ $semestreActual }}º</b>
-        <span class="barra">|</span> Turma: <b>{{ $matriculations->classe }}</b>
+
+        @if (isset($matriculations->classe))
+            <span class="barra">|</span> Turma: <b>{{ $matriculations->classe }}</b>
+        @endif
     </td>
     <td colspan="5" class="text-center bgmac">MAC</td>
     <td colspan="2" class="text-center bg1">EXAME</td>
