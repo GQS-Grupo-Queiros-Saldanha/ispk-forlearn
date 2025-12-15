@@ -1458,6 +1458,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
                 ->orderBy('user_name', 'ASC')
                 ->distinct()
                 ->get();
+                dd($grades);
             
             Log::info('Notas exame especial:', ['count' => $grades->count()]);
         }
