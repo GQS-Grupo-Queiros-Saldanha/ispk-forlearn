@@ -458,8 +458,6 @@ class MatriculationConfirmationController extends Controller
                  return response()->json(array('html' => $view));
             }
 
-           
-           
             $studentInfo = User::where('users.id', $studentId)
                 ->join('user_courses', 'user_courses.users_id', '=', 'users.id')
                 ->join('courses', 'courses.id', '=', 'user_courses.courses_id')
@@ -487,8 +485,8 @@ class MatriculationConfirmationController extends Controller
                       
            //Default course_candidate
            $default_course=DB::table('courses_default')
-          ->select(['courses_id as course_id'])
-          ->where('users_id',$studentId)->first();
+            ->select(['courses_id as course_id'])
+            ->where('users_id',$studentId)->first();
               
            if($default_course){
                $data = $this->candidato_primeiro($default_course);  
@@ -519,8 +517,8 @@ class MatriculationConfirmationController extends Controller
                 ->get();
 
             $matriculation = Matriculation::whereUserId($studentId)
-            ->orderBy('created_at', 'desc')
-            ->first();
+                ->orderBy('created_at', 'desc')
+                ->first();
 
 
             //trazer todas as disciplinas (do estudante)  armazenadas no historico
@@ -582,9 +580,7 @@ class MatriculationConfirmationController extends Controller
 
               //Regras do 5 pontos (saber sobre aprovação ou não)         
               $code_curso=DB::table('courses')->select(['code'])->whereId($studentInfo->course_id)->get();
-              $estado= $this->verificarAprovacao($disciplinesReproved,$studentInfo->course_id); 
-              
-              
+              $estado = $this->verificarAprovacao($disciplinesReproved,$studentInfo->course_id); 
               
                //Pegar a regra dos cursos com mudança de forma dinâmica.
               $curso_mudanca_status=DB::table('tb_courses_change')
@@ -711,6 +707,12 @@ class MatriculationConfirmationController extends Controller
         'curso_code' => $cursoCode
     ]);
 
+    //Regras para cada curos by Ezequiel
+    //id do curso
+    $id_curso
+    $curso = [''=>'']
+
+    
     // Regras
     if ($total_reprovadas >= 5) {
         $estado = ($cursoCode === "RI" && $pontos >= 5 && $pontos < 7) ? 'aprovado' : 'reprovado';

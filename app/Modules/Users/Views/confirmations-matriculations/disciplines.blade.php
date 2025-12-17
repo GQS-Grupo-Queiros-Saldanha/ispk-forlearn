@@ -14,7 +14,7 @@
     @endif 
     @endisset 
  
-    @foreach ($disciplinesReproved as $year => $disciplinesReproved)
+    @foreach ($disciplinesReproved as $year => $reprovedByYear)
     
         <h5 class="card-title mb-2">{{ $year }}º Ano</h5>
         @php array_push($years, $year); @endphp
@@ -22,7 +22,7 @@
             <select name="classes[{{$year}}]" id="classes[{{$year}}]" class="select_turm"  key="{{$year}}">
                 <option value="">Seleciona a turma</option>
                 @foreach ($classes as $class)
-                    @foreach ($disciplinesReproved as $validarCurso)
+                    @foreach ($reprovedByYear as $validarCurso)
                   
                     @endforeach
                         @if ($class->year == $year &&  $class->courses_id==$validarCurso['courses_id'])
@@ -34,7 +34,7 @@
             </select>
 
          <ul style="list-style: none">
-            @foreach ($disciplinesReproved as $discipline)
+            @foreach ($reprovedByYear as $discipline)
                   <li class="item_classes_{{ $year }}">
                     @php $countDiscipline++; @endphp
                        <input type='checkbox' id="check_discipline_{{ $discipline['discipline_id']}}" onclick="showSelect({{$discipline['discipline_id']}})" value="{{$discipline['discipline_id']}}" name="disciplines[{{$discipline->years}}][]" value="{{ $discipline['discipline_id'] }}" class="check-discipline form-check-input-center" data-id="{{$discipline['discipline_id']}}" required>
