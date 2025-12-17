@@ -593,7 +593,7 @@ class estatisticaMatriculationController extends Controller
         $pdf->setOption('footer-html', $footer_html);
 
         // Debug universal
-        dd([
+        /*dd([
             'total_registros_brutos' => $new_model->count(),
             'primeiros_10_registros' => $new_model->take(10), // amostra
             'course_years_disponiveis' => $new_model->pluck('course_year')->unique(),
@@ -601,7 +601,7 @@ class estatisticaMatriculationController extends Controller
             'classes_disponiveis' => $new_model->pluck('classe')->unique(),
             'sexos_disponiveis' => $new_model->pluck('sexo')->unique(),
             'usuarios_unicos' => $new_model->pluck('id_usuario')->unique()->count(),
-        ]);
+        ]);*/
 
 
         return $pdf->stream($pdf_name . '.pdf');
