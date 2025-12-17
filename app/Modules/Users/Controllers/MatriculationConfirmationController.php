@@ -709,8 +709,9 @@ class MatriculationConfirmationController extends Controller
 
     //Regras para cada curos by Ezequiel
     //id do curso
+    /*
     $id_curso
-    $curso = [''=>'']
+    $curso = [''=>'']*/
 
     
     // Regras
