@@ -765,7 +765,7 @@ class MatriculationConfirmationController extends Controller
     } else {
         // Se houver reprovações mas não encaixou nas condições acima, devolve como reprovado e pontos calculados
         $observacao = [
-            'Obs' => 'normal',
+            'Obs' => 'com_cadeiras',
             'curso' => $cursoCode,
             'pontos' => $pontos,
             'estado' => 'reprovado'
