@@ -65,29 +65,25 @@ use App\Modules\Cms\Controllers\mainController;
             
             function determinarEstado($nota, $config, $tipo = 'mac') {
                 if ($tipo === 'mac') {
+
+                    // APROVADO TEM SEMPRE PRIORIDADE
                     if ($nota >= $config->mac_nota_dispensa && $nota <= 20) {
                         return ['estado' => 'Aprovado(a)', 'cor' => 'for-green'];
-                    } elseif ($nota >= $config->exame_nota_inicial && $nota <= $config->exame_nota_final) {
+                    }
+
+                    // EXAME SÓ SE FOR NEGATIVA
+                    if ($nota >= $config->exame_nota_inicial && $nota < $config->mac_nota_dispensa) {
                         return ['estado' => 'Exame', 'cor' => 'for-yellow'];
-                    } elseif ($nota >= 0 && $nota <= $config->mac_nota_recurso) {
-                        return ['estado' => 'Recurso', 'cor' => 'for-red'];
                     }
-                } elseif ($tipo === 'exame') {
-                    if ($nota >= $config->exame_nota && $nota <= 20) {
-                        return ['estado' => 'Aprovado(a)', 'cor' => 'for-green'];
-                    } elseif ($nota >= 0 && $nota < $config->exame_nota) {
+
+                    // RECURSO
+                    if ($nota >= 0 && $nota < $config->exame_nota_inicial) {
                         return ['estado' => 'Recurso', 'cor' => 'for-red'];
-                    }
-                } elseif ($tipo === 'final') {
-                    if ($nota >= 10 && $nota <= 20) {
-                        return ['estado' => 'Aprovado(a)', 'cor' => 'for-green'];
-                    } elseif ($nota >= 0 && $nota < 10) {
-                        return ['estado' => 'Reprovado(a)', 'cor' => 'for-red'];
                     }
                 }
-                
-                return ['estado' => '', 'cor' => ''];
+
             }
+
         @endphp
         
         @foreach($semestres as $semestreActual)
