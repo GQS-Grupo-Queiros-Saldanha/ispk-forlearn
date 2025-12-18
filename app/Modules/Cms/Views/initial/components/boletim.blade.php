@@ -192,7 +192,7 @@ use App\Modules\Cms\Controllers\mainController;
                         $exame_calc <= round($config->exame_oral_final) &&
                         $exame_oral_nota === null) {
                         // Precisa de exame oral mas ainda não tem
-                        $resultado['estado_final'] = 'Exame Oral Pendente';
+                        $resultado['estado_final'] = 'Exame';
                         $resultado['color_final'] = 'for-yellow';
                         $resultado['nota_final'] = '-';
                         $resultado['classificacao_final'] = $classificacao_exame;
