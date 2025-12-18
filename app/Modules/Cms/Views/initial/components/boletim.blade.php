@@ -72,7 +72,7 @@ use App\Modules\Cms\Controllers\mainController;
                     }
 
                     // EXAME SÓ SE FOR NEGATIVA
-                    if ($nota >= $config->exame_nota_inicial && $nota < $config->mac_nota_dispensa) {
+                    if ($nota >= $config->exame_nota_inicial && $nota < 10 ) {
                         return ['estado' => 'Exame', 'cor' => 'for-yellow'];
                     }
 
