@@ -1218,10 +1218,7 @@ class mainController extends Controller
             ->where('id_ano_lectivo', $lective)
             ->get()
             ->groupBy(['id_disciplina', 'Pauta_tipo']);
-        
-        dd($pautas);
-
-
+            
         
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
             "percurso", "articles", "plano", "matriculations",
