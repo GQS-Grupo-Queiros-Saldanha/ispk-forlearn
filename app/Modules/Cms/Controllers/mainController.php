@@ -1220,18 +1220,19 @@ class mainController extends Controller
             ->groupBy(['id_disciplina', 'Pauta_tipo']);
         
         dd(compact(
-            'articles', 
-            'plano', 
-            'config', 
-            'melhoria_notas', 
-            'classes', 
-            'institution', 
-            'footer_html', 
-            'disciplinas_ids', 
-            'id_turma', 
-            'lective', 
+            'articles',
+            'plano',
+            'config',
+            'melhoria_notas',
+            'classes',
+            'institution',
+            'footer_html',
+            'disciplinas_ids',
+            'id_turma',
+            'lective',
             'pautas'
         ));
+
 
         
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
