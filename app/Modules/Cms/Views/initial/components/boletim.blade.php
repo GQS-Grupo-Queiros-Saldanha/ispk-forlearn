@@ -60,19 +60,26 @@ use App\Modules\Cms\Controllers\mainController;
                     return round($mac_nota);
                 }
                 
-                return 0;
+                return null;
             }
             
             function determinarEstado($nota, $config, $tipo = 'mac') {
+                if ($nota === null || $nota === '') {
+                    return ['estado' => '-', 'cor' => 'for-blue'];
+                }
+                // Verificar se $config existe e tem as propriedades necessárias
+                if (!isset($config) || !is_object($config)) {
+                    return ['estado' => 'Indefinido', 'cor' => 'for-blue'];
+                }
+                
                 if ($tipo === 'mac') {
-
                     // APROVADO TEM SEMPRE PRIORIDADE
                     if ($nota >= $config->mac_nota_dispensa && $nota <= 20) {
                         return ['estado' => 'Aprovado(a)', 'cor' => 'for-green'];
                     }
 
                     // EXAME SÓ SE FOR NEGATIVA
-                    if ($nota >= $config->exame_nota_inicial && $nota <=10 /*$config->mac_nota_dispensa*/) {
+                    if ($nota >= $config->exame_nota_inicial && $nota < $config->mac_nota_dispensa) {
                         return ['estado' => 'Exame', 'cor' => 'for-yellow'];
                     }
 
@@ -81,7 +88,155 @@ use App\Modules\Cms\Controllers\mainController;
                         return ['estado' => 'Recurso', 'cor' => 'for-red'];
                     }
                 }
+                
+                if ($tipo === 'exame') {
+                    if ($nota >= $config->mac_nota_dispensa && $nota <= 20) {
+                        return ['estado' => 'Aprovado(a)', 'cor' => 'for-green'];
+                    }
+                    if ($nota >= $config->exame_nota_inicial && $nota < $config->mac_nota_dispensa) {
+                        return ['estado' => 'Recurso', 'cor' => 'for-red'];
+                    }
+                    if ($nota >= 0 && $nota < $config->exame_nota_inicial) {
+                        return ['estado' => 'Recurso', 'cor' => 'for-red'];
+                    }
+                }
+                
+                if ($tipo === 'final') {
+                    if ($nota >= 10 && $nota <= 20) {
+                        return ['estado' => 'Aprovado(a)', 'cor' => 'for-green'];
+                    } else {
+                        return ['estado' => 'Reprovado(a)', 'cor' => 'for-red'];
+                    }
+                }
+                
+                // Estado padrão se nada se aplicar
+                return ['estado' => 'Indefinido', 'cor' => 'for-blue'];
+            }
 
+            function calcularEstadoFinal($mac_nota, $exame_nota, $recurso_nota, $especial_nota, $exame_oral_nota, $config, $exam_only, $mac_percentagem, $neen_percentagem) {
+                // Inicializar variáveis de resultado
+                $resultado = [
+                    'estado_final' => 'Indefinido',
+                    'color_final' => 'for-blue',
+                    'nota_final' => '-',
+                    'aprovado' => false,
+                    'recurso' => false,
+                    'exame' => false,
+                    'exame_oral' => false,
+                    'classificacao_final' => 0
+                ];
+                
+                // 1. Verificar se tem nota de exame especial (tem prioridade máxima)
+                if ($especial_nota !== null) {
+                    $estado = determinarEstado($especial_nota, $config, 'final');
+                    $resultado['estado_final'] = $estado['estado'];
+                    $resultado['color_final'] = $estado['cor'];
+                    $resultado['nota_final'] = $especial_nota;
+                    $resultado['classificacao_final'] = $especial_nota;
+                    $resultado['aprovado'] = ($estado['estado'] === 'Aprovado(a)');
+                    return $resultado;
+                }
+                
+                // 2. Verificar se tem nota de recurso
+                if ($recurso_nota !== null) {
+                    $estado = determinarEstado($recurso_nota, $config, 'final');
+                    $resultado['estado_final'] = $estado['estado'];
+                    $resultado['color_final'] = $estado['cor'];
+                    $resultado['nota_final'] = $recurso_nota;
+                    $resultado['classificacao_final'] = $recurso_nota;
+                    $resultado['aprovado'] = ($estado['estado'] === 'Aprovado(a)');
+                    $resultado['recurso'] = true;
+                    return $resultado;
+                }
+                
+                // 3. Verificar se é disciplina apenas de exame
+                if ($exam_only == 1 && $exame_nota !== null) {
+                    $estado = determinarEstado($exame_nota, $config, 'final');
+                    $resultado['estado_final'] = $estado['estado'];
+                    $resultado['color_final'] = $estado['cor'];
+                    $resultado['nota_final'] = $exame_nota;
+                    $resultado['classificacao_final'] = $exame_nota;
+                    $resultado['aprovado'] = ($estado['estado'] === 'Aprovado(a)');
+                    $resultado['exame'] = true;
+                    return $resultado;
+                }
+                
+                // 4. Verificar estado baseado apenas no MAC (se não tem exame)
+                if ($exame_nota === null &&  $mac_nota !== null) {
+                    $estado = determinarEstado($mac_nota, $config, 'mac');
+                    $resultado['estado_final'] = $estado['estado'];
+                    $resultado['color_final'] = $estado['cor'];
+                    $resultado['nota_final'] = $mac_nota;
+                    $resultado['classificacao_final'] = $mac_nota;
+                    $resultado['aprovado'] = ($estado['estado'] === 'Aprovado(a)');
+                    $resultado['exame'] = ($estado['estado'] === 'Exame');
+                    $resultado['recurso'] = ($estado['estado'] === 'Recurso');
+                    return $resultado;
+                }
+                
+                // 5. Calcular com exame normal (escrito + oral se necessário)
+                if ($exame_nota !== null) {
+                    // Calcular classificação após exame
+                    $exame_calc = round($exame_nota);
+                    $classificacao_exame = 0;
+                    
+                    if ($exam_only == 1) {
+                        $classificacao_exame = $exame_calc;
+                    } else {
+                        $classificacao_exame = round(($mac_nota * $mac_percentagem) + ($exame_calc * $neen_percentagem));
+                    }
+                    
+                    // Verificar se precisa de exame oral
+                    if (isset($config->exame_oral_final, $config->mac_nota_recurso) &&
+                        $exame_calc > $config->mac_nota_recurso &&
+                        $exame_calc <= round($config->exame_oral_final) &&
+                        $exame_oral_nota === null) {
+                        // Precisa de exame oral mas ainda não tem
+                        $resultado['estado_final'] = 'Exame Oral Pendente';
+                        $resultado['color_final'] = 'for-yellow';
+                        $resultado['nota_final'] = '-';
+                        $resultado['classificacao_final'] = $classificacao_exame;
+                        $resultado['exame'] = true;
+                        $resultado['exame_oral'] = true;
+                        return $resultado;
+                    }
+                    
+                    // Se tem exame oral, calcular com ele
+                    if ($exame_oral_nota !== null) {
+                        $oral_calc = round($exame_oral_nota);
+                        if ($exam_only == 1) {
+                            $classificacao_exame = $oral_calc;
+                        } else {
+                            $classificacao_exame = round(($mac_nota * $mac_percentagem) + ($oral_calc * $neen_percentagem));
+                        }
+                    }
+                    
+                    // Determinar estado final
+                    $estado = determinarEstado($classificacao_exame, $config, 'exame');
+                    $resultado['estado_final'] = $estado['estado'];
+                    $resultado['color_final'] = $estado['cor'];
+                    $resultado['nota_final'] = $classificacao_exame;
+                    $resultado['classificacao_final'] = $classificacao_exame;
+                    $resultado['aprovado'] = ($estado['estado'] === 'Aprovado(a)');
+                    $resultado['exame'] = true;
+                    $resultado['exame_oral'] = ($exame_oral_nota !== null);
+                    
+                    return $resultado;
+                }
+                
+                // 6. Estado padrão (apenas MAC sem exame)
+                if ($mac_nota !== null) {
+                    $estado = determinarEstado($mac_nota, $config, 'mac');
+                    $resultado['estado_final'] = $estado['estado'];
+                    $resultado['color_final'] = $estado['cor'];
+                    $resultado['nota_final'] = $mac_nota;
+                    $resultado['classificacao_final'] = $mac_nota;
+                    $resultado['aprovado'] = ($estado['estado'] === 'Aprovado(a)');
+                    $resultado['exame'] = ($estado['estado'] === 'Exame');
+                    $resultado['recurso'] = ($estado['estado'] === 'Recurso');
+                }
+                
+                return $resultado;
             }
 
         @endphp
@@ -139,16 +294,6 @@ use App\Modules\Cms\Controllers\mainController;
                             $recurso_nota = null;
                             $especial_nota = null;
                             
-                             $mac_nota = 0;
-                            $classificacao = 0;
-                            $estado_final = null;
-                            $color_final = null;
-                            $nota_final = null;
-                            $aprovado = false;
-                            $recurso = false;
-                            $exame = false;
-                            $exame_oral = false;
-                            
                             // Extrair notas do percurso
                             if(isset($percurso[$index])) {
                                 foreach ($percurso[$index] as $itemNotas) {
@@ -192,19 +337,16 @@ use App\Modules\Cms\Controllers\mainController;
                                 $id_turma = $turma ? $turma->id : null;
                             }
                             
-                            // Variáveis de estado
-                            $mac_nota = 0;
-                            $classificacao = 0;
-                            $estado_final = '';
-                            $color_final = '';
-                            $nota_final = '-';
-                            $aprovado = false;
-                            $recurso = false;
-                            $exame = false;
-                            $exame_oral = false;
+                            // Variáveis de configuração
                             $exam_only = isset($item_DISC->e_f) ? $item_DISC->e_f : 0;
                             $mac_percentagem = isset($config->percentagem_mac) ? $config->percentagem_mac / 100 : 0.7;
                             $neen_percentagem = isset($config->percentagem_oral) ? $config->percentagem_oral / 100 : 0.3;
+                            
+                            // Calcular nota MAC
+                            $mac_nota = null;
+                            if ($pf1_nota !== null || $pf2_nota !== null || $oa_nota !== null) {
+                                $mac_nota = calcularNotaMAC($pf1_nota, $pf1_percentagem, $pf2_nota, $pf2_percentagem, $oa_nota, $oa_percentagem);
+                            }
                             
                             // Verificar pautas
                             $p_mac = ($id_turma && isset($item_DISC->id_disciplina) && isset($item_DISC->id_anoLectivo)) 
@@ -227,25 +369,33 @@ use App\Modules\Cms\Controllers\mainController;
                                 ? mainController::verificar_pauta($id_turma, $item_DISC->id_disciplina, $item_DISC->id_anoLectivo, 'Pauta Final')
                                 : 0;
                             
-                            // Cálculo do MAC
-                            if ($p_mac > 0) {
-                                $mac_nota = calcularNotaMAC($pf1_nota, $pf1_percentagem, $pf2_nota, $pf2_percentagem, $oa_nota, $oa_percentagem);
-                                $classificacao = $mac_nota;
-                                
-                                if ($exam_only == 1) {
-                                    $exame = true;
-                                } else {
-                                    $estado_mac = determinarEstado($mac_nota, $config, 'mac');
-                                    $estado_final = $estado_mac['estado'];
-                                    $color_final = $estado_mac['cor'];
-                                    
-                                    $aprovado = ($estado_final == 'Aprovado(a)');
-                                    $recurso = ($estado_final == 'Recurso');
-                                    $exame = ($estado_final == 'Exame');
-                                    
-                                    $nota_final = $mac_nota;
-                                }
-                            }
+                            // Calcular estado final UMA ÚNICA VEZ
+                            $estado_resultado = calcularEstadoFinal(
+                                $mac_nota, 
+                                $neen_nota, 
+                                $recurso_nota, 
+                                $especial_nota, 
+                                $oral_nota, 
+                                $config, 
+                                $exam_only, 
+                                $mac_percentagem, 
+                                $neen_percentagem
+                            );
+                            
+                            // Atribuir variáveis finais
+                            $estado_final = $estado_resultado['estado_final'];
+                            $color_final = $estado_resultado['color_final'];
+                            $nota_final = $estado_resultado['nota_final'];
+                            $aprovado = $estado_resultado['aprovado'];
+                            $recurso = $estado_resultado['recurso'];
+                            $exame = $estado_resultado['exame'];
+                            $exame_oral = $estado_resultado['exame_oral'];
+                            $classificacao = $estado_resultado['classificacao_final'];
+                            
+                            // Determinar estado para exibição no MAC (antes de qualquer exame)
+                            $estado_mac_display = determinarEstado($mac_nota, $config, 'mac');
+                            $estado_mac_texto = $estado_mac_display['estado'];
+                            $color_mac_texto = $estado_mac_display['cor'];
                         @endphp
                         
                         <tbody>
@@ -261,77 +411,30 @@ use App\Modules\Cms\Controllers\mainController;
                                 
                                 <!-- Média MAC -->
                                 @if ($p_mac > 0)
-                                    <td class='text-bold text-center'>{{ $nota_final }}</td>
-                                    <td class="text-bold text-center {{ $color_final }}">{{ $estado_final }}</td>
+                                    <td class='text-bold text-center'>{{  $mac_nota !== null ? $mac_nota : '-' }}</td>
+                                    <td class="text-bold text-center {{ $color_mac_texto }}">{{ $estado_mac_texto }}</td>
                                 @else
                                     <td style='text-align: center'>-</td>
                                     <td style='text-align: center'>-</td>
                                 @endif
                                 
                                 <!-- Exame Escrito -->
-                                @if ($neen_nota === null || $aprovado)
-                                    <td style='text-align: center'>-</td>
-                                @elseif ($estado_final == 'Recurso')
+                                @if ($neen_nota === null || $aprovado || $recurso)
                                     <td style='text-align: center'>-</td>
                                 @else
                                     <td style='text-align: center'>{{ round($neen_nota) }}</td>
                                 @endif
                                 
                                 <!-- Exame Oral -->
-                                @if ($oral_nota === null)
+                                @if ($oral_nota === null || $aprovado || $recurso || !$exame_oral)
                                     <td style='text-align: center'>-</td>
-                                @elseif ($p_exame_oral > 0 && !$aprovado && $estado_final != 'Recurso')
-                                    <td style='text-align: center'>{{ round($oral_nota) }}</td>
                                 @else
-                                    <td style='text-align: center'>-</td>
+                                    <td style='text-align: center'>{{ round($oral_nota) }}</td>
                                 @endif
                                 
-                                <!-- Cálculo após exame -->
-                                @php
-                                    // Calcular classificação após exame
-                                    if ($exame && $neen_nota !== null) {
-                                        $neen_calc = round($neen_nota);
-                                        
-                                        // Verificar se precisa de exame oral
-                                        if (isset($config->exame_oral_final) && 
-                                            $neen_calc > $config->mac_nota_recurso && 
-                                            $neen_calc <= round($config->exame_oral_final)) {
-                                            $exame_oral = true;
-                                        } else {
-                                            if ($exam_only == 1) {
-                                                $classificacao = $neen_calc;
-                                            } else {
-                                                $classificacao = ($mac_nota * $mac_percentagem) + ($neen_calc * $neen_percentagem);
-                                                $classificacao = round($classificacao);
-                                            }
-                                            
-                                            $estado_exame = determinarEstado($classificacao, $config, 'exame');
-                                            $estado_final = $estado_exame['estado'];
-                                            $color_final = $estado_exame['cor'];
-                                            $nota_final = $classificacao;
-                                        }
-                                    }
-                                    
-                                    // Cálculo após exame oral
-                                    if ($exame_oral && $oral_nota !== null) {
-                                        $oral_calc = round($oral_nota);
-                                        
-                                        if ($exam_only == 1) {
-                                            $classificacao = $neen_calc;
-                                        } else {
-                                            $classificacao = ($mac_nota * $mac_percentagem) + ($oral_calc * $neen_percentagem);
-                                            $classificacao = round($classificacao);
-                                        }
-                                        
-                                        $estado_final = ($classificacao >= 10) ? 'Aprovado(a)' : 'Recurso';
-                                        $color_final = ($classificacao >= 10) ? 'for-green' : 'for-red';
-                                        $nota_final = $classificacao;
-                                    }
-                                @endphp
-                                
                                 <!-- Classificação MAC + Exame -->
-                                @if ($p_final > 0)
-                                    <td class='text-bold text-center'>{{ $classificacao }}</td>
+                                @if ($p_final > 0 && ($exame || $exame_oral) && !$recurso && $especial_nota === null)
+                                    <td class='text-bold text-center'>{{ $classificacao !== null ? $classificacao : '-' }}</td>
                                     <td class="text-bold text-center {{ $color_final }}">{{ $estado_final }}</td>
                                 @else
                                     <td style='text-align: center'>-</td>
@@ -340,21 +443,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 
                                 <!-- Recurso -->
                                 @if ($recurso_nota !== null && $p_recurso > 0 && !$aprovado)
-                                    @php
-                                        $recurso_calc = round($recurso_nota);
-                                        $classificacao = $recurso_calc;
-                                        
-                                        if ($recurso_calc >= 10) {
-                                            $estado_final = 'Aprovado(a)';
-                                            $color_final = 'for-green';
-                                            $aprovado = true;
-                                        } elseif ($recurso_calc < 10 && $especial_nota === null) {
-                                            $estado_final = 'Especial';
-                                            $color_final = 'for-red';
-                                        }
-                                        $nota_final = $classificacao;
-                                    @endphp
-                                    <td style='text-align: center'>{{ $recurso_calc }}</td>
+                                    <td style='text-align: center'>{{ round($recurso_nota) }}</td>
                                     <td class="text-bold text-center {{ $color_final }}">{{ $estado_final }}</td>
                                 @else
                                     <td style='text-align: center'>-</td>
@@ -363,15 +452,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 
                                 <!-- Exame Especial -->
                                 @if ($especial_nota !== null && $p_especial > 0 && !$aprovado)
-                                    @php
-                                        $especial_calc = round($especial_nota);
-                                        $classificacao = $especial_calc;
-                                        $estado_final = determinarEstado($especial_calc, $config, 'final');
-                                        $color_final = $estado_final['cor'];
-                                        $estado_final = $estado_final['estado'];
-                                        $nota_final = $classificacao;
-                                    @endphp
-                                    <td style='text-align: center'>{{ $especial_calc }}</td>
+                                    <td style='text-align: center'>{{ round($especial_nota) }}</td>
                                     <td class="text-bold text-center {{ $color_final }}">{{ $estado_final }}</td>
                                 @else
                                     <td style='text-align: center'>-</td>
@@ -379,7 +460,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 @endif
                                 
                                 <!-- Nota Final -->
-                                @if ($p_final > 0)
+                                @if ($p_final > 0 && $nota_final !== '-')
                                     <td class='text-bold text-center'>{{ $nota_final }}</td>
                                     <td class="text-bold text-center {{ $color_final }}">{{ $estado_final }}</td>
                                 @else
