@@ -1195,14 +1195,8 @@ class mainController extends Controller
                 return $faltou && $nota_normal && $fez_segunda_chamada;
             });
         });
+        
         // Pega todas as pautas de uma vez
-        /*$pautas = DB::table('publicar_pauta')
-            ->where('id_turma', $id_turma) // se aplicável
-            ->whereIn('id_disciplina', $disciplines) // array de disciplinas
-            ->where('id_ano_lectivo', $lective)
-            ->get()
-            ->groupBy(['id_disciplina', 'Pauta_tipo']);*/
-
 
         $articles = $this->get_payments($matriculations->lective_year, $matriculations->user_id);
         $plano = $this->study_plain($matriculations->lective_year, $matriculations->user_id);
@@ -1213,11 +1207,37 @@ class mainController extends Controller
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
         
         Log::info('CONFIG DEBUG2', ['config' => $config]);
+
+        $disciplinas_ids = $disciplines->pluck('id_disciplina')->toArray();
+        $id_turma = $classes->first()->id ?? null; // ou pega a turma correta
+        $lective = $matriculations->lective_year;
+
+        $pautas = DB::table('publicar_pauta')
+            ->when($id_turma, fn($q) => $q->where('id_turma', $id_turma))
+            ->whereIn('id_disciplina', $disciplinas_ids)
+            ->where('id_ano_lectivo', $lective)
+            ->get()
+            ->groupBy(['id_disciplina', 'Pauta_tipo']);
+        
+        dd(compact(
+            'articles', 
+            'plano', 
+            'config', 
+            'melhoria_notas', 
+            'classes', 
+            'institution', 
+            'footer_html', 
+            'disciplinas_ids', 
+            'id_turma', 
+            'lective', 
+            'pautas'
+        ));
+
         
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
             "percurso", "articles", "plano", "matriculations",
             "disciplines", "student_info", "institution", "config",
-            "classes", "melhoria_notas"
+            "classes", "melhoria_notas, pautas"
         ))
             ->setOption('margin-top', '2mm')
             ->setOption('margin-left', '2mm')
