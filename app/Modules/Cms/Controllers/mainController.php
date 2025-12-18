@@ -992,19 +992,15 @@ class mainController extends Controller
             ->get();
     }
 
-    public static function verificar_pauta($turma, $disciplina, $lective, $pauta)
-    {
-
-        $pautas = DB::table("publicar_pauta")
+   public static function verificar_pauta($turma, $disciplina, $lective, $pauta){
+        return DB::table('publicar_pauta')
             ->where('id_turma', $turma)
             ->where('id_disciplina', $disciplina)
             ->where('id_ano_lectivo', $lective)
-            // ->where('estado',1)
-            ->where('Pauta_tipo', "like", $pauta)
-            ->get();
-
-        return count($pautas);
+            ->where('Pauta_tipo', $pauta)
+            ->exists();
     }
+
 
     public function get_boletim_student(Request $request, $lective_year = null)
     {
@@ -1199,6 +1195,14 @@ class mainController extends Controller
                 return $faltou && $nota_normal && $fez_segunda_chamada;
             });
         });
+        // Pega todas as pautas de uma vez
+        /*$pautas = DB::table('publicar_pauta')
+            ->where('id_turma', $id_turma) // se aplicável
+            ->whereIn('id_disciplina', $disciplines) // array de disciplinas
+            ->where('id_ano_lectivo', $lective)
+            ->get()
+            ->groupBy(['id_disciplina', 'Pauta_tipo']);*/
+
 
         $articles = $this->get_payments($matriculations->lective_year, $matriculations->user_id);
         $plano = $this->study_plain($matriculations->lective_year, $matriculations->user_id);
