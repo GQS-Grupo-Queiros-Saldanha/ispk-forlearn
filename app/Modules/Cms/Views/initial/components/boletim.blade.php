@@ -139,6 +139,16 @@ use App\Modules\Cms\Controllers\mainController;
                             $recurso_nota = null;
                             $especial_nota = null;
                             
+                            $mac_nota = 0;
+                            $classificacao = 0;
+                            $estado_final = null;
+                            $color_final = null;
+                            $nota_final = null;
+                            $aprovado = false;
+                            $recurso = false;
+                            $exame = false;
+                            $exame_oral = false;
+                            
                             // Extrair notas do percurso
                             if(isset($percurso[$index])) {
                                 foreach ($percurso[$index] as $itemNotas) {
@@ -218,24 +228,74 @@ use App\Modules\Cms\Controllers\mainController;
                                 : 0;
                             
                             // Cálculo do MAC
+                           
                             if ($p_mac > 0) {
+                                // 1. Calcula a média MAC
                                 $mac_nota = calcularNotaMAC($pf1_nota, $pf1_percentagem, $pf2_nota, $pf2_percentagem, $oa_nota, $oa_percentagem);
                                 $classificacao = $mac_nota;
-                                
-                                if ($exam_only == 1) {
-                                    $exame = true;
-                                } else {
-                                    $estado_mac = determinarEstado($mac_nota, $config, 'mac');
-                                    $estado_final = $estado_mac['estado'];
-                                    $color_final = $estado_mac['cor'];
-                                    
-                                    $aprovado = ($estado_final == 'Aprovado(a)');
-                                    $recurso = ($estado_final == 'Recurso');
-                                    $exame = ($estado_final == 'Exame');
-                                    
-                                    $nota_final = $mac_nota;
+
+                                // Inicializa flags
+                                $estado_final = null;
+                                $color_final  = null;
+                                $nota_final   = $mac_nota;
+                                $aprovado     = false;
+                                $recurso      = false;
+                                $exame        = false;
+                                $exame_oral   = false;
+
+                                // 2. Determina estado inicial pelo MAC
+                                $estado_mac = determinarEstado($mac_nota, $config, 'mac');
+                                $estado_final = $estado_mac['estado'];
+                                $color_final  = $estado_mac['cor'];
+
+                                // Define flags de acordo com o estado
+                                $aprovado = ($estado_final == 'Aprovado(a)');
+                                $recurso  = ($estado_final == 'Recurso');
+                                $exame    = ($estado_final == 'Exame');
+
+                                // 3. Se existir exame escrito
+                                if ($exame && $neen_nota !== null) {
+                                    $calc_exame = round($neen_nota);
+                                    $classificacao = round($mac_nota * $mac_percentagem + $calc_exame * $neen_percentagem);
+                                    $estado_exame = determinarEstado($classificacao, $config, 'mac'); // ou 'exame', se preferir
+                                    $estado_final = $estado_exame['estado'];
+                                    $color_final  = $estado_exame['cor'];
+                                    $nota_final   = $classificacao;
+                                }
+
+                                // 4. Se existir exame oral
+                                if ($exame_oral && $oral_nota !== null) {
+                                    $calc_oral = round($oral_nota);
+                                    $classificacao = round($mac_nota * $mac_percentagem + $calc_oral * $neen_percentagem);
+                                    $estado_final = ($classificacao >= 10) ? 'Aprovado(a)' : 'Recurso';
+                                    $color_final  = ($classificacao >= 10) ? 'for-green' : 'for-red';
+                                    $nota_final   = $classificacao;
+                                }
+
+                                // 5. Recurso
+                                if ($recurso_nota !== null) {
+                                    $classificacao = round($recurso_nota);
+                                    if ($classificacao >= 10) {
+                                        $estado_final = 'Aprovado(a)';
+                                        $color_final  = 'for-green';
+                                        $aprovado     = true;
+                                    } else {
+                                        $estado_final = 'Recurso';
+                                        $color_final  = 'for-red';
+                                    }
+                                    $nota_final = $classificacao;
+                                }
+
+                                // 6. Exame especial
+                                if ($especial_nota !== null) {
+                                    $classificacao = round($especial_nota);
+                                    $estado_final = ($classificacao >= 10) ? 'Aprovado(a)' : 'Recurso';
+                                    $color_final  = ($classificacao >= 10) ? 'for-green' : 'for-red';
+                                    $nota_final   = $classificacao;
                                 }
                             }
+
+
                         @endphp
                         
                         <tbody>
