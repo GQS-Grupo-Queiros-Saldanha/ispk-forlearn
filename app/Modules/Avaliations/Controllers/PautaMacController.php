@@ -80,42 +80,30 @@ class PautaMacController extends Controller
             $MetricasCOde_dev = [$m->code_dev];
         
        
-                    $students = AvaliacaoAluno::leftJoin('plano_estudo_avaliacaos as pea', 'pea.id', '=', 'avaliacao_alunos.plano_estudo_avaliacaos_id')
-                    ->leftJoin('matriculations as mt', 'mt.user_id', '=', 'avaliacao_alunos.users_id')
-                    ->when($segunda_chamada,function($join){
-                     
-                        $join->where('avaliacao_alunos.segunda_chamada',1);
-                    })
-                    ->when(!$segunda_chamada,function($join){
-                     
-                        $join->where('avaliacao_alunos.segunda_chamada',null);
-                    })
-                    ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'mt.id')
-                    ->leftJoin('matriculation_disciplines as mat_disc', 'mat_disc.matriculation_id', '=', 'mt.id')
-                    ->leftJoin('user_parameters as u_p', function ($join) {
-                     $join->on('mt.user_id', '=', 'u_p.users_id')
-                        ->where('u_p.parameters_id', 1);
-                        })  
-                        ->leftJoin('user_parameters as u_p1', function ($join) {
-                     $join->on('mt.user_id', '=', 'u_p1.users_id')
-                        ->where('u_p1.parameters_id', 19);
-                        })
-                        
-                     ->select(
-                        
-                        'avaliacao_alunos.nota as grade',
-                        'u_p.value as nome',
-                        'u_p1.value as mat'
-                       )
-                    // Aqui não seria o ID do Plano Estudo Avaliacaos?
-                    ->where('pea.study_plan_editions_id', $study_plan_id)
-                    ->where('avaliacao_alunos.metricas_id', $metrica_id)
-                    ->where('pea.disciplines_id', $id)
-                    ->where('mc.class_id', $class_id)
-                    ->where('avaliacao_alunos.id_turma', $class_id)
-                    ->orderBy('nome', 'ASC')
-                    ->distinct() 
-                    ->get();
+                $students = AvaliacaoAluno::leftJoin('plano_estudo_avaliacaos as pea', 'pea.id', '=', 'avaliacao_alunos.plano_estudo_avaliacaos_id')
+                ->leftJoin('matriculations as mt', 'mt.user_id', '=', 'avaliacao_alunos.users_id')
+                ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'mt.id')
+                ->leftJoin('user_parameters as u_p', function ($join) {
+                    $join->on('mt.user_id', '=', 'u_p.users_id')->where('u_p.parameters_id', 1);
+                })  
+                ->leftJoin('user_parameters as u_p1', function ($join) {
+                    $join->on('mt.user_id', '=', 'u_p1.users_id')->where('u_p1.parameters_id', 19);
+                })
+                ->where('pea.study_plan_editions_id', $study_plan_id)
+                ->where('avaliacao_alunos.metricas_id', $metrica_id)
+                ->where('pea.disciplines_id', $id)
+                ->where('mc.class_id', $class_id)
+                ->where('avaliacao_alunos.id_turma', $class_id)
+                ->select(
+                    'mt.user_id', // seleciona ID do aluno
+                    'u_p.value as nome',
+                    'u_p1.value as mat',
+                    DB::raw('MAX(avaliacao_alunos.nota) as grade') // pega apenas uma nota
+                )
+                ->groupBy('mt.user_id', 'u_p.value', 'u_p1.value') // agrupa por aluno
+                ->orderBy('nome', 'ASC')
+                ->get();
+
 
                  
                     if($students->isEmpty())
