@@ -1144,12 +1144,12 @@ class mainController extends Controller
        
 
         $matriculations = DB::table("matriculations")
-            ->where("id",$matriculation)
-            ->where("user_id",auth()->user()->id)
+            ->where("user_id",$matriculation)
             ->whereNull("deleted_at")
             ->select(["lective_year","id","user_id"])
             ->orderBy("lective_year","asc")
             ->first();
+
         dd($matriculation,$matriculations);
 
         $courses = DB::table("user_courses")
