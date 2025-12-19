@@ -91,7 +91,7 @@ class PautaMacController extends Controller
                         $join->where('avaliacao_alunos.segunda_chamada',null);
                     })
                     ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'mt.id')
-                    ->leftJoin('matriculation_disciplines as mat_disc', 'mat_disc.matriculation_id', '=', 'mt.id')
+                    //->leftJoin('matriculation_disciplines as mat_disc', 'mat_disc.matriculation_id', '=', 'mt.id')
                     ->leftJoin('user_parameters as u_p', function ($join) {
                      $join->on('mt.user_id', '=', 'u_p.users_id')
                         ->where('u_p.parameters_id', 1);

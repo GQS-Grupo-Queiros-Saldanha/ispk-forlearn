@@ -1233,19 +1233,12 @@ class mainController extends Controller
             $key = $pauta->id_disciplina . '|' . $pauta->pauta_tipo;
             $pautasIndexadas[$key] = true;
         }
-        // DEBUG — parar tudo aqui
-       dd([
-            'total_pautas' => count($pautasIndexadas),
-            'keys' => array_keys($pautasIndexadas),
-            'pautasIndexadas' => $pautasIndexadas
-        ]);
-
-
-                
+         
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
             "percurso", "articles", "plano", "matriculations",
             "disciplines", "student_info", "institution", "config",
-            "classes", "melhoria_notas"
+            "classes", "melhoria_notas","pautasIndexadas"
+
         ))
             ->setOption('margin-top', '2mm')
             ->setOption('margin-left', '2mm')
