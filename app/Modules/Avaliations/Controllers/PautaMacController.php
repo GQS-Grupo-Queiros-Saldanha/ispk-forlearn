@@ -117,7 +117,7 @@ class PautaMacController extends Controller
                     ->distinct() 
                     ->get();
 
-                 
+                        dd($students);
                     if($students->isEmpty())
                     {
                         Toastr::warning(__('Nenhuma nota lançada'),__('toastr.warning'));
