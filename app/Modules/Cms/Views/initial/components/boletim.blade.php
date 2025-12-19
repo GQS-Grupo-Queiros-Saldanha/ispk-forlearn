@@ -30,7 +30,7 @@ use App\Modules\Cms\Controllers\mainController;
         Para visualizar as notas lançadas, dirija-se a Tesouraria para regularizar os seus pagamentos!
     </div>
 @elseif (auth()->check() && auth()->user()->id != 1425)
-   <div class="card border-warning shadow-sm mb-4">
+    <div class="card border-warning shadow-sm mb-4">
         <div class="card-body p-4">
             <div class="d-flex align-items-center mb-3">
                 <i class="bi bi-tools fs-3 text-warning me-3"></i>
@@ -48,20 +48,143 @@ use App\Modules\Cms\Controllers\mainController;
                 O sistema está em manutenção para melhorias técnicas.
             </div>
             
-            <div class="progress mb-3" style="height: 10px;">
-                <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
-                    style="width: 65%;" role="progressbar" 
-                    aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">
+            <!-- Barra de Progresso com ID para controle JS -->
+            <div class="progress mb-3" style="height: 12px;">
+                <div id="maintenanceProgressBar" 
+                    class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
+                    role="progressbar" 
+                    style="width: 0%;"
+                    aria-valuenow="0" 
+                    aria-valuemin="0" 
+                    aria-valuemax="100">
                 </div>
             </div>
             
-            <div class="d-flex justify-content-between text-muted small">
-                <span><i class="bi bi-calendar-check me-1"></i> Início: {{ now()->format('d/m H:i') }}</span>
-                <span><i class="bi bi-calendar-event me-1"></i> Término: {{ now()->addHours(48)->format('d/m H:i') }}</span>
+            <div class="row text-muted small mb-2">
+                <div class="col-6">
+                    <span><i class="bi bi-calendar-check me-1"></i> Início: <span id="startTime">{{ now()->format('d/m H:i') }}</span></span>
+                </div>
+                <div class="col-6 text-end">
+                    <span><i class="bi bi-calendar-event me-1"></i> Término: <span id="endTime">{{ now()->addHours(48)->format('d/m H:i') }}</span></span>
+                </div>
+            </div>
+            
+            <!-- Contador Regressivo em Tempo Real -->
+            <div class="alert alert-light border text-center py-2 mt-2">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="fw-bold text-warning fs-5" id="countdownHours">48</div>
+                        <small class="text-muted">Horas</small>
+                    </div>
+                    <div class="col-3">
+                        <div class="fw-bold text-warning fs-5" id="countdownMinutes">00</div>
+                        <small class="text-muted">Minutos</small>
+                    </div>
+                    <div class="col-3">
+                        <div class="fw-bold text-warning fs-5" id="countdownSeconds">00</div>
+                        <small class="text-muted">Segundos</small>
+                    </div>
+                    <div class="col-3">
+                        <div class="fw-bold text-warning fs-5" id="progressPercent">0%</div>
+                        <small class="text-muted">Concluído</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuração do tempo de manutenção (48 horas em milissegundos)
+            const totalMaintenanceTime = 48 * 60 * 60 * 1000; // 48 horas em ms
+            const maintenanceStartTime = new Date().getTime(); // Momento atual como início
+            
+            // Tempo de término
+            const maintenanceEndTime = maintenanceStartTime + totalMaintenanceTime;
+            
+            // Atualiza a data de término no HTML
+            const endDate = new Date(maintenanceEndTime);
+            document.getElementById('endTime').textContent = 
+                `${String(endDate.getDate()).padStart(2, '0')}/${String(endDate.getMonth() + 1).padStart(2, '0')} ` +
+                `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
+            
+            // Função para atualizar a barra de progresso e contador
+            function updateMaintenanceStatus() {
+                const now = new Date().getTime();
+                const timePassed = now - maintenanceStartTime;
+                const timeRemaining = maintenanceEndTime - now;
+                
+                // Calcula a porcentagem concluída
+                let percentage = Math.min((timePassed / totalMaintenanceTime) * 100, 100);
+                percentage = Math.max(percentage, 0); // Garante que não seja negativo
+                
+                // Atualiza a barra de progresso
+                const progressBar = document.getElementById('maintenanceProgressBar');
+                progressBar.style.width = `${percentage}%`;
+                progressBar.setAttribute('aria-valuenow', Math.round(percentage));
+                
+                // Atualiza a porcentagem exibida
+                document.getElementById('progressPercent').textContent = `${Math.round(percentage)}%`;
+                
+                // Atualiza o contador regressivo se ainda houver tempo
+                if (timeRemaining > 0) {
+                    const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    
+                    document.getElementById('countdownHours').textContent = 
+                        String(hours).padStart(2, '0');
+                    document.getElementById('countdownMinutes').textContent = 
+                        String(minutes).padStart(2, '0');
+                    document.getElementById('countdownSeconds').textContent = 
+                        String(seconds).padStart(2, '0');
+                    
+                    // Muda a cor da barra conforme o progresso
+                    if (percentage > 80) {
+                        progressBar.classList.remove('bg-warning');
+                        progressBar.classList.add('bg-success');
+                    } else if (percentage > 50) {
+                        progressBar.classList.remove('bg-warning');
+                        progressBar.classList.add('bg-info');
+                    }
+                } else {
+                    // Manutenção concluída
+                    document.getElementById('countdownHours').textContent = '00';
+                    document.getElementById('countdownMinutes').textContent = '00';
+                    document.getElementById('countdownSeconds').textContent = '00';
+                    document.getElementById('progressPercent').textContent = '100%';
+                    progressBar.style.width = '100%';
+                    progressBar.classList.remove('bg-warning', 'bg-info');
+                    progressBar.classList.add('bg-success');
+                    progressBar.classList.remove('progress-bar-animated');
+                    
+                    // Altera o texto principal
+                    const statusText = document.querySelector('.card-text.mb-0');
+                    if (statusText) {
+                        statusText.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> Manutenção concluída!';
+                    }
+                }
+            }
+            
+            // Atualiza imediatamente e depois a cada segundo
+            updateMaintenanceStatus();
+            setInterval(updateMaintenanceStatus, 1000);
+            
+            // Efeito visual na barra de progresso
+            const progressBar = document.getElementById('maintenanceProgressBar');
+            progressBar.addEventListener('mouseenter', function() {
+                this.style.transform = 'scaleY(1.5)';
+                this.style.transition = 'transform 0.3s';
+            });
+            
+            progressBar.addEventListener('mouseleave', function() {
+                this.style.transform = 'scaleY(1)';
+            });
+        });
+    </script>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Adicione no cabeçalho se usar animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 @else
