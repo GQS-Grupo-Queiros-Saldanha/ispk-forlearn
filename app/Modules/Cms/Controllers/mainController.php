@@ -1225,15 +1225,21 @@ class mainController extends Controller
             ->orderBy('id_disciplina')
             ->orderBy('Pauta_tipo')
             ->get();
+        
+        // Organizar pautas por disciplina + tipo
+        $pautasIndexadas = [];
 
+        foreach ($pautas as $pauta) {
+            $key = $pauta->id_disciplina . '|' . $pauta->pauta_tipo;
+            $pautasIndexadas[$key] = true;
+        }
         // DEBUG — parar tudo aqui
-        dd([
-            'lective' => $lective,
-            'id_turma' => $id_turma,
-            'disciplinas_ids' => $disciplinas_ids,
-            'total_pautas' => $pautas->count(),
-            'pautas' => $pautas
+       dd([
+            'total_pautas' => count($pautasIndexadas),
+            'keys' => array_keys($pautasIndexadas),
+            'pautasIndexadas' => $pautasIndexadas
         ]);
+
 
                 
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
