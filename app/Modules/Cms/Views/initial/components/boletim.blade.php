@@ -30,9 +30,36 @@ use App\Modules\Cms\Controllers\mainController;
         Para visualizar as notas lançadas, dirija-se a Tesouraria para regularizar os seus pagamentos!
     </div>
 @elseif (auth()->check() && auth()->user()->id != 1425)
-    <div class="alert alert-warning text-dark fw-bold text-center py-3 px-4 animate__animated animate__fadeIn">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        Para visualizar as notas lançadas, dirija-se à Tesouraria para regularizar os seus pagamentos!
+   <div class="card border-warning shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-tools fs-3 text-warning me-3"></i>
+                <div>
+                    <h5 class="card-title fw-bold text-dark mb-1">MANUTENÇÃO PROGRAMADA</h5>
+                    <p class="card-text text-muted mb-0">
+                        <i class="bi bi-clock-history me-1"></i>
+                        Em andamento • Previsão: 48 horas
+                    </p>
+                </div>
+            </div>
+            
+            <div class="alert alert-warning text-dark fw-bold py-3 px-3 mb-3">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                O sistema está em manutenção para melhorias técnicas.
+            </div>
+            
+            <div class="progress mb-3" style="height: 10px;">
+                <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
+                    style="width: 65%;" role="progressbar" 
+                    aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between text-muted small">
+                <span><i class="bi bi-calendar-check me-1"></i> Início: {{ now()->format('d/m H:i') }}</span>
+                <span><i class="bi bi-calendar-event me-1"></i> Término: {{ now()->addHours(48)->format('d/m H:i') }}</span>
+            </div>
+        </div>
     </div>
 
     <!-- Adicione no cabeçalho se usar animate.css -->
