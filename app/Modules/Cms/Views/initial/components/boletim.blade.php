@@ -347,9 +347,9 @@ use App\Modules\Cms\Controllers\mainController;
                             if ($pf1_nota !== null || $pf2_nota !== null || $oa_nota !== null) {
                                 $mac_nota = calcularNotaMAC($pf1_nota, $pf1_percentagem, $pf2_nota, $pf2_percentagem, $oa_nota, $oa_percentagem);
                             }
-                            @php
-                                $disciplinaId = $item_DISC->id_disciplina ?? null;
-                            @endphp
+                            
+                            $disciplinaId = $item_DISC->id_disciplina ?? null;
+                            
 
                             // Verificar pautas
                            $p_mac = ($disciplinaId)
