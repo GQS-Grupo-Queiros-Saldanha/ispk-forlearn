@@ -87,7 +87,6 @@
                 <div class="col-12">
                     <div class="">
                         @if(auth()->check() && auth()->user()->id == 1425)
-                            @include('Cms::initial.components.manutencao')
                             @include('Cms::initial.components.boletim')
                         @else
                             @include('Cms::initial.components.manutencao')
