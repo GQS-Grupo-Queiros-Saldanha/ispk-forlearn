@@ -1143,25 +1143,23 @@ class mainController extends Controller
     public function boletim_pdf($matriculation){
        
 
-         $matriculations = DB::table("matriculations")
-        ->where("id",$matriculation)
-         ->where("user_id",auth()->user()->id)
-        ->whereNull("deleted_at")
-        ->select(["lective_year","id","user_id"])
-        ->orderBy("lective_year","asc")
-        ->first();
+        $matriculations = DB::table("matriculations")
+            ->where("id",$matriculation)
+            ->where("user_id",auth()->user()->id)
+            ->whereNull("deleted_at")
+            ->select(["lective_year","id","user_id"])
+            ->orderBy("lective_year","asc")
+            ->first();
 
         $courses = DB::table("user_courses")
-        ->where("users_id",$matriculations->user_id)
-        ->select(["courses_id"])
-        ->first(); 
+            ->where("users_id",$matriculations->user_id)
+            ->select(["courses_id"])
+            ->first(); 
         
-
         if(!isset($matriculations->lective_year)){
             return "Nenhuma matrícula encontrada neste ano lectivo";
         }
          
-        
         $student_info = $this->get_matriculation_student($matriculations->lective_year);
         $disciplines = $this->get_disciplines($matriculations->lective_year);
         $percurso = BoletimNotas_Student($matriculations->lective_year, $courses->courses_id, $matriculations->id);  
@@ -1171,9 +1169,7 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$matriculations->lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
 
-        
-
-        
+    
         $institution = Institution::latest()->first();  
         
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
@@ -1188,9 +1184,7 @@ class mainController extends Controller
         ->setPaper('a4','landscape');    
         
         
-        return $pdf->stream('Boletim_de_notas_'.$student_info->matricula 
-        .'_' .
-        $student_info->lective_year .'.pdf');
+        return $pdf->stream('Boletim_de_notas_'.$student_info->matricula  .'_' . $student_info->lective_year .'.pdf');
     }
 
 
