@@ -95,7 +95,7 @@ class PautaMacController extends Controller
                 ->where('mc.class_id', $class_id)
                 ->where('avaliacao_alunos.id_turma', $class_id)
                 ->select(
-                    'mt.user_id', // seleciona ID do aluno
+                    'u_p1.user_id', // seleciona ID do aluno
                     'u_p.value as nome',
                     'u_p1.value as mat',
                     DB::raw('MAX(avaliacao_alunos.nota) as grade') // pega apenas uma nota
