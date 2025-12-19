@@ -1328,7 +1328,6 @@ class mainController extends Controller
             ->get();
     }
 
-
     //ATENÇAÕ REGIÃO CRÍTICA
     public function get_classes_grades($class_id,$lectiveYearSelected){
 

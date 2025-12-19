@@ -347,27 +347,35 @@ use App\Modules\Cms\Controllers\mainController;
                             if ($pf1_nota !== null || $pf2_nota !== null || $oa_nota !== null) {
                                 $mac_nota = calcularNotaMAC($pf1_nota, $pf1_percentagem, $pf2_nota, $pf2_percentagem, $oa_nota, $oa_percentagem);
                             }
-                            
+                            @php
+                                $disciplinaId = $item_DISC->id_disciplina ?? null;
+                            @endphp
+
                             // Verificar pautas
-                            $p_mac = ($id_turma && isset($item_DISC->id_disciplina) && isset($item_DISC->id_anoLectivo)) 
-                                ? mainController::verificar_pauta($id_turma, $item_DISC->id_disciplina, $item_DISC->id_anoLectivo, 'Pauta Frequência')
-                                : 0;
-                                
-                            $p_exame_oral = ($id_turma && isset($item_DISC->id_disciplina) && isset($item_DISC->id_anoLectivo))
-                                ? mainController::verificar_pauta($id_turma, $item_DISC->id_disciplina, $item_DISC->id_anoLectivo, 'Pauta de Exame Oral')
-                                : 0;
-                                
-                            $p_recurso = ($id_turma && isset($item_DISC->id_disciplina) && isset($item_DISC->id_anoLectivo))
-                                ? mainController::verificar_pauta($id_turma, $item_DISC->id_disciplina, $item_DISC->id_anoLectivo, 'Pauta de Recurso')
-                                : 0;
-                                
-                            $p_especial = ($id_turma && isset($item_DISC->id_disciplina) && isset($item_DISC->id_anoLectivo))
-                                ? mainController::verificar_pauta($id_turma, $item_DISC->id_disciplina, $item_DISC->id_anoLectivo, 'Pauta Exame Especial')
-                                : 0;
-                                
-                            $p_final = ($id_turma && isset($item_DISC->id_disciplina) && isset($item_DISC->id_anoLectivo))
-                                ? mainController::verificar_pauta($id_turma, $item_DISC->id_disciplina, $item_DISC->id_anoLectivo, 'Pauta Final')
-                                : 0;
+                           $p_mac = ($disciplinaId)
+                                ? !empty($pautasIndexadas[$disciplinaId . '|Pauta Frequência'])
+                                : false;
+
+                                                        
+                            $p_exame_oral = ($disciplinaId)
+                                ? !empty($pautasIndexadas[$disciplinaId . '|Pauta de Exame Oral'])
+                                : false;
+
+                                                        
+                            $p_recurso = ($disciplinaId)
+                                ? !empty($pautasIndexadas[$disciplinaId . '|Pauta de Recurso'])
+                                : false;
+
+                                                        
+                            $p_especial = ($disciplinaId)
+                                ? !empty($pautasIndexadas[$disciplinaId . '|Pauta Exame Especial'])
+                                : false;
+
+                                                        
+                            $p_final = ($disciplinaId)
+                                ? !empty($pautasIndexadas[$disciplinaId . '|Pauta Final'])
+                                : false;
+
                             
                             // Calcular estado final UMA ÚNICA VEZ
                             $estado_resultado = calcularEstadoFinal(
