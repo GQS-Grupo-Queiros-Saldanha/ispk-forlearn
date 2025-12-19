@@ -1150,7 +1150,7 @@ class mainController extends Controller
             ->orderBy("lective_year","asc")
             ->first();
 
-        dd($matriculation,$matriculations);
+        //dd($matriculation,$matriculations);
 
         $courses = DB::table("user_courses")
             ->where("users_id",$matriculations->user_id)
