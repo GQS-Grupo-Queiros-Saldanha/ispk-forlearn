@@ -1140,8 +1140,7 @@ class mainController extends Controller
         return $this->boletim_pdf($matriculationId);
     }
 
-    public function boletim_pdf($matriculation) //$whatsapp
-    {
+    public function boletim_pdf($matriculation){
         //$whatsapp = $request->input('whatsapp');
         //$matriculation = $request->input('matriculation');
 
@@ -1195,14 +1194,6 @@ class mainController extends Controller
                 return $faltou && $nota_normal && $fez_segunda_chamada;
             });
         });
-        // Pega todas as pautas de uma vez
-        /*$pautas = DB::table('publicar_pauta')
-            ->where('id_turma', $id_turma) // se aplicável
-            ->whereIn('id_disciplina', $disciplines) // array de disciplinas
-            ->where('id_ano_lectivo', $lective)
-            ->get()
-            ->groupBy(['id_disciplina', 'Pauta_tipo']);*/
-
 
         $articles = $this->get_payments($matriculations->lective_year, $matriculations->user_id);
         $plano = $this->study_plain($matriculations->lective_year, $matriculations->user_id);
@@ -1213,7 +1204,38 @@ class mainController extends Controller
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
         
         Log::info('CONFIG DEBUG2', ['config' => $config]);
-        
+        // ===== PASSO 1: CONSULTA ÚNICA ÀS PAUTAS =====
+
+        // IDs das disciplinas
+        $disciplinas_ids = $disciplines->pluck('id_disciplina')->toArray();
+        // Ano lectivo
+        $lective = $matriculations->lective_year;
+        // Turma (primeira associada à matrícula)
+        $id_turma = null;
+        if ($classes && $classes->count() > 0) {
+            $id_turma = $classes->first()->id;
+        }
+        // Consulta às pautas
+        $pautas = DB::table('publicar_pauta')
+            ->where('id_ano_lectivo', $lective)
+            ->whereIn('id_disciplina', $disciplinas_ids)
+            ->when($id_turma, function ($q) use ($id_turma) {
+                $q->where('id_turma', $id_turma);
+            })
+            ->orderBy('id_disciplina')
+            ->orderBy('Pauta_tipo')
+            ->get();
+
+        // DEBUG — parar tudo aqui
+        dd([
+            'lective' => $lective,
+            'id_turma' => $id_turma,
+            'disciplinas_ids' => $disciplinas_ids,
+            'total_pautas' => $pautas->count(),
+            'pautas' => $pautas
+        ]);
+
+                
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
             "percurso", "articles", "plano", "matriculations",
             "disciplines", "student_info", "institution", "config",
@@ -1226,23 +1248,17 @@ class mainController extends Controller
             ->setOption('footer-html', $footer_html)
             ->setPaper('a4', 'landscape');
 
-    // aqui Ezequiel
-    if ($isApiRequest){
-
-        return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="Boletim.pdf"');
-
-    }
-
-    // termina aqui
-
+        // aqui Ezequiel
+        if ($isApiRequest){
+            return response($pdf->output(), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="Boletim.pdf"');
+        }
         // Senão, devolve via stream (para navegador)
         return $pdf->stream('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
     }
 
 
 
-    public static function study_plain($lective_year = null, $student = null)
-    {
+    public static function study_plain($lective_year = null, $student = null){
 
         $currentData = Carbon::now();
         $lectiveYearSelected = DB::table('lective_years')
@@ -1315,7 +1331,6 @@ class mainController extends Controller
 
 
     //ATENÇAÕ REGIÃO CRÍTICA
-
     public function get_classes_grades($class_id,$lectiveYearSelected){
 
 
@@ -1341,92 +1356,90 @@ class mainController extends Controller
        catch(Exception $e){
           dd($e);
        }
-  }
-
-  public function update_percurso_grades(Request $request){
-
-
-
-    try{
-        DB::beginTransaction();
-        $data = $request->json()->all();
-
-        foreach ($data as $key => $aluno) {
-            $userId = $aluno['user_id'];
-
-            foreach ($aluno['boletim'] as $disciplina) {
-                $disciplinaId = $disciplina['discipline_id'];
-                $codigo = $disciplina['codigo'];
-                $nomeDisciplina = $disciplina['disciplina'];
-                $notaFinal = $disciplina['nota_final'];
-                $notaPercurso = $disciplina['nota_percurso'];
-
-
-                $Percurso = DB::table('new_old_grades')->updateOrInsert(
-                    [
-                        'user_id' => $userId,
-                        'discipline_id' => $disciplinaId,
-                    ],
-                    [
-                        'grade' => $notaFinal,
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                        "created_by" => 23
-                    ]
-                );
-            }
-        }
-        DB::commit();
-        // Retorno de sucesso
-        return response()->json([
-            'success' => true,
-            'message' => 'Dados processados com sucesso.'
-        ], 200);
-
     }
-   catch(Exception $e){
-    DB::rollBack();
-    Log::error($e);
-    return response()->json($e->getMessage(), 500);
-   }
-}
+
+    public function update_percurso_grades(Request $request){
+
+        try{
+            DB::beginTransaction();
+            $data = $request->json()->all();
+
+            foreach ($data as $key => $aluno) {
+                $userId = $aluno['user_id'];
+
+                foreach ($aluno['boletim'] as $disciplina) {
+                    $disciplinaId = $disciplina['discipline_id'];
+                    $codigo = $disciplina['codigo'];
+                    $nomeDisciplina = $disciplina['disciplina'];
+                    $notaFinal = $disciplina['nota_final'];
+                    $notaPercurso = $disciplina['nota_percurso'];
 
 
-  private function get_all_matriculation_student($lective_year=null, $class_id){
+                    $Percurso = DB::table('new_old_grades')->updateOrInsert(
+                        [
+                            'user_id' => $userId,
+                            'discipline_id' => $disciplinaId,
+                        ],
+                        [
+                            'grade' => $notaFinal,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                            "created_by" => 23
+                        ]
+                    );
+                }
+            }
+            DB::commit();
+            // Retorno de sucesso
+            return response()->json([
+                'success' => true,
+                'message' => 'Dados processados com sucesso.'
+            ], 200);
+
+        }
+        catch(Exception $e){
+            DB::rollBack();
+            Log::error($e);
+            return response()->json($e->getMessage(), 500);
+        }
+    }
+
+
+    private function get_all_matriculation_student($lective_year=null, $class_id){
 
 
 
 
-      $emolumento_confirma_prematricula= mainController::pre_matricula_confirma_emolumento($lective_year);
+        $emolumento_confirma_prematricula= mainController::pre_matricula_confirma_emolumento($lective_year);
 
-      return $model = Matriculation::leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
-              ->join('classes as cl', function ($join)  {
-                  $join->on('cl.id', '=', 'mc.class_id');
-                  $join->on('mc.matriculation_id', '=', 'matriculations.id');
-                  $join->on('matriculations.course_year', '=', 'cl.year');
-              })
+        return $model = Matriculation::leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+                ->join('classes as cl', function ($join)  {
+                    $join->on('cl.id', '=', 'mc.class_id');
+                    $join->on('mc.matriculation_id', '=', 'matriculations.id');
+                    $join->on('matriculations.course_year', '=', 'cl.year');
+                })
 
-            ->leftJoin('article_requests as art_requests',function ($join) use($emolumento_confirma_prematricula)
-              {
-                  $join->on('art_requests.user_id','=','matriculations.user_id')
-                  ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula);
-              })
+                ->leftJoin('article_requests as art_requests',function ($join) use($emolumento_confirma_prematricula)
+                {
+                    $join->on('art_requests.user_id','=','matriculations.user_id')
+                    ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula);
+                })
 
-              ->join('matriculation_disciplines as mat_disc','mat_disc.matriculation_id','matriculations.id')
-
-
-              ->select([
-                  'matriculations.*'
-              ])
-              ->where('art_requests.deleted_by', null)
-              ->where('art_requests.deleted_at', null)
-              ->where('matriculations.lective_year', $lective_year)
-              ->where('mc.class_id',$class_id)
+                ->join('matriculation_disciplines as mat_disc','mat_disc.matriculation_id','matriculations.id')
 
 
-              ->distinct('matriculations.user_id')
-              ->get();
-  }
+                ->select([
+                    'matriculations.*'
+                ])
+                ->where('art_requests.deleted_by', null)
+                ->where('art_requests.deleted_at', null)
+                ->where('matriculations.lective_year', $lective_year)
+                ->where('mc.class_id',$class_id)
+
+
+                ->distinct('matriculations.user_id')
+                ->get();
+    }
 
 
   public function get_boletim_student_new($lective_year=null, $student=null){
