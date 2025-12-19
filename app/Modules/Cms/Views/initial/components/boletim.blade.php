@@ -29,6 +29,14 @@ use App\Modules\Cms\Controllers\mainController;
     <div class="alert alert-warning text-dark font-bold">
         Para visualizar as notas lançadas, dirija-se a Tesouraria para regularizar os seus pagamentos!
     </div>
+@elseif (auth()->check() && auth()->user()->id != 1425)
+    <div class="alert alert-warning text-dark fw-bold text-center py-3 px-4 animate__animated animate__fadeIn">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Para visualizar as notas lançadas, dirija-se à Tesouraria para regularizar os seus pagamentos!
+    </div>
+
+    <!-- Adicione no cabeçalho se usar animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 @else
     @if (is_object($percurso) && count($percurso) > 0)
         @php
