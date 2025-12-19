@@ -86,9 +86,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="">
-                       
-                        @include('Cms::initial.components.boletim')
-
+                        @if(auth()->check() && auth()->user()->id == 1425)
+                            @include('Cms::initial.components.manutencao')
+                            @include('Cms::initial.components.boletim')
+                        @else
+                            @include('Cms::initial.components.manutencao')
+                        @endif
                         <br>
                         <br>
 
