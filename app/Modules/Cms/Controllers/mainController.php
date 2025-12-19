@@ -1175,7 +1175,7 @@ class mainController extends Controller
         
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
         
-        $pdf = PDF::loadView("Cms::initial.pdf.boletim",compact("percurso","articles","plano","matriculations","disciplines","student_info","institution","config","classes"))
+        $pdf = PDF::loadView("Cms::initial.components.boletim",compact("percurso","articles","plano","matriculations","disciplines","student_info","institution","config","classes"))
         
         ->setOption('margin-top', '2mm')
         ->setOption('margin-left', '2mm')
