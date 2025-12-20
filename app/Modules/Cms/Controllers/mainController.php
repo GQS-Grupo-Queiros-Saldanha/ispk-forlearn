@@ -1270,7 +1270,13 @@ class mainController extends Controller
             ->get()
             ->first();
 
-        $disciplinas = DB::table('study_plans as sp')
+        $disciplinas = DB::table('matriculation_disciplines md')
+            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')        
+            ->where('md.matriculation_id', $matriculation)
+            ->select('d.code as disciplina')
+            -get();
+
+        $plano_de_estudo = DB::table('study_plans as sp')
             ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
             ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'sp.id')//pegar as disciplinas da edicao
             ->where('uc.users_id', $estudante->user)
