@@ -1261,7 +1261,7 @@ class mainController extends Controller
             ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
             ->where('m.id', $matriculation)
             ->select('
-                    m.lective_year as ano_curricular',
+                    m.course_year as ano_curricular',
                     'mc.class_id as turma'
                 )
             ->get();
