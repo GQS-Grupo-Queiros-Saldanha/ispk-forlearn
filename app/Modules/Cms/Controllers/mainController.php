@@ -1257,37 +1257,39 @@ class mainController extends Controller
 
     public function boletim_pdf($matriculation){
      
-        $estudante = DB::table('matriculations as m')
+        $dados = DB::table('matriculations as m')
             ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id') // pegar a turma
             ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id') //pegar o curso
+            ->join('matriculation_disciplines as md', 'md.matriculation_id', '=', 'm.id')
+            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')//pegar as disciplinas
+            ->join('avaliacao_alunos as al', function($join) use ($matriculation) {
+                $join->on('al.users_id', '=', 'm.user_id')
+                     ->where('al.id_turma', '=', 'mc.class_id'); 
+                })//pegar as notas do aluno pela turma
+            ->join('classes as c', 'c.id', '=', 'al.id_turma')        
             ->where('m.id', $matriculation)
             ->select(
                 'm.course_year as ano_curricular',   
-                'mc.class_id as turma',
                 'm.user_id as user',
-                'uc.courses_id as curso'
+                'uc.courses_id as curso',
+                'd.code as disciplina',
+                'al.nota as nota',
+                'c.display_name as turma'
             )
-            ->get()
-            ->first();
-
-        $disciplinas = DB::table('matriculation_disciplines as md')
-            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')        
-            ->where('md.matriculation_id', $matriculation)
-            ->select('d.code as disciplina')
             ->get();
 
         $plano_de_estudo = DB::table('study_plans as sp')
             ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
             ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'sp.id')//pegar as disciplinas da edicao
-            ->where('uc.users_id', $estudante->user)
-            ->where('sphd.years', $estudante->ano_curricular)
+            ->where('uc.users_id', $dados->user)
+            ->where('sphd.years', $dados->ano_curricular)
             ->select(
                 'sphd.disciplines_id as disciplinas',
                 'sphd.discipline_periods_id as semestre'
             )
             ->get();
             
-        dd($estudante, $disciplinas);
+        dd($dados, $disciplinas);
     }
 
 
