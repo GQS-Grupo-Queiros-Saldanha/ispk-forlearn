@@ -1254,8 +1254,19 @@ class mainController extends Controller
         // Senão, devolve via stream (para navegador)
         return $pdf->stream('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
     }
+
     public function boletim_pdf($matriculation){
-        dd($matriculation);
+        
+        $matricula = DB::table('matriculations as m')
+            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
+            ->where('m.id', $matriculation)
+            ->select('
+                    m.lective_year as ano_curricular',
+                    'mc.class_id as turma'
+                )
+            ->get()
+
+        dd($matricula);
     }
 
 
