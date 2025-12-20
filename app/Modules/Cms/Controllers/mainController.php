@@ -1258,34 +1258,26 @@ class mainController extends Controller
     public function boletim_pdf($matriculation){
      
         
-        $ultimaTurma = DB::table('matriculation_classes')
-            ->selectRaw('MAX(id_sui) as id, id_sui')
-            ->groupBy('id_sui');
+        $turma = DB::table('matriculations as m')
+            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
+            ->where('m.id', $matriculation)
+            ->select('mc.class_id as turma')
+            ->orderBy('mc.id_sui', 'desc') // maior id primeiro
+            ->first(); // pega só o maior
 
         $dados = DB::table('matriculations as m')
-
-            // JOIN apenas com a turma válida (maior id)
-            ->joinSub($ultimaTurma, 'mc_max', function ($join) {
-                $join->on('mc_max.matriculation_id', '=', 'm.id');
-            })
-            ->join('matriculation_classes as mc', 'mc.id', '=', 'mc_max.id_sui')
-
-            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
+            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id') // pegar a turma
+            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id') //pegar o curso
             ->join('matriculation_disciplines as md', 'md.matriculation_id', '=', 'm.id')
-            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
-
-            // Avaliação ligada ao usuário E à turma válida
-            ->join('avaliacao_alunos as al', function ($join) {
+            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')//pegar as disciplinas
+            ->join('avaliacao_alunos as al', function($join) use ($matriculation) {
                 $join->on('al.users_id', '=', 'm.user_id')
-                    ->on('al.id_turma', '=', 'mc.class_id');
-            })
-
-            ->join('classes as c', 'c.id', '=', 'mc.class_id')
-
-            ->where('m.id', $matriculation)
-
+                     ->where('al.id_turma', '=', 'mc.class_id'); 
+                })//pegar as notas do aluno pela turma
+            ->join('classes as c', 'c.id', '=', 'al.id_turma')        
+            ->where('mc.class_id', $turma->turma)
             ->select(
-                'm.course_year as ano_curricular',
+                'm.course_year as ano_curricular',   
                 'm.user_id as user',
                 'uc.courses_id as curso',
                 'd.code as disciplina',
@@ -1293,7 +1285,6 @@ class mainController extends Controller
                 'c.display_name as turma'
             )
             ->get();
-
 
         /*$plano_de_estudo = DB::table('study_plans as sp')
             ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
