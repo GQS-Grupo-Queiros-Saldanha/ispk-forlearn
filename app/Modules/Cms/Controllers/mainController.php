@@ -1278,7 +1278,7 @@ class mainController extends Controller
             )
             ->get();
 
-        $plano_de_estudo = DB::table('study_plans as sp')
+        /*$plano_de_estudo = DB::table('study_plans as sp')
             ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
             ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'sp.id')//pegar as disciplinas da edicao
             ->where('uc.users_id', $dados->user)
@@ -1288,8 +1288,8 @@ class mainController extends Controller
                 'sphd.discipline_periods_id as semestre'
             )
             ->get();
-            
-        dd($dados, $disciplinas);
+        */    
+        dd($dados);
     }
 
 
