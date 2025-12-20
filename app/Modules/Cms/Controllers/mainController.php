@@ -1257,17 +1257,31 @@ class mainController extends Controller
 
     public function boletim_pdf($matriculation){
      
-     $matricula = DB::table('matriculations as m')
-         ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
-         ->where('m.id', $matriculation)
-         ->select(
-             'm.course_year as ano_curricular',   // Corrigido para "course_year"
-             'mc.class_id as turma'
-         )
-         ->get();
+        $estudante = DB::table('matriculations as m')
+            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id') // pegar a turma
+            ->join('user_courses as uc', 'uc.users_id', '=', 'm.users_id') //pegar o curso
+            ->where('m.id', $matriculation)
+            ->select(
+                'm.course_year as ano_curricular',   
+                'mc.class_id as turma',
+                'm.user_id as user',
+                'uc.courses_id as curso'
+            )
+            ->get();
 
-     dd($matricula);
- }
+        $disciplinas = DB::table('study_plans as sp')
+            ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
+            ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'sp.id')//pegar as disciplinas da edicao
+            ->where('uc.users_id', $estudante->user)
+            ->where('sphd.year', $estudante->ano_curricular)
+            ->select(
+                'sphd.disciplines_id as disciplinas',
+                'sphd.discipline_periods_id as semestre'
+            )
+            ->get();
+            
+        dd($estudante, $disciplinas);
+    }
 
 
 
