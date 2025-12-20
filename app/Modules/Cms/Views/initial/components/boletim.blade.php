@@ -93,96 +93,76 @@ use App\Modules\Cms\Controllers\mainController;
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Configuração do tempo de manutenção (48 horas em milissegundos)
-            // ✅ início da manutenção: ontem às 17:00
-            const maintenanceStartDate = new Date();
-            maintenanceStartDate.setDate(maintenanceStartDate.getDate() - 1); // ontem
-            maintenanceStartDate.setHours(17, 0, 0, 0); // 17:00:00
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
 
-            const maintenanceStartTime = maintenanceStartDate.getTime();
+        // ⏱ Duração total: 48 horas
+        const totalMaintenanceTime = 48 * 60 * 60 * 1000;
 
-            // Atualiza a data de término no HTML
-            const endDate = new Date(maintenanceEndTime);
-            document.getElementById('endTime').textContent = 
-                `${String(endDate.getDate()).padStart(2, '0')}/${String(endDate.getMonth() + 1).padStart(2, '0')} ` +
-                `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
-            
-            // Função para atualizar a barra de progresso e contador
-            function updateMaintenanceStatus() {
-                const now = new Date().getTime();
-                const timePassed = now - maintenanceStartTime;
-                const timeRemaining = maintenanceEndTime - now;
-                
-                // Calcula a porcentagem concluída
-                let percentage = Math.min((timePassed / totalMaintenanceTime) * 100, 100);
-                percentage = Math.max(percentage, 0); // Garante que não seja negativo
-                
-                // Atualiza a barra de progresso
-                const progressBar = document.getElementById('maintenanceProgressBar');
-                progressBar.style.width = `${percentage}%`;
-                progressBar.setAttribute('aria-valuenow', Math.round(percentage));
-                
-                // Atualiza a porcentagem exibida
-                document.getElementById('progressPercent').textContent = `${Math.round(percentage)}%`;
-                
-                // Atualiza o contador regressivo se ainda houver tempo
-                if (timeRemaining > 0) {
-                    const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-                    
-                    document.getElementById('countdownHours').textContent = 
-                        String(hours).padStart(2, '0');
-                    document.getElementById('countdownMinutes').textContent = 
-                        String(minutes).padStart(2, '0');
-                    document.getElementById('countdownSeconds').textContent = 
-                        String(seconds).padStart(2, '0');
-                    
-                    // Muda a cor da barra conforme o progresso
-                    if (percentage > 80) {
-                        progressBar.classList.remove('bg-warning');
-                        progressBar.classList.add('bg-success');
-                    } else if (percentage > 50) {
-                        progressBar.classList.remove('bg-warning');
-                        progressBar.classList.add('bg-info');
-                    }
-                } else {
-                    // Manutenção concluída
-                    document.getElementById('countdownHours').textContent = '00';
-                    document.getElementById('countdownMinutes').textContent = '00';
-                    document.getElementById('countdownSeconds').textContent = '00';
-                    document.getElementById('progressPercent').textContent = '100%';
-                    progressBar.style.width = '100%';
-                    progressBar.classList.remove('bg-warning', 'bg-info');
-                    progressBar.classList.add('bg-success');
-                    progressBar.classList.remove('progress-bar-animated');
-                    
-                    // Altera o texto principal
-                    const statusText = document.querySelector('.card-text.mb-0');
-                    if (statusText) {
-                        statusText.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> Manutenção concluída!';
-                    }
-                }
-            }
-            
-            // Atualiza imediatamente e depois a cada segundo
-            updateMaintenanceStatus();
-            setInterval(updateMaintenanceStatus, 1000);
-            
-            // Efeito visual na barra de progresso
+        // 🕔 Início: ontem às 17:00
+        const maintenanceStartDate = new Date();
+        maintenanceStartDate.setDate(maintenanceStartDate.getDate() - 1);
+        maintenanceStartDate.setHours(17, 0, 0, 0);
+        const maintenanceStartTime = maintenanceStartDate.getTime();
+
+        // 🏁 Fim da manutenção
+        const maintenanceEndTime = maintenanceStartTime + totalMaintenanceTime;
+
+        // Atualiza datas no HTML
+        const startDate = new Date(maintenanceStartTime);
+        const endDate = new Date(maintenanceEndTime);
+
+        document.getElementById('startTime').textContent =
+            `${String(startDate.getDate()).padStart(2, '0')}/${String(startDate.getMonth() + 1).padStart(2, '0')} ` +
+            `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')}`;
+
+        document.getElementById('endTime').textContent =
+            `${String(endDate.getDate()).padStart(2, '0')}/${String(endDate.getMonth() + 1).padStart(2, '0')} ` +
+            `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
+
+        function updateMaintenanceStatus() {
+            const now = Date.now();
+            const timePassed = now - maintenanceStartTime;
+            const timeRemaining = maintenanceEndTime - now;
+
+            let percentage = Math.min((timePassed / totalMaintenanceTime) * 100, 100);
+            percentage = Math.max(percentage, 0);
+
             const progressBar = document.getElementById('maintenanceProgressBar');
-            progressBar.addEventListener('mouseenter', function() {
-                this.style.transform = 'scaleY(1.5)';
-                this.style.transition = 'transform 0.3s';
-            });
-            
-            progressBar.addEventListener('mouseleave', function() {
-                this.style.transform = 'scaleY(1)';
-            });
-        });
-    </script>
+            progressBar.style.width = `${percentage}%`;
+            progressBar.setAttribute('aria-valuenow', Math.round(percentage));
+
+            document.getElementById('progressPercent').textContent = `${Math.round(percentage)}%`;
+
+            if (timeRemaining > 0) {
+                const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+                document.getElementById('countdownHours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('countdownMinutes').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('countdownSeconds').textContent = String(seconds).padStart(2, '0');
+
+                progressBar.classList.remove('bg-warning', 'bg-info', 'bg-success');
+                if (percentage > 80) progressBar.classList.add('bg-success');
+                else if (percentage > 50) progressBar.classList.add('bg-info');
+                else progressBar.classList.add('bg-warning');
+
+            } else {
+                progressBar.style.width = '100%';
+                progressBar.classList.remove('bg-warning', 'bg-info');
+                progressBar.classList.add('bg-success');
+                document.getElementById('progressPercent').textContent = '100%';
+                document.getElementById('countdownHours').textContent = '00';
+                document.getElementById('countdownMinutes').textContent = '00';
+                document.getElementById('countdownSeconds').textContent = '00';
+            }
+        }
+
+        updateMaintenanceStatus();
+        setInterval(updateMaintenanceStatus, 1000);
+    });
+</script>
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
