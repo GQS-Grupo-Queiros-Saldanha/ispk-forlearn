@@ -1271,7 +1271,8 @@ class mainController extends Controller
             ->join('matriculation_disciplines as md', 'md.matriculation_id', '=', 'm.id')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')//pegar as disciplinas
             ->join('avaliacao_alunos as al', 'al.users_id', '=', 'm.user_id')//pegar as notas do aluno pela turma
-            ->join('classes as c', 'c.id', '=', 'al.id_turma')        
+            ->join('classes as c', 'c.id', '=', 'al.id_turma')
+            ->join('metricas', 'metricas.id', '=', 'al.metricas_id')        
             ->where('mc.class_id', $turma->turma)
             ->where('al.id_turma', $turma->turma)
             ->where('m.id', $matriculation)
@@ -1280,6 +1281,8 @@ class mainController extends Controller
                 'm.user_id as user',
                 'uc.courses_id as curso',
                 'd.code as disciplina',
+                'metricas.nome as metrica',
+                'metricas.pecentagem as percentagem',
                 'al.nota as nota',
                 'c.display_name as turma'
             )
