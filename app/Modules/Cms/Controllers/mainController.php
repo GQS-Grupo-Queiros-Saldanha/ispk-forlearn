@@ -1268,7 +1268,7 @@ class mainController extends Controller
             ->joinSub($ultimaTurma, 'mc_max', function ($join) {
                 $join->on('mc_max.matriculation_id', '=', 'm.id');
             })
-            ->join('matriculation_classes as mc', 'mc.id', '=', 'mc_max.id')
+            ->join('matriculation_classes as mc', 'mc.id', '=', 'mc_max.id_sui')
 
             ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
             ->join('matriculation_disciplines as md', 'md.matriculation_id', '=', 'm.id')
