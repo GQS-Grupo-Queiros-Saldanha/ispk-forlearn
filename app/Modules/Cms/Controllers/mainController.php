@@ -1294,7 +1294,7 @@ class mainController extends Controller
             // ===============================
             ->join('study_plan_editions as spe', function ($join) {
                 $join->on('spe.study_plans_id', '=', 'sp.id')
-                    ->on('spe.lective_years_id', '=', 'm.lective_years')
+                    ->on('spe.lective_years_id', '=', 'm.lective_year')
                     ->on('spe.course_year', '=', 'm.course_year');
             })
 
