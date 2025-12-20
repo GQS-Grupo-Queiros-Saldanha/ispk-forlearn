@@ -1267,7 +1267,8 @@ class mainController extends Controller
                 'm.user_id as user',
                 'uc.courses_id as curso'
             )
-            ->get();
+            ->get()
+            ->first();
 
         $disciplinas = DB::table('study_plans as sp')
             ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
