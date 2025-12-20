@@ -1266,18 +1266,74 @@ class mainController extends Controller
             ->first(); // pega só o maior
 
         $dados = DB::table('matriculations as m')
-            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id') // pegar a turma
-            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id') //pegar o curso
+
+            // ===============================
+            // Turma da matrícula
+            // ===============================
+            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
+
+            // ===============================
+            // Curso do aluno
+            // ===============================
+            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
+
+            // ===============================
+            // Disciplinas da matrícula
+            // ===============================
             ->join('matriculation_disciplines as md', 'md.matriculation_id', '=', 'm.id')
-            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')//pegar as disciplinas
-            ->join('avaliacao_alunos as al', 'al.users_id', '=', 'm.user_id')//pegar as notas do aluno pela turma
+            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
+
+            // ===============================
+            // Plano de estudos do curso
+            // ===============================
+            ->join('study_plans as sp', 'sp.courses_id', '=', 'uc.courses_id')
+
+            // ===============================
+            // Edição do plano de estudos
+            // (filtrada por plano, ano letivo e ano curricular)
+            // ===============================
+            ->join('study_plan_editions as spe', function ($join) {
+                $join->on('spe.study_plans_id', '=', 'sp.id')
+                    ->on('spe.lective_years_id', '=', 'm.lective_years')
+                    ->on('spe.course_year', '=', 'm.course_year');
+            })
+
+            // ===============================
+            // Avaliações previstas no plano
+            // (disciplina + edição do plano)
+            // ===============================
+            ->join('plano_estudo_avaliacaos as pea', function ($join) {
+                $join->on('pea.study_plan_editions_id', '=', 'spe.id')
+                    ->on('pea.disciplines_id', '=', 'md.discipline_id');
+            })
+
+            // ===============================
+            // Notas do aluno
+            // ===============================
+            ->join('avaliacao_alunos as al', 'al.users_id', '=', 'm.user_id')
+
+            // ===============================
+            // Métricas (PP1, PP2, EX, etc)
+            // ===============================
+            ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
+
+            // ===============================
+            // Turma da avaliação
+            // ===============================
             ->join('classes as c', 'c.id', '=', 'al.id_turma')
-            ->join('metricas', 'metricas.id', '=', 'al.metricas_id')        
-            ->where('mc.class_id', $turma->turma)
-            ->where('al.id_turma', $turma->turma)
-            ->where('m.id', $matriculation)
+
+            // ===============================
+            // Filtros principais
+            // ===============================
+            ->where('m.id', $matriculation)           // matrícula correta
+            ->where('mc.class_id', $turma->turma)     // turma válida da matrícula
+            ->where('al.id_turma', $turma->turma)     // turma da avaliação
+
+            // ===============================
+            // Campos retornados
+            // ===============================
             ->select(
-                'm.course_year as ano_curricular',   
+                'm.course_year as ano_curricular',
                 'm.user_id as user',
                 'uc.courses_id as curso',
                 'd.code as disciplina',
@@ -1286,19 +1342,11 @@ class mainController extends Controller
                 'al.nota as nota',
                 'c.display_name as turma'
             )
+
             ->get();
 
-        /*$plano_de_estudo = DB::table('study_plans as sp')
-            ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
-            ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'sp.id')//pegar as disciplinas da edicao
-            ->where('uc.users_id', $dados->user)
-            ->where('sphd.years', $dados->ano_curricular)
-            ->select(
-                'sphd.disciplines_id as disciplinas',
-                'sphd.discipline_periods_id as semestre'
-            )
-            ->get();
-        */    
+
+                   
         dd($dados, $turma);
     }
 
