@@ -1274,7 +1274,7 @@ class mainController extends Controller
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')        
             ->where('md.matriculation_id', $matriculation)
             ->select('d.code as disciplina')
-            -get();
+            ->get();
 
         $plano_de_estudo = DB::table('study_plans as sp')
             ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
