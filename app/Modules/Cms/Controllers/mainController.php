@@ -1270,12 +1270,10 @@ class mainController extends Controller
             ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id') //pegar o curso
             ->join('matriculation_disciplines as md', 'md.matriculation_id', '=', 'm.id')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')//pegar as disciplinas
-            ->join('avaliacao_alunos as al', function($join) use ($matriculation) {
-                $join->on('al.users_id', '=', 'm.user_id')
-                     ->where('al.id_turma', '=', 'mc.class_id'); 
-                })//pegar as notas do aluno pela turma
+            ->join('avaliacao_alunos as al', 'al.users_id', '=', 'm.user_id')//pegar as notas do aluno pela turma
             ->join('classes as c', 'c.id', '=', 'al.id_turma')        
             ->where('mc.class_id', $turma->turma)
+            ->where('al.id_turma', $turma->turma)
             ->select(
                 'm.course_year as ano_curricular',   
                 'm.user_id as user',
@@ -1297,7 +1295,7 @@ class mainController extends Controller
             )
             ->get();
         */    
-        dd($dados);
+        dd($dados, $turma);
     }
 
 
