@@ -123,10 +123,3 @@ use App\Modules\Cms\Controllers\mainController;
             </tr>
         </tbody>
     </table>
-
-    @elseif (is_object($percurso))
-        <div class="alert alert-warning text-dark font-bold">Nenhuma nota foi lançada neste ano lectivo!</div>
-    @else
-        <div class="alert alert-warning text-dark font-bold">{{ $percurso }}!</div>
-    @endif
-@endif
