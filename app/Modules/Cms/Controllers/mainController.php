@@ -1335,6 +1335,8 @@ class mainController extends Controller
             ->select(
                 'm.course_year as ano_curricular',
                 'm.user_id as user',
+                'pea.disciplines_id as id_disciplin_1',
+                'md.discipline_id as id_disciplin_2',
                 'uc.courses_id as curso',
                 'd.code as disciplina',
                 'metricas.nome as metrica',
