@@ -1256,18 +1256,19 @@ class mainController extends Controller
     }
 
     public function boletim_pdf($matriculation){
-        
-        $matricula = DB::table('matriculations as m')
-            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
-            ->where('m.id', $matriculation)
-            ->select('
-                    m.course_year as ano_curricular',
-                    'mc.class_id as turma'
-                )
-            ->get();
+     
+     $matricula = DB::table('matriculations as m')
+         ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
+         ->where('m.id', $matriculation)
+         ->select(
+             'm.course_year as ano_curricular',   // Corrigido para "course_year"
+             'mc.class_id as turma'
+         )
+         ->get();
 
-        dd($matricula);
-    }
+     dd($matricula);
+ }
+
 
 
     public static function study_plain($lective_year = null, $student = null){
