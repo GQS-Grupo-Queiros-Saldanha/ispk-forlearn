@@ -1274,7 +1274,7 @@ class mainController extends Controller
             ->join('user_courses as uc', 'uc.courses_id', '=', 'sp.courses_id')//pegar o plano de estudo pelo curso
             ->join('study_plans_has_disciplines as sphd', 'sphd.study_plans_id', '=', 'sp.id')//pegar as disciplinas da edicao
             ->where('uc.users_id', $estudante->user)
-            ->where('sphd.year', $estudante->ano_curricular)
+            ->where('sphd.years', $estudante->ano_curricular)
             ->select(
                 'sphd.disciplines_id as disciplinas',
                 'sphd.discipline_periods_id as semestre'
