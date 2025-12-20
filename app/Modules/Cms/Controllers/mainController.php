@@ -1264,7 +1264,7 @@ class mainController extends Controller
                     m.lective_year as ano_curricular',
                     'mc.class_id as turma'
                 )
-            ->get()
+            ->get();
 
         dd($matricula);
     }
