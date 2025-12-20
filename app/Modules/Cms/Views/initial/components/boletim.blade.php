@@ -96,12 +96,13 @@ use App\Modules\Cms\Controllers\mainController;
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Configuração do tempo de manutenção (48 horas em milissegundos)
-            const totalMaintenanceTime = 48 * 60 * 60 * 1000; // 48 horas em ms
-            const maintenanceStartTime = new Date().getTime(); // Momento atual como início
-            
-            // Tempo de término
-            const maintenanceEndTime = maintenanceStartTime + totalMaintenanceTime;
-            
+            // ✅ início da manutenção: ontem às 17:00
+            const maintenanceStartDate = new Date();
+            maintenanceStartDate.setDate(maintenanceStartDate.getDate() - 1); // ontem
+            maintenanceStartDate.setHours(17, 0, 0, 0); // 17:00:00
+
+            const maintenanceStartTime = maintenanceStartDate.getTime();
+
             // Atualiza a data de término no HTML
             const endDate = new Date(maintenanceEndTime);
             document.getElementById('endTime').textContent = 
