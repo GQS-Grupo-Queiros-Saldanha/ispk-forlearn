@@ -29,7 +29,7 @@ use App\Modules\Cms\Controllers\mainController;
     <div class="alert alert-warning text-dark font-bold">
         Para visualizar as notas lançadas, dirija-se a Tesouraria para regularizar os seus pagamentos!
     </div>
-@elseif (auth()->check() && auth()->user()->id != 592)
+@elseif (auth()->check() && auth()->user()->id != 529)
     <div class="card border-warning shadow-sm mb-4">
         <div class="card-body p-4">
             <div class="d-flex align-items-center mb-3">
