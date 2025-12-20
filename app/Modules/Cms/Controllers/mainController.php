@@ -1140,7 +1140,7 @@ class mainController extends Controller
         return $this->boletim_pdf($matriculationId);
     }
 
-    public function boletim_pdf($matriculation){
+    public function boletim__pdf($matriculation){
         //$whatsapp = $request->input('whatsapp');
         //$matriculation = $request->input('matriculation');
 
@@ -1254,7 +1254,9 @@ class mainController extends Controller
         // Senão, devolve via stream (para navegador)
         return $pdf->stream('Boletim_de_notas_' . $student_info->matricula . '_' . $student_info->lective_year . '.pdf');
     }
-
+    public function boletim_pdf($matriculation){
+        dd($matriculation);
+    }
 
 
     public static function study_plain($lective_year = null, $student = null){
