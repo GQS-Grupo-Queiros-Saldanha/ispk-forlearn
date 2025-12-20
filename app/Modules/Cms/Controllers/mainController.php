@@ -1270,7 +1270,7 @@ class mainController extends Controller
             ->get()
             ->first();
 
-        $disciplinas = DB::table('matriculation_disciplines md')
+        $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')        
             ->where('md.matriculation_id', $matriculation)
             ->select('d.code as disciplina')
