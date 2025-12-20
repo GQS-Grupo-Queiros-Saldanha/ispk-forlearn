@@ -1282,7 +1282,7 @@ class mainController extends Controller
                 'uc.courses_id as curso',
                 'd.code as disciplina',
                 'metricas.nome as metrica',
-                'metricas.pecentagem as percentagem',
+                'metricas.percentagem as percentagem',
                 'al.nota as nota',
                 'c.display_name as turma'
             )
