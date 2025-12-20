@@ -1259,7 +1259,7 @@ class mainController extends Controller
      
         $estudante = DB::table('matriculations as m')
             ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id') // pegar a turma
-            ->join('user_courses as uc', 'uc.users_id', '=', 'm.users_id') //pegar o curso
+            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id') //pegar o curso
             ->where('m.id', $matriculation)
             ->select(
                 'm.course_year as ano_curricular',   
