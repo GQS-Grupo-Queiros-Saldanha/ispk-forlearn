@@ -1274,6 +1274,7 @@ class mainController extends Controller
             ->join('classes as c', 'c.id', '=', 'al.id_turma')        
             ->where('mc.class_id', $turma->turma)
             ->where('al.id_turma', $turma->turma)
+            ->where('m.id', $matriculation)
             ->select(
                 'm.course_year as ano_curricular',   
                 'm.user_id as user',
