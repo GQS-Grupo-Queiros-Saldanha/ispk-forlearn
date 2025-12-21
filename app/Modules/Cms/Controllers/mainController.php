@@ -1272,7 +1272,7 @@ class mainController extends Controller
         
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
-            >join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
+            ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
             ->where('md.matriculation_id', $matriculation)
             ->select(
                 'd.code as disciplinas',
