@@ -56,8 +56,8 @@ use App\Modules\Cms\Controllers\mainController;
 
                         <tr style="text-align: center">
                             <th class="bg1 bo1">#</th>
-                            <th class="bg1 bo1">CÓDIGO</th>
-                            <th class="bg1 bo1">DISCIPLINA</th>
+                            <th class="bg1 bo1">{{ $disciplina->disciplinas }}</th>
+                            <th class="bg1 bo1">{{ $disciplina->nome_disciplina }}</th>
                             <th class="bgmac bo1">PF1</th>
                             <th class="bgmac bo1">PF2</th>
                             <th class="bgmac bo1">OA</th>
