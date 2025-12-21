@@ -1073,23 +1073,76 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
+
+        $matricula = DB::table('matriculations as m')
+            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
+            ->join('classes', 'classes.id', '=', 'mc.class_id')
+            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
+            ->join('courses_translations as ct', 'ct.courses_id', '=', 'uc.courses_id')
+            ->where('m.id', $matriculation)
+            ->where('ct.active', 1)
+            ->select(
+                'mc.class_id as turma',
+                'classes.code as nome_turma',
+                'm.course_year as ano_curricular',
+                'm.lective_year as ano_lectivo',
+                'm.user_id as usuario',
+                'ct.display_name as nome_curso'
+            )
+            ->orderBy('mc.id_sui', 'desc') // maior id primeiro
+            ->first();
+        /*-----------------------------------*/
+        $disciplinas = DB::table('matriculation_disciplines as md')
+            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
+            ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
+            ->where('md.matriculation_id', $matriculation)
+            ->where('dt.active', 1)
+            ->select(
+                'd.code as disciplinas',
+                'dt.display_name as nome_disciplina'
+            )
+            ->get();
+                
+        /*----------------------------------*/
+        $dados = DB::table('study_plans as sp')
+            ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
+
+            ->join('plano_estudo_avaliacaos as pea', function ($join) {
+                $join->on('pea.study_plan_editions_id', '=', 'spe.id');
+            })
+
+            ->join('matriculation_disciplines as md', function ($join) {
+                $join->on('md.discipline_id', '=', 'pea.disciplines_id');
+            })
+
+            ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
+            ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
+            ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
+            ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
+
+            ->where('spe.lective_years_id', $matricula->ano_lectivo)
+            ->where('al.id_turma', $matricula->turma)
+            ->where('al.users_id', $matricula->usuario)
+            ->where('md.matriculation_id', $matriculation)
+            ->where('dt.active', 1)
+
+            ->select(
+                'd.code as disciplina',
+                'dt.display_name as nome_disciplina',
+                'metricas.nome as metrica',
+                'metricas.percentagem as percentagem',
+                'al.nota as nota'
+            )
+            ->get();
+
         
-        if($student ==000){
-             dd([
-                'percurso' => $percurso,
-                'articles' => $articles,
-                'plano' => $plano,
-                'matriculations' => $matriculations,
-                'disciplines' => $disciplines,
-                'student' => $student,
-                'config' => $config,
-                'classes' => $classes,
-                'melhoria_notas' => $melhoria_notas
-            ]);
-        }
+        
+        
 
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
-        $html = view("Cms::initial.components.boletim", compact("percurso", "articles", "plano", "matriculations", "disciplines", "student", "config", "classes", "melhoria_notas"))->render();
+        $html = view("Cms::initial.components.boletim", compact(
+            "matricula", "disciplinas", "dados", "student_info", "institution" 
+            ))->render();
 
         return response()->json($html);
     }
@@ -1141,7 +1194,7 @@ class mainController extends Controller
     }
 
     public function boletim__pdf($matriculation){
-        //$whatsapp = $request->input('whatsapp');
+        //$get_boletim_studentwhatsapp = $request->input('whatsapp');
         //$matriculation = $request->input('matriculation');
 
         // Verifica se o usuário é um pedido de API
@@ -1324,6 +1377,7 @@ class mainController extends Controller
         $student_info = $this->get_matriculation_student($matricula->ano_lectivo, $matricula->usuario);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
+        
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
             "matricula", "disciplinas", "dados", "student_info", "institution" 
             ))

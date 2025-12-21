@@ -44,9 +44,6 @@
     @parent
     <script>
         $(document).ready(function() {
-
-           
-
             
             getStudentBoletim($("#lective_year").val()); 
             
