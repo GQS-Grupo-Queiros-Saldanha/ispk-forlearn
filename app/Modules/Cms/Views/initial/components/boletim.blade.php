@@ -32,26 +32,23 @@ use App\Modules\Cms\Controllers\mainController;
 @elseif (auth()->check() && auth()->user()->id != 529)
     @include('Cms::initial.components.manutencao')
 @else
-    @if(isset($disciplinas))
+    @if(isset($disciplinas) && $disciplinas->count())
         @php
-            $semestres = [1, 2]; // ou calcula dinamicamente
+            // Separar disciplinas por semestre
+            $disciplinas_semestre1 = $disciplinas->filter(fn($d) => intval($d->disciplinas[3]) === 1);
+            $disciplinas_semestre2 = $disciplinas->filter(fn($d) => intval($d->disciplinas[3]) === 2);
+            $semestres = [1 => $disciplinas_semestre1, 2 => $disciplinas_semestre2];
         @endphp
 
-        @foreach($semestres as $sem)
-            @php
-                $disc_semestre = $disciplinas->filter(function($d) use ($sem) {
-                    return (int)$d->disciplinas[3] === $sem;
-                });
-            @endphp
-
-            @if($disc_semestre->isNotEmpty())
-                <table class="table tabela_pauta table-striped table-hover tabela_pauta">
+        @foreach($semestres as $num_semestre => $disciplinas_semestre)
+            @if($disciplinas_semestre->count())
+                <table class="table tabela_pauta table-striped table-hover">
                     <thead>
                         <tr>
                             <td colspan="3" class="boletim_text">
                                 <b>{{ $matricula->nome_curso }}</b>
                                 <as class="barra">|</as> Ano: <b>{{ $matricula->ano_curricular }}º</b>
-                                <as class="barra">|</as> Semestre: <b>{{ $sem }}º</b>
+                                <as class="barra">|</as> Semestre: <b>{{ $num_semestre }}º</b>
                                 <as class="barra">|</as> Turma: <b>{{ $matricula->nome_turma }}</b>
                             </td>
                             <td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>
@@ -77,29 +74,66 @@ use App\Modules\Cms\Controllers\mainController;
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($disc_semestre as $index => $disc)
+                        @foreach($disciplinas_semestre as $index => $disciplina)
                             @php
-                                $notas = $dados->where('disciplina', $disc->disciplinas);
-                                $pf1 = $notas->firstWhere('metrica', 'PP1')->nota ?? '-';
-                                $pf2 = $notas->firstWhere('metrica', 'PP2')->nota ?? '-';
-                                $oa  = $notas->firstWhere('metrica', 'OA')->nota ?? '-';
-                                $exame = $notas->firstWhere('metrica', 'Exame Escrito')->nota ?? '-';
-                                $recurso = $notas->firstWhere('metrica', 'Recurso')->nota ?? '-';
+                                // Pegar notas de cada métrica
+                                $notas_disc = $dados->where('disciplina', $disciplina->disciplinas);
+
+                                $pf1 = $notas_disc->firstWhere('metrica', 'PP1')->nota ?? 0;
+                                $pf2 = $notas_disc->firstWhere('metrica', 'PP2')->nota ?? 0;
+                                $oa  = $notas_disc->firstWhere('metrica', 'OA')->nota ?? 0;
+
+                                // Média ponderada PF1+PF2+OA
+                                $media = round(
+                                    ($pf1 * 0.35) + ($pf2 * 0.35) + ($oa * 0.30),
+                                    2
+                                );
+
+                                // Exame escrito/oral
+                                $ex_escrito = $notas_disc->firstWhere('metrica', 'Exame Escrito')->nota ?? 0;
+                                $ex_oral = $notas_disc->firstWhere('metrica', 'Exame Oral')->nota ?? 0;
+                                $exame_total = $ex_escrito + $ex_oral;
+
+                                // Média + exame (se houver)
+                                $media_exame = $exame_total ? round(($media*0.7) + ($exame_total*0.3), 2) : $media;
+
+                                // Definir cor e classificação
+                                if($media >= 12) {
+                                    $cor_media = 'for-green';
+                                    $classificacao = 'Aprovado(a)';
+                                } elseif($media == 10) {
+                                    $cor_media = 'for-yellow';
+                                    $classificacao = 'Exame';
+                                } else {
+                                    $cor_media = 'for-red';
+                                    $classificacao = 'Recurso';
+                                }
                             @endphp
+
                             <tr>
-                                <td class="text-center">{{ $index+1 }}</td>
-                                <td class="text-center">{{ $disc->disciplinas }}</td>
-                                <td>{{ $disc->nome_disciplina }}</td>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="text-center">{{ $disciplina->disciplinas }}</td>
+                                <td>{{ $disciplina->nome_disciplina }}</td>
+
                                 <td class="text-center">{{ $pf1 }}</td>
                                 <td class="text-center">{{ $pf2 }}</td>
                                 <td class="text-center">{{ $oa }}</td>
-                                <td colspan="2" class="text-center">Média</td>
-                                <td class="text-center">{{ $exame }}</td>
-                                <td class="text-center">-</td>
-                                <td colspan="2" class="text-center">MAC + Exame</td>
-                                <td colspan="2" class="text-center">{{ $recurso }}</td>
-                                <td colspan="2" class="text-center">Especial</td>
-                                <td colspan="2" class="text-center">Final</td>
+
+                                <td class="text-center">{{ $media }}</td>
+                                <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
+
+                                <td class="text-center">{{ $ex_escrito ?: '-' }}</td>
+                                <td class="text-center">{{ $ex_oral ?: '-' }}</td>
+
+                                <td class="text-center">{{ $media_exame }}</td>
+                                <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
+
+                                {{-- Recurso/Especial --}}
+                                <td colspan="2" class="text-center">-</td>
+                                <td colspan="2" class="text-center">-</td>
+
+                                <td colspan="2" class="text-center">{{ $media_exame }}</td>
+                                <td colspan="2" class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -109,6 +143,5 @@ use App\Modules\Cms\Controllers\mainController;
     @else
         <h1>Sem disciplinas associadas à matrícula</h1>
     @endif
-
 
 @endif
