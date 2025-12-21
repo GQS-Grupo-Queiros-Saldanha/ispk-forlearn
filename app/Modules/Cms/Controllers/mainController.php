@@ -1258,99 +1258,56 @@ class mainController extends Controller
     public function boletim_pdf($matriculation){
      
         
-        $turma = DB::table('matriculations as m')
+        $matricula = DB::table('matriculations as m')
             ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
             ->where('m.id', $matriculation)
-            ->select('mc.class_id as turma')
-            ->orderBy('mc.id_sui', 'desc') // maior id primeiro
-            ->first(); // pega só o maior
-
-        $dados = DB::table('matriculations as m')
-
-            // ===============================
-            // Turma da matrícula
-            // ===============================
-            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
-
-            // ===============================
-            // Curso do aluno
-            // ===============================
-            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
-
-            // ===============================
-            // Disciplinas da matrícula
-            // ===============================
-            ->join('matriculation_disciplines as md', 'md.matriculation_id', '=', 'm.id')
-            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
-
-            // ===============================
-            // Plano de estudos do curso
-            // ===============================
-            ->join('study_plans as sp', 'sp.courses_id', '=', 'uc.courses_id')
-
-            // ===============================
-            // Edição do plano de estudos
-            // (filtrada por plano, ano letivo e ano curricular)
-            // ===============================
-            ->join('study_plan_editions as spe', function ($join) {
-                $join->on('spe.study_plans_id', '=', 'sp.id')
-                    ->on('spe.lective_years_id', '=', 'm.lective_year')
-                    ->on('spe.course_year', '=', 'm.course_year');
-            })
-
-            // ===============================
-            // Avaliações previstas no plano
-            // (disciplina + edição do plano)
-            // ===============================
-            ->join('plano_estudo_avaliacaos as pea', function ($join) {
-                $join->on('pea.study_plan_editions_id', '=', 'spe.id')
-                    ->on('pea.disciplines_id', '=', 'md.discipline_id');
-            })
-
-            // ===============================
-            // Notas do aluno
-            // ===============================
-            ->join('avaliacao_alunos as al', 'al.users_id', '=', 'm.user_id')
-
-            // ===============================
-            // Métricas (PP1, PP2, EX, etc)
-            // ===============================
-            ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
-
-            // ===============================
-            // Turma da avaliação
-            // ===============================
-            ->join('classes as c', 'c.id', '=', 'al.id_turma')
-
-            // ===============================
-            // Filtros principais
-            // ===============================
-            ->where('m.id', $matriculation)           // matrícula correta
-            ->where('mc.class_id', $turma->turma)     // turma válida da matrícula
-            ->where('al.id_turma', $turma->turma)     // turma da avaliação
-
-            // ===============================
-            // Campos retornados
-            // ===============================
             ->select(
+                'mc.class_id as turma',
                 'm.course_year as ano_curricular',
-                'm.user_id as user',
-                'pea.disciplines_id as id_disciplin_1',
-                'md.discipline_id as id_disciplin_2',
-                'uc.courses_id as curso',
-                'd.code as disciplina',
-                'metricas.nome as metrica',
-                'metricas.percentagem as percentagem',
-                'al.nota as nota',
-                'c.display_name as turma'
+                'm.lective_year as ano_lectivo',
+                'm.user_id as usuario'
             )
+            ->orderBy('mc.id_sui', 'desc') // maior id primeiro
+            ->first();
 
+        $resultado = DB::table('avaliacao_alunos as aa')
+            ->join('plano_estudo_avaliacaos as pe', 'aa.plano_estudo_avaliacaos_id', '=', 'pe.id')
+            ->join('study_plan_editions as spe', 'pe.study_plan_editions_id', '=', 'spe.id')
+            ->join('matriculation_disciplines as md', 'pe.disciplines_id', '=', 'md.discipline_id')
+            ->where('spe.study_plans_id', 5)
+            ->where('spe.lective_years_id', 9)
+            ->where('md.matriculation_id', 851)
+            ->where('aa.id_turma', 54)
+            ->where('aa.users_id', 529)
+            ->select('aa.*') 
             ->get();
 
 
-                   
-        dd($dados, $turma);
-    }
+        /*----------------------------------*/
+        $dados = DB::table('study_plans as sp')
+            ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
+            ->join('matriculation_disciplines as md', 'md.discipline_id', '=', 'pea.disciplines_id')
+
+            ->join('plano_estudo_avaliacaos as pea', function($join){
+                $join->on('pea.study_plan_editions_id', '=', 'spe.id')
+                    ->on('pea.disciplines_id', '=', 'md.discipline_id')
+            })
+            ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
+            ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
+            ->where('spe.lective_years_id', $matricula->ano_curricular)
+            ->where('pea.lective_years_id', $matricula->ano_lectivo)
+            ->where('al.id_turma',$matricula->turma)
+            ->where('al.users_id',$matricula->usuario)
+            ->where('md.matriculation_id', $matriculation)
+
+            ->select(
+                'metricas.nome as metrica',
+                'metricas.percentagem as percentagem',
+                'al.nota as nota'
+                )
+            ->get();
+
+            dd($matricula,$dados);
 
 
 
