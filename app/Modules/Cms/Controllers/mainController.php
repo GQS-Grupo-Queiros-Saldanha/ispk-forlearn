@@ -1026,8 +1026,7 @@ class mainController extends Controller
             ->select(["lective_year", "id"])
             ->orderBy("lective_year", "asc")
             ->first();
-        Log::info('matricula user', ['dados'=>$matriculations]);
-
+        $matriculation = $matriculations->id;
             
         if (!isset($matriculations->lective_year)) {
             return "Nenhuma matrícula encontrada neste ano lectivo";
@@ -1096,7 +1095,7 @@ class mainController extends Controller
             ->join('classes', 'classes.id', '=', 'mc.class_id')
             ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
             ->join('courses_translations as ct', 'ct.courses_id', '=', 'uc.courses_id')
-            ->where('m.id', $matriculations)
+            ->where('m.id', $matriculation)
             ->where('ct.active', 1)
             ->select(
                 'mc.class_id as turma',
@@ -1108,12 +1107,11 @@ class mainController extends Controller
             )
             ->orderBy('mc.id_sui', 'desc') // maior id primeiro
             ->first();
-        Log::info('matricula',['dados'=>$matricula]);
         /*-----------------------------------*/
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
             ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
-            ->where('md.matriculation_id', $matriculations)
+            ->where('md.matriculation_id', $matriculation)
             ->where('dt.active', 1)
             ->select(
                 'd.code as disciplinas',
@@ -1141,7 +1139,7 @@ class mainController extends Controller
             ->where('spe.lective_years_id', $matricula->ano_lectivo)
             ->where('al.id_turma', $matricula->turma)
             ->where('al.users_id', $matricula->usuario)
-            ->where('md.matriculation_id', $matriculations)
+            ->where('md.matriculation_id', $matriculation)
             ->where('dt.active', 1)
 
             ->select(
