@@ -32,16 +32,21 @@ use App\Modules\Cms\Controllers\mainController;
 @elseif (auth()->check() && auth()->user()->id != 529)
     @include('Cms::initial.components.manutencao')
 @else
-    @if(isset($disciplinas) && $disciplinas->count())
+    @if(isset($disciplinas) && count($disciplinas))
         @php
             // Separar disciplinas por semestre
-            $disciplinas_semestre1 = $disciplinas->filter(fn($d) => intval($d->disciplinas[3]) === 1);
-            $disciplinas_semestre2 = $disciplinas->filter(fn($d) => intval($d->disciplinas[3]) === 2);
+            $disciplinas_semestre1 = [];
+            $disciplinas_semestre2 = [];
+            foreach($disciplinas as $d){
+                $sem = intval($d->disciplinas[3]);
+                if($sem === 1) $disciplinas_semestre1[] = $d;
+                elseif($sem === 2) $disciplinas_semestre2[] = $d;
+            }
             $semestres = [1 => $disciplinas_semestre1, 2 => $disciplinas_semestre2];
         @endphp
 
         @foreach($semestres as $num_semestre => $disciplinas_semestre)
-            @if($disciplinas_semestre->count())
+            @if(count($disciplinas_semestre))
                 <table class="table tabela_pauta table-striped table-hover">
                     <thead>
                         <tr>
@@ -77,34 +82,33 @@ use App\Modules\Cms\Controllers\mainController;
                         @foreach($disciplinas_semestre as $index => $disciplina)
                             @php
                                 // Pegar notas de cada métrica
-                                $notas_disc = $dados->where('disciplina', $disciplina->disciplinas);
+                                $pf1 = $pf2 = $oa = $ex_escrito = $ex_oral = 0;
 
-                                $pf1 = $notas_disc->firstWhere('metrica', 'PP1')->nota ?? 0;
-                                $pf2 = $notas_disc->firstWhere('metrica', 'PP2')->nota ?? 0;
-                                $oa  = $notas_disc->firstWhere('metrica', 'OA')->nota ?? 0;
+                                foreach($dados as $nota){
+                                    if($nota->disciplina == $disciplina->disciplinas){
+                                        if($nota->metrica == 'PP1') $pf1 = $nota->nota;
+                                        if($nota->metrica == 'PP2') $pf2 = $nota->nota;
+                                        if($nota->metrica == 'OA') $oa = $nota->nota;
+                                        if($nota->metrica == 'Exame Escrito') $ex_escrito = $nota->nota;
+                                        if($nota->metrica == 'Exame Oral') $ex_oral = $nota->nota;
+                                    }
+                                }
 
                                 // Média ponderada PF1+PF2+OA
-                                $media = round(
-                                    ($pf1 * 0.35) + ($pf2 * 0.35) + ($oa * 0.30),
-                                    2
-                                );
+                                $media = round(($pf1*0.35)+($pf2*0.35)+($oa*0.3),2);
 
-                                // Exame escrito/oral
-                                $ex_escrito = $notas_disc->firstWhere('metrica', 'Exame Escrito')->nota ?? 0;
-                                $ex_oral = $notas_disc->firstWhere('metrica', 'Exame Oral')->nota ?? 0;
-                                $exame_total = $ex_escrito + $ex_oral;
+                                // Exame total
+                                $exame_total = ($ex_escrito ? $ex_escrito : 0) + ($ex_oral ? $ex_oral : 0);
+                                $media_exame = $exame_total ? round(($media*0.7) + ($exame_total*0.3),2) : $media;
 
-                                // Média + exame (se houver)
-                                $media_exame = $exame_total ? round(($media*0.7) + ($exame_total*0.3), 2) : $media;
-
-                                // Definir cor e classificação
-                                if($media >= 12) {
+                                // Cor e classificação
+                                if($media >= 12){
                                     $cor_media = 'for-green';
                                     $classificacao = 'Aprovado(a)';
-                                } elseif($media == 10) {
+                                } elseif($media == 10){
                                     $cor_media = 'for-yellow';
                                     $classificacao = 'Exame';
-                                } else {
+                                } else{
                                     $cor_media = 'for-red';
                                     $classificacao = 'Recurso';
                                 }
@@ -128,7 +132,6 @@ use App\Modules\Cms\Controllers\mainController;
                                 <td class="text-center">{{ $media_exame }}</td>
                                 <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
-                                {{-- Recurso/Especial --}}
                                 <td colspan="2" class="text-center">-</td>
                                 <td colspan="2" class="text-center">-</td>
 
@@ -143,5 +146,4 @@ use App\Modules\Cms\Controllers\mainController;
     @else
         <h1>Sem disciplinas associadas à matrícula</h1>
     @endif
-
 @endif
