@@ -34,7 +34,10 @@ use App\Modules\Cms\Controllers\mainController;
 @else
     @if(isset($disciplinas))
         @foreach($disciplinas as disciplina)
-            @if(disciplina)
+        @php
+            $semestre = $disciplina->disciplinas[3]; // 3º índice da string
+        @endphp
+            @if($semestre = 1)
                 <table class="table tabela_pauta table-striped table-hover tabela_pauta">
                     <thead>
                         <tr>
@@ -45,7 +48,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 <as class="barra">|</as> Turma: <b>{{ $matricula->nome_turma }}</b>
                             </td>
                             <td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>
-                            <td colspan="2" class="text-center bg1 p-top">EXAME{{ disciplina->disciplinas[3] }}</td>
+                            <td colspan="2" class="text-center bg1 p-top">EXAME</td>
                             <td colspan="2" class="text-center cf1 bo1 p-top">CLASSIFICAÇÃO</td>
                             <td colspan="4" class="rec bo1 text-center p-top">EXAME</td>
                             <td colspan="2" class="fn bo1 text-center p-top">CLASSIFICAÇÃO</td>
