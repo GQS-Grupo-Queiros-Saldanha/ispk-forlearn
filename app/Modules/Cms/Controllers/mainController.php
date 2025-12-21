@@ -1321,6 +1321,18 @@ class mainController extends Controller
 
         
         //dd($matricula,$dados, $disciplinas);
+
+        $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
+            "matricula", "disciplinas", "dados" 
+            ))
+            ->setOption('margin-top', '2mm')
+            ->setOption('margin-left', '2mm')
+            ->setOption('margin-bottom', '13mm')
+            ->setOption('margin-right', '2mm')
+            ->setOption('footer-html', $footer_html)
+            ->setPaper('a4', 'landscape');
+
+
         return $pdf->stream('Boletim_de_notas_' . $matriculation . '_' . $matricula->ano_lectivo . '.pdf');
 
     }
