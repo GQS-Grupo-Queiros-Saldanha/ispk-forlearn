@@ -231,5 +231,4 @@ use App\Modules\Cms\Controllers\mainController;
     @else
         <h1>Sem disciplinas associadas à matrícula</h1>
     @endif
-
 @endif
