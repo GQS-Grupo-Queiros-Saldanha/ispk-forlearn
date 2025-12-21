@@ -1275,7 +1275,7 @@ class mainController extends Controller
             )
             ->orderBy('mc.id_sui', 'desc') // maior id primeiro
             ->first();
-        
+        /*-----------------------------------*/
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
             ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
@@ -1319,7 +1319,10 @@ class mainController extends Controller
             )
             ->get();
 
-        dd($matricula,$dados, $disciplinas);
+        
+        //dd($matricula,$dados, $disciplinas);
+        return $pdf->stream('Boletim_de_notas_' . $matriculation . '_' . $matricula->ano_lectivo . '.pdf');
+
     }
 
 
