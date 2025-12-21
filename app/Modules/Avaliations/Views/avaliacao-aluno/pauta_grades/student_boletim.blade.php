@@ -1,178 +1,376 @@
-<title>BOLETIM DE NOTAS | forLEARN® by GQS</title>
-@extends('layouts.generic_index_new')
-@section('page-title', 'BOLETIM DE NOTAS')
-@section('breadcrumb')
-    <li class="breadcrumb-item">
-        <a href="/">Home</a>
-    </li>
-    <li class="breadcrumb-item">
-        <a href="{{ route('panel_avaliation') }}">Avaliações</a>
-    </li>
-    <li class="breadcrumb-item active" aria-current="page">Boletim de notas</li>
-@endsection
-@section('selects')
-    <div class="mb-2">
-        <label for="lective_year">Selecione o ano lectivo</label>
-        <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm">
-            <option selected value="" data-terminado="1">Seleciona o ano lectivo</option>
-            @foreach ($lectiveYears as $lectiveYear)
-                <option value="{{ $lectiveYear->id }}" @if ($lectiveYearSelected == $lectiveYear->id) selected @endif>
-                    {{ $lectiveYear->currentTranslation->display_name }}
-                </option>
-            @endforeach 
-        </select>
-    </div>
-@endsection
-@section('body')
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boletim Acadêmico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        .boletim_text{
-            font-weight: normal !important;
-            font-size: 14px !important; 
+        :root {
+            --approved-color: #d4edda;
+            --recovery-color: #f8d7da;
+            --exam-color: #fff3cd;
+            --approved-text: #155724;
+            --recovery-text: #721c24;
+            --exam-text: #856404;
         }
-        .table{
-            margin-bottom: 1px;
-            padding-bottom: 1px;
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        
+        .table thead {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            z-index: 10;
+        }
+        
+        .table th {
+            border-bottom: 2px solid #495057;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-aprovado {
+            background-color: var(--approved-color) !important;
+            color: var(--approved-text);
+            font-weight: 600;
+        }
+        
+        .status-recurso {
+            background-color: var(--recovery-color) !important;
+            color: var(--recovery-text);
+            font-weight: 600;
+        }
+        
+        .status-exame {
+            background-color: var(--exam-color) !important;
+            color: var(--exam-text);
+            font-weight: 600;
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(106, 17, 203, 0.25);
+        }
+        
+        .student-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .summary-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        @media (max-width: 768px) {
+            .table-container {
+                max-height: 400px;
+            }
+            
+            .table {
+                font-size: 0.85rem;
+            }
+            
+            .student-header h2 {
+                font-size: 1.3rem;
+            }
         }
     </style>
-    
-   <div id="table_student" class="mt-2">
-       
-   </div>
-@endsection
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card">
+                    <!-- Cabeçalho com informações do aluno -->
+                    <div class="student-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h2 class="mb-1" id="studentName">Carregando...</h2>
+                                <p class="mb-0 opacity-75" id="studentInfo">Matrícula: <span id="matricula">-</span> | Curso: <span id="curso">-</span></p>
+                            </div>
+                            <button class="btn btn-download" onclick="downloadBoletim()">
+                                <i class="bi bi-download me-2"></i>Baixar Boletim
+                            </button>
+                        </div>
+                    </div>
 
-@section('scripts-new')
-    @parent
+                    <!-- Cards de resumo -->
+                    <div class="p-4 bg-light">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="summary-card text-center">
+                                    <div class="summary-value" id="totalDisciplinas">0</div>
+                                    <div class="summary-label">Disciplinas</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="summary-card text-center">
+                                    <div class="summary-value" id="totalAprovadas">0</div>
+                                    <div class="summary-label">Aprovadas</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="summary-card text-center">
+                                    <div class="summary-value" id="totalExame">0</div>
+                                    <div class="summary-label">Exame</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="summary-card text-center">
+                                    <div class="summary-value" id="totalRecurso">0</div>
+                                    <div class="summary-label">Recurso</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de disciplinas -->
+                    <div class="p-4">
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th width="40%">Disciplina</th>
+                                        <th width="15%">Nota</th>
+                                        <th width="15%">Faltas</th>
+                                        <th width="15%">Média</th>
+                                        <th width="15%">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="disciplinasTable">
+                                    <!-- Dados serão inseridos via JavaScript -->
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Carregando...</span>
+                                            </div>
+                                            <p class="mt-2 text-muted">Carregando dados...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function() {
+        // Variável global para armazenar o ID da matrícula
+        let currentMatriculationId = null;
+        
+        // Função para processar os dados recebidos da API
+        function processarDadosBoletim(data) {
+            console.log('Dados recebidos:', data);
             
-            getStudentBoletim($("#lective_year").val()); 
+            // Atualizar variável global com o ID
+            currentMatriculationId = data.id;
             
-            $("#lective_year").change(function(){
-                getStudentBoletim($(this).val());
-            });
+            // Atualizar informações do aluno
+            document.getElementById('matricula').textContent = data.matricula || '-';
+            document.getElementById('curso').textContent = data.dados?.curso || '-';
             
-            function getStudentBoletim(lective_year) {
-                $("#table_student").html(""); // limpa tabela
-                $.ajax({
-                    url: "/pt/get_boletim_student/" + lective_year,
-                    type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'json',
-                }).done(function(data) {
-                    var matricula = data.matricula;
-                    var dados = data.dados;
-                    var disciplinas = data.disciplinas;
-
-                    if (!disciplinas || disciplinas.length === 0) {
-                        $("#table_student").html("<h1>Sem disciplinas associadas à matrícula</h1>");
-                        return;
-                    }
-
-                    // Separar disciplinas por semestre
-                    var semestres = {1: [], 2: []};
-                    disciplinas.forEach(function(d) {
-                        var sem = parseInt(d.disciplinas[3]);
-                        if (sem === 1) semestres[1].push(d);
-                        else if (sem === 2) semestres[2].push(d);
-                    });
-
-                    // Loop pelos semestres
-                    for (var num_semestre in semestres) {
-                        var disciplinas_semestre = semestres[num_semestre];
-                        if (disciplinas_semestre.length === 0) continue;
-
-                        var html = '<table class="table tabela_pauta table-striped table-hover"><thead>';
-                        html += '<tr><td colspan="3" class="boletim_text"><b>' + matricula.nome_curso + '</b> | Ano: <b>' + matricula.ano_curricular + 'º</b> | Semestre: <b>' + num_semestre + 'º</b> | Turma: <b>' + matricula.nome_turma + '</b></td>';
-                        html += '<td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>';
-                        html += '<td colspan="2" class="text-center bg1 p-top">EXAME</td>';
-                        html += '<td colspan="2" class="text-center cf1 bo1 p-top">CLASSIFICAÇÃO</td>';
-                        html += '<td colspan="4" class="rec bo1 text-center p-top">EXAME</td>';
-                        html += '<td colspan="2" class="fn bo1 text-center p-top">CLASSIFICAÇÃO</td></tr>';
-
-                        html += '<tr style="text-align: center">';
-                        html += '<th class="bg1 bo1">#</th>';
-                        html += '<th class="bg1 bo1">CÓDIGO</th>';
-                        html += '<th class="bg1 bo1">DISCIPLINA</th>';
-                        html += '<th class="bgmac bo1">PF1</th>';
-                        html += '<th class="bgmac bo1">PF2</th>';
-                        html += '<th class="bgmac bo1">OA</th>';
-                        html += '<th colspan="2" class="bgmac bo1">MÉDIA</th>';
-                        html += '<th class="bg1 bo1">ESCRITO</th>';
-                        html += '<th class="bg1 bo1">ORAL</th>';
-                        html += '<th colspan="2" class="cf1 bo1">MAC + EXAME</th>';
-                        html += '<th colspan="2" class="rec bo1">RECURSO</th>';
-                        html += '<th colspan="2" class="rec bo1">ESPECIAL</th>';
-                        html += '<th colspan="2" class="fn bo1">FINAL</th>';
-                        html += '</tr></thead><tbody>';
-
-                        disciplinas_semestre.forEach(function(disciplina, index) {
-                            var pf1 = pf2 = oa = ex_escrito = ex_oral = nota_recurso = null;
-
-                            dados.forEach(function(nota) {
-                                if (nota.disciplina == disciplina.disciplinas) {
-                                    if (nota.metrica == 'PP1') pf1 = parseFloat(nota.nota);
-                                    if (nota.metrica == 'PP2') pf2 = parseFloat(nota.nota);
-                                    if (nota.metrica == 'OA') oa = parseFloat(nota.nota);
-                                    if (nota.metrica == 'Exame Escrito') ex_escrito = parseFloat(nota.nota);
-                                    if (nota.metrica == 'Exame Oral') ex_oral = parseFloat(nota.nota);
-                                    if (nota.metrica == 'Recurso') nota_recurso = parseFloat(nota.nota);
-                                }
-                            });
-
-                            // Média MAC
-                            var media = (pf1 !== null || pf2 !== null || oa !== null)
-                                ? +( (pf1 || 0)*0.35 + (pf2 || 0)*0.35 + (oa || 0)*0.3 ).toFixed(2)
-                                : null;
-
-                            // Exame
-                            var exame_total = (ex_escrito !== null || ex_oral !== null) ? ((ex_escrito||0) + (ex_oral||0)) : null;
-                            var media_exame = (media !== null && exame_total !== null) ? +((media*0.7) + (exame_total*0.3)).toFixed(2) : null;
-
-                            // Nota final considerando recurso
-                            var media_final = (media < 10 && nota_recurso !== null) ? nota_recurso : (media_exame !== null ? media_exame : media);
-
-                            // Classificações
-                            var cor_media = '', cor_final = '';
-                            var classificacao = '-', final = '-';
-                            if (media !== null) {
-                                if (media >= 10.3) { classificacao='Aprovado(a)'; cor_media='for-green'; }
-                                else if (media == 10) { classificacao='Exame'; cor_media='for-yellow'; }
-                                else { classificacao='Recurso'; cor_media='for-red'; }
-                            }
-                            if (media_final !== null) {
-                                if (media_final >= 10) { final='Aprovado(a)'; cor_final='for-green'; }
-                                else { final='Reprovado(a)'; cor_final='for-red'; }
-                            }
-
-                            html += '<tr>';
-                            html += '<td class="text-center">'+(index+1)+'</td>';
-                            html += '<td class="text-center">'+disciplina.disciplinas+'</td>';
-                            html += '<td>'+disciplina.nome_disciplina+'</td>';
-                            html += '<td class="text-center">'+(pf1!==null?pf1:'-')+'</td>';
-                            html += '<td class="text-center">'+(pf2!==null?pf2:'-')+'</td>';
-                            html += '<td class="text-center">'+(oa!==null?oa:'-')+'</td>';
-                            html += '<td class="text-center">'+(media!==null?media:'-')+'</td>';
-                            html += '<td class="text-center '+cor_media+'">'+classificacao+'</td>';
-                            html += '<td class="text-center">'+(ex_escrito!==null?ex_escrito:'-')+'</td>';
-                            html += '<td class="text-center">'+(ex_oral!==null?ex_oral:'-')+'</td>';
-                            html += '<td class="text-center">'+(media_exame!==null?media_exame:'-')+'</td>';
-                            html += '<td class="text-center '+cor_media+'">'+classificacao+'</td>';
-                            html += '<td colspan="2" class="text-center">'+(nota_recurso!==null?nota_recurso:'-')+'</td>';
-                            html += '<td colspan="2" class="text-center">-</td>';
-                            html += '<td colspan="2" class="text-center">'+(media_final!==null?media_final:'-')+'</td>';
-                            html += '<td colspan="2" class="text-center '+cor_final+'">'+final+'</td>';
-                            html += '</tr>';
-                        });
-
-                        html += '</tbody></table>';
-                        $("#table_student").append(html);
-                    }
+            // Atualizar nome do aluno (ajuste conforme sua estrutura de dados)
+            const studentName = data.dados?.nome || 'Aluno não identificado';
+            document.getElementById('studentName').textContent = studentName;
+            
+            // Processar disciplinas
+            const tableBody = document.getElementById('disciplinasTable');
+            tableBody.innerHTML = '';
+            
+            let totalAprovadas = 0;
+            let totalExame = 0;
+            let totalRecurso = 0;
+            
+            if (data.disciplinas && data.disciplinas.length > 0) {
+                data.disciplinas.forEach(disciplina => {
+                    const status = disciplina.status || 'aprovado'; // Supondo que o status venha do backend
+                    const statusClass = getStatusClass(status);
+                    const statusText = getStatusText(status);
+                    
+                    // Contar por status
+                    if (status === 'aprovado') totalAprovadas++;
+                    else if (status === 'exame') totalExame++;
+                    else if (status === 'recurso') totalRecurso++;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="fw-medium">${disciplina.nome || 'Disciplina não informada'}</td>
+                        <td>${disciplina.nota || '-'}</td>
+                        <td>${disciplina.faltas || '0'}</td>
+                        <td class="fw-semibold">${disciplina.media || '-'}</td>
+                        <td><span class="badge ${statusClass}">${statusText}</span></td>
+                    `;
+                    tableBody.appendChild(row);
                 });
+            } else {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-journal-x display-6 d-block mb-3"></i>
+                            Nenhuma disciplina encontrada
+                        </td>
+                    </tr>
+                `;
             }
-           
-        })
+            
+            // Atualizar resumo
+            document.getElementById('totalDisciplinas').textContent = data.disciplinas?.length || 0;
+            document.getElementById('totalAprovadas').textContent = totalAprovadas;
+            document.getElementById('totalExame').textContent = totalExame;
+            document.getElementById('totalRecurso').textContent = totalRecurso;
+        }
+        
+        // Função para determinar a classe CSS do status
+        function getStatusClass(status) {
+            switch(status.toLowerCase()) {
+                case 'aprovado': return 'status-aprovado';
+                case 'recurso': return 'status-recurso';
+                case 'exame': return 'status-exame';
+                default: return 'bg-secondary';
+            }
+        }
+        
+        // Função para formatar o texto do status
+        function getStatusText(status) {
+            switch(status.toLowerCase()) {
+                case 'aprovado': return 'Aprovado';
+                case 'recurso': return 'Recurso';
+                case 'exame': return 'Exame';
+                default: return status;
+            }
+        }
+        
+        // Função para baixar o boletim em PDF
+        function downloadBoletim() {
+            if (!currentMatriculationId) {
+                alert('ID da matrícula não disponível');
+                return;
+            }
+            
+            // Criar URL dinâmica com o ID
+            const pdfUrl = `boletim_pdf/${currentMatriculationId}`;
+            
+            // Criar link temporário para download
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.target = '_blank';
+            link.download = `boletim_${currentMatriculationId}.pdf`;
+            
+            // Simular clique para iniciar download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Feedback visual opcional
+            const btn = document.querySelector('.btn-download');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Baixando...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }, 2000);
+        }
+        
+        // Exemplo de chamada à API (substitua pela sua lógica real)
+        function carregarDados() {
+            // Simulação de dados - substitua pela sua chamada AJAX real
+            const mockData = {
+                matricula: "20230001",
+                disciplinas: [
+                    { nome: "Matemática Avançada", nota: 8.5, faltas: 2, media: 8.0, status: "aprovado" },
+                    { nome: "Programação Web", nota: 6.0, faltas: 5, media: 6.5, status: "exame" },
+                    { nome: "Banco de Dados", nota: 4.5, faltas: 3, media: 4.0, status: "recurso" },
+                    { nome: "Redes de Computadores", nota: 9.0, faltas: 1, media: 9.0, status: "aprovado" },
+                    { nome: "Engenharia de Software", nota: 7.5, faltas: 0, media: 7.5, status: "aprovado" },
+                    { nome: "Inteligência Artificial", nota: 5.5, faltas: 4, media: 5.0, status: "exame" },
+                    { nome: "Sistemas Operacionais", nota: 8.0, faltas: 2, media: 8.0, status: "aprovado" }
+                ],
+                dados: {
+                    nome: "João Silva Santos",
+                    curso: "Ciência da Computação",
+                    periodo: "2023.1"
+                },
+                id: 12345 // ID para o PDF
+            };
+            
+            // Para usar com sua API real:
+            /*
+            fetch('sua_api_endpoint')
+                .then(response => response.json())
+                .then(data => {
+                    processarDadosBoletim(data);
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+            */
+            
+            // Usando dados mockados para demonstração
+            setTimeout(() => {
+                processarDadosBoletim(mockData);
+            }, 1000);
+        }
+        
+        // Carregar dados quando a página carregar
+        document.addEventListener('DOMContentLoaded', carregarDados);
     </script>
-@endsection
+</body>
+</html>

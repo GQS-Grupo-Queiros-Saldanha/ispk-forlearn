@@ -1155,6 +1155,7 @@ class mainController extends Controller
             'matricula'   => $matricula,
             'disciplinas' => $disciplinas,
             'dados'       => $dados,
+            'id' => $matriculation,
         ]);
 
     }
