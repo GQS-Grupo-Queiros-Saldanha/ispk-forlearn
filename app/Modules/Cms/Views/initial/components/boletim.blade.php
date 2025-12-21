@@ -34,15 +34,15 @@ use App\Modules\Cms\Controllers\mainController;
 @else
     @if(isset($disciplinas))
         @foreach($disciplinas as disciplina)
-            @if(disciplina->disciplinas[3] = 1)
+            @if(disciplina->disciplinas[3] == 1)
                 <table class="table tabela_pauta table-striped table-hover tabela_pauta">
                     <thead>
                         <tr>
                             <td colspan="3" class="boletim_text">
                                 <b>Engenharia Informática</b>
-                                <as class="barra">|</as> Ano: <b>$matricula->ano_curricularº</b>
+                                <as class="barra">|</as> Ano: <b>{{ $matricula->ano_curricular }}º</b>
                                 <as class="barra">|</as> Semestre: <b>1º</b>
-                                <as class="barra">|</as> Turma: <b>$matricula->nome_turma</b>
+                                <as class="barra">|</as> Turma: <b>{{ $matricula->nome_turma }}</b>
                             </td>
                             <td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>
                             <td colspan="2" class="text-center bg1 p-top">EXAME</td>
@@ -71,8 +71,8 @@ use App\Modules\Cms\Controllers\mainController;
                     <tbody>
                         <tr>
                             <td class="text-center">1</td>
-                            <td class="text-center">disciplina->disciplinas</td>
-                            <td>disciplina->nome_disciplina</td>
+                            <td class="text-center">{{ $disciplina->disciplinas }}</td>
+                            <td>{{ $disciplina->nome_disciplina }}</td>
 
                             <td class="text-center">14</td>
                             <td class="text-center">16</td>
@@ -219,7 +219,7 @@ use App\Modules\Cms\Controllers\mainController;
                     </tbody>
                 </table>
             @endif
-        @enfor
+        @endforeach
     @endif
 
 @endif
