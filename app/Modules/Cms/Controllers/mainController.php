@@ -1269,19 +1269,18 @@ class mainController extends Controller
             )
             ->orderBy('mc.id_sui', 'desc') // maior id primeiro
             ->first();
+        
+        $disciplinas = DB::table('matriculation_disciplines as md')
+            ->join('disciplines as d', 'd.id', '=', 'md.disciplines_id')
+            ->where('md.matriculation_id', $matriculation)
 
-        $resultado = DB::table('avaliacao_alunos as aa')
-            ->join('plano_estudo_avaliacaos as pe', 'aa.plano_estudo_avaliacaos_id', '=', 'pe.id')
-            ->join('study_plan_editions as spe', 'pe.study_plan_editions_id', '=', 'spe.id')
-            ->join('matriculation_disciplines as md', 'pe.disciplines_id', '=', 'md.discipline_id')
-            ->where('spe.study_plans_id', 5)
-            ->where('spe.lective_years_id', 9)
-            ->where('md.matriculation_id', 851)
-            ->where('aa.id_turma', 54)
-            ->where('aa.users_id', 529)
-            ->select('aa.*') 
+            ->select(
+                'd.code as disciplinas',
+            )
             ->get();
 
+        
+                
 
         /*----------------------------------*/
         $dados = DB::table('study_plans as sp')
