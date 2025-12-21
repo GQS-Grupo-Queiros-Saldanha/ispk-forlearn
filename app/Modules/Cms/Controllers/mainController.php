@@ -1273,15 +1273,11 @@ class mainController extends Controller
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
             ->where('md.matriculation_id', $matriculation)
-
             ->select(
                 'd.code as disciplinas',
             )
             ->get();
-
-        
                 
-
         /*----------------------------------*/
         $dados = DB::table('study_plans as sp')
             ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
@@ -1297,7 +1293,7 @@ class mainController extends Controller
             ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
             ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
             ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
-            ->join('disciplines_translations as dt', 'dt.disciplie_id', '=', 'pea.disciplines_id')
+            ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
 
             ->where('spe.lective_years_id', $matricula->ano_lectivo)
             ->where('al.id_turma', $matricula->turma)
