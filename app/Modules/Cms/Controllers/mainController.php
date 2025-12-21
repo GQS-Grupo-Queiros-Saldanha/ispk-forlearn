@@ -1274,6 +1274,7 @@ class mainController extends Controller
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
             ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
             ->where('md.matriculation_id', $matriculation)
+            ->where('dt.active', 1)
             ->select(
                 'd.code as disciplinas',
                 'dt.display_name as nome_disciplina'
