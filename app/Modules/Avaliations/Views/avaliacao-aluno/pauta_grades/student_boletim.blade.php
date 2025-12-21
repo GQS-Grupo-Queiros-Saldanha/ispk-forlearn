@@ -352,7 +352,7 @@
 
                 }).fail(function () {
                     $("#table_student").html(
-                        '<div class="alert alert-danger">Erro ao carregar boletim</div>'
+                        '<div class="alert alert-danger">Em manutenção</div>'
                     );
                 });
             }
