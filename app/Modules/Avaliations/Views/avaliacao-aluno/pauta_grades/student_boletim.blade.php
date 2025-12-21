@@ -153,70 +153,79 @@
 @section('scripts-new')
     @parent
     <script>
-        $(document).ready(function() {
-            
-            getStudentBoletim($("#lective_year").val()); 
-            
-            $("#lective_year").change(function(){
+        $(document).ready(function () {
+
+            getStudentBoletim($("#lective_year").val());
+
+            $("#lective_year").change(function () {
                 getStudentBoletim($(this).val());
             });
-            
+
             function getStudentBoletim(lective_year) {
-                $("#table_student").html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Carregando boletim...</p></div>');
-                
+
+                $("#table_student").html(
+                    '<div class="text-center p-5">' +
+                    '<div class="spinner-border text-primary"></div>' +
+                    '<p class="mt-2">Carregando boletim...</p>' +
+                    '</div>'
+                );
+
                 $.ajax({
                     url: "/pt/get_boletim_student/" + lective_year,
                     type: "GET",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    cache: false,
-                    dataType: 'json',
-                }).done(function(data) {
-                    var matricula = data.matricula;
-                    var dados = data.dados;
+                    dataType: "json"
+                }).done(function (data) {
+
+                    var matricula   = data.matricula;
                     var disciplinas = data.disciplinas;
+                    var dados       = data.dados;
                     var matriculationId = data.id;
 
                     if (!disciplinas || disciplinas.length === 0) {
-                        $("#table_student").html("<div class='alert alert-info'><h5>Sem disciplinas associadas à matrícula</h5></div>");
+                        $("#table_student").html(
+                            "<div class='alert alert-info'>Sem disciplinas associadas à matrícula</div>"
+                        );
                         return;
                     }
 
-                    // Botão de download do boletim
-                    $("#table_student").html('<a href="/boletim_pdf/' + matriculationId + '" class="btn btn-primary mb-3" target="_blank"><i class="bi bi-download me-2"></i>Baixar Boletim em PDF</a>');
+                    $("#table_student").html(
+                        '<a href="/boletim_pdf/' + matriculationId + '" ' +
+                        'class="btn btn-primary mb-3" target="_blank">Baixar boletim</a>'
+                    );
 
-                    // Separar disciplinas por semestre
+                    /* Separar disciplinas por semestre */
                     var semestres = {1: [], 2: []};
-                    disciplinas.forEach(function(d) {
+
+                    disciplinas.forEach(function (d) {
                         var sem = parseInt(d.disciplinas[3]);
                         if (sem === 1) semestres[1].push(d);
-                        else if (sem === 2) semestres[2].push(d);
+                        if (sem === 2) semestres[2].push(d);
                     });
 
-                    // Loop pelos semestres
+                    /* Loop dos semestres */
                     for (var num_semestre in semestres) {
-                        var disciplinas_semestre = semestres[num_semestre];
-                        if (disciplinas_semestre.length === 0) continue;
 
-                        var html = '<div class="table-responsive mb-4">';
-                        html += '<table class="table tabela_pauta table-striped table-hover table-sm">';
+                        var lista = semestres[num_semestre];
+                        if (lista.length === 0) continue;
+
+                        var html = '';
+                        html += '<table class="table tabela_pauta table-striped table-hover">';
                         html += '<thead>';
                         html += '<tr>';
-                        html += '<td colspan="3" class="boletim_text bg-dark text-white">';
-                        html += '<b>' + matricula.nome_curso + '</b> | ';
-                        html += 'Ano: <b>' + matricula.ano_curricular + 'º</b> | ';
-                        html += 'Semestre: <b>' + num_semestre + 'º</b> | ';
-                        html += 'Turma: <b>' + matricula.nome_turma + '</b>';
+                        html += '<td colspan="3" class="boletim_text">';
+                        html += '<b>' + matricula.nome_curso + '</b> ';
+                        html += '<span class="barra">|</span> Ano: <b>' + matricula.ano_curricular + 'º</b> ';
+                        html += '<span class="barra">|</span> Semestre: <b>' + num_semestre + 'º</b> ';
+                        html += '<span class="barra">|</span> Turma: <b>' + matricula.nome_turma + '</b>';
                         html += '</td>';
-                        html += '<td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>';
-                        html += '<td colspan="2" class="text-center bg1 p-top">EXAME</td>';
-                        html += '<td colspan="2" class="text-center cf1 bo1 p-top">CLASSIFICAÇÃO</td>';
-                        html += '<td colspan="4" class="rec bo1 text-center p-top">EXAME</td>';
-                        html += '<td colspan="2" class="fn bo1 text-center p-top">CLASSIFICAÇÃO FINAL</td>';
+                        html += '<td colspan="5" class="text-center bgmac bo1">MAC</td>';
+                        html += '<td colspan="2" class="text-center bg1">EXAME</td>';
+                        html += '<td colspan="2" class="text-center cf1 bo1">CLASSIFICAÇÃO</td>';
+                        html += '<td colspan="4" class="rec bo1 text-center">EXAME</td>';
+                        html += '<td colspan="2" class="fn bo1 text-center">CLASSIFICAÇÃO</td>';
                         html += '</tr>';
 
-                        html += '<tr style="text-align: center">';
+                        html += '<tr class="text-center">';
                         html += '<th class="bg1 bo1">#</th>';
                         html += '<th class="bg1 bo1">CÓDIGO</th>';
                         html += '<th class="bg1 bo1">DISCIPLINA</th>';
@@ -233,48 +242,51 @@
                         html += '</tr>';
                         html += '</thead><tbody>';
 
-                        disciplinas_semestre.forEach(function(disciplina, index) {
-                            var pf1 = null, pf2 = null, oa = null, ex_escrito = null, ex_oral = null, nota_recurso = null;
+                        /* Loop disciplinas */
+                        lista.forEach(function (disciplina, index) {
 
-                            // Processar notas
-                            if (dados && Array.isArray(dados)) {
-                                dados.forEach(function(nota) {
-                                    if (nota.disciplina == disciplina.disciplinas) {
-                                        if (nota.metrica == 'PP1') pf1 = parseFloat(nota.nota);
-                                        if (nota.metrica == 'PP2') pf2 = parseFloat(nota.nota);
-                                        if (nota.metrica == 'OA') oa = parseFloat(nota.nota);
-                                        if (nota.metrica == 'Exame Escrito') ex_escrito = parseFloat(nota.nota);
-                                        if (nota.metrica == 'Exame Oral') ex_oral = parseFloat(nota.nota);
-                                        if (nota.metrica == 'Recurso') nota_recurso = parseFloat(nota.nota);
-                                    }
-                                });
-                            }
+                            var pf1 = null, pf2 = null, oa = null;
+                            var ex_escrito = null, ex_oral = null;
+                            var nota_recurso = null;
 
-                            // Média MAC
+                            dados.forEach(function (n) {
+                                if (n.disciplina === disciplina.disciplinas) {
+                                    if (n.metrica === 'PP1') pf1 = parseFloat(n.nota);
+                                    if (n.metrica === 'PP2') pf2 = parseFloat(n.nota);
+                                    if (n.metrica === 'OA') oa = parseFloat(n.nota);
+                                    if (n.metrica === 'Exame Escrito') ex_escrito = parseFloat(n.nota);
+                                    if (n.metrica === 'Exame Oral') ex_oral = parseFloat(n.nota);
+                                    if (n.metrica === 'Recurso') nota_recurso = parseFloat(n.nota);
+                                }
+                            });
+
+                            /* MÉDIA MAC — SÓ SE TODAS EXISTIREM */
                             var media = null;
-                            if (pf1 !== null || pf2 !== null || oa !== null) {
-                                media = +((pf1 || 0) * 0.35 + (pf2 || 0) * 0.35 + (oa || 0) * 0.3).toFixed(2);
+                            if (pf1 !== null && pf2 !== null && oa !== null) {
+                                media = +((pf1 * 0.35) + (pf2 * 0.35) + (oa * 0.3)).toFixed(2);
                             }
 
-                            // CORREÇÃO DA LÓGICA DAS CORES - Igual ao blade
-                            var cor_media = '', classificacao = '-';
+                            /* CLASSIFICAÇÃO MAC */
+                            var cor_media = '';
+                            var classificacao = '-';
+
                             if (media !== null) {
-                                if (media >= 10.3) { 
-                                    classificacao = 'Aprovado(a)'; 
-                                    cor_media = 'for-green text-white';  // Verde para aprovado
-                                } else if (media == 10) { 
-                                    classificacao = 'Exame'; 
-                                    cor_media = 'for-yellow';  // Amarelo para exame
-                                } else { 
-                                    classificacao = 'Recurso'; 
-                                    cor_media = 'for-red';  // Vermelho para recurso
+                                if (media >= 10.3) {
+                                    classificacao = 'Aprovado(a)';
+                                    cor_media = 'for-green';
+                                } else if (media === 10) {
+                                    classificacao = 'Exame';
+                                    cor_media = 'for-yellow';
+                                } else {
+                                    classificacao = 'Recurso';
+                                    cor_media = 'for-red';
                                 }
                             }
 
-                            // Exame normal
+                            /* EXAME */
                             var exame_total = null;
                             if (ex_escrito !== null || ex_oral !== null) {
-                                exame_total = +((ex_escrito || 0) + (ex_oral || 0)).toFixed(2);
+                                exame_total = (ex_escrito || 0) + (ex_oral || 0);
                             }
 
                             var media_exame = null;
@@ -282,80 +294,68 @@
                                 media_exame = +((media * 0.7) + (exame_total * 0.3)).toFixed(2);
                             }
 
-                            // Média final - CORREÇÃO DA LÓGICA
+                            /* MÉDIA FINAL */
                             var media_final = null;
                             if (media !== null) {
                                 if (media < 10 && nota_recurso !== null) {
-                                    // Se média MAC é menor que 10 e tem recurso, usa recurso
                                     media_final = nota_recurso;
                                 } else if (media_exame !== null) {
-                                    // Se tem exame, usa média exame
                                     media_final = media_exame;
                                 } else {
-                                    // Caso contrário, usa média MAC
                                     media_final = media;
                                 }
                             }
 
-                            // Classificação final - CORREÇÃO DA LÓGICA
-                            var cor_final = '', estado_final = '-';
+                            var estado_final = '-';
+                            var cor_final = '';
+
                             if (media_final !== null) {
-                                if (media_final >= 10) { 
-                                    estado_final = 'Aprovado(a)'; 
-                                    cor_final = 'for-green text-white';  // Verde para aprovado final
-                                } else { 
-                                    estado_final = 'Reprovado(a)'; 
-                                    cor_final = 'for-red';  // Vermelho para reprovado final
+                                if (media_final >= 10) {
+                                    estado_final = 'Aprovado(a)';
+                                    cor_final = 'for-green';
+                                } else {
+                                    estado_final = 'Reprovado(a)';
+                                    cor_final = 'for-red';
                                 }
                             }
 
-                            // Linha da disciplina
                             html += '<tr>';
                             html += '<td class="text-center">' + (index + 1) + '</td>';
                             html += '<td class="text-center">' + disciplina.disciplinas + '</td>';
                             html += '<td>' + disciplina.nome_disciplina + '</td>';
-                            
-                            // Notas MAC
+
                             html += '<td class="text-center">' + (pf1 !== null ? pf1 : '-') + '</td>';
                             html += '<td class="text-center">' + (pf2 !== null ? pf2 : '-') + '</td>';
-                            html += '<td class="text-center">' + (oa !== null ? oa : '-') + '</td>';
-                            
-                            // Média MAC e classificação
-                            html += '<td class="text-center fw-bold">' + (media !== null ? media : '-') + '</td>';
-                            html += '<td class="text-center fw-bold ' + cor_media + '">' + classificacao + '</td>';
-                            
-                            // Exames
+                            html += '<td class="text-center">' + (oa  !== null ? oa  : '-') + '</td>';
+
+                            html += '<td class="text-center">' + (media !== null ? media : '-') + '</td>';
+                            html += '<td class="text-center ' + cor_media + '">' + classificacao + '</td>';
+
                             html += '<td class="text-center">' + (ex_escrito !== null ? ex_escrito : '-') + '</td>';
                             html += '<td class="text-center">' + (ex_oral !== null ? ex_oral : '-') + '</td>';
-                            
-                            // Média com exame e classificação (repetida)
+
                             html += '<td class="text-center">' + (media_exame !== null ? media_exame : '-') + '</td>';
-                            html += '<td class="text-center fw-bold ' + cor_media + '">' + classificacao + '</td>';
-                            
-                            // Recursos
+                            html += '<td class="text-center ' + cor_media + '">' + classificacao + '</td>';
+
                             html += '<td colspan="2" class="text-center">' + (nota_recurso !== null ? nota_recurso : '-') + '</td>';
                             html += '<td colspan="2" class="text-center">-</td>';
-                            
-                            // Final
-                            html += '<td colspan="2" class="text-center fw-bold">' + (media_final !== null ? media_final : '-') + '</td>';
-                            html += '<td colspan="2" class="text-center fw-bold ' + cor_final + '">' + estado_final + '</td>';
+
+                            html += '<td colspan="2" class="text-center">' + (media_final !== null ? media_final : '-') + '</td>';
+                            html += '<td colspan="2" class="text-center ' + cor_final + '">' + estado_final + '</td>';
                             html += '</tr>';
                         });
 
-                        html += '</tbody></table></div>';
+                        html += '</tbody></table>';
                         $("#table_student").append(html);
                     }
-                    
-                    // Adicionar alguns estilos modernos
-                    $("#table_student table").addClass("table-hover");
-                    $("#table_student th").addClass("align-middle");
-                    $("#table_student td").addClass("align-middle");
-                    
-                }).fail(function(xhr, status, error) {
-                    $("#table_student").html('<div class="alert alert-danger">Erro ao carregar o boletim. Tente novamente.</div>');
-                    console.error("Erro AJAX:", status, error);
+
+                }).fail(function () {
+                    $("#table_student").html(
+                        '<div class="alert alert-danger">Erro ao carregar boletim</div>'
+                    );
                 });
             }
         });
     </script>
+
 @endsection
