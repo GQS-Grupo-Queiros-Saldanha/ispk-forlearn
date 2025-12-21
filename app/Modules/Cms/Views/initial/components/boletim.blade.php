@@ -25,16 +25,13 @@ use App\Modules\Cms\Controllers\mainController;
     .semestreA, .semestre2{ } 
 </style>
 
-@if(2+2 !=4 )
-    <div class="alert alert-warning text-dark font-bold">
-        Para visualizar as notas lançadas, dirija-se a Tesouraria para regularizar os seus pagamentos!
-    </div>
-@elseif (auth()->check() && auth()->user()->id != 529)
+
+@if (auth()->check() && auth()->user()->id != 529)
     @include('Cms::initial.components.manutencao')
 @else
     @if(isset($disciplinas))
         <h1>ola</h1>
+    @else
+        <h1>Sem dados</h1>
     @endif
-    <h1>oi</h1>
-
 @endif
