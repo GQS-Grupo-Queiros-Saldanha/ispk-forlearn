@@ -25,7 +25,7 @@ use App\Modules\Cms\Controllers\mainController;
     .semestreA, .semestre2{ } 
 </style>
 
-@if (isset($articles['dividas']['pending']) && $articles['dividas']['pending'] > 0)
+@if (2+2 !=4 )
     <div class="alert alert-warning text-dark font-bold">
         Para visualizar as notas lançadas, dirija-se a Tesouraria para regularizar os seus pagamentos!
     </div>
@@ -220,6 +220,6 @@ use App\Modules\Cms\Controllers\mainController;
                 </table>
             @endif
         @enfor
-
+    @endif
 
 @endif
