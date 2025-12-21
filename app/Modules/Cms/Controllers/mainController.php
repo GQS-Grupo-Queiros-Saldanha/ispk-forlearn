@@ -1286,28 +1286,33 @@ class mainController extends Controller
         /*----------------------------------*/
         $dados = DB::table('study_plans as sp')
             ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
-            ->join('matriculation_disciplines as md', 'md.discipline_id', '=', 'pea.disciplines_id')
 
-            ->join('plano_estudo_avaliacaos as pea', function($join){
-                $join->on('pea.study_plan_editions_id', '=', 'spe.id')
-                    ->on('pea.disciplines_id', '=', 'md.discipline_id')
+            ->join('plano_estudo_avaliacaos as pea', function ($join) {
+                $join->on('pea.study_plan_editions_id', '=', 'spe.id');
             })
+
+            ->join('matriculation_disciplines as md', function ($join) {
+                $join->on('md.discipline_id', '=', 'pea.disciplines_id');
+            })
+
             ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
             ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
+
             ->where('spe.lective_years_id', $matricula->ano_curricular)
             ->where('pea.lective_years_id', $matricula->ano_lectivo)
-            ->where('al.id_turma',$matricula->turma)
-            ->where('al.users_id',$matricula->usuario)
+            ->where('al.id_turma', $matricula->turma)
+            ->where('al.users_id', $matricula->usuario)
             ->where('md.matriculation_id', $matriculation)
 
             ->select(
                 'metricas.nome as metrica',
                 'metricas.percentagem as percentagem',
                 'al.nota as nota'
-                )
+            )
             ->get();
 
-            dd($matricula,$dados);
+        dd($matricula,$dados);
+    }
 
 
 
