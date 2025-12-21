@@ -1151,7 +1151,12 @@ class mainController extends Controller
             )
             ->get();
 
-        return response()->json($matricula,$dados, $disciplinas);
+        return response()->json([
+            'matricula'   => $matricula,
+            'disciplinas' => $disciplinas,
+            'dados'       => $dados,
+        ]);
+
     }
 
     public function get_schedule_student($lective_year){
