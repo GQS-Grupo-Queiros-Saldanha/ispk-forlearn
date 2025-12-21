@@ -1301,6 +1301,7 @@ class mainController extends Controller
             ->where('al.id_turma', $matricula->turma)
             ->where('al.users_id', $matricula->usuario)
             ->where('md.matriculation_id', $matriculation)
+            ->where('dt.active', 1)
 
             ->select(
                 'd.code as disciplina',
