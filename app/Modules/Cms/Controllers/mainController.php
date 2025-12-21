@@ -1095,7 +1095,7 @@ class mainController extends Controller
             ->join('classes', 'classes.id', '=', 'mc.class_id')
             ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
             ->join('courses_translations as ct', 'ct.courses_id', '=', 'uc.courses_id')
-            ->where('m.id', $matriculation)
+            ->where('m.id', $matriculations)
             ->where('ct.active', 1)
             ->select(
                 'mc.class_id as turma',
@@ -1111,7 +1111,7 @@ class mainController extends Controller
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
             ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
-            ->where('md.matriculation_id', $matriculation)
+            ->where('md.matriculation_id', $matriculations)
             ->where('dt.active', 1)
             ->select(
                 'd.code as disciplinas',
@@ -1139,7 +1139,7 @@ class mainController extends Controller
             ->where('spe.lective_years_id', $matricula->ano_lectivo)
             ->where('al.id_turma', $matricula->turma)
             ->where('al.users_id', $matricula->usuario)
-            ->where('md.matriculation_id', $matriculation)
+            ->where('md.matriculation_id', $matriculations)
             ->where('dt.active', 1)
 
             ->select(
