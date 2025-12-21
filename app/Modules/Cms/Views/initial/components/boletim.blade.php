@@ -42,7 +42,7 @@ use App\Modules\Cms\Controllers\mainController;
                     <thead>
                         <tr>
                             <td colspan="3" class="boletim_text">
-                                <b>Engenharia Informática</b>
+                                <b>{{ $matricula->nome_curso }}</b>
                                 <as class="barra">|</as> Ano: <b>{{ $matricula->ano_curricular }}º</b>
                                 <as class="barra">|</as> Semestre: <b>1º</b>
                                 <as class="barra">|</as> Turma: <b>{{ $matricula->nome_turma }}</b>
