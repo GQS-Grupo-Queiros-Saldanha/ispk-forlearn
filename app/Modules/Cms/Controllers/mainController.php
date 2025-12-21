@@ -1385,7 +1385,6 @@ class mainController extends Controller
             )
             ->get();
 
-        return response()->json($matricula,$dados, $disciplinas);
         //dd($matricula,$dados, $disciplinas);
         
 
