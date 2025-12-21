@@ -1309,7 +1309,7 @@ class mainController extends Controller
             )
             ->get();
 
-        dd($matricula,$dados);
+        dd($matricula,$dados, $disciplinas);
     }
 
 
