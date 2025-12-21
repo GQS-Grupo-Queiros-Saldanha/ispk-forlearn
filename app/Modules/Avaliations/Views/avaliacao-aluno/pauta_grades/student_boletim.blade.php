@@ -16,9 +16,11 @@
         <select name="lective_year" id="lective_year" class="selectpicker form-control form-control-sm">
             <option selected value="" data-terminado="1">Seleciona o ano lectivo</option>
             @foreach ($lectiveYears as $lectiveYear)
+                @if($lectiveYear->id == '11')
                 <option value="{{ $lectiveYear->id }}" @if ($lectiveYearSelected == $lectiveYear->id) selected @endif>
                     {{ $lectiveYear->currentTranslation->display_name }}
                 </option>
+                @endif
             @endforeach 
         </select>
     </div>
