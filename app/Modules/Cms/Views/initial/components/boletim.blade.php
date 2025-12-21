@@ -105,7 +105,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 if($media >= 12){
                                     $cor_media = 'for-green';
                                     $classificacao = 'Aprovado(a)';
-                                } elseif($media == 10){
+                                } elseif($media >= 10 && $media < 11  ){
                                     $cor_media = 'for-yellow';
                                     $classificacao = 'Exame';
                                 } else{
