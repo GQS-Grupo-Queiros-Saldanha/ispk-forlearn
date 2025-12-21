@@ -1150,7 +1150,7 @@ class mainController extends Controller
                 'al.nota as nota'
             )
             ->get();
-
+        dd($matricula,$dados, $disciplinas);
         return response()->json([
             'matricula'   => $matricula,
             'disciplinas' => $disciplinas,
@@ -1385,7 +1385,7 @@ class mainController extends Controller
             )
             ->get();
 
-        //dd($matricula,$dados, $disciplinas);
+        dd($matricula,$dados, $disciplinas);
         
 
         $student_info = $this->get_matriculation_student($matricula->ano_lectivo, $matricula->usuario);
