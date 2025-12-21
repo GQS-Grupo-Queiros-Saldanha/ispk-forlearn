@@ -1299,7 +1299,6 @@ class mainController extends Controller
             ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
 
             ->where('spe.lective_years_id', $matricula->ano_curricular)
-            ->where('pea.lective_years_id', $matricula->ano_lectivo)
             ->where('al.id_turma', $matricula->turma)
             ->where('al.users_id', $matricula->usuario)
             ->where('md.matriculation_id', $matriculation)
