@@ -102,10 +102,10 @@ use App\Modules\Cms\Controllers\mainController;
                                 $media_exame = $exame_total ? round(($media*0.7) + ($exame_total*0.3),2) : $media;
 
                                 // Cor e classificação
-                                if($media >= 11){
+                                if($media >= 10.30){
                                     $cor_media = 'for-green';
                                     $classificacao = 'Aprovado(a)';
-                                } elseif($media >= 10 && $media < 11  ){
+                                } elseif($media == 10 && $media < 10.29  ){
                                     $cor_media = 'for-yellow';
                                     $classificacao = 'Exame';
                                 } else{
