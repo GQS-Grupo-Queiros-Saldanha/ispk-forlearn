@@ -192,7 +192,7 @@
 
                     $("#table_student").html(
                         '<a href="/boletim_pdf/' + matriculationId + '" ' +
-                        'class="btn btn-primary mb-3" target="_blank">Baixar boletim</a>'
+                        'class="btn btn-primary mb-3" target="_blank"><i class="bi bi-filetype-pdf"></i>Boletim de Notas</a>'
                     );
 
                     // Separar disciplinas por semestre
