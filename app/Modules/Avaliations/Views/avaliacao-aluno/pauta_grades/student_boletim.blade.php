@@ -65,11 +65,15 @@
                     var matricula = data.matricula;
                     var dados = data.dados;
                     var disciplinas = data.disciplinas;
+                    var matriculationId = data.id;
 
                     if (!disciplinas || disciplinas.length === 0) {
                         $("#table_student").html("<h1>Sem disciplinas associadas à matrícula</h1>");
                         return;
                     }
+
+                    // Botão de download do boletim
+                    $("#table_student").append('<a href="/boletim_pdf/' + matriculationId + '" class="btn btn-primary mb-3">Baixar Boletim</a>');
 
                     // Separar disciplinas por semestre
                     var semestres = {1: [], 2: []};
@@ -122,21 +126,20 @@
                                 }
                             });
 
-                            // Média MAC
+                            // Média ponderada MAC
                             var media = (pf1 !== null || pf2 !== null || oa !== null)
-                                ? +( (pf1 || 0)*0.35 + (pf2 || 0)*0.35 + (oa || 0)*0.3 ).toFixed(2)
+                                ? +( (pf1||0)*0.35 + (pf2||0)*0.35 + (oa||0)*0.3 ).toFixed(2)
                                 : null;
 
-                            // Exame
+                            // Média com exame
                             var exame_total = (ex_escrito !== null || ex_oral !== null) ? ((ex_escrito||0) + (ex_oral||0)) : null;
                             var media_exame = (media !== null && exame_total !== null) ? +((media*0.7) + (exame_total*0.3)).toFixed(2) : null;
 
-                            // Nota final considerando recurso
+                            // Considerar recurso se media < 10
                             var media_final = (media < 10 && nota_recurso !== null) ? nota_recurso : (media_exame !== null ? media_exame : media);
 
-                            // Classificações
-                            var cor_media = '', cor_final = '';
-                            var classificacao = '-', final = '-';
+                            // Definir cores e classificações
+                            var cor_media = '', cor_final = '', classificacao = '-', final = '-';
                             if (media !== null) {
                                 if (media >= 10.3) { classificacao='Aprovado(a)'; cor_media='for-green'; }
                                 else if (media == 10) { classificacao='Exame'; cor_media='for-yellow'; }
