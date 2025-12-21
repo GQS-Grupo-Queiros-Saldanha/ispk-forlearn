@@ -1260,12 +1260,18 @@ class mainController extends Controller
         
         $matricula = DB::table('matriculations as m')
             ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
+            ->join('classes', 'classes.id', '=', 'mc.class_id')
+            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
+            ->join('courses_translations as ct', 'ct.courses_id', '=', 'uc.courses_id')
             ->where('m.id', $matriculation)
+            ->where('ct.active', 1)
             ->select(
                 'mc.class_id as turma',
+                'classes.code as nome_turma',
                 'm.course_year as ano_curricular',
                 'm.lective_year as ano_lectivo',
-                'm.user_id as usuario'
+                'm.user_id as usuario',
+                'ct.display_name as nome_curso'
             )
             ->orderBy('mc.id_sui', 'desc') // maior id primeiro
             ->first();
