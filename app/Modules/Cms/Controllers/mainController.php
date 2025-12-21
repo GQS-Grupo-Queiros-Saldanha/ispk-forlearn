@@ -1073,6 +1073,22 @@ class mainController extends Controller
         $config = DB::table('avalicao_config')->where('lective_year',$lective_year)->first();
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
+        
+        if($student ==000){
+             dd([
+                'percurso' => $percurso,
+                'articles' => $articles,
+                'plano' => $plano,
+                'matriculations' => $matriculations,
+                'disciplines' => $disciplines,
+                'student' => $student,
+                'config' => $config,
+                'classes' => $classes,
+                'melhoria_notas' => $melhoria_notas
+            ]);
+        }
+
+        Log::info('CONFIG DEBUG1.2', ['config' => $config]);
 
         $matricula = DB::table('matriculations as m')
             ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
@@ -1135,16 +1151,7 @@ class mainController extends Controller
             )
             ->get();
 
-        
-        
-        
-
-        Log::info('CONFIG DEBUG1.2', ['config' => $config]);
-        $html = view("Cms::initial.components.boletim", compact(
-            "matricula", "disciplinas", "dados", "student_info", "institution" 
-            ))->render();
-
-        return response()->json($html);
+        return response()->json($matricula,$dados, $disciplinas);
     }
 
     public function get_schedule_student($lective_year){
@@ -1372,8 +1379,10 @@ class mainController extends Controller
             )
             ->get();
 
-        
+        return response()->json($matricula,$dados, $disciplinas);
         //dd($matricula,$dados, $disciplinas);
+        
+
         $student_info = $this->get_matriculation_student($matricula->ano_lectivo, $matricula->usuario);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
@@ -1392,8 +1401,6 @@ class mainController extends Controller
         return $pdf->stream('Boletim_de_notas_' . $matriculation . '_' . $matricula->ano_lectivo . '.pdf');
 
     }
-
-
 
     public static function study_plain($lective_year = null, $student = null){
 
@@ -1653,26 +1660,26 @@ class mainController extends Controller
 
               $temNotaFinal = $dadosDisciplina['nota_final'] !== null;
 
-$temNotaPercurso = $dadosDisciplina['nota_percurso'] !== null;
+    $temNotaPercurso = $dadosDisciplina['nota_percurso'] !== null;
 
-$notasSaoDiferentes = $dadosDisciplina['nota_final'] != $dadosDisciplina['nota_percurso'];
+    $notasSaoDiferentes = $dadosDisciplina['nota_final'] != $dadosDisciplina['nota_percurso'];
 
-if (
-    (
-        ($temNotaFinal && !$temNotaPercurso) ||
-        ($temNotaPercurso && $notasSaoDiferentes)
-    )
-){
-                  $dadosSemestre[] = $dadosDisciplina;
-              }
+    if (
+        (
+            ($temNotaFinal && !$temNotaPercurso) ||
+            ($temNotaPercurso && $notasSaoDiferentes)
+        )
+    ){
+                    $dadosSemestre[] = $dadosDisciplina;
+                }
 
-          }
+            }
 
-      }
+        }
 
-      return $dadosSemestre
-      ;
-  }
+        return $dadosSemestre
+        ;
+    }
 
   protected function processarDisciplina($student,$disciplina, $avaliacoes, $index, $melhoria_notas, $config, $notas_percurso)
   {

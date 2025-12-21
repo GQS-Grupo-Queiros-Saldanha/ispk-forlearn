@@ -434,10 +434,6 @@ class PautaGeralAvaliacoesController extends Controller
 
             if (auth()->user()->hasRole('student')) {
 
-                // $date = BoletimNotas_Student($id_anoLectivo, $id_curso, $id_user);
-
-                // return $student_course[0]->users_id;
-                
 
                 $data = [
                     'lectiveYearSelected' => $lectiveYearSelected,
@@ -457,16 +453,6 @@ class PautaGeralAvaliacoesController extends Controller
 
                 return view("Avaliations::avaliacao-aluno.pauta_grades.student_boletim")->with($data);
             }
-
-
-
-            // $data=[
-            //     'lectiveYearSelected'=>$lectiveYearSelected,
-            //     'lectiveYears'=>$lectiveYears
-            // ];
-
-
-            // return view("Avaliations::avaliacao-aluno.pauta_grades.student_boletim")->with($data);
 
         } catch (Exception | Throwable $e) {
             logError($e);
