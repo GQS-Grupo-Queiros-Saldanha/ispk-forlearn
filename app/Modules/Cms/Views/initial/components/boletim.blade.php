@@ -34,19 +34,14 @@ use App\Modules\Cms\Controllers\mainController;
 @else
     @if(isset($disciplinas) && count($disciplinas))
         @php
-            /* ===============================
-            Separar disciplinas por semestre
-            =============================== */
+            // Separar disciplinas por semestre
             $disciplinas_semestre1 = [];
             $disciplinas_semestre2 = [];
 
             foreach ($disciplinas as $d) {
                 $sem = intval($d->disciplinas[3]);
-                if ($sem === 1) {
-                    $disciplinas_semestre1[] = $d;
-                } elseif ($sem === 2) {
-                    $disciplinas_semestre2[] = $d;
-                }
+                if ($sem === 1) $disciplinas_semestre1[] = $d;
+                elseif ($sem === 2) $disciplinas_semestre2[] = $d;
             }
 
             $semestres = [
@@ -66,13 +61,13 @@ use App\Modules\Cms\Controllers\mainController;
                                 <as class="barra">|</as> Semestre: <b>{{ $num_semestre }}º</b>
                                 <as class="barra">|</as> Turma: <b>{{ $matricula->nome_turma }}</b>
                             </td>
-                            <td colspan="5" class="text-center bgmac bo1">MAC</td>
-                            <td colspan="2" class="text-center bg1">EXAME</td>
-                            <td colspan="2" class="text-center cf1 bo1">CLASSIFICAÇÃO</td>
-                            <td colspan="4" class="rec bo1 text-center">EXAME</td>
-                            <td colspan="2" class="fn bo1 text-center">CLASSIFICAÇÃO</td>
+                            <td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>
+                            <td colspan="2" class="text-center bg1 p-top">EXAME</td>
+                            <td colspan="2" class="text-center cf1 bo1 p-top">CLASSIFICAÇÃO</td>
+                            <td colspan="4" class="rec bo1 text-center p-top">EXAME</td>
+                            <td colspan="2" class="fn bo1 text-center p-top">CLASSIFICAÇÃO</td>
                         </tr>
-                        <tr class="text-center">
+                        <tr style="text-align:center">
                             <th class="bg1 bo1">#</th>
                             <th class="bg1 bo1">CÓDIGO</th>
                             <th class="bg1 bo1">DISCIPLINA</th>
@@ -88,160 +83,147 @@ use App\Modules\Cms\Controllers\mainController;
                             <th colspan="2" class="fn bo1">FINAL</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                    @foreach($disciplinas_semestre as $index => $disciplina)
-                        @php
-                            /* ===============================
-                            Inicialização segura
-                            =============================== */
-                            $pf1 = $pf2 = $oa = null;
-                            $ex_escrito = $ex_oral = null;
-                            $nota_recurso = null;
+                        @foreach($disciplinas_semestre as $index => $disciplina)
+                            @php
+                                /*
+                                Inicialização segura
+                                */
+                                $pf1 = $pf2 = $oa = null;
+                                $ex_escrito = $ex_oral = null;
+                                $nota_recurso = null;
 
-                            /* ===============================
-                            Leitura das notas
-                            - ignora null
-                            - usa sempre a maior
-                            =============================== */
-                            foreach ($dados as $nota) {
+                                /*
+                                Pegar SEMPRE a MAIOR nota válida por métrica
+                                Ignora null
+                                */
+                                foreach ($dados as $nota) {
+                                    if ($nota->disciplina === $disciplina->disciplinas && $nota->nota !== null) {
+                                        $valor = floatval($nota->nota);
 
-                                if ($nota->disciplina !== $disciplina->disciplinas) {
-                                    continue;
+                                        if ($nota->metrica === 'PP1')
+                                            $pf1 = $pf1 === null ? $valor : max($pf1, $valor);
+
+                                        if ($nota->metrica === 'PP2')
+                                            $pf2 = $pf2 === null ? $valor : max($pf2, $valor);
+
+                                        if ($nota->metrica === 'OA')
+                                            $oa = $oa === null ? $valor : max($oa, $valor);
+
+                                        if ($nota->metrica === 'Exame Escrito')
+                                            $ex_escrito = $ex_escrito === null ? $valor : max($ex_escrito, $valor);
+
+                                        if ($nota->metrica === 'Exame Oral')
+                                            $ex_oral = $ex_oral === null ? $valor : max($ex_oral, $valor);
+
+                                        if ($nota->metrica === 'Recurso')
+                                            $nota_recurso = $nota_recurso === null ? $valor : max($nota_recurso, $valor);
+                                    }
                                 }
 
-                                if ($nota->nota === null) {
-                                    continue;
+                                /*
+                                MÉDIA MAC
+                                ❗️Só existe se PF1 + PF2 + OA existirem
+                                */
+                                $media = null;
+                                if ($pf1 !== null && $pf2 !== null && $oa !== null) {
+                                    $media = round(
+                                        ($pf1 * 0.35) +
+                                        ($pf2 * 0.35) +
+                                        ($oa  * 0.30),
+                                        2
+                                    );
                                 }
 
-                                $valor = floatval($nota->nota);
+                                /*
+                                Classificação MAC
+                                */
+                                $cor_media = '';
+                                $classificacao = '-';
 
-                                switch ($nota->metrica) {
-                                    case 'PP1':
-                                        $pf1 = $pf1 === null ? $valor : max($pf1, $valor);
-                                        break;
-                                    case 'PP2':
-                                        $pf2 = $pf2 === null ? $valor : max($pf2, $valor);
-                                        break;
-                                    case 'OA':
-                                        $oa = $oa === null ? $valor : max($oa, $valor);
-                                        break;
-                                    case 'Exame Escrito':
-                                        $ex_escrito = $ex_escrito === null ? $valor : max($ex_escrito, $valor);
-                                        break;
-                                    case 'Exame Oral':
-                                        $ex_oral = $ex_oral === null ? $valor : max($ex_oral, $valor);
-                                        break;
-                                    case 'Recurso':
-                                        $nota_recurso = $nota_recurso === null ? $valor : max($nota_recurso, $valor);
-                                        break;
+                                if ($media !== null) {
+                                    if ($media >= 10.3) {
+                                        $classificacao = 'Aprovado(a)';
+                                        $cor_media = 'for-green';
+                                    } elseif ($media == 10) {
+                                        $classificacao = 'Exame';
+                                        $cor_media = 'for-yellow';
+                                    } else {
+                                        $classificacao = 'Recurso';
+                                        $cor_media = 'for-red';
+                                    }
                                 }
-                            }
 
-                            /* ===============================
-                            Média MAC (só se existir nota)
-                            =============================== */
-                            $media = null;
-                            if ($pf1 !== null || $pf2 !== null || $oa !== null) {
-                                $media = round(
-                                    (($pf1 ?? 0) * 0.35) +
-                                    (($pf2 ?? 0) * 0.35) +
-                                    (($oa  ?? 0) * 0.30),
-                                    2
-                                );
-                            }
-
-                            /* ===============================
-                            Classificação MAC
-                            =============================== */
-                            $classificacao = '-';
-                            $cor_media = '';
-
-                            if ($media !== null) {
-                                if ($media >= 10.3) {
-                                    $classificacao = 'Aprovado(a)';
-                                    $cor_media = 'for-green';
-                                } elseif ($media == 10) {
-                                    $classificacao = 'Exame';
-                                    $cor_media = 'for-yellow';
-                                } else {
-                                    $classificacao = 'Recurso';
-                                    $cor_media = 'for-red';
+                                /*
+                                Exame normal
+                                Só existe se houver média MAC
+                                */
+                                $media_exame = null;
+                                if ($media !== null && ($ex_escrito !== null || $ex_oral !== null)) {
+                                    $exame_total = ($ex_escrito ?? 0) + ($ex_oral ?? 0);
+                                    $media_exame = round(
+                                        ($media * 0.7) + ($exame_total * 0.3),
+                                        2
+                                    );
                                 }
-                            }
 
-                            /* ===============================
-                            Exame normal
-                            =============================== */
-                            $exame_total = null;
-                            if ($ex_escrito !== null || $ex_oral !== null) {
-                                $exame_total = round(
-                                    ($ex_escrito ?? 0) + ($ex_oral ?? 0),
-                                    2
-                                );
-                            }
-
-                            $media_exame = null;
-                            if ($media !== null && $exame_total !== null) {
-                                $media_exame = round(
-                                    ($media * 0.7) + ($exame_total * 0.3),
-                                    2
-                                );
-                            }
-
-                            /* ===============================
-                            Média final
-                            =============================== */
-                            if ($media !== null && $media < 10 && $nota_recurso !== null) {
-                                $media_final = $nota_recurso;
-                            } elseif ($media_exame !== null) {
-                                $media_final = $media_exame;
-                            } else {
-                                $media_final = $media;
-                            }
-
-                            /* ===============================
-                            Classificação final
-                            =============================== */
-                            $estado_final = '-';
-                            $cor_final = '';
-
-                            if ($media_final !== null) {
-                                if ($media_final >= 10) {
-                                    $estado_final = 'Aprovado(a)';
-                                    $cor_final = 'for-green';
-                                } else {
-                                    $estado_final = 'Reprovado(a)';
-                                    $cor_final = 'for-red';
+                                /*
+                                Média final
+                                - Recurso só se média < 10
+                                */
+                                $media_final = null;
+                                if ($media !== null) {
+                                    if ($media < 10 && $nota_recurso !== null) {
+                                        $media_final = $nota_recurso;
+                                    } elseif ($media_exame !== null) {
+                                        $media_final = $media_exame;
+                                    } else {
+                                        $media_final = $media;
+                                    }
                                 }
-                            }
-                        @endphp
 
-                        <tr>
-                            <td class="text-center">{{ $index + 1 }}</td>
-                            <td class="text-center">{{ $disciplina->disciplinas }}</td>
-                            <td>{{ $disciplina->nome_disciplina }}</td>
+                                /*
+                                Estado final
+                                */
+                                $estado_final = '-';
+                                $cor_final = '';
 
-                            <td class="text-center">{{ $pf1 ?? '-' }}</td>
-                            <td class="text-center">{{ $pf2 ?? '-' }}</td>
-                            <td class="text-center">{{ $oa  ?? '-' }}</td>
+                                if ($media_final !== null) {
+                                    if ($media_final >= 10) {
+                                        $estado_final = 'Aprovado(a)';
+                                        $cor_final = 'for-green';
+                                    } else {
+                                        $estado_final = 'Reprovado(a)';
+                                        $cor_final = 'for-red';
+                                    }
+                                }
+                            @endphp
 
-                            <td class="text-center">{{ $media ?? '-' }}</td>
-                            <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
+                            <tr>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="text-center">{{ $disciplina->disciplinas }}</td>
+                                <td>{{ $disciplina->nome_disciplina }}</td>
 
-                            <td class="text-center">{{ $ex_escrito ?? '-' }}</td>
-                            <td class="text-center">{{ $ex_oral ?? '-' }}</td>
+                                <td class="text-center">{{ $pf1 !== null ? $pf1 : '-' }}</td>
+                                <td class="text-center">{{ $pf2 !== null ? $pf2 : '-' }}</td>
+                                <td class="text-center">{{ $oa !== null ? $oa : '-' }}</td>
 
-                            <td class="text-center">{{ $media_exame ?? '-' }}</td>
-                            <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
+                                <td class="text-center">{{ $media !== null ? $media : '-' }}</td>
+                                <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
-                            <td colspan="2" class="text-center">{{ $nota_recurso ?? '-' }}</td>
-                            <td colspan="2" class="text-center">-</td>
+                                <td class="text-center">{{ $ex_escrito !== null ? $ex_escrito : '-' }}</td>
+                                <td class="text-center">{{ $ex_oral !== null ? $ex_oral : '-' }}</td>
 
-                            <td colspan="2" class="text-center">{{ $media_final ?? '-' }}</td>
-                            <td colspan="2" class="text-center {{ $cor_final }}">{{ $estado_final }}</td>
-                        </tr>
-                    @endforeach
+                                <td class="text-center">{{ $media_exame !== null ? $media_exame : '-' }}</td>
+                                <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
+
+                                <td colspan="2" class="text-center">{{ $nota_recurso !== null ? $nota_recurso : '-' }}</td>
+                                <td colspan="2" class="text-center">-</td>
+
+                                <td colspan="2" class="text-center">{{ $media_final !== null ? $media_final : '-' }}</td>
+                                <td colspan="2" class="text-center {{ $cor_final }}">{{ $estado_final }}</td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             @endif
