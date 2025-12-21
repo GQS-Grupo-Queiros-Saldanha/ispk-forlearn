@@ -81,37 +81,72 @@ use App\Modules\Cms\Controllers\mainController;
                     <tbody>
                         @foreach($disciplinas_semestre as $index => $disciplina)
                             @php
-                                // Pegar notas de cada métrica
-                                $pf1 = $pf2 = $oa = $ex_escrito = $ex_oral = 0;
+                                // Inicialização
+                                $pf1 = $pf2 = $oa = null;
+                                $ex_escrito = $ex_oral = null;
+                                $nota_recurso = null;
 
-                                foreach($dados as $nota){
-                                    if($nota->disciplina == $disciplina->disciplinas){
-                                        if($nota->metrica == 'PP1') $pf1 = $nota->nota;
-                                        if($nota->metrica == 'PP2') $pf2 = $nota->nota;
-                                        if($nota->metrica == 'OA') $oa = $nota->nota;
-                                        if($nota->metrica == 'Exame Escrito') $ex_escrito = $nota->nota;
-                                        if($nota->metrica == 'Exame Oral') $ex_oral = $nota->nota;
-                                        if ($nota->metrica == 'Recurso') $nota_recurso = $nota->nota;
+                                foreach ($dados as $nota) {
+                                    if ($nota->disciplina == $disciplina->disciplinas) {
+                                        if ($nota->metrica == 'PP1') $pf1 = floatval($nota->nota);
+                                        if ($nota->metrica == 'PP2') $pf2 = floatval($nota->nota);
+                                        if ($nota->metrica == 'OA') $oa = floatval($nota->nota);
+                                        if ($nota->metrica == 'Exame Escrito') $ex_escrito = floatval($nota->nota);
+                                        if ($nota->metrica == 'Exame Oral') $ex_oral = floatval($nota->nota);
+                                        if ($nota->metrica == 'Recurso') $nota_recurso = floatval($nota->nota);
                                     }
                                 }
 
-                                // Média ponderada PF1+PF2+OA
-                                $media = round(($pf1*0.35)+($pf2*0.35)+($oa*0.3),2);
+                                // Média MAC
+                                $media = ($pf1 !== null || $pf2 !== null || $oa !== null)
+                                    ? round(($pf1 * 0.35) + ($pf2 * 0.35) + ($oa * 0.3), 2)
+                                    : null;
 
-                                // Exame total
-                                $exame_total = ($ex_escrito ? $ex_escrito : 0) + ($ex_oral ? $ex_oral : 0);
-                                $media_exame = $exame_total ? round(($media*0.7) + ($exame_total*0.3),2) : $media;
+                                // Cor e classificação MAC
+                                $cor_media = '';
+                                $classificacao = '-';
+                                if ($media !== null) {
+                                    if ($media >= 10.3) {
+                                        $classificacao = 'Aprovado(a)';
+                                        $cor_media = 'for-green';
+                                    } elseif ($media == 10) {
+                                        $classificacao = 'Exame';
+                                        $cor_media = 'for-yellow';
+                                    } else {
+                                        $classificacao = 'Recurso';
+                                        $cor_media = 'for-red';
+                                    }
+                                }
 
-                                // Cor e classificação
-                                if($media >= 10.30){
-                                    $cor_media = 'for-green';
-                                    $classificacao = 'Aprovado(a)';
-                                } elseif($media == 10 && $media < 10.29  ){
-                                    $cor_media = 'for-yellow';
-                                    $classificacao = 'Exame';
-                                } else{
-                                    $cor_media = 'for-red';
-                                    $classificacao = 'Recurso';
+                                // Exame normal
+                                $exame_total = ($ex_escrito !== null || $ex_oral !== null)
+                                    ? round(($ex_escrito ?: 0) + ($ex_oral ?: 0), 2)
+                                    : null;
+
+                                $media_exame = ($media !== null && $exame_total !== null)
+                                    ? round(($media * 0.7) + ($exame_total * 0.3), 2)
+                                    : null;
+
+                                // Se houver recurso, substituir a nota
+                                if ($media !== null && $media < 10 && $nota_recurso !== null) {
+                                    $media_final = $nota_recurso;
+                                } elseif ($media_exame !== null) {
+                                    $media_final = $media_exame;
+                                } else {
+                                    $media_final = $media;
+                                }
+
+                                // Classificação final
+                                $cor_final = '';
+                                $estado_final = '-';
+                                if ($media_final !== null) {
+                                    if ($media_final >= 10) {
+                                        $estado_final = 'Aprovado(a)';
+                                        $cor_final = 'for-green';
+                                    } else {
+                                        $estado_final = 'Reprovado(a)';
+                                        $cor_final = 'for-red';
+                                    }
                                 }
                             @endphp
 
@@ -120,24 +155,23 @@ use App\Modules\Cms\Controllers\mainController;
                                 <td class="text-center">{{ $disciplina->disciplinas }}</td>
                                 <td>{{ $disciplina->nome_disciplina }}</td>
 
-                                <td class="text-center">{{ $pf1 }}</td>
-                                <td class="text-center">{{ $pf2 }}</td>
-                                <td class="text-center">{{ $oa }}</td>
+                                <td class="text-center">{{ $pf1 !== null ? $pf1 : '-' }}</td>
+                                <td class="text-center">{{ $pf2 !== null ? $pf2 : '-' }}</td>
+                                <td class="text-center">{{ $oa  !== null ? $oa  : '-' }}</td>
 
-                                <td class="text-center">{{ $media }}</td>
+                                <td class="text-center">{{ $media !== null ? $media : '-' }}</td>
                                 <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
-                                <td class="text-center">{{ $ex_escrito ?: '-' }}</td>
-                                <td class="text-center">{{ $ex_oral ?: '-' }}</td>
+                                <td class="text-center">{{ $ex_escrito !== null ? $ex_escrito : '-' }}</td>
+                                <td class="text-center">{{ $ex_oral !== null ? $ex_oral : '-' }}</td>
 
-                                <td class="text-center">{{ $media_exame }}</td>
+                                <td class="text-center">{{ $media_exame !== null ? $media_exame : '-' }}</td>
                                 <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
+                                <td colspan="2" class="text-center">{{ $nota_recurso !== null ? $nota_recurso : '-' }}</td>
                                 <td colspan="2" class="text-center">-</td>
-                                <td colspan="2" class="text-center">-</td>
-
-                                <td colspan="2" class="text-center">{{ $media_exame }}</td>
-                                <td colspan="2" class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
+                                <td colspan="2" class="text-center">{{ $media_final !== null ? $media_final : '-' }}</td>
+                                <td colspan="2" class="text-center {{ $cor_final }}">{{ $estado_final }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -147,4 +181,5 @@ use App\Modules\Cms\Controllers\mainController;
     @else
         <h1>Sem disciplinas associadas à matrícula</h1>
     @endif
+
 @endif
