@@ -33,7 +33,7 @@ use App\Modules\Cms\Controllers\mainController;
     @include('Cms::initial.components.manutencao')
 @else
     @if(isset($disciplinas))
-        @foreach($disciplinas as disciplina)
+        @foreach($disciplinas as $disciplina)
             @php
                 $semestre = $disciplina->disciplinas[3]; // 3º índice da string
             @endphp
