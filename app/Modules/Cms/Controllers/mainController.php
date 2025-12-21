@@ -1271,7 +1271,7 @@ class mainController extends Controller
             ->first();
         
         $disciplinas = DB::table('matriculation_disciplines as md')
-            ->join('disciplines as d', 'd.id', '=', 'md.disciplines_id')
+            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
             ->where('md.matriculation_id', $matriculation)
 
             ->select(
