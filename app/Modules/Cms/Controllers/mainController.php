@@ -1276,7 +1276,7 @@ class mainController extends Controller
             ->where('md.matriculation_id', $matriculation)
             ->select(
                 'd.code as disciplinas',
-                'dt.display_name as nome_disciplina',
+                'dt.display_name as nome_disciplina'
             )
             ->get();
                 
