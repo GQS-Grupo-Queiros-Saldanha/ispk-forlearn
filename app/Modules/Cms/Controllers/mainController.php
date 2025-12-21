@@ -1026,6 +1026,7 @@ class mainController extends Controller
             ->select(["lective_year", "id"])
             ->orderBy("lective_year", "asc")
             ->first();
+        Log::info('matricula user', ['dados'=>$matriculations]);
 
             
         if (!isset($matriculations->lective_year)) {
