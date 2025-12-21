@@ -33,18 +33,25 @@ use App\Modules\Cms\Controllers\mainController;
     @include('Cms::initial.components.manutencao')
 @else
     @if(isset($disciplinas))
-        @foreach($disciplinas as $disciplina)
+        @php
+            $semestres = [1, 2]; // ou calcula dinamicamente
+        @endphp
+
+        @foreach($semestres as $sem)
             @php
-                $semestre = $disciplina->disciplinas[3]; // 3º índice da string
+                $disc_semestre = $disciplinas->filter(function($d) use ($sem) {
+                    return (int)$d->disciplinas[3] === $sem;
+                });
             @endphp
-            @if($semestre == 1)
+
+            @if($disc_semestre->isNotEmpty())
                 <table class="table tabela_pauta table-striped table-hover tabela_pauta">
                     <thead>
                         <tr>
                             <td colspan="3" class="boletim_text">
                                 <b>{{ $matricula->nome_curso }}</b>
                                 <as class="barra">|</as> Ano: <b>{{ $matricula->ano_curricular }}º</b>
-                                <as class="barra">|</as> Semestre: <b>1º</b>
+                                <as class="barra">|</as> Semestre: <b>{{ $sem }}º</b>
                                 <as class="barra">|</as> Turma: <b>{{ $matricula->nome_turma }}</b>
                             </td>
                             <td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>
@@ -53,99 +60,6 @@ use App\Modules\Cms\Controllers\mainController;
                             <td colspan="4" class="rec bo1 text-center p-top">EXAME</td>
                             <td colspan="2" class="fn bo1 text-center p-top">CLASSIFICAÇÃO</td>
                         </tr>
-
-                        <tr style="text-align: center">
-                            <th class="bg1 bo1">#</th>
-                            <th class="bg1 bo1">{{ $disciplina->disciplinas }}</th>
-                            <th class="bg1 bo1">{{ $disciplina->nome_disciplina }}</th>
-                            <th class="bgmac bo1">PF1</th>
-                            <th class="bgmac bo1">PF2</th>
-                            <th class="bgmac bo1">OA</th>
-                            <th colspan="2" class="bgmac bo1">MÉDIA</th>
-                            <th class="bg1 bo1">ESCRITO</th>
-                            <th class="bg1 bo1">ORAL</th>
-                            <th colspan="2" class="cf1 bo1">MAC + EXAME</th>
-                            <th colspan="2" class="rec bo1">RECURSO</th>
-                            <th colspan="2" class="rec bo1">ESPECIAL</th>
-                            <th colspan="2" class="fn bo1">FINAL</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr>
-                            <td class="text-center">1</td>
-                            <td class="text-center">{{ $disciplina->disciplinas }}</td>
-                            <td>{{ $disciplina->nome_disciplina }}</td>
-
-                            <td class="text-center">14</td>
-                            <td class="text-center">16</td>
-                            <td class="text-center">15</td>
-
-                            <td class="text-center">15</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">15</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">15</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-                        </tr>
-
-                        <tr>
-                            <td class="text-center">2</td>
-                            <td class="text-center">MAT102</td>
-                            <td>Matemática</td>
-
-                            <td class="text-center">8</td>
-                            <td class="text-center">9</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">9</td>
-                            <td class="text-center for-red">Recurso</td>
-
-                            <td class="text-center">10</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">9</td>
-                            <td class="text-center for-red">Reprovado(a)</td>
-
-                            <td class="text-center">11</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">11</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-                        </tr>
-                    </tbody>
-                </table>
-            @else
-                <table class="table tabela_pauta table-striped table-hover tabela_pauta">
-                    <thead>
-                        <tr>
-                            <td colspan="3" class="boletim_text">
-                                <b>Engenharia Informática</b>
-                                <as class="barra">|</as> Ano: <b>1º</b>
-                                <as class="barra">|</as> Semestre: <b>2º</b>
-                                <as class="barra">|</as> Turma: <b>A</b>
-                            </td>
-                            <td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>
-                            <td colspan="2" class="text-center bg1 p-top">EXAME</td>
-                            <td colspan="2" class="text-center cf1 bo1 p-top">CLASSIFICAÇÃO</td>
-                            <td colspan="4" class="rec bo1 text-center p-top">EXAME</td>
-                            <td colspan="2" class="fn bo1 text-center p-top">CLASSIFICAÇÃO</td>
-                        </tr>
-
                         <tr style="text-align: center">
                             <th class="bg1 bo1">#</th>
                             <th class="bg1 bo1">CÓDIGO</th>
@@ -162,69 +76,39 @@ use App\Modules\Cms\Controllers\mainController;
                             <th colspan="2" class="fn bo1">FINAL</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        <tr>
-                            <td class="text-center">1</td>
-                            <td class="text-center">INF101</td>
-                            <td>Programação I</td>
-
-                            <td class="text-center">14</td>
-                            <td class="text-center">16</td>
-                            <td class="text-center">15</td>
-
-                            <td class="text-center">15</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">15</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">15</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-                        </tr>
-
-                        <tr>
-                            <td class="text-center">2</td>
-                            <td class="text-center">MAT102</td>
-                            <td>Matemática</td>
-
-                            <td class="text-center">8</td>
-                            <td class="text-center">9</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">9</td>
-                            <td class="text-center for-red">Recurso</td>
-
-                            <td class="text-center">10</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">9</td>
-                            <td class="text-center for-red">Reprovado(a)</td>
-
-                            <td class="text-center">11</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-
-                            <td class="text-center">11</td>
-                            <td class="text-center for-green">Aprovado(a)</td>
-                        </tr>
+                        @foreach($disc_semestre as $index => $disc)
+                            @php
+                                $notas = $dados->where('disciplina', $disc->disciplinas);
+                                $pf1 = $notas->firstWhere('metrica', 'PP1')->nota ?? '-';
+                                $pf2 = $notas->firstWhere('metrica', 'PP2')->nota ?? '-';
+                                $oa  = $notas->firstWhere('metrica', 'OA')->nota ?? '-';
+                                $exame = $notas->firstWhere('metrica', 'Exame Escrito')->nota ?? '-';
+                                $recurso = $notas->firstWhere('metrica', 'Recurso')->nota ?? '-';
+                            @endphp
+                            <tr>
+                                <td class="text-center">{{ $index+1 }}</td>
+                                <td class="text-center">{{ $disc->disciplinas }}</td>
+                                <td>{{ $disc->nome_disciplina }}</td>
+                                <td class="text-center">{{ $pf1 }}</td>
+                                <td class="text-center">{{ $pf2 }}</td>
+                                <td class="text-center">{{ $oa }}</td>
+                                <td colspan="2" class="text-center">Média</td>
+                                <td class="text-center">{{ $exame }}</td>
+                                <td class="text-center">-</td>
+                                <td colspan="2" class="text-center">MAC + Exame</td>
+                                <td colspan="2" class="text-center">{{ $recurso }}</td>
+                                <td colspan="2" class="text-center">Especial</td>
+                                <td colspan="2" class="text-center">Final</td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             @endif
         @endforeach
     @else
-        <h1>Sem disciplinas associados a matricula</h1>
+        <h1>Sem disciplinas associadas à matrícula</h1>
     @endif
+
 
 @endif
