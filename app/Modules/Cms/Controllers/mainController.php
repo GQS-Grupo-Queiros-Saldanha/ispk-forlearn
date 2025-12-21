@@ -1150,7 +1150,7 @@ class mainController extends Controller
                 'al.nota as nota'
             )
             ->get();
-        dd($matricula,$dados, $disciplinas);
+            
         return response()->json([
             'matricula'   => $matricula,
             'disciplinas' => $disciplinas,
