@@ -1297,6 +1297,7 @@ class mainController extends Controller
 
             ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
             ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
+            ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
 
             ->where('spe.lective_years_id', $matricula->ano_lectivo)
             ->where('al.id_turma', $matricula->turma)
@@ -1304,6 +1305,7 @@ class mainController extends Controller
             ->where('md.matriculation_id', $matriculation)
 
             ->select(
+                'd.code as disciplina',
                 'metricas.nome as metrica',
                 'metricas.percentagem as percentagem',
                 'al.nota as nota'
