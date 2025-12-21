@@ -37,7 +37,7 @@ use App\Modules\Cms\Controllers\mainController;
         @php
             $semestre = $disciplina->disciplinas[3]; // 3º índice da string
         @endphp
-            @if($semestre = 1)
+            @if($semestre == 1)
                 <table class="table tabela_pauta table-striped table-hover tabela_pauta">
                     <thead>
                         <tr>
