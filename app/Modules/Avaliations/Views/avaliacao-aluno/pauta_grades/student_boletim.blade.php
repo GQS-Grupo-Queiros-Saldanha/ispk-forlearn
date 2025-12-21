@@ -146,7 +146,7 @@
     </style>
     
    <div id="table_student" class="mt-2">
-       <!-- @include('Cms::initial.components.manutencao') -->
+       
    </div>
 @endsection
 
@@ -154,7 +154,7 @@
     @parent
     <script>
 
-        $(document).ready(function () {
+                $(document).ready(function () {
 
             getStudentBoletim($("#lective_year").val());
 
@@ -294,6 +294,7 @@
                 });
             }
         });
+;
 
     </script>
 
