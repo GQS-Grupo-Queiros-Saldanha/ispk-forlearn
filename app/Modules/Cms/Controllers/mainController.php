@@ -1321,7 +1321,7 @@ class mainController extends Controller
 
         
         //dd($matricula,$dados, $disciplinas);
-        
+        $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
         $pdf = PDF::loadView("Cms::initial.pdf.boletim", compact(
             "matricula", "disciplinas", "dados" 
