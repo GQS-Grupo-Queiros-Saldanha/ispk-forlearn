@@ -35,5 +35,6 @@ use App\Modules\Cms\Controllers\mainController;
     @if(isset($disciplinas))
         <h1>ola</h1>
     @endif
+    <h1>oi</h1>
 
 @endif
