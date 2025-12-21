@@ -153,8 +153,7 @@
 @section('scripts-new')
     @parent
     <script>
-
-                $(document).ready(function () {
+        $(document).ready(function () {
 
             getStudentBoletim($("#lective_year").val());
 
@@ -210,15 +209,46 @@
 
                         var html = '';
                         html += '<table class="table tabela_pauta table-striped table-hover">';
-                        html += '<thead> ... </thead><tbody>';
+                        html += '<thead>';
+                        html += '<tr>';
+                        html += '<td colspan="3" class="boletim_text">';
+                        html += '<b>' + matricula.nome_curso + '</b> ';
+                        html += '<span class="barra">|</span> Ano: <b>' + matricula.ano_curricular + 'º</b> ';
+                        html += '<span class="barra">|</span> Semestre: <b>' + num_semestre + 'º</b> ';
+                        html += '<span class="barra">|</span> Turma: <b>' + matricula.nome_turma + '</b>';
+                        html += '</td>';
+                        html += '<td colspan="5" class="text-center bgmac bo1 p-top">MAC</td>';
+                        html += '<td colspan="2" class="text-center bg1 p-top">EXAME</td>';
+                        html += '<td colspan="2" class="text-center cf1 bo1 p-top">CLASSIFICAÇÃO</td>';
+                        html += '<td colspan="4" class="rec bo1 text-center p-top">EXAME</td>';
+                        html += '<td colspan="2" class="fn bo1 text-center p-top">CLASSIFICAÇÃO</td>';
+                        html += '</tr>';
 
+                        html += '<tr style="text-align: center">';
+                        html += '<th class="bg1 bo1">#</th>';
+                        html += '<th class="bg1 bo1">CÓDIGO</th>';
+                        html += '<th class="bg1 bo1">DISCIPLINA</th>';
+                        html += '<th class="bgmac bo1">PF1</th>';
+                        html += '<th class="bgmac bo1">PF2</th>';
+                        html += '<th class="bgmac bo1">OA</th>';
+                        html += '<th colspan="2" class="bgmac bo1">MÉDIA</th>';
+                        html += '<th class="bg1 bo1">ESCRITO</th>';
+                        html += '<th class="bg1 bo1">ORAL</th>';
+                        html += '<th colspan="2" class="cf1 bo1">MAC + EXAME</th>';
+                        html += '<th colspan="2" class="rec bo1">RECURSO</th>';
+                        html += '<th colspan="2" class="rec bo1">ESPECIAL</th>';
+                        html += '<th colspan="2" class="fn bo1">FINAL</th>';
+                        html += '</tr>';
+                        html += '</thead><tbody>';
+
+                        // Loop disciplinas
                         lista.forEach(function (disciplina, index) {
 
                             var pf1 = null, pf2 = null, oa = null;
                             var ex_escrito = null, ex_oral = null;
                             var nota_recurso = null;
 
-                            // Pegando sempre a maior nota por métrica
+                            // Pega sempre a maior nota por métrica
                             dados.forEach(function (n) {
                                 if (n.disciplina === disciplina.disciplinas && n.nota !== null) {
                                     var valor = parseFloat(n.nota);
@@ -294,8 +324,6 @@
                 });
             }
         });
-;
-
     </script>
 
 @endsection
