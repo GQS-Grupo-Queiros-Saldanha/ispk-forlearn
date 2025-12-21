@@ -145,8 +145,8 @@
         }
     </style>
     
-   <div id="table_studen" class="mt-2">
-       @include('Cms::initial.components.manutencao')
+   <div id="table_student" class="mt-2">
+       <!--@include('Cms::initial.components.manutencao')-->
    </div>
 @endsection
 
