@@ -126,28 +126,31 @@
                                 }
                             });
 
-                            // Média ponderada MAC
+                            // Média MAC
                             var media = (pf1 !== null || pf2 !== null || oa !== null)
                                 ? +( (pf1||0)*0.35 + (pf2||0)*0.35 + (oa||0)*0.3 ).toFixed(2)
                                 : null;
 
-                            // Média com exame
-                            var exame_total = (ex_escrito !== null || ex_oral !== null) ? ((ex_escrito||0) + (ex_oral||0)) : null;
-                            var media_exame = (media !== null && exame_total !== null) ? +((media*0.7) + (exame_total*0.3)).toFixed(2) : null;
-
-                            // Considerar recurso se media < 10
-                            var media_final = (media < 10 && nota_recurso !== null) ? nota_recurso : (media_exame !== null ? media_exame : media);
-
-                            // Definir cores e classificações
-                            var cor_media = '', cor_final = '', classificacao = '-', final = '-';
+                            // Cor e classificação MAC
+                            var cor_media = '', classificacao = '-';
                             if (media !== null) {
                                 if (media >= 10.3) { classificacao='Aprovado(a)'; cor_media='for-green'; }
                                 else if (media == 10) { classificacao='Exame'; cor_media='for-yellow'; }
                                 else { classificacao='Recurso'; cor_media='for-red'; }
                             }
+
+                            // Exame normal
+                            var exame_total = (ex_escrito !== null || ex_oral !== null) ? ((ex_escrito||0) + (ex_oral||0)) : null;
+                            var media_exame = (media !== null && exame_total !== null) ? +((media*0.7) + (exame_total*0.3)).toFixed(2) : null;
+
+                            // Média final com recurso
+                            var media_final = (media < 10 && nota_recurso !== null) ? nota_recurso : (media_exame !== null ? media_exame : media);
+
+                            // Cor e estado final
+                            var cor_final = '', estado_final = '-';
                             if (media_final !== null) {
-                                if (media_final >= 10) { final='Aprovado(a)'; cor_final='for-green'; }
-                                else { final='Reprovado(a)'; cor_final='for-red'; }
+                                if (media_final >= 10) { estado_final='Aprovado(a)'; cor_final='for-green'; }
+                                else { estado_final='Reprovado(a)'; cor_final='for-red'; }
                             }
 
                             html += '<tr>';
@@ -166,7 +169,7 @@
                             html += '<td colspan="2" class="text-center">'+(nota_recurso!==null?nota_recurso:'-')+'</td>';
                             html += '<td colspan="2" class="text-center">-</td>';
                             html += '<td colspan="2" class="text-center">'+(media_final!==null?media_final:'-')+'</td>';
-                            html += '<td colspan="2" class="text-center '+cor_final+'">'+final+'</td>';
+                            html += '<td colspan="2" class="text-center '+cor_final+'">'+estado_final+'</td>';
                             html += '</tr>';
                         });
 
@@ -175,6 +178,7 @@
                     }
                 });
             }
+
            
         })
     </script>
