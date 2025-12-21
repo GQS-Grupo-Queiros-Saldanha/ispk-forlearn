@@ -190,11 +190,6 @@
                         return;
                     }
 
-                    $("#table_student").html(
-                        '<a href="/boletim_pdf/' + matriculationId + '" ' +
-                        'class="btn btn-primary mb-3" target="_blank"><i class="bi bi-filetype-pdf"></i>Boletim de Notas</a>'
-                    );
-
                     // Separar disciplinas por semestre
                     var semestres = {1: [], 2: []};
                     disciplinas.forEach(function (d) {
@@ -316,6 +311,11 @@
                         });
 
                         html += '</tbody></table>';
+                        
+                        $("#table_student").html(
+                        '<a href="/boletim_pdf/' + matriculationId + '" ' +
+                        'class="btn btn-primary mb-3" target="_blank"><i class="bi bi-filetype-pdf"></i>Boletim de Notas</a>');
+
                         $("#table_student").append(html);
                     }
 
