@@ -34,7 +34,7 @@ use App\Modules\Cms\Controllers\mainController;
 @else
     @if(isset($disciplinas))
         @foreach($disciplinas as disciplina)
-            @if(disciplina->disciplinas[3])
+            @if(disciplina)
                 <table class="table tabela_pauta table-striped table-hover tabela_pauta">
                     <thead>
                         <tr>
