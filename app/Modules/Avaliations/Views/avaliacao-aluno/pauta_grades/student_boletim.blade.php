@@ -165,13 +165,6 @@
 
             function getStudentBoletim(lective_year) {
 
-                $("#table_student").html(
-                    '<div class="text-center p-5">' +
-                    '<div class="spinner-border text-primary"></div>' +
-                    '<p class="mt-2">Carregando boletim...</p>' +
-                    '</div>'
-                );
-
                 $.ajax({
                     url: "/pt/get_boletim_student/" + lective_year,
                     type: "GET",
