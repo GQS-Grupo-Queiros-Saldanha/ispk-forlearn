@@ -29,8 +29,6 @@ use App\Modules\Cms\Controllers\mainController;
     <div class="alert alert-warning text-dark font-bold">
         Para visualizar as notas lançadas, dirija-se a Tesouraria para regularizar os seus pagamentos!
     </div>
-@elseif (auth()->check() && auth()->user()->id != 577)
-    @include('Cms::initial.components.manutencao')
 @else
     @if(isset($disciplinas) && count($disciplinas))
         @php
@@ -229,6 +227,6 @@ use App\Modules\Cms\Controllers\mainController;
             @endif
         @endforeach
     @else
-        <h1>Sem disciplinas associadas à matrícula</h1>
+        <h1></h1>
     @endif
 @endif
