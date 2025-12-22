@@ -316,7 +316,7 @@
                         $("#table_student").append(html);
 
                         $("#table_student").append(
-                        '<br><div class="d-flex justify-content-end mt-3"><a href="/boletim_pdf/' + matriculationId + '" ' +
+                        '<br><div class="d-flex justify-content-end"><a href="/boletim_pdf/' + matriculationId + '" ' +
                         'class="btn btn-primary mb-3" target="_blank"><i class="bi bi-filetype-pdf"></i>Boletim de Notas</a></div>');
 
                     }
