@@ -877,6 +877,7 @@
             // Atualizar botão PDF
             if (state.pautaPath) {
                 elements.btnPdf.attr('href', state.pautaPath)
+                console.log("Definindo URL do PDF da pauta:", state.pautaPath);
                     .find('span').removeClass('btn-danger').addClass('btn-primary');
             }
 
