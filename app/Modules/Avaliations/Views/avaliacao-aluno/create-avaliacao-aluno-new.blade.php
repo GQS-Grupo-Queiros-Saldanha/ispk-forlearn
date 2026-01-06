@@ -886,6 +886,7 @@
             // Controlar visibilidade dos botões de pauta
             if (state.estadoPautaLancar == 1) {
                 showOpenPauta();
+                console.log("Definindo URL de abertura da pauta:", openUrl);
                 $('#btn_open_pauta').attr('href', openUrl);
                 
                 state.elementoBtnSalvar = $("#div_btn_save").html();
