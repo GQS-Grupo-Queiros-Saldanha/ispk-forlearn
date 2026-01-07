@@ -170,7 +170,7 @@ class MatriculationClasseListController extends Controller
                         ->join('articles as art', 'art.id', '=', 'ar.article_id')
                         ->join('code_developer as cd', 'cd.id', '=', 'art.id_code_dev')
                         ->whereColumn('ar.user_id', 'user.id')
-                        ->whereIn('cd.code', ['confirm', 'p_matricula', 'pedido_t_entrada'])
+                        ->whereIn('cd.code', ['confirm', 'p_matricula', 'pedido_t_entrada', 'confirm_tardia'])
                         ->where('ar.status', 'total')
                         ->whereBetween('ar.created_at', [
                             $lectiveYear->start_date,
