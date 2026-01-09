@@ -235,9 +235,10 @@ INSCRIÇÃO PARA CURSO PROFISSIONAL
 
 
         $("#course").change(function() {
-            const curso = $(this).val();~
-            console.debug("id do curso",curso);
+            const curso = $(this).val();
             var url = "/users/student-special-course/get-classes/" + curso + "/" + null;
+            console.debug("id do curso",curso);
+            console.debug("url final",url);
 
             $.ajax({
                 url: url,
