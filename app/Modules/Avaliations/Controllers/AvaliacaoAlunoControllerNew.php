@@ -5925,7 +5925,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
                 ->where('id', $pauta_id)
                 ->first();
 
-            dd($request->all());
+           
 
             $disciplina = $pauta->id_disciplina;
             $pauta_tipo = $pauta->pauta_tipo;
