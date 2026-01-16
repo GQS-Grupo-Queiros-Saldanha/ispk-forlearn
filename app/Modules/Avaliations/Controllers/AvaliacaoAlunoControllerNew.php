@@ -5916,6 +5916,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
             $pauta = DB::table('lancar_pauta')
                 ->where('id', $pauta_id)
                 ->first();
+            dd($pauta);
 
             $disciplina = $pauta->id_disciplina;
             $pauta_tipo = $pauta->pauta_tipo;
