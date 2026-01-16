@@ -5912,11 +5912,19 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
         try {
             DB::beginTransaction();
             $pauta_id = $request->pauta_id;
-
+            /*try {
+                $pauta = DB::table('lancar_pauta')
+                    ->where('id', $pauta_id)
+                    ->first();
+            } catch (Exception $e) {
+                DB::rollBack();
+                Toastr::error(__('Não foi possível encontrar a pauta.'), __('toastr.error'));
+                return redirect()->back();
+            }*/
             $pauta = DB::table('lancar_pauta')
                 ->where('id', $pauta_id)
                 ->first();
-            dd($pauta_id,$pauta);
+            dd($request->all());
 
             $disciplina = $pauta->id_disciplina;
             $pauta_tipo = $pauta->pauta_tipo;
