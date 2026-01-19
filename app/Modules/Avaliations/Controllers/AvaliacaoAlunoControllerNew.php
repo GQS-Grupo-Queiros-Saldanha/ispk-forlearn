@@ -5917,7 +5917,7 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
                     ->where('id', $pauta_id)
                     ->first();
             } catch (Exception $e) {
-                DB::rollBack();
+                
                 Toastr::error(__('Não foi possível encontrar a pauta. Lançe as notas e volte a tentar'), __('toastr.error'));
                 return redirect()->back();
             }
