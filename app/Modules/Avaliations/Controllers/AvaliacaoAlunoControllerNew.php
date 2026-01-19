@@ -5924,12 +5924,13 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
             $pauta = DB::table('lancar_pauta')
                 ->where('id', $pauta_id)
                 ->first();
-
-            $disciplina = $pauta->id_disciplina;
-            if($disciplina == null ){
+            
+            if($$pauta->id_disciplina == null ){
                 Toastr::error(__('Guarde as notas antes de fechar a pauta por favor'), __('toastr.error'));
                 return redirect()->back();
             }
+
+            $disciplina = $pauta->id_disciplina;
             $pauta_tipo = $pauta->pauta_tipo;
             $id_ano_lectivo = $pauta->id_ano_lectivo;
             
