@@ -674,6 +674,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->select([
                     'disciplines.id as id',
                     'disciplines.code as code',
+                    'disciplines.uc as uc',
                     'dcp.display_name as name',
                     'dat.display_name as area',
                     'study_plans_has_disciplines.years as course_year',
