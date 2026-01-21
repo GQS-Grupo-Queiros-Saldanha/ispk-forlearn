@@ -911,7 +911,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->get();
 
 
-
+            dd($disciplines);
 
             $data = [
                 'config' => $config,
