@@ -911,9 +911,6 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->select(["notas.grade", "display_name"])
                 ->get();
 
-
-            dd($disciplines);
-
             $data = [
                 'config' => $config,
                 'cargaHoraria' => $cargaHoraria,
