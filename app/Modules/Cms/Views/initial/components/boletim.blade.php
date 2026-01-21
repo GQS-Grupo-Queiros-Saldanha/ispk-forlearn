@@ -124,7 +124,9 @@ use App\Modules\Cms\Controllers\mainController;
                                 ❗️Só existe se PF1 + PF2 + OA existirem
                                 */
                                 $media = null;
-                                if ($pf1 !== null && $pf2 !== null && $oa !== null) {
+                                //&& $pf2 !== null && $oa !== null
+                                //Olá, adiciona estas provas para o boletim verificar o média dependo da existênci das provas que selecionares. boa sorte
+                                if ($pf1 !== null ) {
                                     $media = round(
                                         ($pf1 * 0.35) +
                                         ($pf2 * 0.35) +
