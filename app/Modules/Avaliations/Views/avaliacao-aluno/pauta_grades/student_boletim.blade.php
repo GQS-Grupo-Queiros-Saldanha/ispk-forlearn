@@ -252,7 +252,7 @@
                             });
 
                             // Média MAC só se todas existirem
-                            var media = (pf1 !== null && /*pf2 !== null && oa !== null*/)
+                            var media = (pf1 !== null /*&& pf2 !== null && oa !== null*/)
                                 ? +((pf1*0.35) + (pf2*0.35) + (oa*0.3)).toFixed(2)
                                 : null;
 
