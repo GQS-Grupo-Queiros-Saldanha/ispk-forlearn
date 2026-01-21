@@ -2838,7 +2838,7 @@ class ArticleRequestsController extends Controller
                 return response()->json(array('data'=>false));
             }
         } catch (Exception | Throwable $e) {
-            // logError($e);
+            logError($e);
             return Request::ajax() ? response()->json(['error'=>$e->getMessage()], 500) : abort(500);
         }
     }

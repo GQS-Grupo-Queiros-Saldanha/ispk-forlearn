@@ -2173,7 +2173,7 @@ public function colocar_emolumento($id_user){
           ->first();
           
         $lectiveYearSelected = $lectiveYearSelected ?? DB::table('lective_years')
-          ->where('lective_years.id', 9)
+          ->where('lective_years.id', 11)
           ->first();
            
 
