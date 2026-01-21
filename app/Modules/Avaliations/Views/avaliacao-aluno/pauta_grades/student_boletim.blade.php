@@ -286,18 +286,18 @@
                             html += '<td class="text-center">' + (index+1) + '</td>';
                             html += '<td class="text-center">' + disciplina.disciplinas + '</td>';
                             html += '<td>' + disciplina.nome_disciplina + '</td>';
-                            html += '<td class="text-center">' + (pf1!==null?pf1:'-') + '</td>';
-                            html += '<td class="text-center">' + (pf2!==null?pf2:'-') + '</td>';
+                            html += '<td class="text-center">' + (pf1!==null?Math.ceil(pf1):'-') + '</td>';
+                            html += '<td class="text-center">' + (pf2!==null?Math.ceil(pf2):'-') + '</td>';
                             html += '<td class="text-center">' + (oa!==null?oa:'-') + '</td>';
-                            html += '<td class="text-center">' + (media!==null?media:'-') + '</td>';
+                            html += '<td class="text-center">' + (media!==null?Math.ceil(media):'-') + '</td>';
                             html += '<td class="text-center '+cor_media+'">' + classificacao + '</td>';
-                            html += '<td class="text-center">' + (ex_escrito!==null?ex_escrito:'-') + '</td>';
+                            html += '<td class="text-center">' + (ex_escrito!==null?Math.ceil(ex_escrito):'-') + '</td>';
                             html += '<td class="text-center">' + (ex_oral!==null?ex_oral:'-') + '</td>';
-                            html += '<td class="text-center">' + (media_exame!==null?media_exame:'-') + '</td>';
+                            html += '<td class="text-center">' + (media_exame!==null?Math.ceil(xmedia_exame):'-') + '</td>';
                             html += '<td class="text-center '+cor_media+'">' + classificacao + '</td>';
-                            html += '<td colspan="2" class="text-center">' + (nota_recurso!==null?nota_recurso:'-') + '</td>';
+                            html += '<td colspan="2" class="text-center">' + (nota_recurso!==null?Math.ceil(nota_recurso):'-') + '</td>';
                             html += '<td colspan="2" class="text-center">-</td>';
-                            html += '<td colspan="2" class="text-center">' + (media_final!==null?media_final:'-') + '</td>';
+                            html += '<td colspan="2" class="text-center">' + (media_final!==null?Math.ceil(media_final):'-') + '</td>';
                             html += '<td colspan="2" class="text-center '+cor_final+'">' + estado_final + '</td>';
                             html += '</tr>';
 
