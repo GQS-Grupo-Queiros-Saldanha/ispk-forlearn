@@ -204,23 +204,23 @@ use App\Modules\Cms\Controllers\mainController;
                                 <td class="text-center">{{ $disciplina->disciplinas }}</td>
                                 <td>{{ $disciplina->nome_disciplina }}</td>
 
-                                <td class="text-center">{{ $pf1 !== null ? $pf1 : '-' }}</td>
-                                <td class="text-center">{{ $pf2 !== null ? $pf2 : '-' }}</td>
-                                <td class="text-center">{{ $oa !== null ? $oa : '-' }}</td>
+                                <td class="text-center">{{ $pf1 !== null ? ceil($pf1) : '-' }}</td>
+                                <td class="text-center">{{ $pf2 !== null ? ceil($pf2) : '-' }}</td>
+                                <td class="text-center">{{ $oa !== null ? ceil($oa) : '-' }}</td>
 
-                                <td class="text-center">{{ $media !== null ? $media : '-' }}</td>
+                                <td class="text-center">{{ $media !== null ? ceil($media) : '-' }}</td>
                                 <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
-                                <td class="text-center">{{ $ex_escrito !== null ? $ex_escrito : '-' }}</td>
-                                <td class="text-center">{{ $ex_oral !== null ? $ex_oral : '-' }}</td>
+                                <td class="text-center">{{ $ex_escrito !== null ? ceil($ex_escrito) : '-' }}</td>
+                                <td class="text-center">{{ $ex_oral !== null ? ceil($ex_oral) : '-' }}</td>
 
                                 <td class="text-center">{{ $media_exame !== null ? $media_exame : '-' }}</td>
                                 <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
-                                <td colspan="2" class="text-center">{{ $nota_recurso !== null ? $nota_recurso : '-' }}</td>
+                                <td colspan="2" class="text-center">{{ $nota_recurso !== null ? ceil($nota_recurso) : '-' }}</td>
                                 <td colspan="2" class="text-center">-</td>
 
-                                <td colspan="2" class="text-center">{{ $media_final !== null ? $media_final : '-' }}</td>
+                                <td colspan="2" class="text-center">{{ $media_final !== null ? ceil($media_final) : '-' }}</td>
                                 <td colspan="2" class="text-center {{ $cor_final }}">{{ $estado_final }}</td>
                             </tr>
                         @endforeach
