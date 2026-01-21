@@ -536,7 +536,7 @@ class estatisticaMatriculationController extends Controller
         $date_generated = date("Y/m/d");
 
         // Debug para ver a estrutura completa
-        /*dd([
+        dd([
             'confirmados' => $confirmados,
             'courses' => $courses,
             'departamentos' => $departamentos,
@@ -546,7 +546,7 @@ class estatisticaMatriculationController extends Controller
             'staff' => $staff,
             'p_matriculas' => $p_matriculas,
             'cf_matriculas' => $cf_matriculas,
-        ]);*/
+        ]);
 
         $pdf = PDF::loadView(
             "Users::matriculations.pdf-relatorios",

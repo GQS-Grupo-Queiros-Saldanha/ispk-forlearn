@@ -4,14 +4,11 @@
 
     <style>
 
-    
-
-
         body{
-         font-family: 'Tinos', serif;
+        font-family: 'Tinos', serif;
         }
 
-         html, body {
+        html, body {
             padding:0;
         }
 
@@ -34,173 +31,173 @@
             font-size: 0.75rem;
         }
 
-  .h1-title {
+        .h1-title {
 
-            padding: 0;
-            margin-bottom: 0;
-            font-size:4.3em;
-   
-   
-        
-           
-        }
-        .h1-title_Com{
+                padding: 0;
+                margin-bottom: 0;
+                font-size:4.3em;
+    
+    
             
-            padding: 0;
-            margin-bottom: 0;
-            font-size:4.3em;
-           
-          
-             
+            
+            }
+            .h1-title_Com{
+                
+                padding: 0;
+                margin-bottom: 0;
+                font-size:4.3em;
+            
+            
+                
+            }
+
+            .img-institution-logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .img-parameter {
+                max-height: 100px;
+                max-width: 50px;
+            }
+
+            .table-parameter-group {
+                page-break-inside: avoid;
+            }
+
+            .table-parameter-group td,
+            .table-parameter-group th {
+                vertical-align: unset;
+            }
+
+            .tbody-parameter-group {
+                border-top: 0;
+
+                padding: 0;
+                margin: 0;
+            }
+
+            .thead-parameter-group {
+                color: white;
+                background-color: #3D3C3C;
+            }
+
+            .th-parameter-group {
+                padding: 2px 5px !important;
+                font-size: .625rem;
+            }
+
+            .div-top {
+                height:99px;
+                position: relative;
+                margin-bottom: 15px;
+                background-color: rgb(240, 240, 240);
+                background-image: url('https://forlearn.ao/storage/attachment/{{$institution->logotipo}}');
+                background-position: 100%;
+                background-repeat: no-repeat;
+                background-size: 10%;
+            }
+
+            .td-institution-name {
+                vertical-align: middle !important;
+                font-weight: bold;
+                text-align: justify;
+            }
+
+            .td-institution-logo {
+                vertical-align: middle !important;
+                text-align: center;
+            }
+
+            .td-parameter-column {
+                padding-left: 5px !important;
+            }
+
+            label {
+                font-weight: bold;
+                font-size: .75rem;
+                color: #000;
+                margin-bottom: 0;
+            }
+
+            input, textarea, select {
+                display: none;
+            }
+
+            .td-fotografia {
+                background-size: cover;
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+                width:85px;
+                height:100%;
+                margin-bottom: 5px;
+
+                background-position:50%;
+                margin-right:8px;
+            }
+            .mediaClass td{
+                border: 1px solid #fff;
+
+
+            }
+
+            p{
+            /*margin-top:50px;*/
+            @if($config->tamanho_fonte!="")
+                font-size:{{$config->tamanho_fonte}}pt;
+            @else
+                font-size:1.5rem;
+            @endif
+                    margin-left: 120px !important;
+                    margin-right: 120px !important;
+            color:black;
+            text-align:justify;
+        }
+        .dados_pessoais{ margin-bottom:-5;}
+
+            .pl-1 {
+                padding-left: 1rem !important;
+            }
+            table     { page-break-inside:auto }
+                tr    { page-break-inside:avoid; page-break-after:auto }
+                thead { display:table-header-group }
+                tfoot { display:table-footer-group }
+            
+        .bg0{
+            background-color: #2f5496!important;
+        }
+        .bg1{
+            background-color: #8eaadb!important;
+        }
+        .bg2{
+            background-color: #d9e2f3!important;
+        }
+        .bg3{
+            background-color:#fbe4d5!important;
+        }
+        .bg4{
+            background-color:#f4b083!important;
+        }
+        
+
+        
+        .table_te td
+            {
+            font-size:10pt!important;
+            }
+            
+        .body {
+            margin-top:-50px;
         }
 
-        .img-institution-logo {
-            width: 50px;
-            height: 50px;
-        }
-
-        .img-parameter {
-            max-height: 100px;
-            max-width: 50px;
-        }
-
-        .table-parameter-group {
-            page-break-inside: avoid;
-        }
-
-        .table-parameter-group td,
-        .table-parameter-group th {
-            vertical-align: unset;
-        }
-
-        .tbody-parameter-group {
-            border-top: 0;
-
-            padding: 0;
-            margin: 0;
-        }
-
-        .thead-parameter-group {
-            color: white;
-            background-color: #3D3C3C;
-        }
-
-        .th-parameter-group {
-            padding: 2px 5px !important;
-            font-size: .625rem;
-        }
 
         .div-top {
-            height:99px;
-            position: relative;
-            margin-bottom: 15px;
-            background-color: rgb(240, 240, 240);
-            background-image: url('https://forlearn.ao/storage/attachment/{{$institution->logotipo}}');
-            background-position: 100%;
-            background-repeat: no-repeat;
-            background-size: 10%;
-        }
-
-        .td-institution-name {
-            vertical-align: middle !important;
-            font-weight: bold;
-            text-align: justify;
-        }
-
-        .td-institution-logo {
-            vertical-align: middle !important;
-            text-align: center;
-        }
-
-        .td-parameter-column {
-            padding-left: 5px !important;
-        }
-
-        label {
-            font-weight: bold;
-            font-size: .75rem;
-            color: #000;
-            margin-bottom: 0;
-        }
-
-        input, textarea, select {
-            display: none;
-        }
-
-        .td-fotografia {
-            background-size: cover;
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-            width:85px;
-            height:100%;
-            margin-bottom: 5px;
-
-            background-position:50%;
-            margin-right:8px;
-        }
-        .mediaClass td{
-            border: 1px solid #fff;
-
-
-        }
-
-        p{
-         /*margin-top:50px;*/
-        @if($config->tamanho_fonte!="")
-            font-size:{{$config->tamanho_fonte}}pt;
-        @else
-            font-size:1.5rem;
-        @endif
-                margin-left: 120px !important;
-                margin-right: 120px !important;
-         color:black;
-         text-align:justify;
-     }
-      .dados_pessoais{ margin-bottom:-5;}
-
-        .pl-1 {
-            padding-left: 1rem !important;
-        }
-          table     { page-break-inside:auto }
-               tr    { page-break-inside:avoid; page-break-after:auto }
-               thead { display:table-header-group }
-               tfoot { display:table-footer-group }
-        
-    .bg0{
-        background-color: #2f5496!important;
-    }
-    .bg1{
-        background-color: #8eaadb!important;
-    }
-    .bg2{
-        background-color: #d9e2f3!important;
-    }
-    .bg3{
-        background-color:#fbe4d5!important;
-    }
-    .bg4{
-        background-color:#f4b083!important;
-    }
-    
-
-    
-    .table_te td
-        {
-          font-size:10pt!important;
+            margin-bottom:-40px!important;
         }
         
-    .body {
-        margin-top:-50px;
-    }
-
-
-    .div-top {
-         margin-bottom:-40px!important;
-    }
-    
-    .institution-name {
-        margin-left: 90px!important;
-    }
+        .institution-name {
+            margin-left: 90px!important;
+        }
 
     </style>
     <main>
