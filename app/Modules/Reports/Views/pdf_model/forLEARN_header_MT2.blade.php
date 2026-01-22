@@ -253,7 +253,7 @@
         <tr>
             <td class="bg0" style="border:none; text-align:center;">
                 <h1 class="h1-title pp1-center" style="color:#fc8a17;">
-                   <b>PP1</b>
+                   <b>Exame especial</b>
                 </h1>
             </td>
         </tr>
