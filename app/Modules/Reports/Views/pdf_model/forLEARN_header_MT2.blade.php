@@ -306,13 +306,7 @@
         </div>
 
         <div class="metrica" style="position: absolute; top: 8px; left: 430px; width: 450px; font-family: Impact; padding-top: 40px;color:white;">
-            <h4><b>
-                @if (isset($institution->nome))
-                   
-                @else
-                   pp1
-                @endif 
-                </b></h4>
+            <h4><b>Exame escrito</b></h4>
         </div>
 
     </div>
