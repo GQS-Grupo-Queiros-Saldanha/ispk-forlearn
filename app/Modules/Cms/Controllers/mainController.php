@@ -1366,8 +1366,8 @@ class mainController extends Controller
             ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
             ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
 
-            ->where('spe.lective_years_id', $matricula->ano_lectivo)
-            ->whereIn('al.id_turma', $matricula->turma)
+            ->whereIn('spe.lective_years_id', $matricula->ano_lectivo)
+            ->where('al.id_turma', $matricula->turma)
             ->where('al.users_id', $matricula->usuario)
             ->where('md.matriculation_id', $matriculation)
             ->where('dt.active', 1)
