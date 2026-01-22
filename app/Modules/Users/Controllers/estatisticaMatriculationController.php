@@ -128,8 +128,6 @@ class estatisticaMatriculationController extends Controller
 
         $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYears->id);
 
-
-
         $new_model = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
             ->join('users as u1', 'u1.id', '=', 'matriculations.created_by')
@@ -178,7 +176,7 @@ class estatisticaMatriculationController extends Controller
                 'up_meca.value as matricula',
                 'art_requests.status as state',
                 'up_bi.value as n_bi',
-                'cl.display_name as classe',
+                //'cl.display_name as classe',
                 'u_p.value as student',
                 'u0.email as email',
                 'u1.name as criado_por',
@@ -240,9 +238,6 @@ class estatisticaMatriculationController extends Controller
                 $mode[] = $item;
             }
         }
-
-
-
 
         $new_model = collect($new_model)->map(function ($item) {
             if ($item->sexo == "Feminino" || $item->sexo == 125 || $item->sexo == "feminino" || $item->sexo == "f" || $item->sexo == "F")
