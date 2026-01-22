@@ -133,8 +133,6 @@
 
     }
 
-
-
     .pl-1 {
         padding-left: 1rem !important;
     }
@@ -207,8 +205,6 @@
         color: white;
     }
 
-
-
     .bg1 {
         background-color: #8eaadb !important;
     }
@@ -244,7 +240,6 @@
 
 <div class="div-top" style="">
     <div class="div-top">
-
 
         <table class="table table-main m-0 p-1 bg0 " style="border:none;margin-top:-15px!important;margin-right:0px!important">
             <tr>
@@ -290,12 +285,7 @@
 
         </table>
 
-
-
-
-
-        <div class="instituto"
-            style="position: absolute; top: 8px; left: 130px; width: 450px; font-family: Impact; padding-top: 40px;color:white;">
+        <div class="instituto" style="position: absolute; top: 8px; left: 130px; width: 450px; font-family: Impact; padding-top: 40px;color:white;">
             <h4><b>
                 @if (isset($institution->nome))
                     @php
@@ -311,6 +301,16 @@
                     @endphp
                 @else
                     Nome da instituição não encontrado
+                @endif 
+                </b></h4>
+        </div>
+
+        <div class="metrica" style="position: absolute; top: 8px; left: 430px; width: 450px; font-family: Impact; padding-top: 40px;color:white;">
+            <h4><b>
+                @if (isset($institution->nome))
+                   
+                @else
+                   pp1
                 @endif 
                 </b></h4>
         </div>
