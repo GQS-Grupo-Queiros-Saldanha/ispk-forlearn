@@ -1337,7 +1337,9 @@ class mainController extends Controller
             )
             ->orderBy('mc.id_sui', 'desc') // maior id primeiro
             ->get();
-            dd($matricula->turma);
+            foreach($matricula as $matricula){
+                Log::info('MATRICULA DEBUG', ['matricula' => $matricula->ano_lectivo]);
+            };
         /*-----------------------------------*/
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
