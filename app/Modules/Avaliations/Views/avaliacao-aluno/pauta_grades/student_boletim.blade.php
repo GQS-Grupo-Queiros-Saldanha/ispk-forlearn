@@ -57,7 +57,7 @@
         .boletim_text { font-weight: normal !important; } 
         .barra { color: #f39c12 !important; font-weight: bold; } 
         .semestreA, .semestre2{ } 
-        .btn-pdf-boletim{width: 2rem;}
+        .btn-pdf-boletim{width: 4rem; height: 2rem;}
         
         /* Estilos adicionais para modernização */
         .table-responsive {
