@@ -313,7 +313,7 @@ class MatriculationDisciplineListController extends Controller
       $model = $model->filter(function ($item) {
         return isset($item);
       });
-
+      $metrica = $request->metrica;
       $pdf = PDF::loadView("Users::list-disciplines-matriculations.pdf_lista", compact(
         'model',
         'regime',
@@ -326,7 +326,8 @@ class MatriculationDisciplineListController extends Controller
         'titulo_documento',
         'anoLectivo_documento',
         'documentoGerado_documento',
-        'documentoCode_documento'
+        'documentoCode_documento',
+        'metrica'
       ));
 
 
