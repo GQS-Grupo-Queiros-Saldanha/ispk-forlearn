@@ -127,6 +127,7 @@ class estatisticaMatriculationController extends Controller
             ->first();
 
         $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYears->id);
+        //dd($emolumento_confirma_prematricula,$lectiveYears->id);
 
         $new_model = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
@@ -139,12 +140,12 @@ class estatisticaMatriculationController extends Controller
                 $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 $join->on('ct.active', '=', DB::raw(true));
             })
-            /*->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
-            ->join('classes as cl', function ($join) {
+            ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+            ->leftjoin('classes as cl', function ($join) {
                 $join->on('cl.id', '=', 'mc.class_id');
                 $join->on('mc.matriculation_id', '=', 'matriculations.id');
                 $join->on('matriculations.course_year', '=', 'cl.year');
-            })*/
+            })
             ->leftJoin('user_parameters as u_p', function ($join) {
                 $join->on('u0.id', '=', 'u_p.users_id')
                     ->where('u_p.parameters_id', 1);
@@ -176,7 +177,7 @@ class estatisticaMatriculationController extends Controller
                 'up_meca.value as matricula',
                 'art_requests.status as state',
                 'up_bi.value as n_bi',
-                //'cl.display_name as classe',
+                'cl.display_name as classe',
                 'u_p.value as student',
                 'u0.email as email',
                 'u1.name as criado_por',
@@ -238,6 +239,9 @@ class estatisticaMatriculationController extends Controller
                 $mode[] = $item;
             }
         }
+
+
+
 
         $new_model = collect($new_model)->map(function ($item) {
             if ($item->sexo == "Feminino" || $item->sexo == 125 || $item->sexo == "feminino" || $item->sexo == "f" || $item->sexo == "F")
