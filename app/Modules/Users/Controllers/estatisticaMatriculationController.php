@@ -141,7 +141,7 @@ class estatisticaMatriculationController extends Controller
                 $join->on('ct.active', '=', DB::raw(true));
             })
             ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
-            ->leftjoin('classes as cl', function ($join) {
+            ->join('classes as cl', function ($join) {
                 $join->on('cl.id', '=', 'mc.class_id');
                 $join->on('mc.matriculation_id', '=', 'matriculations.id');
                 $join->on('matriculations.course_year', '=', 'cl.year');
