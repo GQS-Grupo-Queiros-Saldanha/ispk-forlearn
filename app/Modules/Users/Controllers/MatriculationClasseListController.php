@@ -254,6 +254,7 @@ class MatriculationClasseListController extends Controller
 
         $anoLectivo = $lectiveYears[0]->currentTranslation->display_name ?? 'Ano Lectivo';
         $institution = Institution::latest()->first();
+        $metrica = $request->get('metrica','');
 
         $pdf = PDF::loadView("Users::list-class-matriculation.pdf_lista", compact(
             'model',
@@ -262,7 +263,8 @@ class MatriculationClasseListController extends Controller
             'curso',
             'lectiveYears',
             'ano',
-            'institution'
+            'institution',
+            'metrica'
         ));
 
         $pdf->setPaper('a4', 'landscape');

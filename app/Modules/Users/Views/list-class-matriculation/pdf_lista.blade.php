@@ -76,7 +76,7 @@
     </style>
 
     <main>
-        @include('Reports::pdf_model.forLEARN_header_MT')
+        @include('Reports::pdf_model.forLEARN_header_MT2')
             <!-- aqui termina o cabeçalho do pdf -->
         <div class="">
         <div class="">

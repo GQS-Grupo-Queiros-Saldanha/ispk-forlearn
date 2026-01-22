@@ -69,6 +69,24 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="col-6">
+                        <div class="form-group col">
+                            <label>Lista de metricas</label>
+                            <select required
+                                class="selectpicker form-control form-control-sm" required="" id="metrica" data-actions-box="false" data-selected-text-format="values" name="metrica" tabindex="-98">
+                                <option value=""></option>
+                                <option value="0">PP1</option>
+                                <option value="1">PP2</option>
+                                <option value="2">OA</option>
+                                <option value="3">Exame escrito</option>
+                                <option value="4">Exame oral</option>
+                                <option value="5">Exame especial</option>
+                                <option value="6">Exame de recurso</option>
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <input type="hidden" name="AnoLectivo" value="" id="Ano_lectivo_foi">
