@@ -268,6 +268,12 @@
 
             {{-- rigth --}}
             <tr>
+                <td class="td-fotografia " rowspan="12" style=" width:200px; height:78px;border:none;"></td>
+            </tr>
+            <tr>
+                <td class="td-fotografia " rowspan="12" style=" width:200px; height:78px;border:none;"></td>
+            </tr>
+            <tr>
                 <td class="bg0" style="border:none; text-align:right;padding-right:7px;">
                     <h1 class="h1-title" style="">
                        <b> {{$doc_name}}</b>
