@@ -157,6 +157,7 @@
     <script>
         $(document).ready(function () {
 
+            // Função para carregar boletim
             getStudentBoletim($("#lective_year").val());
 
             $("#lective_year").change(function () {
@@ -165,16 +166,35 @@
 
             function getStudentBoletim(lective_year) {
 
+                $("#table_student").html('<div class="alert alert-info">Carregando boletim...</div>');
+
                 $.ajax({
                     url: "/pt/get_boletim_student/" + lective_year,
                     type: "GET",
                     dataType: "json"
                 }).done(function (data) {
 
-                    var matricula   = data.matricula;
-                    var disciplinas = data.disciplinas;
-                    var dados       = data.dados;
+                    if (!data.success) {
+                        $("#table_student").html(
+                            '<div class="alert alert-danger">' + (data.message || 'Erro ao carregar boletim') + '</div>'
+                        );
+                        return;
+                    }
+
+                    var matriculas   = data.matriculas;
+                    var disciplinas  = data.disciplinas;
+                    var dados        = data.dados;
                     var matriculationId = data.id;
+
+                    if (!matriculas || matriculas.length === 0) {
+                        $("#table_student").html(
+                            '<div class="alert alert-info">Sem matrícula encontrada</div>'
+                        );
+                        return;
+                    }
+
+                    // Pega a primeira matrícula
+                    var matricula = matriculas[0];
 
                     if (!disciplinas || disciplinas.length === 0) {
                         $("#table_student").html(
@@ -186,12 +206,14 @@
                     // Separar disciplinas por semestre
                     var semestres = {1: [], 2: []};
                     disciplinas.forEach(function (d) {
-                        var sem = parseInt(d.disciplinas[3]);
+                        var sem = parseInt(d.disciplinas[3]); // assumindo que o 4º caractere indica semestre
                         if (sem === 1) semestres[1].push(d);
                         if (sem === 2) semestres[2].push(d);
                     });
 
-                    // Loop semestres
+                    $("#table_student").html(''); // limpa conteúdo antes de inserir
+
+                    // Loop por semestre
                     for (var num_semestre in semestres) {
 
                         var lista = semestres[num_semestre];
@@ -231,14 +253,13 @@
                         html += '</tr>';
                         html += '</thead><tbody>';
 
-                        // Loop disciplinas
                         lista.forEach(function (disciplina, index) {
 
                             var pf1 = null, pf2 = null, oa = null;
                             var ex_escrito = null, ex_oral = null;
                             var nota_recurso = null;
 
-                            // Pega sempre a maior nota por métrica
+                            // Maior nota por métrica
                             dados.forEach(function (n) {
                                 if (n.disciplina === disciplina.disciplinas && n.nota !== null) {
                                     var valor = parseFloat(n.nota);
@@ -251,8 +272,8 @@
                                 }
                             });
 
-                            // Média MAC só se todas existirem
-                            var media = (pf1 !== null /*&& pf2 !== null && oa !== null*/)
+                            // Média MAC
+                            var media = (pf1 !== null && pf2 !== null && oa !== null)
                                 ? +((pf1*0.35) + (pf2*0.35) + (oa*0.3)).toFixed(2)
                                 : null;
 
@@ -260,7 +281,7 @@
                             var cor_media = '', classificacao = '-';
                             if (media !== null) {
                                 if (media >= 10.5) { classificacao='Aprovado(a)'; cor_media='for-green'; }
-                                else if (media <= 10.4  && meida > 5) { classificacao='Exame'; cor_media='for-yellow'; }
+                                else if (media > 5 && media <= 10.4) { classificacao='Exame'; cor_media='for-yellow'; }
                                 else { classificacao='Recurso'; cor_media='for-red'; }
                             }
 
@@ -271,8 +292,8 @@
                             // Média final
                             var media_final = null;
                             if (media !== null) {
-                                if (media<10 && nota_recurso!==null) media_final = nota_recurso;
-                                else if (media_exame!==null) media_final = media_exame;
+                                if (media < 10 && nota_recurso !== null) media_final = nota_recurso;
+                                else if (media_exame !== null) media_final = media_exame;
                                 else media_final = media;
                             }
 
@@ -293,34 +314,34 @@
                             html += '<td class="text-center '+cor_media+'">' + classificacao + '</td>';
                             html += '<td class="text-center">' + (ex_escrito!==null?Math.ceil(ex_escrito):'-') + '</td>';
                             html += '<td class="text-center">' + (ex_oral!==null?ex_oral:'-') + '</td>';
-                            html += '<td class="text-center">' + (media_exame!==null?Math.ceil(xmedia_exame):'-') + '</td>';
+                            html += '<td class="text-center">' + (media_exame!==null?Math.ceil(media_exame):'-') + '</td>';
                             html += '<td class="text-center '+cor_media+'">' + classificacao + '</td>';
                             html += '<td colspan="2" class="text-center">' + (nota_recurso!==null?Math.ceil(nota_recurso):'-') + '</td>';
                             html += '<td colspan="2" class="text-center">-</td>';
                             html += '<td colspan="2" class="text-center">' + (media_final!==null?Math.ceil(media_final):'-') + '</td>';
                             html += '<td colspan="2" class="text-center '+cor_final+'">' + estado_final + '</td>';
                             html += '</tr>';
-
                         });
 
                         html += '</tbody></table>';
-                        
-                        
+
+                        // Adiciona tabela e botão PDF
                         $("#table_student").append(html);
-
                         $("#table_student").append(
-                        '<br><a class"d-flex justify-content-end mt-3" href="/boletim_pdf/' + matriculationId + '" ' +
-                        'class="btn btn-primary mb-3" target="_blank"><i class="bi bi-filetype-pdf"></i>Boletim de Notas</a>');
-
+                            '<br><a href="/boletim_pdf/' + matriculationId + '" ' +
+                            'class="d-flex justify-content-end mt-3 btn btn-primary mb-3" target="_blank">' +
+                            '<i class="bi bi-filetype-pdf"></i> Boletim de Notas</a>'
+                        );
                     }
 
-                }).fail(function () {
+                }).fail(function (xhr, status, error) {
                     $("#table_student").html(
-                        '<div class="alert alert-danger">Erro ao carregar boletim</div>'
+                        '<div class="alert alert-danger">Erro ao carregar boletim: ' + (xhr.responseJSON?.message || error) + '</div>'
                     );
                 });
             }
         });
     </script>
+
 
 @endsection
