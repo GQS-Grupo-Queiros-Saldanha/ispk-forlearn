@@ -1,5 +1,5 @@
 <style>
-    /* Mantenho todo o CSS original sem alterações */
+    /* Mantenho todo o CSS original */
     body {
         font-family: 'Calibri Light', sans-serif;
     }
@@ -215,23 +215,33 @@
         color: #fc8a17;
     }
     
-    /* Apenas adiciono estas classes para melhor organização */
+    /* Apenas ajustes para alinhamento */
     .pp1-center {
         text-align: center;
-        font-size: 2.5em;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        font-size: 2.2em;
+        padding-top: 20px !important;
+        margin-bottom: 5px !important;
     }
     
-    .logo-cell {
+    .doc-name {
+        text-align: right;
+        padding-top: 5px !important;
+        padding-right: 7px;
+    }
+    
+    .doc-date {
+        text-align: right;
+        padding-right: 7px;
+        padding-top: 5px !important;
+        font-size: 0.9em;
+    }
+    
+    .logo-container {
+        width: 120px;
+        height: 68px;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center center !important;
-    }
-    
-    .spacer-cell {
-        width: 200px;
-        height: 78px;
-        border: none;
     }
 </style>
 
@@ -241,44 +251,41 @@
 @endphp
 
 <div class="div-top">
-    <table class="table table-main m-0 p-1 bg0" style="border:none; margin-top:-15px; margin-right:0;">
-        <!-- Linha 1: Logo -->
+    <table class="table table-main m-0 p-1 bg0" style="border:none; margin-top:-15px; margin-right:0; height:130px;">
         <tr>
-            <td class="td-fotografia logo-cell" rowspan="8"
-                style="background-image:url('{{ $logotipo }}'); width:120px; height:68px;">
+            <!-- Coluna 1: Logo -->
+            <td class="td-fotografia logo-container" rowspan="3"
+                style="background-image:url('{{ $logotipo }}'); width:120px; height:68px; position:relative; top:10px; left:10px;">
             </td>
-        </tr>
-
-        <!-- Linha 2: PP1 Centralizado -->
-        <tr>
-            <td class="bg0" style="border:none; text-align:center;">
-                <h1 class="h1-title pp1-center" style="color:#fc8a17;">
-                   <b>Exame especial</b>
-                </h1>
-            </td>
-        </tr>
-
-        <!-- Linha 3: Nome do Documento -->
-        <tr>
-            <td class="bg0" style="border:none; text-align:right; padding-right:7px;">
-                <h1 class="h1-title">
-                   <b>{{ $doc_name }}</b>
-                </h1>
-            </td>
-        </tr>
-
-        <!-- Linha 4: Data de Geração -->
-        <tr>
-            <td class="data-generate" style="border:none; text-align:right; padding-right:7px;">
-                <span style="position:relative;">
-                    Documento gerado a
-                    <b>{{ $currentDate }}</b>
-                </span>
+            
+            <!-- Coluna 2: Conteúdo principal -->
+            <td style="border:none; vertical-align:top;">
+                <!-- Linha 1: PP1 Centralizado -->
+                <div style="text-align:center; padding-top:15px;">
+                    <h1 class="h1-title pp1-center" style="color:#fc8a17; margin:0; padding:0;">
+                       <b>PP1</b>
+                    </h1>
+                </div>
+                
+                <!-- Linha 2: Nome do Documento -->
+                <div class="doc-name">
+                    <h1 class="h1-title" style="margin:0; padding:0;">
+                       <b>{{ $doc_name }}</b>
+                    </h1>
+                </div>
+                
+                <!-- Linha 3: Data de Geração -->
+                <div class="doc-date">
+                    <span style="color:white;">
+                        Documento gerado a
+                        <b>{{ $currentDate }}</b>
+                    </span>
+                </div>
             </td>
         </tr>
     </table>
 
-    <!-- Nome da Instituição -->
+    <!-- Nome da Instituição (mantido igual) -->
     <div class="instituto" style="position: absolute; top: 8px; left: 130px; width: 450px; font-family: Impact; padding-top: 40px; color:white;">
         <h4><b>
             @if (isset($institution->nome))
