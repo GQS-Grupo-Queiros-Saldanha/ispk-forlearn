@@ -127,7 +127,7 @@ class estatisticaMatriculationController extends Controller
             ->first();
 
         $emolumento_confirma_prematricula = $this->pre_matricula_confirma_emolumento($lectiveYears->id);
-        //dd($emolumento_confirma_prematricula);
+        dd($emolumento_confirma_prematricula,$lectiveYears->id);
 
 
 
