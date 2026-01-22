@@ -259,8 +259,8 @@
                             // Classificação MAC
                             var cor_media = '', classificacao = '-';
                             if (media !== null) {
-                                if (media >= 10.3) { classificacao='Aprovado(a)'; cor_media='for-green'; }
-                                else if (media <= 7) { classificacao='Exame'; cor_media='for-yellow'; }
+                                if (media >= 10.5) { classificacao='Aprovado(a)'; cor_media='for-green'; }
+                                else if (media <= 10) { classificacao='Exame'; cor_media='for-yellow'; }
                                 else { classificacao='Recurso'; cor_media='for-red'; }
                             }
 
