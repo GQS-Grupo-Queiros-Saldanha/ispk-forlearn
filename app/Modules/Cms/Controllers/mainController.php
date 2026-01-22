@@ -1084,80 +1084,83 @@ class mainController extends Controller
         }
 
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
+        try {
+            // --- Buscar matriculas ---
+            $matriculas = DB::table('matriculations as m')
+                ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
+                ->join('classes', 'classes.id', '=', 'mc.class_id')
+                ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
+                ->join('courses_translations as ct', 'ct.courses_id', '=', 'uc.courses_id')
+                ->where('m.id', $matriculation)
+                ->where('ct.active', 1)
+                ->select(
+                    'mc.class_id as turma',
+                    'classes.code as nome_turma',
+                    'm.course_year as ano_curricular',
+                    'm.lective_year as ano_lectivo',
+                    'm.user_id as usuario',
+                    'ct.display_name as nome_curso'
+                )
+                ->orderBy('mc.id_sui', 'desc')
+                ->get();
 
-        $matriculas = DB::table('matriculations as m')
-            ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
-            ->join('classes', 'classes.id', '=', 'mc.class_id')
-            ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
-            ->join('courses_translations as ct', 'ct.courses_id', '=', 'uc.courses_id')
-            ->where('m.id', $matriculation)
-            ->where('ct.active', 1)
-            ->select(
-                'mc.class_id as turma',
-                'classes.code as nome_turma',
-                'm.course_year as ano_curricular',
-                'm.lective_year as ano_lectivo',
-                'm.user_id as usuario',
-                'ct.display_name as nome_curso'
-            )
-            ->orderBy('mc.id_sui', 'desc') // maior id primeiro
-            ->get();
-        /*-----------------------------------*/
-        $disciplinas = DB::table('matriculation_disciplines as md')
-            ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
-            ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
-            ->where('md.matriculation_id', $matriculation)
-            ->where('dt.active', 1)
-            ->select(
-                'd.code as disciplinas',
-                'dt.display_name as nome_disciplina'
-            )
-            ->get();
-                
-        /*----------------------------------*/
-        $all_dados = collect();
-        foreach($matriculas as $matricula){
-            $dados = DB::table('study_plans as sp')
-                ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
-
-                ->join('plano_estudo_avaliacaos as pea', function ($join) {
-                    $join->on('pea.study_plan_editions_id', '=', 'spe.id');
-                })
-
-                ->join('matriculation_disciplines as md', function ($join) {
-                    $join->on('md.discipline_id', '=', 'pea.disciplines_id');
-                })
-
-                ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
-                ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
-                ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
-                ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
-
-                ->where('spe.lective_years_id', $matricula->ano_lectivo)
-                ->where('al.id_turma', $matricula->turma)
-                ->where('al.users_id', $matricula->usuario)
+            // --- Buscar disciplinas ---
+            $disciplinas = DB::table('matriculation_disciplines as md')
+                ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
+                ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'd.id')
                 ->where('md.matriculation_id', $matriculation)
                 ->where('dt.active', 1)
-
                 ->select(
-                    'd.code as disciplina',
-                    'dt.display_name as nome_disciplina',
-                    'metricas.nome as metrica',
-                    'metricas.percentagem as percentagem',
-                    'al.nota as nota'
+                    'd.code as disciplinas',
+                    'dt.display_name as nome_disciplina'
                 )
                 ->get();
-                $all_dados = $all_dados->concat($dados);
+
+            // --- Buscar notas e métricas ---
+            $all_dados = collect();
+            foreach ($matriculas as $matriculaItem) {
+                $dados = DB::table('study_plans as sp')
+                    ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
+                    ->join('plano_estudo_avaliacaos as pea', 'pea.study_plan_editions_id', '=', 'spe.id')
+                    ->join('matriculation_disciplines as md', 'md.discipline_id', '=', 'pea.disciplines_id')
+                    ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
+                    ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
+                    ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
+                    ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
+                    ->where('spe.lective_years_id', $matriculaItem->ano_lectivo)
+                    ->where('al.id_turma', $matriculaItem->turma)
+                    ->where('al.users_id', $matriculaItem->usuario)
+                    ->where('md.matriculation_id', $matriculation)
+                    ->where('dt.active', 1)
+                    ->select(
+                        'd.code as disciplina',
+                        'dt.display_name as nome_disciplina',
+                        'metricas.nome as metrica',
+                        'metricas.percentagem as percentagem',
+                        'al.nota as nota'
+                    )
+                    ->get();
+
+                $all_dados = $all_dados->merge($dados); // merge acumula corretamente
+            }
+
+            // --- Retornar JSON ---
+            return response()->json([
+                'success'     => true,
+                'matriculas'  => $matriculas->toArray(),
+                'disciplinas' => $disciplinas->toArray(),
+                'dados'       => $all_dados->toArray(),
+                'id'          => $matriculation,
+            ]);
+
+        } catch (\Exception $e) {
+            // --- Retornar erro legível no front ---
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao buscar os dados da matrícula.',
+                'error'   => $e->getMessage(), // mensagem detalhada do erro
+            ], 500);
         }
-        
-        $dados = $all_dados;
-            
-        return response()->json([
-            'matricula'   => $matricula,
-            'disciplinas' => $disciplinas,
-            'dados'       => $dados,
-            'id' => $matriculation,
-        ]);
 
     }
 
