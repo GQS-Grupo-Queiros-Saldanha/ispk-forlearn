@@ -1336,7 +1336,7 @@ class mainController extends Controller
                 'ct.display_name as nome_curso'
             )
             ->orderBy('mc.id_sui', 'desc') // maior id primeiro
-            ->first();
+            ->get();
         /*-----------------------------------*/
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
@@ -1367,7 +1367,7 @@ class mainController extends Controller
             ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
 
             ->where('spe.lective_years_id', $matricula->ano_lectivo)
-            ->where('al.id_turma', $matricula->turma)
+            ->whereIn('al.id_turma', $matricula->turma)
             ->where('al.users_id', $matricula->usuario)
             ->where('md.matriculation_id', $matriculation)
             ->where('dt.active', 1)
@@ -1381,7 +1381,7 @@ class mainController extends Controller
             )
             ->get();
 
-        dd($matricula,$dados, $disciplinas);
+       
         
 
         $student_info = $this->get_matriculation_student($matricula->ano_lectivo, $matricula->usuario);
