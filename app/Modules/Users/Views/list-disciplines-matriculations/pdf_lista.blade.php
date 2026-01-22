@@ -39,6 +39,11 @@
             background-color: #ffffff !important;
             border: 1.5px solid #666 !important;
         }
+        .signature {
+            margin-top: 50px;
+            text-align: left;
+            font-size: 14pt;
+        }
 
         /* =========================================================
            MODO DE IMPRESSÃO (PRETO E BRANCO)
