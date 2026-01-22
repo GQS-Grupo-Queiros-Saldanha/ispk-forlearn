@@ -1085,7 +1085,7 @@ class mainController extends Controller
 
         Log::info('CONFIG DEBUG1.2', ['config' => $config]);
 
-        $matricula = DB::table('matriculations as m')
+        $matriculas = DB::table('matriculations as m')
             ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
             ->join('classes', 'classes.id', '=', 'mc.class_id')
             ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
@@ -1101,7 +1101,7 @@ class mainController extends Controller
                 'ct.display_name as nome_curso'
             )
             ->orderBy('mc.id_sui', 'desc') // maior id primeiro
-            ->first();
+            ->get();
         /*-----------------------------------*/
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
@@ -1113,38 +1113,44 @@ class mainController extends Controller
                 'dt.display_name as nome_disciplina'
             )
             ->get();
-            
+                
         /*----------------------------------*/
-        $dados = DB::table('study_plans as sp')
-            ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
+        $all_dados = collect();
+        foreach($matriculas as $matricula){
+            $dados = DB::table('study_plans as sp')
+                ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
 
-            ->join('plano_estudo_avaliacaos as pea', function ($join) {
-                $join->on('pea.study_plan_editions_id', '=', 'spe.id');
-            })
+                ->join('plano_estudo_avaliacaos as pea', function ($join) {
+                    $join->on('pea.study_plan_editions_id', '=', 'spe.id');
+                })
 
-            ->join('matriculation_disciplines as md', function ($join) {
-                $join->on('md.discipline_id', '=', 'pea.disciplines_id');
-            })
+                ->join('matriculation_disciplines as md', function ($join) {
+                    $join->on('md.discipline_id', '=', 'pea.disciplines_id');
+                })
 
-            ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
-            ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
-            ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
-            ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
+                ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
+                ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
+                ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
+                ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
 
-            ->where('spe.lective_years_id', $matricula->ano_lectivo)
-            ->where('al.id_turma', $matricula->turma)
-            ->where('al.users_id', $matricula->usuario)
-            ->where('md.matriculation_id', $matriculation)
-            ->where('dt.active', 1)
+                ->where('spe.lective_years_id', $matricula->ano_lectivo)
+                ->where('al.id_turma', $matricula->turma)
+                ->where('al.users_id', $matricula->usuario)
+                ->where('md.matriculation_id', $matriculation)
+                ->where('dt.active', 1)
 
-            ->select(
-                'd.code as disciplina',
-                'dt.display_name as nome_disciplina',
-                'metricas.nome as metrica',
-                'metricas.percentagem as percentagem',
-                'al.nota as nota'
-            )
-            ->get();
+                ->select(
+                    'd.code as disciplina',
+                    'dt.display_name as nome_disciplina',
+                    'metricas.nome as metrica',
+                    'metricas.percentagem as percentagem',
+                    'al.nota as nota'
+                )
+                ->get();
+                $all_dados = $all_dados->concat($dados);
+        }
+        
+        $dados = $all_dados;
             
         return response()->json([
             'matricula'   => $matricula,
