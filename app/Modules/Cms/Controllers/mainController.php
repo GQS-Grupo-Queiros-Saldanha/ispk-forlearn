@@ -1381,7 +1381,7 @@ class mainController extends Controller
             )
             ->get();
 
-        //dd($matricula,$dados, $disciplinas);
+        dd($matricula,$dados, $disciplinas);
         
 
         $student_info = $this->get_matriculation_student($matricula->ano_lectivo, $matricula->usuario);
