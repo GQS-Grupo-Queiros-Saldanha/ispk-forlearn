@@ -1058,11 +1058,7 @@ class mainController extends Controller
                     ->where('Avaliacao_aluno_turma', $avl->Avaliacao_aluno_turma)
                     ->where('segunda_chamada', 1)
                     ->isNotEmpty();
-
-
                 $sai =  $faltou && $nota_normal && $fez_segunda_chamada;
-
-
                 return $sai;
             });
         });
@@ -1074,7 +1070,7 @@ class mainController extends Controller
         $classes = $this->matriculation_classes($matriculations->id);
         $melhoria_notas = get_melhoria_notas($student, $lectiveYearSelected_id, 0);
         
-        if($student ==000){
+        if($student == 000){
              dd([
                 'percurso' => $percurso,
                 'articles' => $articles,
@@ -1118,7 +1114,7 @@ class mainController extends Controller
                 'dt.display_name as nome_disciplina'
             )
             ->get();
-                
+        dd($matriculation);      
         /*----------------------------------*/
         $dados = DB::table('study_plans as sp')
             ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
