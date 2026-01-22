@@ -1320,7 +1320,7 @@ class mainController extends Controller
     public function boletim_pdf($matriculation){
      
         
-        $matricula = DB::table('matriculations as m')
+        $matriculas = DB::table('matriculations as m')
             ->join('matriculation_classes as mc', 'mc.matriculation_id', '=', 'm.id')
             ->join('classes', 'classes.id', '=', 'mc.class_id')
             ->join('user_courses as uc', 'uc.users_id', '=', 'm.user_id')
@@ -1337,9 +1337,6 @@ class mainController extends Controller
             )
             ->orderBy('mc.id_sui', 'desc') // maior id primeiro
             ->get();
-            foreach($matricula as $matricula){
-                Log::info('MATRICULA DEBUG', ['matricula' => $matricula->ano_lectivo]);
-            };
         /*-----------------------------------*/
         $disciplinas = DB::table('matriculation_disciplines as md')
             ->join('disciplines as d', 'd.id', '=', 'md.discipline_id')
@@ -1353,41 +1350,44 @@ class mainController extends Controller
             ->get();
                 
         /*----------------------------------*/
-        $dados = DB::table('study_plans as sp')
-            ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
+        $all_dados = collect();
+        foreach($matriculas as $matricula){
+            $dados = DB::table('study_plans as sp')
+                ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
 
-            ->join('plano_estudo_avaliacaos as pea', function ($join) {
-                $join->on('pea.study_plan_editions_id', '=', 'spe.id');
-            })
+                ->join('plano_estudo_avaliacaos as pea', function ($join) {
+                    $join->on('pea.study_plan_editions_id', '=', 'spe.id');
+                })
 
-            ->join('matriculation_disciplines as md', function ($join) {
-                $join->on('md.discipline_id', '=', 'pea.disciplines_id');
-            })
+                ->join('matriculation_disciplines as md', function ($join) {
+                    $join->on('md.discipline_id', '=', 'pea.disciplines_id');
+                })
 
-            ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
-            ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
-            ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
-            ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
+                ->join('avaliacao_alunos as al', 'al.plano_estudo_avaliacaos_id', '=', 'pea.id')
+                ->join('metricas', 'metricas.id', '=', 'al.metricas_id')
+                ->join('disciplines as d', 'd.id', '=', 'pea.disciplines_id')
+                ->join('disciplines_translations as dt', 'dt.discipline_id', '=', 'pea.disciplines_id')
 
-            ->whereIn('spe.lective_years_id', $matricula->ano_lectivo)
-            ->where('al.id_turma', $matricula->turma)
-            ->where('al.users_id', $matricula->usuario)
-            ->where('md.matriculation_id', $matriculation)
-            ->where('dt.active', 1)
+                ->where('spe.lective_years_id', $matricula->ano_lectivo)
+                ->where('al.id_turma', $matricula->turma)
+                ->where('al.users_id', $matricula->usuario)
+                ->where('md.matriculation_id', $matriculation)
+                ->where('dt.active', 1)
 
-            ->select(
-                'd.code as disciplina',
-                'dt.display_name as nome_disciplina',
-                'metricas.nome as metrica',
-                'metricas.percentagem as percentagem',
-                'al.nota as nota'
-            )
-            ->get();
-
-       
+                ->select(
+                    'd.code as disciplina',
+                    'dt.display_name as nome_disciplina',
+                    'metricas.nome as metrica',
+                    'metricas.percentagem as percentagem',
+                    'al.nota as nota'
+                )
+                ->get();
+                $all_dados = $all_dados->concat($dados);
+        }
         
-
-        $student_info = $this->get_matriculation_student($matricula->ano_lectivo, $matricula->usuario);
+        $dados = $all_dados;
+        $first_matricula = $matriculas->first();
+        $student_info = $this->get_matriculation_student($first_matricula->ano_lectivo, $first_matricula->usuario);
         $institution = Institution::latest()->first();
         $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
         
@@ -1402,7 +1402,7 @@ class mainController extends Controller
             ->setPaper('a4', 'landscape');
 
 
-        return $pdf->stream('Boletim_de_notas_' . $matriculation . '_' . $matricula->ano_lectivo . '.pdf');
+        return $pdf->stream('Boletim_de_notas_' . $matriculation . '_' . $first_matricula->ano_lectivo . '.pdf');
 
     }
 
