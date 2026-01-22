@@ -260,7 +260,7 @@
                             var cor_media = '', classificacao = '-';
                             if (media !== null) {
                                 if (media >= 10.5) { classificacao='Aprovado(a)'; cor_media='for-green'; }
-                                else if (media <= 10) { classificacao='Exame'; cor_media='for-yellow'; }
+                                else if (media <= 10.4 && meida > 5) { classificacao='Exame'; cor_media='for-yellow'; }
                                 else { classificacao='Recurso'; cor_media='for-red'; }
                             }
 

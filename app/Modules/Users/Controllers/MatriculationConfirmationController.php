@@ -2257,6 +2257,7 @@ public function colocar_emolumento($id_user){
                         $displayName = $this->formatUserName($user);
                         return ['id' => $user->id, 'display_name' => $displayName];
                     });
+                    dd( $equivalente_studant);
                     
                     //Importados estudantes
                   $StudentImported = User::whereHas('roles', function ($q) {
