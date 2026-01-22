@@ -2295,12 +2295,11 @@ public function colocar_emolumento($id_user){
                         if (!$StudentImported->isEmpty()) {
                             $usuarios = $usuarios->concat($StudentImported);
                         }
+                        if (!$equivalente_studant->isEmpty()) {
+                            $usuarios = $usuarios->concat($equivalente_studant);
+                        }
                         
-            
-            
-        
-          
-
+        $usuarios = $usuarios->unique('id')->values();
 
         return $usuarios->sortBy(function ($item) {
             return strtr(
