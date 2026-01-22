@@ -199,6 +199,11 @@
                     </div>
                 </div>
             </div>
+            <div class="signature">
+                Docente(s):
+                ________________________________________________________________________
+               ({{ $metrica }})
+            </div>
         </div>
     </main>
 @endsection
