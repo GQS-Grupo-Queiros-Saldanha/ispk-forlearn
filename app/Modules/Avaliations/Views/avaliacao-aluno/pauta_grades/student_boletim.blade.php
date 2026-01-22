@@ -57,6 +57,7 @@
         .boletim_text { font-weight: normal !important; } 
         .barra { color: #f39c12 !important; font-weight: bold; } 
         .semestreA, .semestre2{ } 
+        .btn-pdf-boletim{width: 2rem;}
         
         /* Estilos adicionais para modernização */
         .table-responsive {
@@ -329,7 +330,7 @@
                         $("#table_student").append(html);
                         $("#table_student").append(
                             '<br><a href="/boletim_pdf/' + matriculationId + '" ' +
-                            'class="d-flex justify-content-end mt-3 btn btn-primary mb-3" target="_blank">' +
+                            'class="d-flex justify-content-end mt-3 btn btn-primary mb-3 btn-pdf-boletim" target="_blank">' +
                             '<i class="bi bi-filetype-pdf"></i> Boletim de Notas</a>'
                         );
                     }
