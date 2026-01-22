@@ -142,12 +142,12 @@ class estatisticaMatriculationController extends Controller
                 $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                 $join->on('ct.active', '=', DB::raw(true));
             })
-            ->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
+            /*->leftJoin('matriculation_classes as mc', 'mc.matriculation_id', '=', 'matriculations.id')
             ->join('classes as cl', function ($join) {
                 $join->on('cl.id', '=', 'mc.class_id');
                 $join->on('mc.matriculation_id', '=', 'matriculations.id');
                 $join->on('matriculations.course_year', '=', 'cl.year');
-            })
+            })*/
             ->leftJoin('user_parameters as u_p', function ($join) {
                 $join->on('u0.id', '=', 'u_p.users_id')
                     ->where('u_p.parameters_id', 1);
@@ -170,8 +170,8 @@ class estatisticaMatriculationController extends Controller
                     ->whereNull('articles.deleted_by')
                     ->whereNull('articles.deleted_at');
             })
-            ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)// dados 372,383
-            ->where('matriculations.lective_year', $lectiveYears->id) //13
+            ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)// dados 348, 356, 399
+            ->where('matriculations.lective_year', $lectiveYears->id) //11
             ->select([
                 'matriculations.*',
                 'u0.id as id_usuario',
