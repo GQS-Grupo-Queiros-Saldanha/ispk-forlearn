@@ -84,13 +84,13 @@
                             <select required
                                 class="selectpicker form-control form-control-sm" required="" id="metrica" data-actions-box="false" data-selected-text-format="values" name="metrica" tabindex="-98">
                                 <option value=""></option>
-                                <option value="0">PP1</option>
-                                <option value="1">PP2</option>
-                                <option value="2">OA</option>
-                                <option value="3">Exame escrito</option>
-                                <option value="4">Exame oral</option>
-                                <option value="5">Exame especial</option>
-                                <option value="6">Exame de recurso</option>
+                                <option value="PP1">PP1</option>
+                                <option value=">PP2">PP2</option>
+                                <option value="OA">OA</option>
+                                <option value="Exame escrito">Exame escrito</option>
+                                <option value="Exame oral">Exame oral</option>
+                                <option value="Exame especial">Exame especial</option>
+                                <option value="Exame de recurso">Exame de recurso</option>
                             </select>
                         </div>
                     </div>
