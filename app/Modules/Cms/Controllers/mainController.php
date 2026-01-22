@@ -1017,8 +1017,6 @@ class mainController extends Controller
 
         $student = auth()->user()->id;
 
-
-
         $matriculations = DB::table("matriculations")
             ->where("user_id", $student)
             ->whereNull("deleted_at")
@@ -1026,6 +1024,7 @@ class mainController extends Controller
             ->select(["lective_year", "id"])
             ->orderBy("lective_year", "asc")
             ->first();
+            
         $matriculation = $matriculations->id;
             
         if (!isset($matriculations->lective_year)) {
@@ -1114,7 +1113,7 @@ class mainController extends Controller
                 'dt.display_name as nome_disciplina'
             )
             ->get();
-        dd($matriculation);      
+            
         /*----------------------------------*/
         $dados = DB::table('study_plans as sp')
             ->join('study_plan_editions as spe', 'spe.study_plans_id', '=', 'sp.id')
