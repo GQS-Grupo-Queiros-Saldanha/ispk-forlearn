@@ -180,16 +180,16 @@
                 let userData = null;
                 let userCourse = null;
 
-                function showSelect(id) {
+                window.showSelect = function (id) {
                     if ($("#check_discipline_" + id).is(':checked')) {
                         $("#checkbox_group_" + id).prop('hidden', false);
                         $("#checkbox_item_" + id).prop('disabled', false);
-                    }
-                    if (!$("#check_discipline_" + id).is(':checked')) {
+                    } else {
                         $("#checkbox_group_" + id).prop('hidden', true);
                         $("#checkbox_item_" + id).prop('disabled', true);
                     }
-                }
+                };
+
 
                 function resetUserSelect() {
                     userData = null;
