@@ -40,7 +40,7 @@
             border: 1.5px solid #666 !important;
         }
         .signature {
-            margin-top: 50px;
+            margin: 50px;
             text-align: left;
             font-size: 14pt;
         }
