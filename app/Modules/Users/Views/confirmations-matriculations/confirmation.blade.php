@@ -190,6 +190,15 @@
                     }
                 };
 
+                function toggleSubmitButton() {
+                    if ($('.check-discipline:checked').length > 0) {
+                        $('#groupBTNconf').removeClass('d-none');
+                    } else {
+                        $('#groupBTNconf').addClass('d-none');
+                    }
+                }
+
+
 
                 function resetUserSelect() {
                     userData = null;
@@ -217,6 +226,8 @@
                         $.get(route, function(data) {
                             userData = data;
                             $('#discipline-tables-containerx').html(userData.html);
+                            toggleSubmitButton();
+
                         });
                         
                         // if(groupBTNconf.hasClass('d-none')){
@@ -466,6 +477,9 @@
 
                         targetInput.prop('checked', false);
                         targetContainer.attr('hidden', !isChecked);
+
+                        toggleSubmitButton();
+
                     });
 
                     containerConfigYears.attr('hidden', false);
