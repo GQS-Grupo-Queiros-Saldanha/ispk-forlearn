@@ -480,17 +480,17 @@ class MatriculationConfirmationController extends Controller
             }
         }
 
-      if ($status==="CE") {
-          
-                      
+      if ($status==="CE") {           
            //Default course_candidate
            $default_course=DB::table('courses_default')
             ->select(['courses_id as course_id'])
             ->where('users_id',$studentId)->first();
               
            if($default_course){
+            Log::info('Candidato com curso default - 1: ' . json_encode($default_course, JSON_PRETTY_PRINT));
                $data = $this->candidato_primeiro($default_course);  
            }else{
+            Log::info('Candidato sem curso default - 2: ' . json_encode($studentInfo, JSON_PRETTY_PRINT));
                 $data = $this->candidato_primeiro($studentInfo);
            }
            
