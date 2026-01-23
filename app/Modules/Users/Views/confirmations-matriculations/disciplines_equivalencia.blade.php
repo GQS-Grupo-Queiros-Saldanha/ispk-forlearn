@@ -188,12 +188,14 @@
    var Mudanca= "{{$countReprovad}}";
    var condi= "{{$condi}}";
      if (Mudanca!=0 && condi==1) {
-        //$("#groupBTNconf").attr("hidden",true);
-        $("#groupBTNconf").attr("hidden",false);
+        $("#groupBTNconf").attr("hidden",true);
+        //$("#groupBTNconf").removeClass("d-none");
+
      }
     else{
-        //$("#groupBTNconf").attr("hidden",false);
-         $("#groupBTNconf").attr("hidden",true);
+        $("#groupBTNconf").attr("hidden",false);
+        $("#groupBTNconf").removeClass("d-none");
+
       }
    //Fim do 
 
