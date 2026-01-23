@@ -134,10 +134,8 @@ class MatriculationClasseListController extends Controller
 
             // Junta a turma correspondente
             ->join('classes as turma', 'mc2.class_id', '=', 'turma.id')
-
             // Junta o utilizador
             ->join('users as user', 'mat.user_id', '=', 'user.id')
-
             // Parâmetros do utilizador
             ->leftJoin('user_parameters as u_p', function ($join) {
                 $join->on('user.id', '=', 'u_p.users_id')
@@ -151,7 +149,6 @@ class MatriculationClasseListController extends Controller
                 $join->on('user.id', '=', 'up_bi.users_id')
                     ->where('up_bi.parameters_id', 14);
             })
-
             // Verificar se o aluno tem disciplinas válidas
             ->whereExists(function ($q) use ($request) {
                 $q->select(DB::raw(1))
@@ -161,7 +158,6 @@ class MatriculationClasseListController extends Controller
                     ->where('md.exam_only', $request->regime ?? 0)
                     ->where('st.years', $request->curricular_year);
             })
-
             // Verificar se existe pagamento confirm/p_matricula (ou nenhum)
             ->where(function ($q) use ($lectiveYear) {
                 $q->whereExists(function ($sub) use ($lectiveYear) {
@@ -215,6 +211,7 @@ class MatriculationClasseListController extends Controller
             ->orderBy('mc.class_id', 'DESC')
 
             ->get();
+            dd($request->AnoLectivo, $request->classe, $lectiveYear->id);
 
 
 
