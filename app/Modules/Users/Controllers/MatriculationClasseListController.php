@@ -120,18 +120,15 @@ class MatriculationClasseListController extends Controller
 
         // Consulta principal
         $model = DB::table('matriculations as mat')
-
             // Junta o resultado (matriculation_id + class_id real)
             ->joinSub($classeReal, 'mc', function ($join) {
                 $join->on('mc.matriculation_id', '=', 'mat.id');
             })
-
             // Junta novamente à tabela original para obter os dados completos da classe
             ->join('matriculation_classes as mc2', function ($join) {
                 $join->on('mc2.matriculation_id', '=', 'mc.matriculation_id')
                     ->on('mc2.class_id', '=', 'mc.class_id');
             })
-
             // Junta a turma correspondente
             ->join('classes as turma', 'mc2.class_id', '=', 'turma.id')
             // Junta o utilizador
@@ -168,7 +165,7 @@ class MatriculationClasseListController extends Controller
                         ->whereColumn('ar.user_id', 'user.id')
                         ->whereIn('cd.code', ['confirm', 'p_matricula', 'pedido_t_entrada', 'confirm_tardia'])
                         ->where('ar.status', 'total')
-                        
+                        ->whereBetween('ar.created_at', [$lectiveYear->start_date, $lectiveYear->end_date ]);
                 })
                 ->orWhereRaw('NOT EXISTS (SELECT 1 FROM article_requests WHERE user_id = user.id)');
             })
@@ -206,17 +203,15 @@ class MatriculationClasseListController extends Controller
 
             ->orderBy('student', 'ASC')
             ->orderBy('mc.class_id', 'DESC')
-
             ->get();
+
             dd($model);
-
-
 
         if ($model->isEmpty()) {
             Toastr::error(__('Não foram encontrados alunos matriculados na turma selecionada.'), __('toastr.error'));
             return redirect()->back();
         }
-        //dd($model);
+      
 
         // 💰 Filtro de dívidas e bolsas (mantido)
         if (isset($request->status) && $request->status == "0") {
