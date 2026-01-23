@@ -167,7 +167,7 @@ class MatriculationClasseListController extends Controller
                         ->where('ar.status', 'total')
                         ->whereBetween('ar.created_at', [$lectiveYear->start_date, $lectiveYear->end_date ]);
                 })
-                ->orWhereRaw('NOT EXISTS (SELECT 1 FROM article_requests WHERE user_id = user.id)');
+                //->orWhereRaw('NOT EXISTS (SELECT 1 FROM article_requests WHERE user_id = user.id)');
             })
 
             ->where('mat.lective_year', $lectiveYear->id)
