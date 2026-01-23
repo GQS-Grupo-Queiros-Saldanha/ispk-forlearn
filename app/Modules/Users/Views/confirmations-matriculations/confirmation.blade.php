@@ -191,6 +191,8 @@
                 };
 
                 function toggleSubmitButton() {
+                    $("#groupBTNconf").removeClass("d-none");
+
                     if ($('.check-discipline:checked').length > 0) {
                         $('#groupBTNconf').removeClass('d-none');
                     } else {
