@@ -1,7 +1,8 @@
 <title>Matrículas | forLEARN® by GQS</title>
 @extends('layouts.generic_index_new')
 @section('navbar')
- 
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 @endsection
 @switch($action)
     @case('create')
@@ -126,6 +127,7 @@
     @endsection
     @section('scripts-new')
         @parent
+        
         <script src="https://kit.fontawesome.com/e1fa782e3f.js" crossorigin="anonymous"></script>
         <script>
             (() => {
