@@ -357,10 +357,11 @@ class MatriculationConfirmationController extends Controller
      
      
      
-    public function ajaxUserData($studentId){       
-     try{
+    public function ajaxUserData($studentId){
+        Log::info("Início do processamento ajaxUserData", ['studentId' => $studentId]);       
+     
+    try{
 
-       
        $info="";
        $student=explode(",",$studentId);
        $studentId=$student[0];
