@@ -189,16 +189,7 @@
    var condi= "{{$condi}}";
    $("#groupBTNconf").removeClass("d-none");
 
-    if (Mudanca!=0 && condi==1) {
-        $("#groupBTNconf").attr("hidden",true);
-        //$("#groupBTNconf").removeClass("d-none");
-
-     }
-    else{
-        $("#groupBTNconf").attr("hidden",false);
-        $("#groupBTNconf").removeClass("d-none");
-
-      }
+    
    //Fim do 
 
    var flag=false;
