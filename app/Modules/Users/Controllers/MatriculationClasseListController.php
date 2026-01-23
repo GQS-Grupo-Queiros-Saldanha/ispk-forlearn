@@ -88,7 +88,7 @@ class MatriculationClasseListController extends Controller
 
  public function ajaxUserDataPDF(Request $request){
     try {
-        
+        dd($request->all());
         if (empty($request->classe)) {
             Toastr::error(__('Verifique se selecionou uma turma antes de gerar o PDF.'), __('toastr.error'));
             return redirect()->back();
@@ -205,7 +205,7 @@ class MatriculationClasseListController extends Controller
             ->orderBy('mc.class_id', 'DESC')
             ->get();
 
-            dd($lectiveYear->start_date, $lectiveYear->end_date);
+            dd($model);
 
         if ($model->isEmpty()) {
             Toastr::error(__('Não foram encontrados alunos matriculados na turma selecionada.'), __('toastr.error'));
