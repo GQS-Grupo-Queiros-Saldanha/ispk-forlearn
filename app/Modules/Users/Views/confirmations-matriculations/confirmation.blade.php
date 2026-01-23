@@ -189,9 +189,9 @@
                         $("#checkbox_item_" + id).prop('disabled', true);
                     }
                 };
-
+                $("#groupBTNconf").removeClass("d-none");
                 function toggleSubmitButton() {
-                    $("#groupBTNconf").removeClass("d-none");
+                  
 
                     if ($('.check-discipline:checked').length > 0) {
                         $('#groupBTNconf').removeClass('d-none');
