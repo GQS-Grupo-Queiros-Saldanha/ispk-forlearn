@@ -362,27 +362,27 @@ class MatriculationConfirmationController extends Controller
      
     try{
 
-       $info="";
-       $student=explode(",",$studentId);
-       $studentId=$student[0];
-       $anoLEctivo= $student[1];
+        $info="";
+        $student=explode(",",$studentId);
+        $studentId=$student[0];
+        $anoLEctivo= $student[1];
 
     // Crie uma instância da classe
-      $matriculationStrategyConfigUtil = new MatriculationStrategyConfigUtil();
+        $matriculationStrategyConfigUtil = new MatriculationStrategyConfigUtil();
 
-      $currentData = Carbon::now();
-      $lectiveYearSelected = DB::table('lective_years')
-      ->where("id",$anoLEctivo)
-    // ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-      ->first();
-
-      $lectiveYearSelected = $lectiveYearSelected ?? DB::table('lective_years')
-        ->where('lective_years.id', 12)
+        $currentData = Carbon::now();
+        $lectiveYearSelected = DB::table('lective_years')
+        ->where("id",$anoLEctivo)
+        // ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
         ->first();
 
-     //variaveis super importante
-      $data =[];
-      $status="CE";
+        $lectiveYearSelected = $lectiveYearSelected ?? DB::table('lective_years')
+            ->where('lective_years.id', 12)
+            ->first();
+
+        //variaveis super importante
+        $data =[];
+        $status="CE";
 
         //Candidados deste ano 
       //2021--- e os já matriculados.
@@ -418,6 +418,7 @@ class MatriculationConfirmationController extends Controller
      
            if($data!=0){
                 $view = view("Users::confirmations-matriculations.disciplines_equivalencia")->with($data)->render();
+                Log::info("Renderização da view de equivalência concluída", ['estudanteID' => $studentId,'anoLectivo' => $lectiveYearSelected->id]);
                 return response()->json(array('html' => $view));
             }
 
