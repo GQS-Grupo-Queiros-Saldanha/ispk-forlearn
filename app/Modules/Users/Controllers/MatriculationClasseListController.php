@@ -211,7 +211,7 @@ class MatriculationClasseListController extends Controller
             ->orderBy('mc.class_id', 'DESC')
 
             ->get();
-            dd($request->AnoLectivo, $request->classe, $lectiveYear->id);
+            dd($model);
 
 
 
