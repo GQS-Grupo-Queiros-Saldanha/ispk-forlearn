@@ -110,7 +110,7 @@
                                 <div hidden>
                                     <input type="hidden" value="{{ $lective_year->id }}" name="anoLective" required id="flag_id_lective">
                                 </div>
-                                <div id="groupBTNconf" class="mt-3 d-none">
+                                <div id="groupBTNconf" class="mt-3">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-plus-square"></i>
                                         Criar confirmação de matrícula
@@ -189,10 +189,8 @@
                         $("#checkbox_item_" + id).prop('disabled', true);
                     }
                 };
-                $("#groupBTNconf").removeClass("d-none");
-                function toggleSubmitButton() {
-                  
 
+                function toggleSubmitButton() {
                     if ($('.check-discipline:checked').length > 0) {
                         $('#groupBTNconf').removeClass('d-none');
                     } else {
