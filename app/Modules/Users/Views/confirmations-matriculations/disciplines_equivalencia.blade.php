@@ -187,7 +187,9 @@
    //Para ocultar o botão de confrmar se mudança ter matrícula
    var Mudanca= "{{$countReprovad}}";
    var condi= "{{$condi}}";
-     if (Mudanca!=0 && condi==1) {
+   $("#groupBTNconf").removeClass("d-none");
+
+    if (Mudanca!=0 && condi==1) {
         $("#groupBTNconf").attr("hidden",true);
         //$("#groupBTNconf").removeClass("d-none");
 
