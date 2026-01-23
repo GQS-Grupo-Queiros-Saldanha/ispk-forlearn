@@ -168,10 +168,7 @@ class MatriculationClasseListController extends Controller
                         ->whereColumn('ar.user_id', 'user.id')
                         ->whereIn('cd.code', ['confirm', 'p_matricula', 'pedido_t_entrada', 'confirm_tardia'])
                         ->where('ar.status', 'total')
-                        ->whereBetween('ar.created_at', [
-                            $lectiveYear->start_date,
-                            $lectiveYear->end_date
-                        ]);
+                        
                 })
                 ->orWhereRaw('NOT EXISTS (SELECT 1 FROM article_requests WHERE user_id = user.id)');
             })
