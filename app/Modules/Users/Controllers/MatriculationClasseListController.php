@@ -88,7 +88,7 @@ class MatriculationClasseListController extends Controller
 
  public function ajaxUserDataPDF(Request $request){
     try {
-       
+        dd($request)
         if (empty($request->classe)) {
             Toastr::error(__('Verifique se selecionou uma turma antes de gerar o PDF.'), __('toastr.error'));
             return redirect()->back();
