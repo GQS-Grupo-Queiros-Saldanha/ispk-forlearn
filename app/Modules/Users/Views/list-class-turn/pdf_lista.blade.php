@@ -7,6 +7,13 @@
             $doc_name = 'LISTA DE ALUNOS';
             $discipline_code = '';
     @endphp
+    <style>
+        .signature {
+        margin: 50px;
+        text-align: left;
+        font-size: 14pt;
+        }
+    </style>
     <main>
         @include('Reports::pdf_model.forLEARN_header')
             <!-- aqui termina o cabeçalho do pdf -->
@@ -100,6 +107,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="signature">
+                Docente(s):<br>
+                __________________________________
+               <br>
+                ({{ $metrica }})
             </div>
         </div>
          </div>
