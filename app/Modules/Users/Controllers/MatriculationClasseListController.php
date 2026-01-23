@@ -205,7 +205,7 @@ class MatriculationClasseListController extends Controller
             ->orderBy('mc.class_id', 'DESC')
             ->get();
 
-            dd($model);
+            dd($request);
 
         if ($model->isEmpty()) {
             Toastr::error(__('Não foram encontrados alunos matriculados na turma selecionada.'), __('toastr.error'));
