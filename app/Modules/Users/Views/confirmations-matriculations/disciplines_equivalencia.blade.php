@@ -1,173 +1,248 @@
-@php
-    $years = [];
-    $countDiscipline = 0;
-    $especialidade = [];
-    $basta = 0;
-    $condi = 0;
-    $countReprovad = count($disciplinesReproved);
-@endphp
+@php $years = []; (int)$countDiscipline = 0; $especialidade=[]; $basta=0; $condi=0;  $countReprovad=count($disciplinesReproved);   @endphp
 
-@if (isset($estado['error']) && $estado['error'] === "yes")
 
+
+@if (isset($estado['error']) && $estado['error']=="yes")
     <h3>Atenção!</h3><br>
     <div class="alert-warning p-3">
-        <p>
-            A <b>forLEARN</b> detectou que este é um estudante vindo por equivalência.
-            Existem parâmetros que impedem a matrícula.
+        <p>A <b>forLEARN</b> detectou que este é um estudante vindo por equivalência. No entanto existe alguns paramêtros que possivelmente não foram compridos ao rigor
+            e está impedindo a disponibilização das disciplinas para efectuar a matrícula do mesmo. Por favor verifica se compriu com os passos todos listados abaixo: 
         </p>
         <br>
-        <label>1º Lançou todas as notas positivas?</label><br>
-        <label>2º As notas são todas positivas?</label><br>
-        <label>3º Atualizou notas após adicionar disciplinas?</label><br>
-        <label>4º Houve mudança de curso após lançamento?</label>
+        <label for="">1º Efectuou o devidamente o lançamento das notas positivas das disciplinas que equivalem ?</label>
+        <label for="">2º As notas lançadas são todas elas positivas?</label>
+        <label for="">3º Se adicionou uma nova disciplina após lançar as notas, fez a actualização das notas para que a nota desta reflita?</label>
+        <label for="">4º Houve alguma mudança de curso após o lançamento das notas?</label>
+
+        <br>
+        <br>
+        <p>Caso todas etapas acima descritas forem validadas devidamente e o problema persistir, contactar o apoio a <b>forLEARN</b>.
+        </p>
+
     </div>
 
-@elseif(!empty($disciplinesReproved) || !empty($curricularPlanDisciplines))
+@elseif(!empty($disciplinesReproved) && !empty($curricularPlanDisciplines))
 
-    {{-- DISCIPLINAS EM ATRASO --}}
-    @foreach ($disciplinesReproved as $year => $disciplinasAno)
+    {{-- @php $years = []; (int)$countDiscipline = 0; $especialidade=[]; $basta=0; $condi=0;  $countReprovad=count($disciplinesReproved);   @endphp --}}
+    @isset($info)
+        @if ($info!="")
+            @php
+                $condi=1;
+            @endphp
+                <div class="alert alert-warning" role="alert">
+                    {{$countReprovad!=0? "Atenção: Para prosseguir com esta matrícula com a condição de mudança de curso automática,
+                    primeiro deve-se efectuar o lançamento de nota(s) positiva(s) da(s) cadeira(s) em atraso para que a mudança ocorra sem antecedentes negativos.": $info}}
+                </div>
+                <input type="hidden" value="change" name="course_change">
+        @endif 
+    @endisset 
 
-        <h5>{{ $year }}º Ano</h5>
-        @php $years[] = $year; @endphp
-
-        <label><b>Turma:</b></label>
-        <select name="classes[{{$year}}]" class="select-turma">
-            <option value="">Seleciona a turma</option>
-            @foreach ($classes as $class)
-                @foreach ($disciplinasAno as $d)
-                    @if ($class->year == $year && $class->courses_id == $d['courses_id'])
-                        <option value="{{ $class->id }}">
-                            {{ $class->display_name }}
-                        </option>
-                        @break
-                    @endif
+@foreach ($disciplinesReproved as $year => $disciplinesReproved)
+    
+        <h5 class="card-title mb-2">{{ $year }}º Ano</h5>
+        @php array_push($years, $year); @endphp
+        <span class="font-weight: bold; margin-right: 6px">Turma:</span>
+            <select name="classes[{{$year}}]" id="">
+   
+                @foreach ($classes as $class)
+                    @foreach ($disciplinesReproved as $validarCurso)
+                  
+                    @endforeach
+                        @if ($class->year == $year &&  $class->courses_id==$validarCurso['courses_id'])
+                            <option value="{{$class->id}}">
+                                {{ $class->display_name }}
+                            </option>
+                        @endif
                 @endforeach
-            @endforeach
-        </select>
+            </select>
 
-        <ul style="list-style:none">
-            @foreach ($disciplinasAno as $discipline)
-                @php $countDiscipline++; @endphp
-                <li>
-                    <input type="checkbox"
-                           id="check_discipline_{{ $discipline['discipline_id'] }}"
-                           onclick="showSelect({{ $discipline['discipline_id'] }})"
-                           name="disciplines[{{$discipline->years}}][]"
-                           value="{{ $discipline['discipline_id'] }}"
-                           class="check-discipline">
-
-                    <label>
-                        #{{ $discipline['code'] }} - {{ $discipline['display_name'] }}
-                    </label>
-
-                    <div id="checkbox_group_{{ $discipline['discipline_id'] }}" hidden>
-                        <label style="margin-left:20px">
-                            <input type="checkbox"
-                                   id="checkbox_item_{{ $discipline['discipline_id'] }}"
-                                   name="disciplines_exam_only[{{$discipline->years}}][]"
-                                   disabled>
-                            Inscrição para exame
+         <ul style="list-style:none">
+            @foreach ($disciplinesReproved as $discipline)
+                  <li>
+                    @php $countDiscipline++; @endphp
+                    <input type='checkbox' id="check_discipline_{{ $discipline['discipline_id']}}" onclick="showSelect({{$discipline['discipline_id']}})" value="{{$discipline['discipline_id']}}" name="disciplines[{{$discipline->years}}][]" value="{{ $discipline['discipline_id'] }}" class="check-discipline form-check-input-center" data-id="{{$discipline['discipline_id']}}" required>
+                        <label for="{{ $discipline['discipline_id']}}">
+                            #{{$discipline['code']}}-{{$discipline['display_name']}}
                         </label>
+                        <br>
+                    <div class="checkbox" id="checkbox_group_{{$discipline['discipline_id']}}" hidden>
+                            <label for="" class="form-check-label" style="color:#595959; margin-left: 20px">
+                                 <input type="checkbox" id="checkbox_item_{{$discipline['discipline_id']}}" value="{{ $discipline['discipline_id'] }}" class="check-discipline-regime form-check-input-center" data-id="checkbox_item_{{$discipline['discipline_id']}}" name="disciplines_exam_only[{{$discipline->years}}][]" disabled>
+                                 <span>Inscrição para exame</span>
+                             </label>
                     </div>
-                </li>
+                   </li>
             @endforeach
         </ul>
     @endforeach
+    
+    
 
-    {{-- PRÓXIMO ANO --}}
+    @if(isset($estado['curso'])=="CEE" && $nextYear==3 &&  $countDiscipline>0)
+        @php
+            $basta=1;
+        @endphp
+    @endif
+
     <div id="ContainerSeguinte">
+     @if (isset($estado['pontos']) < 5 && isset($estado['curso'])!="CEE" && $nextYear==3  || $estado['Obs']=="normal" &&  isset($estado['curso'])!="CEE" ||$estado['Obs']=="normal" && isset($estado['curso'])!="CEE" && $estado['pontos'] == 0 && $nextYear==4 ||  $estado['pontos'] >= 5 && $estado['estado']=="aprovado" && isset($estado['curso'])=="RI" || isset($estado['curso'])=="CEE" && $nextYear==3 &&  $countDiscipline<1 )
+  
+    @foreach ($curricularPlanDisciplines as $year => $curricularPlanDisciplines)
+    @if ($year <= $nextYear) 
+       {{-- Ano curricular: {{$year}}º - {{$nextYear }}º Ano - Estado: {{$estado['pontos'] }}  curso:{{$estado['curso']}} --}}
+        <h5 class="card-title mb-2">{{$year}}º Ano</h5>
+        @php array_push($years, $year); @endphp
+        <span class="font-weight: bold; margin-right: 6px">Turma:</span>
+        <select name="classes[{{$year}}]" id="">
+            @foreach ($classes as $class)
+                @foreach ($curricularPlanDisciplines as $validarCursoA)
+                
+                @endforeach
+                    @if ($class->year == $year &&  $class->courses_id==$validarCursoA['courses_id'])
+                        <option value="{{$class->id}}">
+                        {{ $class->display_name }}
+                        </option>
+                    @endif
+            @endforeach
+        </select>       
 
-        @foreach ($curricularPlanDisciplines as $year => $disciplinasAno)
-            @if ($year <= $nextYear)
 
-                <h5>{{ $year }}º Ano</h5>
-                @php $years[] = $year; @endphp
+    @if(isset($estado['curso'])==="CEE" && $year===3 && $countDiscipline<1 || isset($estado['curso'])==="CEE" && $year===4)
+        <br>
+        <span class="font-weight: bold; margin-right: 6px">Especialidade:</span>
+            <select name="especialidade_{{$estado['curso']}}" id="espcialidadeCEE">
+                <option value="">Seleciona a especialidade</option>
+                <option value="COA">COA</option>
+                <option value="GEE">GEE</option>
+                <option value="ECO">ECO</option>          
+        </select>
+    @endif
 
-                <label><b>Turma:</b></label>
-                <select name="classes[{{$year}}]" class="select-turma">
-                    <option value="">Seleciona a turma</option>
-                    @foreach ($classes as $class)
-                        @foreach ($disciplinasAno as $d)
-                            @if ($class->year == $year && $class->courses_id == $d['courses_id'])
-                                <option value="{{ $class->id }}">
-                                    {{ $class->display_name }}
-                                </option>
-                                @break
-                            @endif
-                        @endforeach
-                    @endforeach
-                </select>
+    <ul style="list-style: none" class="Lista_disciplina">
+            @foreach ($curricularPlanDisciplines as $discipline)
+                   
+                @php
+                   $especialidade[]=[
+                    "codigo"=>$discipline['code'],
+                    "id_disciplina"=>$discipline['discipline_id']
+                ];
 
-                {{-- ESPECIALIDADE CEE --}}
-                @if($estado['curso']==="CEE" && ($year===3 || $year===4))
-                    <br>
-                    <label><b>Especialidade:</b></label>
-                    <select id="espcialidadeCEE">
-                        <option value="">Seleciona</option>
-                        <option value="COA">COA</option>
-                        <option value="GEE">GEE</option>
-                        <option value="ECO">ECO</option>
-                    </select>
-                @endif
+                @endphp
+                <li class="item_list_disciplines_{{ $discipline['discipline_id']}}">
+                  <input type='checkbox' id="check_discipline_{{ $discipline['discipline_id']}}" name="disciplines[{{$discipline->years}}][]" value="{{ $discipline['discipline_id'] }}" data-id="{{ $discipline['discipline_id'] }}" class="check-discipline form-check-input-center" required checked>
+                  <label for="{{ $discipline['discipline_id']}}">
+                     #{{ $discipline['code']}} - {{$discipline['display_name'] }}
+                  </label>
+                </li>
 
-                <ul class="Lista_disciplina" style="list-style:none">
-                    @foreach ($disciplinasAno as $discipline)
-                        @php
-                            $especialidade[] = [
-                                'codigo' => $discipline['code'],
-                                'id_disciplina' => $discipline['discipline_id']
-                            ];
-                        @endphp
-                        <li class="item_list_disciplines_{{ $discipline['discipline_id'] }}">
-                            <input type="checkbox"
-                                   checked
-                                   name="disciplines[{{$discipline->years}}][]"
-                                   value="{{ $discipline['discipline_id'] }}">
-                            #{{ $discipline['code'] }} - {{ $discipline['display_name'] }}
-                        </li>
-                    @endforeach
-                </ul>
 
-                @break
+            @endforeach
+            </ul>
             @endif
-        @endforeach
+            @break;
+            @endforeach
+            @endif
+  
+        </div>
 
-    </div>
 
+            <div hidden>
+                <ul>
+                    <li>
+                       @php
+                           
+                         count($years); 
+                       @endphp
+                       @if(isset($estado['curso'])=="CEE" && $nextYear==3 &&  $countDiscipline>0)
+                         @foreach ($years as $year)
+                         <input type="text" name="years[]" value="{{ $year }}">
+                            @if (count($years)==1 && count($years)<3 || count($years)==2 && count($years)<3)
+                                @break;
+                            @endif
+                         @endforeach
+                        @else
+
+                        @foreach ($years as $year)
+                             <input type="text" name="years[]" value="{{ $year }}">
+                        @endforeach
+                        @endif
+                    </li>
+                </ul>
+            </div>
+
+@else
+    <h5 class="card-title mb-2">Sem disciplinas :( </h5>
 @endif
+
+
 <script>
-function showSelect(id) {
-    if ($("#check_discipline_" + id).is(':checked')) {
-        $("#checkbox_group_" + id).prop('hidden', false);
-        $("#checkbox_item_" + id).prop('disabled', false);
-    } else {
-        $("#checkbox_group_" + id).prop('hidden', true);
-        $("#checkbox_item_" + id).prop('disabled', true);
+   //Para ocultar a div quando dor 3 ANO cee com cadeira
+   var CEE= "{{$basta}}";
+    if (CEE==1) {
+        console.log("Ocultou da forma tradicional___")
+        $("#ContainerSeguinte").remove();
     }
-}
+   //Fim do caso CEE
 
-// ===============================
-// CONTROLO DO BOTÃO POR TURMA
-// ===============================
-function controlarBotaoPorTurma() {
-    let mostrar = true;
+   //Para ocultar o botão de confrmar se mudança ter matrícula
+   var Mudanca= "{{$countReprovad}}";
+   var condi= "{{$condi}}";
+     if (Mudanca!=0 && condi==1) {
+        $("#groupBTNconf").attr("hidden",true);
+     }
+    else{
+        $("#groupBTNconf").attr("hidden",false);
+      }
+   //Fim do 
 
-    $('.select-turma').each(function () {
-        if ($(this).val() === "") {
-            mostrar = false;
-        }
+   var flag=false;
+   var Removido=[];
+   var dados= $(".Lista_disciplina").html();
+    $("#espcialidadeCEE").change(function(){
+        console.clear();
+         //Pegar o valor actual  do selector
+        var valor_select= $("#espcialidadeCEE").val();
+        var codigoespecialidade = @json($especialidade);
+
+        if (flag) {
+            $(".Lista_disciplina").html(dados); 
+             toogle(codigoespecialidade,valor_select);
+         }else{
+            //Loop no código de cada disciplina para sabe a especialidade a selecionar
+            toogle(codigoespecialidade,valor_select);
+         }
     });
 
-    if (mostrar) {
-        $('#groupBTNconf').removeAttr('hidden').show();
-    } else {
-        $('#groupBTNconf').hide();
+
+
+    //funcão para toogle_disciplina do curso CEE do 3º ano
+    function toogle(codigoespecialidade,valor_select){
+        codigoespecialidade.forEach(element => {
+        var code=element['codigo'].slice(0,3);
+        var id=element['id_disciplina'];
+
+            if (code!=valor_select) {
+                flag=true;
+                //Remove os elementos da tela
+                $("li").remove(".item_list_disciplines_"+id);
+            }
+        });   
     }
-}
 
-controlarBotaoPorTurma();
-
-$(document).on('change', '.select-turma', function () {
-    controlarBotaoPorTurma();
-});
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
