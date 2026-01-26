@@ -152,7 +152,7 @@ class MatriculationClasseListController extends Controller
                     ->from('matriculation_disciplines as md')
                     ->join('study_plans_has_disciplines as st', 'st.disciplines_id', 'md.discipline_id')
                     ->whereColumn('md.matriculation_id', 'mat.id')
-                    ->where('md.exam_only', $request->regime ?? 0)
+                    //->where('md.exam_only', $request->regime ?? 0)
                     ->where('st.years', $request->curricular_year);
             })
             // Verificar se existe pagamento confirm/p_matricula (ou nenhum)

@@ -89,7 +89,6 @@ Route::group(
         Route::get('pesquisar_notificacao', 'centralNotification@pesquisar_notificacao')->name('pesquisar_notificacao');
         Route::get('marcar_estrela', 'centralNotification@marcar_estrela')->name('marcar_estrela');
 
-
         Route::group(['prefix' => 'users'], function () {
             Route::get('/link', function () {
                 // echo"ola";
@@ -611,5 +610,16 @@ Route::group(
 
 
         });
+
+        //Programadores
+
+        Routa::get('programadores', 'ProgramersController@index')->name('Programers.index');
+        Route::get('clear-cache', 'ProgramersController@clearCache')->name('clear.cache');
+        Route::get('migrate', 'ProgramersController@migrate')->name('migrate');
+        Route::get('seed', 'ProgramersController@seed')->name('seed');
+        Route::get('optimize', 'ProgramersController@optimize')->name('optimize');
+
+
+
     }
 );
