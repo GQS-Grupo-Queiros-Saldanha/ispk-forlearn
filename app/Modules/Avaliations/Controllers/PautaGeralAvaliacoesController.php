@@ -5471,8 +5471,8 @@ class PautaGeralAvaliacoesController extends Controller
                 ->orderBy('mt.id', 'asc')
                 ->where('matricula.lective_year', $id_anoLectivo)
                 ->whereIn('matricula.id', PautaGeralAvaliacoesUtil::usersMatriculationNotAnulate($turmaObj[0]))
-                ->whereBetween('matricula.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])  
-                ->whereBetween('artR.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])  
+                //->whereBetween('matricula.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])  
+                //->whereBetween('artR.created_at', [$lectiveYearSelected->start_date, $lectiveYearSelected->end_date])  
                 ->distinct()
                 ->get();
         }
