@@ -611,15 +611,7 @@ Route::group(
 
         });
 
-        //Programadores
-
-        Routa::get('programadores', 'ProgramersController@index')->name('Programers.index');
-        Route::get('clear-cache', 'ProgramersController@clearCache')->name('clear.cache');
-        Route::get('migrate', 'ProgramersController@migrate')->name('migrate');
-        Route::get('seed', 'ProgramersController@seed')->name('seed');
-        Route::get('optimize', 'ProgramersController@optimize')->name('optimize');
-
-
+     
 
     }
 );
