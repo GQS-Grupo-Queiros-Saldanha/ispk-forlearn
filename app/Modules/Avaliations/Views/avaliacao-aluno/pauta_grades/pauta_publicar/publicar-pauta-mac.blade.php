@@ -134,7 +134,7 @@
     @parent
     <script src="{{ asset('js/new_avalicacoes_publicar.js') }}"></script>
     <script>
-        consolo.debug("teste");
+
         $(document).ready(function (){
             
             var id_anoLectivo=$("#lective_year")
