@@ -5307,6 +5307,14 @@ class PautaGeralAvaliacoesController extends Controller
 
     public function getStudentNotasPautaFinal($id_anoLectivo, $id_curso, $Turma_id_Select, $id_disciplina, $tipo_pauta, $pub_print)
     {
+        Log::info('Função para trazer notas da pauta final chamada: getStudentNotasPautaFinal', [
+            'id_anoLectivo' => $id_anoLectivo,
+            'id_curso' => $id_curso,
+            'Turma_id_Select' => $Turma_id_Select,
+            'id_disciplina' => $id_disciplina,
+            'tipo_pauta' => $tipo_pauta,
+            'pub_print' => $pub_print,
+        ] );
         set_time_limit(300);
         // $propinas = $this->getMatriculations_paymentsAlectivo($id_anoLectivo);
         
