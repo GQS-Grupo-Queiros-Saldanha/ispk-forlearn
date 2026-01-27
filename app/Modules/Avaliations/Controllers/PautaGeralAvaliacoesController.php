@@ -5322,13 +5322,12 @@ class PautaGeralAvaliacoesController extends Controller
         $validacao_proprina = DB::table('pauta_avaliation_student_shows')
             ->where('lective_year_id', $id_anoLectivo)
             ->first();
-
+        Log::info("Validação Propina", (array)$validacao_proprina);
         // dd($validacao_proprina->quantidade_mes);
-
-
         $lectiveYearSelected = DB::table('lective_years')
             ->where('id', $id_anoLectivo)
             ->first();
+        Log::info("Ano Lectivo Selecionado", (array)$lectiveYearSelected);
 
         //Estado da Publicação da pauta
         $estado_publicar = DB::table('publicar_pauta')
