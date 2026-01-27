@@ -5355,7 +5355,7 @@ class PautaGeralAvaliacoesController extends Controller
         $turmaObj = explode(" ,", $Turma_id_Select);
         // PUBLICAR
         if (in_array($pub_print, [4, 3])) {
-          Log::info("Mês Actual antes da validação da propina", ['mesActual' => date('m')]);
+         
             $avaliacaos_student = $this->getStudentNotas($id_anoLectivo, $id_curso, $turmaObj[0], $id_disciplina, $lectiveYearSelected, $tipo_pauta);
             // return $pub_print;
            
@@ -5484,7 +5484,7 @@ class PautaGeralAvaliacoesController extends Controller
                 ->distinct()
                 ->get();
         }
-        Log::info("Mês Actual após validação da propina", ['mesActual' => $mesActual]);
+       
         $avaliacaos_student = $avaliacaos_student->reject(function($avl) use($avaliacaos_student){
             $faltou =  isset($avl->presence);
             $nota_normal = !isset($avl->segunda_chamada);
