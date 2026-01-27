@@ -5371,6 +5371,7 @@ class PautaGeralAvaliacoesController extends Controller
                 // $mesActual = $diaActual > $validacao_proprina->quatidade_day ? $mesActual: $mesActual - $validacao_proprina->quantidade_mes;
                 $mesActual = $diaActual;
             }
+            Log::info("Mês Actual após validação da propina", ['mesActual' => $mesActual]);
             
             // return $tipo_pauta;
             $turmaObj = explode(" ,", $Turma_id_Select);
