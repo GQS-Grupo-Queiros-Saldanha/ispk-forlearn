@@ -142,10 +142,10 @@ use App\Modules\Cms\Controllers\mainController;
                                 $classificacao = '-';
 
                                 if ($media !== null) {
-                                    if ($media >= 10.3) {
+                                    if ($media >= 16) {
                                         $classificacao = 'Aprovado(a)';
                                         $cor_media = 'for-green';
-                                    } elseif ($media < 9.90 and $media >= 5.0) {
+                                    } elseif ($media < 16 and $media >= 7.0) {
                                         $classificacao = 'Exame';
                                         $cor_media = 'for-yellow';
                                     } else {
@@ -169,11 +169,11 @@ use App\Modules\Cms\Controllers\mainController;
 
                                 /*
                                 Média final
-                                - Recurso só se média < 10
+                                - Recurso só se média < 7
                                 */
                                 $media_final = null;
                                 if ($media !== null) {
-                                    if ($media < 10 && $nota_recurso !== null) {
+                                    if ($media < 7 && $nota_recurso !== null) {
                                         $media_final = $nota_recurso;
                                     } elseif ($media_exame !== null) {
                                         $media_final = $media_exame;
@@ -189,7 +189,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 $cor_final = '';
 
                                 if ($media_final !== null) {
-                                    if ($media_final >= 10) {
+                                    if ($media_final >= 16) {
                                         $estado_final = 'Aprovado(a)';
                                         $cor_final = 'for-green';
                                     } else {
