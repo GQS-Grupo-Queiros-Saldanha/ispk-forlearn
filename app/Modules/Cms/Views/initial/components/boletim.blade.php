@@ -142,7 +142,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 $classificacao = '-';
 
                                 if ($media !== null) {
-                                    if ($media >= 15.5) {
+                                    if ($media >= 15.3) {
                                         $classificacao = 'Aprovado(a)';
                                         $cor_media = 'for-green';
                                     } elseif ($media < 16 and $media >= 7.0) {
@@ -189,7 +189,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 $cor_final = '';
 
                                 if ($media_final !== null) {
-                                    if ($media_final >= 15.5) {
+                                    if ($media_final >= 15.3) {
                                         $estado_final = 'Aprovado(a)';
                                         $cor_final = 'for-green';
                                     } else {
