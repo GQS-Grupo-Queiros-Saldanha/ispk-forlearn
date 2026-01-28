@@ -193,7 +193,7 @@
                             // Classificação MAC
                             var cor_media = '', classificacao = '-';
                             if (media !== null) {
-                                if (media >= 15.6) { classificacao='Aprovado(a)'; cor_media='for-green'; }
+                                if (media >= 15.3) { classificacao='Aprovado(a)'; cor_media='for-green'; }
                                 else if (media < 16 && media >= 7) { classificacao='Exame'; cor_media='for-yellow'; }
                                 else { classificacao='Recurso'; cor_media='for-red'; }
                             }
@@ -212,7 +212,7 @@
 
                             var estado_final = '-', cor_final = '';
                             if (media_final !== null) {
-                                if (media_final >= 15.6) { estado_final='Aprovado(a)'; cor_final='for-green'; }
+                                if (media_final >= 15.3) { estado_final='Aprovado(a)'; cor_final='for-green'; }
                                 else { estado_final='Reprovado(a)'; cor_final='for-red'; }
                             }
 
