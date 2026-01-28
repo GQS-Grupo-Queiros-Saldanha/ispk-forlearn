@@ -199,7 +199,8 @@ class MatriculationDisciplineListController extends Controller
         ->join("code_developer as code_dev", 'code_dev.id', 'article_emolumento.id_code_dev')
         ->whereIn('code_dev.code', ["confirm", "p_matricula", "pedido_t_entrada"])
         ->where('user_emolumento.status', "total")
-        //->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
+        ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
+
         ->select([
           'disc.id as id_disciplina',
           'disc.code as disciplina',
@@ -222,14 +223,14 @@ class MatriculationDisciplineListController extends Controller
 
         ->orderBy('student', 'ASC')
         ->distinct(['disc.id', 'up_bi.value', 'mat.code', 'u_p.value'])
-        //->whereBetween('mat.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        ->where("mat_disc.discipline_id", $discipline)
+        ->whereBetween('mat.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
+        ->where("disc.id", $discipline)
         ->where("turma.lective_year_id", $AnoLectivo)
-        //->where("turma.id", $classe)
+        ->where("turma.id", $classe)
         ->whereNull('mat.deleted_at')
 
         ->get();
-      
+        dd($model);
 
       $model->each(function ($item) use ($curricular_year) {
         $item->cadeirante = false;
@@ -239,6 +240,8 @@ class MatriculationDisciplineListController extends Controller
 
 
       if (isset($request->status) && ($request->status == "0")) {
+
+
         $model = collect($model)->map(function ($item, $key) {
           $dividas = $this->get_payments($item->id_anoLectivo, $item->mat);
           if (isset($dividas) && ($dividas > 0)) {
