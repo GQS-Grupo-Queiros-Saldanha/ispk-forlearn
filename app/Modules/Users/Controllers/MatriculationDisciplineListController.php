@@ -225,7 +225,7 @@ class MatriculationDisciplineListController extends Controller
         //->whereBetween('mat.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
         ->where("disc.id", $discipline)
         ->where("turma.lective_year_id", $AnoLectivo)
-        ->where("turma.id", $classe)
+        //->where("turma.id", $classe)
         ->whereNull('mat.deleted_at')
 
         ->get();
