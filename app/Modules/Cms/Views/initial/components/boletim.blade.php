@@ -189,7 +189,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 $cor_final = '';
 
                                 if ($media_final !== null) {
-                                    if ($media_final >= 16) {
+                                    if ($media_final >= 15.5) {
                                         $estado_final = 'Aprovado(a)';
                                         $cor_final = 'for-green';
                                     } else {
