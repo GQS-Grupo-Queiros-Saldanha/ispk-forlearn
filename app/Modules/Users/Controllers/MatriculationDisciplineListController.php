@@ -223,7 +223,7 @@ class MatriculationDisciplineListController extends Controller
         ->orderBy('student', 'ASC')
         ->distinct(['disc.id', 'up_bi.value', 'mat.code', 'u_p.value'])
         //->whereBetween('mat.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        ->where("mat_disc.disciplines_id", $discipline)
+        ->where("mat_disc.discipline_id", $discipline)
         ->where("turma.lective_year_id", $AnoLectivo)
         //->where("turma.id", $classe)
         ->whereNull('mat.deleted_at')
