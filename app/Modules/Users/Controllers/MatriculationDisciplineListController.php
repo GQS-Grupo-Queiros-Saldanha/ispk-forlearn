@@ -197,7 +197,7 @@ class MatriculationDisciplineListController extends Controller
         ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'user.id')
         ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
         ->join("code_developer as code_dev", 'code_dev.id', 'article_emolumento.id_code_dev')
-        ->whereIn('code_dev.code', ["confirm", "p_matricula", "pedido_t_entrada"])
+        ->whereIn('code_dev.code', ["confirm", "p_matricula", "pedido_t_entrada", "confirm_tardia"])
         ->where('user_emolumento.status', "total")
         ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
 
