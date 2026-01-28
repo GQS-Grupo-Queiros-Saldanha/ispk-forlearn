@@ -189,7 +189,6 @@ class MatriculationDisciplineListController extends Controller
           $join->on('user.id', '=', 'up_meca.users_id')
             ->where('up_meca.parameters_id', 19);
         })
-
         ->leftJoin('user_parameters as up_bi', function ($join) {
           $join->on('user.id', '=', 'up_bi.users_id')
             ->where('up_bi.parameters_id', 14);
@@ -198,14 +197,9 @@ class MatriculationDisciplineListController extends Controller
         ->join("article_requests as user_emolumento", 'user_emolumento.user_id', 'user.id')
         ->join("articles as article_emolumento", 'user_emolumento.article_id', 'article_emolumento.id')
         ->join("code_developer as code_dev", 'code_dev.id', 'article_emolumento.id_code_dev')
-        //   ->where('code_dev.code', "confirm")
-        //   ->where('code_dev.code', "confirm")
         ->whereIn('code_dev.code', ["confirm", "p_matricula", "pedido_t_entrada"])
         ->where('user_emolumento.status', "total")
         ->whereBetween('article_emolumento.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
-        //fim dos pagos 
-
-
         ->select([
           'disc.id as id_disciplina',
           'disc.code as disciplina',
@@ -228,7 +222,7 @@ class MatriculationDisciplineListController extends Controller
 
         ->orderBy('student', 'ASC')
         ->distinct(['disc.id', 'up_bi.value', 'mat.code', 'u_p.value'])
-        ->whereBetween('mat.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
+        //->whereBetween('mat.created_at', [$lectiveYearSelectedP[0]->start_date, $lectiveYearSelectedP[0]->end_date])
         ->where("disc.id", $discipline)
         ->where("turma.lective_year_id", $AnoLectivo)
         ->where("turma.id", $classe)
@@ -244,8 +238,6 @@ class MatriculationDisciplineListController extends Controller
 
 
       if (isset($request->status) && ($request->status == "0")) {
-
-
         $model = collect($model)->map(function ($item, $key) {
           $dividas = $this->get_payments($item->id_anoLectivo, $item->mat);
           if (isset($dividas) && ($dividas > 0)) {
@@ -266,10 +258,6 @@ class MatriculationDisciplineListController extends Controller
           }
         });
       }
-
-
-
-
 
       //Validação se for vazio a lista de alunos
       if ($model->isEmpty()) {
