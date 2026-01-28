@@ -204,7 +204,7 @@
 
                             // Média final
                             var media_final = null;
-                            if (media !== null) {
+                            if (media !== null && nota_recurso!==null || media !== null && media_exame !==null) {
                                 if (media < 16 && nota_recurso!==null) media_final = nota_recurso;
                                 else if (media_exame!==null) media_final = media_exame;
                                 else media_final = media;

@@ -172,7 +172,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 - Recurso só se média < 7
                                 */
                                 $media_final = null;
-                                if ($media !== null && $nota_recurso !== null ) {
+                                if ($media !== null && $nota_recurso !== null or $media !== null && $media_exame !== null) {
                                     if ($media < 7 && $nota_recurso !== null) {
                                         $media_final = $nota_recurso;
                                     } elseif ($media_exame !== null) {
