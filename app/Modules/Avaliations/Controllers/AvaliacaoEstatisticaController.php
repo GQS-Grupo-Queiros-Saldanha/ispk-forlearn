@@ -907,6 +907,9 @@ class AvaliacaoEstatisticaController extends Controller
 
     //Gerar Estatistica_Percurso__tipo
     public function generateEstatistic_graduado(Request $request){
+        if (auth()->user()->id == 2370) {
+            dd($request->all());
+        }
         try{
 
             // return $request;

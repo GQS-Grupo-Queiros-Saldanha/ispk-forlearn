@@ -355,8 +355,6 @@ Route::group(
                 Route::get('estatistica-graduado', 'AvaliacaoEstatisticaController@graduado');
                 Route::get('PegarDisciplinasAnoCurricularGraduado/{id_cursos}/{anoLectivo}', 'AvaliacaoEstatisticaController@PegarDisciplinaGraduado');
                 Route::post('Generate_estatistic_graduado', 'AvaliacaoEstatisticaController@generateEstatistic_graduado')->name('generate_estatistic.graduado');
-                Route::get('relatorio-primario-graduado', 'AvaliacaoEstatisticaController@generateRelatorioGraduados')->name('relatorio.primario.graduado');
-                Route::post('report-xls', 'AvaliacaoEstatisticaController@generateRelatorioGraduadosxls')->name('report.primary.xls');
                 //fim graduados
 
             });
