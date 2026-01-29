@@ -39,13 +39,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 use PDF;
 use App\Model\Institution;
+use App\Modules\Avaliations\Exports\GraduadosExport;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AvaliacaoEstatisticaController extends Controller
 {
 
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -57,7 +60,7 @@ class AvaliacaoEstatisticaController extends Controller
               $currentData = Carbon::now();
               $lectiveYearSelected = DB::table('lective_years')
                   ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-                  ->first(); 
+                  ->first();
               $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
               $courses = Course::with(['currentTranslation'])->get();
 
@@ -72,8 +75,8 @@ class AvaliacaoEstatisticaController extends Controller
                          'lectiveYears'=>$lectiveYears,
                          'Pautas'=>$Pauta
                       ];
- 
-           
+
+
 
           return view("Avaliations::avaliacao-estatistica.index")->with($data);
 
@@ -83,7 +86,7 @@ class AvaliacaoEstatisticaController extends Controller
           return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
-    
+
         public function candidato()
     {
         try {
@@ -93,21 +96,21 @@ class AvaliacaoEstatisticaController extends Controller
              ->where('id','!=',22)
              ->where('id','!=',18)
             ;
-    
+
             //if (auth()->user()->hasRole('teacher')) {
             //$teacherCourses = auth()->user()->courses()->pluck('id')->all();
             //$courses = $courses->whereIn('id', $teacherCourses);
             //}
-    
+
             $lectiveYears = LectiveYear::with(['currentTranslation'])
             ->get();
-    
+
             $currentData = Carbon::now();
             $lectiveYearSelected = DB::table('lective_years')
                 ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
                 ->first();
             $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
-                
+
             $Pauta = DB::table('tb_estatistic_avaliation')
             ->select(['pautaType as PautaCode', 'descrition_type_p as NamePauta'])
             ->distinct()
@@ -120,8 +123,8 @@ class AvaliacaoEstatisticaController extends Controller
                 'lectiveYears'=>$lectiveYears,
                 'Pautas'=> $Pauta
             ];
-           
-             
+
+
 
 
             return view("Avaliations::avaliacao-estatistica.estatistica_candidato")->with($data);
@@ -166,8 +169,8 @@ class AvaliacaoEstatisticaController extends Controller
             return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
-   
-   
+
+
 
     public function graduado()
     {
@@ -178,11 +181,11 @@ class AvaliacaoEstatisticaController extends Controller
               $currentData = Carbon::now();
               $lectiveYearSelected = DB::table('lective_years')
                   ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-                  ->first(); 
+                  ->first();
               $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
               $courses = Course::with(['currentTranslation'])->get();
 
-              
+
 
               $AnoLectivo_Percurso=DB::table('new_old_grades')
                 ->select(['lective_year as Ano'])
@@ -197,7 +200,7 @@ class AvaliacaoEstatisticaController extends Controller
                          'lectiveYearsP'=>$AnoLectivo_Percurso
                       ];
 
-           
+
 
           return view("Avaliations::avaliacao-estatistica.graduado")->with($data);
 
@@ -223,11 +226,11 @@ class AvaliacaoEstatisticaController extends Controller
               $currentData = Carbon::now();
               $lectiveYearSelected = DB::table('lective_years')
                   ->whereRaw('"'.$currentData.'" between `start_date` and `end_date`')
-                  ->first(); 
+                  ->first();
               $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
               $courses = Course::with(['currentTranslation'])->get();
 
-              
+
 
               $AnoLectivo_Percurso=DB::table('new_old_grades')
                 ->select(['lective_year as Ano'])
@@ -241,7 +244,7 @@ class AvaliacaoEstatisticaController extends Controller
                          'lectiveYearsP'=>$AnoLectivo_Percurso
                       ];
 
-           
+
 
           return view("Avaliations::avaliacao-estatistica.filter-estatistica")->with($data);
 
@@ -264,7 +267,7 @@ class AvaliacaoEstatisticaController extends Controller
     public function create()
     {
         try {
-           
+
             return view("Avaliations::avaliacao-aluno.create-avaliacao-aluno");
 
         } catch (Exception | Throwable $e) {
@@ -281,14 +284,14 @@ class AvaliacaoEstatisticaController extends Controller
      */
 
 
-     
+
     public function store(Request $request)
     {
-         
+
       //Bem no final de lançar as notas alguém tem que fechar elas.
-        
+
         try {
-          
+
 
 
 
@@ -311,7 +314,7 @@ class AvaliacaoEstatisticaController extends Controller
 
 
 
-    
+
     /**
      * Display the specified resource.
      *
@@ -363,7 +366,7 @@ class AvaliacaoEstatisticaController extends Controller
 
 
 
-     
+
     public function update(Request $request, $id)
     {
         return $id;
@@ -421,13 +424,13 @@ class AvaliacaoEstatisticaController extends Controller
             ->where('id',$id_cursos_c)
             ->first();
             //FimDuration curso
-          
+
             if($curso){
 
-            
-            
+
+
                 $search='Trabalho de Fim de curso';
-            
+
                 $disciplina=DB::table('study_plan_editions as spd')
                 ->leftJoin('study_plan_edition_disciplines as disc_spde','disc_spde.study_plan_edition_id','spd.id')
                 ->leftJoin('study_plans as stdp','stdp.id','spd.study_plans_id')
@@ -454,7 +457,7 @@ class AvaliacaoEstatisticaController extends Controller
 
             return "curso não encontrado";
         }
-          
+
 
 
         } catch (Exception | Throwable $e) {
@@ -531,7 +534,7 @@ class AvaliacaoEstatisticaController extends Controller
              ->whereIn('year',$Anos_academico)
              ->where('lective_year_id',$anoLectivo)
              ->get();
-                   
+
              return response()->json(["disciplina"=>$disciplina,"Turmas"=>$Turmas]);
 
         } catch (Exception | Throwable $e) {
@@ -544,7 +547,7 @@ class AvaliacaoEstatisticaController extends Controller
 
     //Gerar Estatistica__Coordenar__tipo
     public function generateEstatistic(Request $request){
-        try{   
+        try{
             //
             $Cursos=$request->id_curso;
             $Curricular=$request->AnoCurricular_id;
@@ -579,7 +582,7 @@ class AvaliacaoEstatisticaController extends Controller
                 ->whereIn('et.id_course',$Cursos)
                 ->where('et.id_lective_year',$AnoLectivo)
                 ->where('et.pautaType', $Pauta_Busca)
-            
+
 
                 ->when($Disciplinas, function ($query, $Disciplinas) {
                     $query->whereIn('et.id_discipline', $Disciplinas);
@@ -598,23 +601,23 @@ class AvaliacaoEstatisticaController extends Controller
                 ->get();
 
     $dados=collect($estatistica)->all();
-    
+
     $dados_ano_turma_disc=collect($estatistica)->unique(function ($item) {return $item->turma.$item->disciplina_name;});
- 
+
 
     $curso=[];
     $cursos = $dados_ano_turma_disc->unique('curso')->map(function($item){  return  $item->curso; });
-    
-    $curso=[$cursos]; $curso_array=array(); foreach ($curso[0] as $a) { $curso_array[] = $a."";  }
-    
 
-    
-    $cursos = implode(',',$curso_array);    
+    $curso=[$cursos]; $curso_array=array(); foreach ($curso[0] as $a) { $curso_array[] = $a."";  }
+
+
+
+    $cursos = implode(',',$curso_array);
 
 
     $mateuArray=[];
     foreach ($dados as $item){
-     $mateuArray[]=$item->scale;   
+     $mateuArray[]=$item->scale;
     }
      $scalaReprovado =collect($mateuArray)->unique() ->filter(function($item){ return $item=="first" ||  $item=="second";
     })->count();
@@ -647,7 +650,7 @@ class AvaliacaoEstatisticaController extends Controller
              "F"=> $total_f,
              "Percent_F"=>$count!=0?(int) round(($total_f/$count)*100,0):0,
           ];
-             
+
 
         }else{
 
@@ -659,19 +662,19 @@ class AvaliacaoEstatisticaController extends Controller
             $institution = Institution::latest()->first();
 
             //$titulo_documento = "Pauta de";
-            // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;  
-            $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;     
+            // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;
+            $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;
             //Dados do chefe do gabinente
             $gabinete_chefe = User::whereHas('roles', function ($q) {
                 $q->whereIn('id', [47]);
             }) ->leftJoin('user_parameters as u_p9', function ($q) {
-                $q->on('users.id', '=', 'u_p9.users_id') 
+                $q->on('users.id', '=', 'u_p9.users_id')
                 ->where('u_p9.parameters_id', 1);
             })->first();
 
- 
+
             $documentoCode_documento=501;
-            
+
             $data = [
                 'documentoCode_documento'=>$documentoCode_documento,
                 'institution' => $institution,
@@ -699,10 +702,10 @@ class AvaliacaoEstatisticaController extends Controller
            $pdf->setPaper('a4','landscape');
 
            $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-           $pdf->setOption('footer-html', $footer_html); 
+           $pdf->setOption('footer-html', $footer_html);
 
            return $pdf->stream('folha_de_estatistica'. '.pdf');
-        
+
            } catch (Exception | Throwable $e) {
             logError($e);
             return $e;
@@ -718,7 +721,7 @@ class AvaliacaoEstatisticaController extends Controller
 
     //Gerar Estatistica_PErcurso__tipo
     public function generateEstatistic_geral(Request $request){
-        try{   
+        try{
             //
             $estado=$request->documento_set;
             $Cursos=$request->id_curso;
@@ -728,7 +731,7 @@ class AvaliacaoEstatisticaController extends Controller
             $Escala=$request->id_escala_avaliacao;
             $AnoLectivo=$request->id_anoLectivo;
 
-          
+
 
             if($request->id_disciplina){
 
@@ -751,35 +754,35 @@ class AvaliacaoEstatisticaController extends Controller
                  ->leftJoin('user_parameters as up_meca', function ($join) {
                     $join->on('user.id','=','up_meca.users_id')
                     ->where('up_meca.parameters_id', 19);
-                 }) 
-         
+                 })
+
                 ->leftJoin('user_parameters as sexo', function ($join) {
                        $join->on('user.id', '=', 'sexo.users_id')
                        ->where('sexo.parameters_id', 2);
                  })
-           
- 
-                ->leftJoin('parameter_options as sexo_value', 'sexo_value.id', '=', 'sexo.value') 
+
+
+                ->leftJoin('parameter_options as sexo_value', 'sexo_value.id', '=', 'sexo.value')
                 ->when($Disciplinas, function ($query, $Disciplinas) {
                     $query->where('Percurso.discipline_id', $Disciplinas);
-                }) 
+                })
                 ->leftJoin('disciplines as dc', 'dc.id', '=', 'Percurso.discipline_id')
                 ->leftJoin('disciplines_translations as ct', function ($join) {
                     $join->on('ct.discipline_id', '=', 'Percurso.discipline_id');
                     $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                     $join->on('ct.active', '=', DB::raw(true));
-               })        
+               })
                 ->select(['sexo_value.code as sexo','user.id as is_user','full_name.value as nome_completo','Percurso.grade as nota','Percurso.lective_year as AnoLectivo','ct.display_name as disciplina','dc.code as codigo_disciplina', 'up_meca.value as matricula',])
                 ->where('Percurso.lective_year',$AnoLectivo)
                 ->orderBy('nome_completo')
                 ->distinct('matricula')
                 ->get();
-            
+
                  $escala_result=['first'=>0,'second'=>0,'thirst'=>0,'fourth'=>0,'fiveth'=>0,'sixth'=>0];
                  $dadosM=collect(['first'=>0,'second'=>0,'thirst'=>0,'fourth'=>0,'fiveth'=>0,'sixth'=>0]);
                  $dadosF=collect(['first'=>0,'second'=>0,'thirst'=>0,'fourth'=>0,'fiveth'=>0,'sixth'=>0]);
                  $total=["Total_m"=>0,"Total_f"=>0];
-               
+
                  $Dados_estatistico=collect($ESTUDANTES)->filter(function($item) Use ($dadosM,$dadosF) {
                      if($item->sexo=="Masculino"){
                             if($item->nota>=0 && $item->nota<7){
@@ -824,7 +827,7 @@ class AvaliacaoEstatisticaController extends Controller
                         }
                    });
 
-               
+
                 foreach($escala_result as $key=> $item){
                     $estatistica[$key]=[
                         "M"=>$dadosM[$key],
@@ -837,8 +840,8 @@ class AvaliacaoEstatisticaController extends Controller
                     $total["Total_f"]=$total["Total_f"]+$dadosF[$key];
                 }
 
-                
-        
+
+
 
         }else{
 
@@ -847,20 +850,20 @@ class AvaliacaoEstatisticaController extends Controller
              }
             //dados da instituição
             $institution = Institution::latest()->first();
-   
-            // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;  
-            $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;     
+
+            // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;
+            $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;
             //Dados do chefe do gabinente
             $gabinete_chefe = User::whereHas('roles', function ($q) {
                 $q->whereIn('id', [47]);
             }) ->leftJoin('user_parameters as u_p9', function ($q) {
-                $q->on('users.id', '=', 'u_p9.users_id') 
+                $q->on('users.id', '=', 'u_p9.users_id')
                 ->where('u_p9.parameters_id', 1);
             })->first();
 
- 
+
             $documentoCode_documento=502;
-            
+
             $data = [
                 'documentoCode_documento'=>$documentoCode_documento,
                 'institution' => $institution,
@@ -871,14 +874,14 @@ class AvaliacaoEstatisticaController extends Controller
                 'curso' => $course,
                 'documentoCode_documento' => $documentoCode_documento,
                 'chefe_gabinet' => $gabinete_chefe,
-                'logotipo' => $Logotipo_instituicao   
+                'logotipo' => $Logotipo_instituicao
             ];
             //return view("Avaliations::avaliacao-estatistica.pdf.estatisticaDisciplina", $data);
             if($estado==1){
                 //Quando for a tabela de estatistica
                 $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaDisciplina", $data);
             } else{
-                //Quando for a tabela de estudantes com nomes e notas   
+                //Quando for a tabela de estudantes com nomes e notas
                 $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estudantesListaEstatistica", $data);
              }
 
@@ -889,10 +892,10 @@ class AvaliacaoEstatisticaController extends Controller
            $pdf->setPaper('a4','landscape');
 
            $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-           $pdf->setOption('footer-html', $footer_html); 
+           $pdf->setOption('footer-html', $footer_html);
 
            return $pdf->stream($estado==1?'folha_de_estatistica_por_disciplina':'folha_de_estatistica_lista_estudante'. '.pdf');
-        
+
            } catch (Exception | Throwable $e) {
             logError($e);
             return $e;
@@ -904,8 +907,8 @@ class AvaliacaoEstatisticaController extends Controller
 
     //Gerar Estatistica_Percurso__tipo
     public function generateEstatistic_graduado(Request $request){
-        try{   
-           
+        try{
+
             // return $request;
             $estado=$request->documento_set;
             $Cursos=$request->id_curso;
@@ -914,13 +917,13 @@ class AvaliacaoEstatisticaController extends Controller
             $Turmas=$request->id_turma;
             $Escala=$request->id_escala_avaliacao;
             $AnoLectivo=$request->id_anoLectivo;
-         
+
            $lectiveYears = LectiveYear::with(['currentTranslation'])
                 ->where('id',$AnoLectivo)
                 ->first();
            $anoLectivoDsiplay_name=$lectiveYears['currentTranslation']->display_name;
-           
-  
+
+
          if($request->id_disciplina){
 
             $course=DB::table('courses')
@@ -932,7 +935,7 @@ class AvaliacaoEstatisticaController extends Controller
                 ->select(['courses.code as codigo','ct.display_name as course_name'])
                 ->where('courses.id',$Cursos)
                 ->first();
-            
+
 
                 $ESTUDANTES=DB::table('new_old_grades as Percurso')
                     ->leftJoin('users as user', 'user.id', '=', 'Percurso.user_id')
@@ -943,24 +946,24 @@ class AvaliacaoEstatisticaController extends Controller
                     ->leftJoin('user_parameters as up_meca', function ($join) {
                         $join->on('user.id','=','up_meca.users_id')
                         ->where('up_meca.parameters_id', 19);
-                    }) 
-            
+                    })
+
                     ->leftJoin('user_parameters as sexo', function ($join) {
                         $join->on('user.id', '=', 'sexo.users_id')
                         ->where('sexo.parameters_id', 2);
                     })
-            
-    
-                    ->leftJoin('parameter_options as sexo_value', 'sexo_value.id', '=', 'sexo.value') 
+
+
+                    ->leftJoin('parameter_options as sexo_value', 'sexo_value.id', '=', 'sexo.value')
                     ->when($Disciplinas, function ($query, $Disciplinas) {
                         $query->where('Percurso.discipline_id', $Disciplinas);
-                    }) 
+                    })
                     ->leftJoin('disciplines as dc', 'dc.id', '=', 'Percurso.discipline_id')
                     ->leftJoin('disciplines_translations as ct', function ($join) {
                         $join->on('ct.discipline_id', '=', 'Percurso.discipline_id');
                         $join->on('ct.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
                         $join->on('ct.active', '=', DB::raw(true));
-                })        
+                })
                     ->select(['sexo_value.code as sexo','user.id as is_user','full_name.value as nome_completo','Percurso.grade as nota','Percurso.lective_year as AnoLectivo','ct.display_name as disciplina','dc.code as codigo_disciplina', 'up_meca.value as matricula',])
                     ->where('Percurso.lective_year',$anoLectivoDsiplay_name)
                     // ->where('Percurso.lective_year',2020)
@@ -968,20 +971,20 @@ class AvaliacaoEstatisticaController extends Controller
                     ->orderBy('nota','ASC')
                     ->distinct('matricula')
                     ->get();
-                    
+
                  if($ESTUDANTES->isEmpty()){
                     Toastr::warning(__('A forLEARN detectou que  não existe estudantes graduados com os critérios de busca selecionado.'), __('toastr.warning'));
                     return back();
 
-                 }       
-                
+                 }
+
                  $escala_result=['first'=>0,'second'=>0,'thirst'=>0,'fourth'=>0,'fiveth'=>0,'sixth'=>0];
                  $dadosM=collect(['first'=>0,'second'=>0,'thirst'=>0,'fourth'=>0,'fiveth'=>0,'sixth'=>0]);
                  $dadosF=collect(['first'=>0,'second'=>0,'thirst'=>0,'fourth'=>0,'fiveth'=>0,'sixth'=>0]);
                  $total=["Total_m"=>0,"Total_f"=>0];
-               
+
                  $Dados_estatistico=collect($ESTUDANTES)->filter(function($item) Use ($dadosM,$dadosF) {
-                     
+
                     if($item->sexo=="Masculino"){
                             if($item->nota>=0 && $item->nota<7){
                             $dadosM['first']=$dadosM['first']+1;
@@ -1026,7 +1029,7 @@ class AvaliacaoEstatisticaController extends Controller
                         }
                    });
 
-               
+
                 foreach($escala_result as $key=> $item){
                     $estatistica[$key]=[
                         "M"=>$dadosM[$key],
@@ -1034,37 +1037,37 @@ class AvaliacaoEstatisticaController extends Controller
                         "F"=> $dadosF[$key],
                         "Percent_F"=>($dadosF[$key]+$dadosM[$key])!=0?(int) round(($dadosF[$key]/($dadosF[$key]+$dadosM[$key]))*100,0):0,
                     ];
-                    //guardar total 
+                    //guardar total
                     $total["Total_m"]=$total["Total_m"]+$dadosM[$key];
                     $total["Total_f"]=$total["Total_f"]+$dadosF[$key];
                 }
 
         }
-        
+
         else
-        
+
         {
 
              Toastr::warning(__('Não foi possivel gerar a estatística dos graduados, possivelmente houve uma falha ao localizar a disciplina trabalho de fim de curso, verifica se o curso selecionado tem a disciplina "Trabalho de fim de curso" na edição de plano de estudo do ano lectivo selecionado.'), __('toastr.warning'));
             return back();
-             
+
         }
             //dados da instituição
             $institution = Institution::latest()->first();
-   
-            // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;  
-            $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;     
+
+            // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;
+            $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;
             //Dados do chefe do gabinente
             $gabinete_chefe = User::whereHas('roles', function ($q) {
                 $q->whereIn('id', [47]);
             }) ->leftJoin('user_parameters as u_p9', function ($q) {
-                $q->on('users.id', '=', 'u_p9.users_id') 
+                $q->on('users.id', '=', 'u_p9.users_id')
                 ->where('u_p9.parameters_id', 1);
             })->first();
 
- 
+
             $documentoCode_documento=502;
-            
+
             $data = [
                 'documentoCode_documento'=>$documentoCode_documento,
                 'institution' =>$institution,
@@ -1075,14 +1078,14 @@ class AvaliacaoEstatisticaController extends Controller
                 'curso' =>$course,
                 'documentoCode_documento'=>$documentoCode_documento,
                 'chefe_gabinet'=>$gabinete_chefe,
-                'logotipo'=>$Logotipo_instituicao   
+                'logotipo'=>$Logotipo_instituicao
             ];
             //return view("Avaliations::avaliacao-estatistica.pdf.estatisticaDisciplina", $data);
             if($estado==2){
                 //Quando for a tabela de estatistica
                 $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estatisticaDisciplina", $data);
             } else{
-                //Quando for a tabela de estudantes com nomes e notas   
+                //Quando for a tabela de estudantes com nomes e notas
                 $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.estudantesListaGraduados", $data);
             }
 
@@ -1093,17 +1096,17 @@ class AvaliacaoEstatisticaController extends Controller
             $pdf->setPaper('a4','landscape');
 
            $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
-           $pdf->setOption('footer-html', $footer_html); 
+           $pdf->setOption('footer-html', $footer_html);
 
            return $pdf->stream($estado==1?'folha_de_estatistica_por_disciplina':'folha_de_estatistica_lista_estudante'. '.pdf');
-        
+
            } catch (Exception | Throwable $e) {
             logError($e);
             return $e;
             return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
            }
     }
-    
+
         // ===========================================  Estatísticas anual ========================================
 
 
@@ -1111,7 +1114,7 @@ class AvaliacaoEstatisticaController extends Controller
     {
         try {
 
-            
+
 
             $Cursos = $request->id_curso;
             $Curricular = $request->AnoCurricular_id;
@@ -1167,7 +1170,7 @@ class AvaliacaoEstatisticaController extends Controller
                     array_push($disci,$value->id_disciplina);
                 }
 
-               
+
 
             $avaliados = DB::table('users as estudante')
                 ->join('matriculations as matricula', 'matricula.user_id', '=', 'estudante.id')
@@ -1232,7 +1235,7 @@ class AvaliacaoEstatisticaController extends Controller
                 // $soma= $item->sum('valor_banco');
                 // $count = count ($item);
                 // $resulatado=$count.",".$soma;
-                // return $resulatado; 
+                // return $resulatado;
                 $avaliado = ["total" => 0, "masculino" => 0, "femenino" => 0];
 
                 foreach ($item as $estudante) {
@@ -1264,14 +1267,14 @@ class AvaliacaoEstatisticaController extends Controller
 
                 $d = array();
                 $d1 = array();
-                
+
                 foreach ($plano[$item[0]->curricular] as $item_disc) {
                     foreach ($item as $nota) {
                         $code = $item_disc->codigo_disci;
 
                         // switch ($Cursos) {
                         //     case 23:
-                                
+
                         //         // O estudantes só reprova se tiver 6 pontos em atraso
 
 
@@ -1279,12 +1282,12 @@ class AvaliacaoEstatisticaController extends Controller
 
                         //         break;
                         //     case 25:
-                        //         echo "CEE"; 
+                        //         echo "CEE";
                         //         break;
 
                         //     default:
 
-                             
+
 
                         //         break;
                         // }
@@ -1292,13 +1295,13 @@ class AvaliacaoEstatisticaController extends Controller
                          if ($nota->disciplina == $item_disc->id_disciplina) {
 
                             $avaliacao["disciplina"] = $avaliacao["disciplina"] + 1;
-                            
+
                               if (in_array($item_disc->id_disciplina, $d1, true)) {
-                                    
+
                                 }else{
-                                    array_push($d1,$item_disc->id_disciplina);        
+                                    array_push($d1,$item_disc->id_disciplina);
                                 }
-                            
+
                             if ($nota->nota < 10) {
 
                                 switch ($Cursos) {
@@ -1307,7 +1310,7 @@ class AvaliacaoEstatisticaController extends Controller
                                             case 'A':
                                                 $avaliacao["anual"] = $avaliacao["anual"] + 1;
                                                 break;
-        
+
                                             default:
                                                 $avaliacao["semestral"] = $avaliacao["semestral"] + 1;
                                                 break;
@@ -1319,7 +1322,7 @@ class AvaliacaoEstatisticaController extends Controller
                                         case 'A':
                                             $avaliacao["anual"] = $avaliacao["anual"] + 1;
                                             break;
-    
+
                                         default:
                                             $avaliacao["semestral"] = $avaliacao["semestral"] + 1;
                                             break;
@@ -1333,58 +1336,58 @@ class AvaliacaoEstatisticaController extends Controller
                             }
                         } else {
                             // $avaliacao["dn"] = $avaliacao["dn"] + 1;
-                            
+
                                 if (in_array($item_disc->id_disciplina, $d, true)) {
                                 } else {
                                     array_push($d, $item_disc->id_disciplina);
                                 }
-                            
-                             
-                           
+
+
+
                         }
 
                     }
-                    
-                     
-                     
+
+
+
                     $avaliacao["cadeira"] = $avaliacao["cadeira"] + 1;
                 }
-                 
-                
+
+
                     foreach ($d as $dados) {
-                        
+
                          if (in_array($dados, $d1, true)) {
-                              
+
                         }else{
-                            
+
                              foreach ($plano[$item[0]->curricular] as $item_disc) {
                                   if($item_disc->id_disciplina==$dados){
-                                      
+
                                         $novo =   DB::table('new_old_grades as Percurso')
                                         ->where('Percurso.user_id', $item[0]->codigo)
                                         ->where('Percurso.discipline_id', $item_disc->id_disciplina)
                                         ->select(["Percurso.grade"])
                                         ->first();
-                                        
+
                                         $verificar =  isset($novo->grade) ? $novo->grade : "Nada";
-                                        
+
                                          if ( ($verificar !="Nada") && ($verificar >=10) ) {
-                                             
-                                           
-                                             
+
+
+
                                          }else{
-                                     
-                                      
+
+
                                       $code = $item_disc->codigo_disci;
                                       $avaliacao["dn"] = $avaliacao["dn"] + 1;
-                                      
+
                                        switch ($Cursos) {
                                         case 23:
                                             switch ($code[3]) {
                                             case 'A':
                                                 $avaliacao["anual"] = $avaliacao["anual"] + 1;
                                                 break;
-        
+
                                             default:
                                                 $avaliacao["semestral"] = $avaliacao["semestral"] + 1;
                                                 break;
@@ -1396,20 +1399,20 @@ class AvaliacaoEstatisticaController extends Controller
                                                     case 'A':
                                                         $avaliacao["anual"] = $avaliacao["anual"] + 1;
                                                         break;
-                
+
                                                     default:
                                                         $avaliacao["semestral"] = $avaliacao["semestral"] + 1;
                                                         break;
                                                 }
                                         break;
                                     } }
-                                      
+
                                   }
                               }
-                            
+
                         }
                     }
-                 
+
                 // Tiver mais de duas disciplinas
 
                 if (count($item)>1) {
@@ -1456,7 +1459,7 @@ class AvaliacaoEstatisticaController extends Controller
                    return $item;
             });
 
-          
+
 
             $curso = DB::table('courses as cursos')
                 ->join('courses_translations as ct', 'ct.courses_id', '=', 'cursos.id')
@@ -1473,7 +1476,7 @@ class AvaliacaoEstatisticaController extends Controller
             $institution = Institution::latest()->first();
 
             //$titulo_documento = "Pauta de";
-            // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;  
+            // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;
             $Logotipo_instituicao = "https://" . $_SERVER['HTTP_HOST'] . "/storage/" . $institution->logotipo;
             //Dados do chefe do gabinente
             $gabinete_chefe = User::whereHas('roles', function ($q) {
@@ -1487,10 +1490,10 @@ class AvaliacaoEstatisticaController extends Controller
             $documentoCode_documento = 501;
             $total_AV = 0;
 
-            foreach ($total_avaliados as $item) { 
+            foreach ($total_avaliados as $item) {
                 $total_AV = $item["total"] +  $total_AV;
             }
-           
+
             $data = [
                 'documentoCode_documento' => $documentoCode_documento,
                 'institution' => $institution,
@@ -1529,7 +1532,7 @@ class AvaliacaoEstatisticaController extends Controller
             return request()->ajax() ? response()->json($e->getMessage(), 500) : abort(500);
         }
     }
-    
+
          // ===========================================  Estatísticas Candidatos ========================================
 
      public function generateEstatistiCandidato(Request $request)
@@ -1537,19 +1540,19 @@ class AvaliacaoEstatisticaController extends Controller
 
 
          try {
-            
-            
-            
+
+
+
 
              $cursos = $request->course;
              $disciplina = $request->discipline;
              $turmas = $request->classe;
-             
+
              $fases =  explode(",", $request->fase);
-             
+
              $fase =  $fases[0];
              $fase_nome =  $fases[1];
-      
+
 
              $ano = $request->lective_year;
 
@@ -1568,17 +1571,17 @@ class AvaliacaoEstatisticaController extends Controller
             ->where('discipline_area_id', 18)
             ->select('disciplines.id as id_disciplina', 'disciplines.code as code_disciplina', 'dt.display_name as nome_disciplina')
             ->get();
-        
+
             // Pegar as disciplinas
 
              $turma = DB::table('classes as turma')
            ->where( [
- 
+
             ['turma.courses_id', '=', $cursos],
             ['turma.lective_year_id', '=', $ano],
             ['turma.year', '=', 1],
             ['turma.deleted_at', '=', null]
-           
+
             ])->select([
                 'turma.id as id_turma',
                 'turma.code as code_turma',
@@ -1645,103 +1648,103 @@ class AvaliacaoEstatisticaController extends Controller
             ->distinct('full_name.value')
             ->get();
 
-            
+
            $total_candidatos = count($candidatos);
-              
+
            $estudante = collect($candidatos)->groupBy('id_estudante')->map(function ($item, $key) use ($disciplines,$turma,$fase,$fase_nome) {
-           
+
             $saida =  [
-                "usuario_id" =>0, 
+                "usuario_id" =>0,
                 "turma_id" =>0,
-                "curso_id" =>0, 
+                "curso_id" =>0,
                 "disciplina_id"=>0,
                 "nota" =>0,
                 "fase"=>0,
                 "sexo"=>0,
-            ]; 
-            
-            
-            
-           
+            ];
+
+
+
+
                 $turma = DB::table('user_classes as turma')
                     ->leftJoin('grades as notas', 'notas.student_id', '=', 'turma.user_id')
                     ->where('turma.user_id', $item[0]->id_estudante)
                     ->where('notas.id_fase',$fase)
                     ->select([
-                        'turma.class_id as id_turma', 
+                        'turma.class_id as id_turma',
                         'turma.user_id as usuario_id',
                         'notas.course_id as curso_id',
                         'notas.discipline_id as disciplina_id',
                         'notas.value as nota',
                         'notas.id_fase as fase',
                     ])
-                    ->get();    
-          
-              
-        
-            
+                    ->get();
+
+
+
+
 
                     if (count($turma)==0) {
-                       
+
                     }else{
                      $total_disciplina = count($disciplines);
 
                     foreach ($turma as $items) {
-                       
-                        $saida["usuario_id"] = $items->usuario_id; 
+
+                        $saida["usuario_id"] = $items->usuario_id;
                         $saida["turma_id"] =  $items->id_turma;
-                        $saida["curso_id"] =  $items->curso_id; 
+                        $saida["curso_id"] =  $items->curso_id;
                         $saida["disciplina_id"] = $items->disciplina_id;
                         $saida["nota"] =  ($saida["nota"] + $items->nota);
                         $saida["fase"] =  $items->fase;
                         $saida["sexo"] = $item[0]->sexo;
                     }
                     $saida["nota"] = round(($saida["nota"])/$total_disciplina);
-                    return $saida;       
-                }            
+                    return $saida;
+                }
             });
-            
-            
-            
-            
+
+
+
+
             $turmas = collect($estudante)->groupBy('turma_id')->map(function ($estudante_item, $key) {
-     
+
             $escala_result = ['first' => 0, 'second' => 0, 'thirst' => 0, 'fourth' => 0, 'fiveth' => 0, 'sixth' => 0];
             $dadosM = collect(['first' => 0, 'second' => 0, 'thirst' => 0, 'fourth' => 0, 'fiveth' => 0, 'sixth' => 0, 'totalM' => 0]);
             $dadosF = collect(['first' => 0, 'second' => 0, 'thirst' => 0, 'fourth' => 0, 'fiveth' => 0, 'sixth' => 0, 'totalF' => 0]);
             $total = ["Total_m" => 0, "Total_f" => 0];
-           
+
 
             foreach ($estudante_item as $item) {
-                    
+
                         if (!empty($item)) {
-                        
-           
+
+
                         if ($item["sexo"] == "Masculino") {
 
                             if ($item["nota"] >= 0 && $item["nota"] < 7) {
                                 $dadosM['first'] = $dadosM['first'] + 1;
-          
+
                             }
                             if ($item["nota"] > 6 && $item["nota"] < 10) {
                                 $dadosM['second'] = $dadosM['second'] + 1;
-          
+
                             }
                             if ($item["nota"] > 9 && $item["nota"] < 14) {
                                 $dadosM['thirst'] = $dadosM['thirst'] + 1;
-          
+
                             }
                             if ($item["nota"] > 13 && $item["nota"] < 17) {
                                 $dadosM['fourth'] = $dadosM['fourth'] + 1;
-          
+
                             }
                             if ($item["nota"] > 16 && $item["nota"] < 20) {
                                 $dadosM['fiveth'] = $dadosM['fiveth'] + 1;
-          
+
                             }
                             if ($item["nota"] == 20) {
                                 $dadosM['sixth'] = $dadosM['sixth'] + 1;
-          
+
                             }
 
                             $dadosM['totalM'] = $dadosM['totalM'] + 1;
@@ -1750,39 +1753,39 @@ class AvaliacaoEstatisticaController extends Controller
 
                             if ($item["nota"] >= 0 && $item["nota"] < 7) {
                                 $dadosF['first'] = $dadosF['first'] + 1;
-          
+
                             }
                             if ($item["nota"] > 6 && $item["nota"] < 10) {
                                 $dadosF['second'] = $dadosF['second'] + 1;
-          
+
                             }
                             if ($item["nota"] > 9 && $item["nota"] < 14) {
                                 $dadosF['thirst'] = $dadosF['thirst'] + 1;
-          
+
                             }
                             if ($item["nota"] > 13 && $item["nota"] < 17) {
                                 $dadosF['fourth'] = $dadosF['fourth'] + 1;
-          
+
                             }
                             if ($item["nota"] > 16 && $item["nota"] < 20) {
                                 $dadosF['fiveth'] = $dadosF['fiveth'] + 1;
-          
+
                             }
                             if ($item["nota"] == 20) {
                                 $dadosF['sixth'] = $dadosF['sixth'] + 1;
-          
+
                             }
                             $dadosF['totalF'] = $dadosF['totalF'] + 1;
                         }
-                    
+
                     }
-                    
-          
+
+
                 }
-            
-            
+
+
             return [$dadosF, $dadosM];
-            });  
+            });
             // return $turmas;
 
             $total_AV=0;
@@ -1796,15 +1799,15 @@ class AvaliacaoEstatisticaController extends Controller
 
                     if (isset($item_a["totalF"])) {
                         $total_AV += $item_a["totalF"];
-                    } 
+                    }
                     if (isset($item_a["totalM"])) {
                         $total_AV += $item_a["totalM"];
-                    } 
-                    
+                    }
+
                 }
             }
-            
-                        
+
+
             $curso = DB::table('courses as cursos')
                  ->join('courses_translations as ct', 'ct.courses_id', '=', 'cursos.id')
                  ->where('cursos.id', $cursos)
@@ -1814,7 +1817,7 @@ class AvaliacaoEstatisticaController extends Controller
 
             $vagas = DB::table('anuncio_vagas as vagas')
                  ->where('vagas.id_fase', $fase)
-                 ->where('vagas.course_id', $cursos) 
+                 ->where('vagas.course_id', $cursos)
                  ->where('vagas.lective_year', $ano)
                  ->whereNull('deleted_at')
                  ->select([
@@ -1823,21 +1826,21 @@ class AvaliacaoEstatisticaController extends Controller
                     'vagas.noite',
                  ])
                  ->get();
-            
+
             $vaga = 0;
 
             foreach ($vagas as $item) {
-                $vaga = $item->manha+$item->tarde+$item->noite;    
+                $vaga = $item->manha+$item->tarde+$item->noite;
             }
-            
-                 
+
+
              $Pauta_Name = " Candidatos ( ".$fase_nome."º Fase )";
- 
+
              //dados da instituição
              $institution = Institution::latest()->first();
- 
+
              //$titulo_documento = "Pauta de";
-             // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;  
+             // $Logotipo_instituicao="https://".$_SERVER['HTTP_HOST']."/storage/".$institution->logotipo;
              $Logotipo_instituicao = "https://" . $_SERVER['HTTP_HOST'] . "/storage/" . $institution->logotipo;
              //Dados do chefe do gabinente
              $gabinete_chefe = User::whereHas('roles', function ($q) {
@@ -1846,10 +1849,10 @@ class AvaliacaoEstatisticaController extends Controller
                  $q->on('users.id', '=', 'u_p9.users_id')
                      ->where('u_p9.parameters_id', 1);
              })->first();
- 
- 
+
+
              $documentoCode_documento = 501;
-             
+
              $data = [
                  'documentoCode_documento' => $documentoCode_documento,
                  'institution' => $institution,
@@ -1861,22 +1864,22 @@ class AvaliacaoEstatisticaController extends Controller
                  'turma' => $turma,
                  'total_AV' =>$total_AV,
                  'turmas' => $turmas,
-                 'total_candidatos' => $total_candidatos, 
+                 'total_candidatos' => $total_candidatos,
                  'vaga' =>$vaga,
                  'fase_nome' =>$fase_nome,
              ];
              //return view("Avaliations::avaliacao-estatistica.pdf.estatisticaTurma", $data);
- 
+
              $pdf = PDF::loadView("Avaliations::avaliacao-estatistica.pdf.candidato", $data);
              $pdf->setOption('margin-top', '2mm');
              $pdf->setOption('margin-left', '2mm');
              $pdf->setOption('margin-bottom', '13mm');
              $pdf->setOption('margin-right', '2mm');
              $pdf->setPaper('a4', 'landscape');
- 
+
              $footer_html = view()->make('Reports::pdf_model.pdf_footer', compact('institution'))->render();
              $pdf->setOption('footer-html', $footer_html);
- 
+
              return $pdf->stream('folha_de_estatistica_anual' . '.pdf');
          } catch (Exception | Throwable $e) {
              logError($e);
@@ -1886,9 +1889,35 @@ class AvaliacaoEstatisticaController extends Controller
      }
 
 
+    // ===========================================  RELATORIO PRIMARIO DE GRADUADOS ========================================
+    public function generateRelatorioGraduados()
+    {
+        try {
+            //Pegar o ano lectivo na select
+            $lectiveYears = LectiveYear::with(['currentTranslation'])->get();
 
-  
+            $lectiveYearSelected = DB::table('lective_years')
+            ->whereRaw('"'.Carbon::now().'" between `start_date` and `end_date`')->first();
+
+            $lectiveYearSelected = $lectiveYearSelected->id ?? 6;
+            return view("Avaliations::avaliacao-estatistica.relatorioPrimarioGraduado", compact('lectiveYears', 'lectiveYearSelected'));
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+
+    public function generateRelatorioGraduadosxls(Request $request)
+    {
+        try{
+            $lectiveYears = LectiveYear::with(['currentTranslation'])
+            ->where('id',$request->lective_year)->first();
+            $yearname = $lectiveYears->currentTranslation->display_name;
+            return Excel::download(new GraduadosExport($yearname), 'Registo-primario-graduados_'.Carbon::now()->format('Y-m-d H:i:s').'.xlsx');
+
+        } catch (Throwable $th) {
+            Log::error($th);
+            return redirect()->back();
+        }
+    }
 
 }
-
-

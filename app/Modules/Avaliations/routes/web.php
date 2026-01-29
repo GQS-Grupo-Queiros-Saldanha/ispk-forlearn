@@ -247,7 +247,7 @@ Route::group(
                 Route::get('open-pauta/{pauta_id}', 'AvaliacaoAlunoControllerNew@openPauta');
                 Route::post('lock-pauta', 'AvaliacaoAlunoControllerNew@lockPauta')->name('lock-pauta');
                 Route::get('historico-pauta-ajax/{pauta_id}', 'AvaliacaoAlunoControllerNew@historico_pauta_ajax')->name('historic-ajax');
-                //-------------------------------------------------------------------------------------------------------------------------------//  
+                //-------------------------------------------------------------------------------------------------------------------------------//
                 Route::get('disciplines_teacher/{anolectivo}', 'AvaliacaoAlunoControllerNew@disciplina_teacher')->name('disciplines.ajax');
                 Route::get('turma_teacher/{id_edicao_plain}/{anoLectivo}', 'AvaliacaoAlunoControllerNew@getTurmasDisciplina')->name('disciplinesTurmas.ajax');
                 Route::get('turma_teacher_oa/{id_edicao_plain}/{anoLectivo}', 'AvaliacaoAlunoControllerNew@getTurmasDisciplinaOA')->name('disciplinesTurmasOA.ajax');
@@ -355,6 +355,8 @@ Route::group(
                 Route::get('estatistica-graduado', 'AvaliacaoEstatisticaController@graduado');
                 Route::get('PegarDisciplinasAnoCurricularGraduado/{id_cursos}/{anoLectivo}', 'AvaliacaoEstatisticaController@PegarDisciplinaGraduado');
                 Route::post('Generate_estatistic_graduado', 'AvaliacaoEstatisticaController@generateEstatistic_graduado')->name('generate_estatistic.graduado');
+                Route::get('relatorio-primario-graduado', 'AvaliacaoEstatisticaController@generateRelatorioGraduados')->name('relatorio.primario.graduado');
+                Route::post('report-xls', 'AvaliacaoEstatisticaController@generateRelatorioGraduadosxls')->name('report.primary.xls');
                 //fim graduados
 
             });
@@ -362,7 +364,7 @@ Route::group(
             // Requerimento
             Route::middleware(['role_or_permission:gerir_requerimento'])->group(function () {
 
-                // Route::get('requerimento_article', 'RequerimentoController@request_articles'); 
+                // Route::get('requerimento_article', 'RequerimentoController@request_articles');
 
 
                 Route::get('requerimento', 'RequerimentoController@index')->name('requerimento.index');
@@ -379,7 +381,7 @@ Route::group(
                 Route::get('requerimento_cerimonia', 'RequerimentoController@cerimonia')->name("requerimento_cerimonia");
                 Route::get('store_doc_merito/{dados}', 'RequerimentoController@store_doc_merito')->name('requerimento.store_doc_merito');
                 Route::post('store_doc_cerimonia', 'RequerimentoController@store_doc_cerimonia')->name('requerimento.store_doc_cerimonia');
-                // Route::get('index', 'RequerimentoController@filter_Pauta')->name('generate_estatistic_geral'); 
+                // Route::get('index', 'RequerimentoController@filter_Pauta')->name('generate_estatistic_geral');
                 Route::post('delete_doc', 'RequerimentoController@destroy')->name('requerimento.delete_doc');
                 Route::post('updated_word', 'RequerimentoController@updated_word')->name('requerimento.updated_word');
                 Route::get('get_word/{word}', 'RequerimentoController@get_word')->name('requerimento.get_word');
@@ -418,25 +420,25 @@ Route::group(
                 //Solicitação de horário
                 Route::get('requerimento/create_student_schedule', 'RequerimentoController@createStudentSchedule')->name("create_student_schedule");
                 Route::post('requerimento_student_schedule/store', 'RequerimentoController@student_schedule_store')->name('student_schedule_store');
-                
+
                 //Solicitação de Revisão de Prova
                 Route::get('/requerimento/solicitacao_revisao_prova', [RequerimentoController::class, 'solicitacao_revisao_prova'])->name('requerimento.solicitacao_revisao_prova');
                 Route::get('/requerimento/getEstudante/{course_id}/{lective_year}', [RequerimentoController::class, 'getEstudante'])->name('requerimento.getEstudante');
                 Route::get('/requerimento/getDisciplinas/{student_id}/{lective_year}/{course_id}',[RequerimentoController::class, 'getDisciplinas'])->name('requerimento.getDisciplinas');
                 Route::post('/requerimento/solicitacao_revisao_prova_store', [RequerimentoController::class, 'solicitacao_revisao_prova_store'])->name('requerimento.solicitacao_revisao_prova_store');
-                
+
                 //Defesa extraordinaria
                 Route::get('/requerimento/solicitacao_defesa_extraordinaria', [RequerimentoController::class, 'solicitacao_defesa_extraordinaria'])->name('requerimento.solicitacao_defesa_extraordinaria');
                 Route::get('/requerimento/getEstudante_extraordinario/{course_id}/{lective_year}', [RequerimentoController::class, 'getEstudante_extraordinario'])->name('requerimento.getEstudante_extraordinario');
                 Route::get('/requerimento/getDisciplinas_extraordinaria/{student_id}/{lective_year}/{course_id}',[RequerimentoController::class, 'getDisciplinas_extraordinaria'])->name('requerimento.getDisciplinas_extraordinaria');
                 Route::post('/requerimento/solicitacao_solicitacao_defesa_extraordinaria_store', [RequerimentoController::class, 'solicitacao_solicitacao_defesa_extraordinaria_store'])->name('requerimento.solicitacao_solicitacao_defesa_extraordinaria_store');
-                
+
                 //Convite
                 Route::get('/requerimento/solicitacao_convite', [RequerimentoController::class, 'solicitacao_convite'])->name('requerimento.solicitacao_convite');
                 Route::post('/requerimento/create_convite', [RequerimentoController::class, 'create_convite'])->name('requerimento.create_convite');
                 Route::get('/requerimento/get_convite/{lective_year_id}', [RequerimentoController::class, 'get_invitation_type'])->name('requerimento.get_convite');
                 Route::post('/requerimento/solicitacao_convite_store', [RequerimentoController::class, 'solicitacao_convite_store'])->name('requerimento.solicitacao_convite_store');
-                
+
                 //TFC
                 Route::get('requerimento/create_student_tfc', 'RequerimentoController@createStudentTfc')->name("create_student_tfc");
                 Route::post('requerimento_student_tfc/store', 'RequerimentoController@student_tfc_store')->name('student_tfc_store');
@@ -503,7 +505,7 @@ Route::group(
                 Route::get('curricular_path_course/{id_aluno}', 'AvaliacaoAlunoHistoricoController@curricularPathGetCourses');
                 Route::get('curricular_path_students/{id}', 'AvaliacaoAlunoHistoricoController@curricularPathGetStudents');
 
-                //ZACARIAS LOCALIZAR PERCUSO 
+                //ZACARIAS LOCALIZAR PERCUSO
                 Route::get('curricular_path_grade', 'AvaliacaoAlunoHistoricoController@curricularPathGrade');
                 Route::get('curricular_path_pauta', 'AvaliacaoAlunoHistoricoController@curricularPathGetPauta');
                 Route::get('curricular_path_pauta_students/{id}', 'AvaliacaoAlunoHistoricoController@curricularPathGetPautaStudents');
