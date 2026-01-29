@@ -124,7 +124,7 @@ class DeclarationController extends Controller
 
 
     public function generatePdfDeclaracao(Request $request){
-        
+
         //dd($request);
         Log::info("Tipos de documento",['dados'=>$request->type_document]);
         switch ($request->type_document) {
@@ -193,7 +193,7 @@ class DeclarationController extends Controller
 
 
 
-    // ------------ ------------ ------------ ------------ ------------ ------------ ------------ ------------//        
+    // ------------ ------------ ------------ ------------ ------------ ------------ ------------ ------------//
 
 
     // ------------ ------------ ------------ ------------ ------------ ------------ ------------ ------------//
@@ -444,7 +444,7 @@ class DeclarationController extends Controller
             "requerimento",
             "recibo"
         ));
-      
+
         // ✅ Opções de formatação e papel
 $pdf->setOption('margin-top', '2mm');
 $pdf->setOption('margin-left', '2mm');
@@ -644,7 +644,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 ->orderBy('course_year', 'ASC')
                 ->distinct('id')
                 ->get();
-                
+
 
             $disciplines = $this->ordena_plano($disciplines);
 
@@ -942,7 +942,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
 
 
-            // Subir tudo que estiver aqui 
+            // Subir tudo que estiver aqui
 
 
             $courses_duration = DB::table("courses")
@@ -1412,7 +1412,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
         return $pdf->stream($pdf_name . '.pdf');
     }
-    
+
     private function CertificateMerito($request, $config){
 
 
@@ -1976,9 +1976,9 @@ return $pdf->stream($pdf_name . '.pdf');
 
 
         $nascimento = $this->dataEscrita($studentInfo->barthday);
-        //  Esse trecho de código foi primeiro que a Porra do Francisco , conseguiu me dar atenção 
+        //  Esse trecho de código foi primeiro que a Porra do Francisco , conseguiu me dar atenção
         // ele está a rolling
-        // Pegamos as disciplinas agrupadas por anos 
+        // Pegamos as disciplinas agrupadas por anos
 
         $allDiscipline = Discipline::whereCoursesId($studentInfo->course_id)
             ->join('courses', 'courses.id', '=', 'disciplines.courses_id')
@@ -2009,7 +2009,7 @@ return $pdf->stream($pdf_name . '.pdf');
             ->all();
 
 
-        // Todas as notas 
+        // Todas as notas
         $grades = DB::table('new_old_grades')
             ->where('user_id', $studentId)
             ->get();
@@ -2145,7 +2145,7 @@ return $pdf->stream($pdf_name . '.pdf');
             }
         }
 
-        // return ($nada);  
+        // return ($nada);
 
         if ($discp > count($grades)) {
             Toastr::warning(__('O Estudante não tem as notas regularizadas'), __('toastr.warning'));
@@ -2225,7 +2225,7 @@ return $pdf->stream($pdf_name . '.pdf');
     {
 
 
-        // Listar o curso 
+        // Listar o curso
 
         $courses = DB::table('courses as curso')
             ->where('curso.id', $curso)
@@ -2472,8 +2472,8 @@ return $pdf->stream($pdf_name . '.pdf');
 
         $pdf_name = "DSN_" . $studentInfo->number;
         //dd($studentInfo);
-        //Pegar o direitor institucional 
-        //cláudio 
+        //Pegar o direitor institucional
+        //cláudio
 
         //Att: esse mesmo códio vai pegar os usuarios com os cargos definidos por parametro
         //Neste caso o direitor.
@@ -3367,7 +3367,7 @@ return $pdf->stream($pdf_name . '.pdf');
                  "ar.year as ano",
                  "ar.month as mes",
                  "up.value as estudante_nome",
-                 "art.code as code_emolumento", 
+                 "art.code as code_emolumento",
                  */
                 "at.display_name as emolumento"
             ])
@@ -3385,7 +3385,7 @@ return $pdf->stream($pdf_name . '.pdf');
         // $json=[
         //     // 'info'=>$transacao[0],
         //     // 'nome'=>$usuario[0]->nome,
-        //     'recibo'=>$recibo 
+        //     'recibo'=>$recibo
         // ];
 
         return $recibo;
@@ -3437,7 +3437,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
 
 
-    // Method pega curso 
+    // Method pega curso
     #Cláudio Salvador
     public function course_documentation()
     {
@@ -3774,13 +3774,13 @@ return $pdf->stream($pdf_name . '.pdf');
 
     private function pedido_entrada($request, $config){
         try {
-            
+
             $this->gerar_codigo_documento($request->requerimento);
             //dd($request->requerimento);
             $requerimento = DB::table('requerimento')
                 ->where("id", $request->requerimento)
                 ->first();
-            
+
 
 
             $recibo = $this->referenceGetRecibo($requerimento->article_id);
@@ -3988,7 +3988,7 @@ return $pdf->stream($pdf_name . '.pdf');
 
             //$documentation = $transference->documentation;
             $documentation = preg_split('/\r\n|\r|\n/', $documentation);
-                
+
             $data = [
 
                 'config' => $config,
@@ -4004,7 +4004,7 @@ return $pdf->stream($pdf_name . '.pdf');
                 'documentation' => $documentation
 
             ];
-        
+
             $institution = Institution::latest()->first();
 
             $pdf = PDF::loadView("Reports::declaration.pedido-entrada", compact(
@@ -4759,7 +4759,7 @@ return $pdf->stream($pdf_name . '.pdf');
     private function plano_disciplinas($request, $config){
         try {
 
-           
+
 
             $studentId = $request->students;
 
@@ -4777,7 +4777,7 @@ return $pdf->stream($pdf_name . '.pdf');
                             ->where('users_id',$studentId)
                             ->where('up.parameters_id',19)
                             ->first()->value;
-            
+
 
             $disciplinas = DB::table('new_old_grades as g')
                                 ->where('g.user_id',$studentId)
@@ -4827,26 +4827,26 @@ return $pdf->stream($pdf_name . '.pdf');
                         ->orderBy("code");
                     }
                   ])
-        
+
                     ->orderBy('years')
                     ->orderBy('discipline_periods_id');
                 },
               ])->get();
 
-        
+
               $courses = Course::with(['currentTranslation'])->get();
               $areas = DisciplineArea::with(['currentTranslation'])->get();
               $profiles = DisciplineProfile::with(['currentTranslation'])->get();
-        
+
               $hasMandatoryExam = DB::table('discipline_has_exam')
                 ->whereIn('discipline_id', $disciplinas)
                 ->get();
-        
+
               // Verifique se há dados suficientes para gerar o PDF
               if (!$disciplines || $courses->isEmpty() || $areas->isEmpty() || $profiles->isEmpty()) {
                 return abort(404, 'Dados insuficientes para gerar o PDF.');
               }
-        
+
               $plano_regime = DB::table('study_plans_has_disciplines as sthd')
                 ->join("sp_has_discipline_regimes as sthdr", "sthdr.sp_has_disciplines_id", "=", "sthd.id")
                 ->join("discipline_regimes as dr", "dr.id", "=", "sthdr.discipline_regimes_id")
@@ -4856,19 +4856,19 @@ return $pdf->stream($pdf_name . '.pdf');
                   'sthdr.discipline_regimes_id as regime',
                   'sthdr.hours as horas',
                   'dr.code as codigo',
-        
+
                 ])
                 ->get();
-        
+
               // Obtendo a instituição
               $institution = Institution::latest()->first();
               $languages = Language::whereActive(true)->get();
-              
-        
+
+
               // Definindo os dados para o PDF
               $titulo_documento = "Relatório de Disciplina " . date("Y/m/d");
               $documentoGerado_documento = "Documento gerado em " . date("Y/m/d");
-        
+
               // Gerando o PDF
               $pdf = PDF::loadView(
                 'Reports::declaration.plano_disciplinas',
@@ -4884,7 +4884,7 @@ return $pdf->stream($pdf_name . '.pdf');
                   'documentoGerado_documento'
                 )
               );
-        
+
               $pdf->setOption('margin-top', '1mm');
               $pdf->setOption('margin-left', '1mm');
               $pdf->setOption('margin-bottom', '4mm');
@@ -4895,9 +4895,9 @@ return $pdf->stream($pdf_name . '.pdf');
               $pdf->setOption('enable-smart-shrinking', true);
               $pdf->setOption('no-stop-slow-scripts', true);
               $pdf->setPaper('a4', 'portrait');
-        
+
               $pdf_name = "PCdD_" . $matricula;
-        
+
               return $pdf->stream($pdf_name . '.pdf');
 
 
@@ -4908,6 +4908,59 @@ return $pdf->stream($pdf_name . '.pdf');
         }
 
 
+
+    }
+
+    public function Mediafinal($studentId){
+        $notasDisciplinas = DB::table('new_old_grades as notas')
+            ->join('discipline_has_areas as dha', 'dha.discipline_id', '=', 'notas.discipline_id')
+            ->where('notas.user_id', $studentId)
+            ->select(
+                'notas.grade as nota',
+                'notas.discipline_id as disciplina',
+                'dha.discipline_area_id as area_id'
+            )
+            ->get();
+
+            // Mapeamento de IDs → nomes
+            $mapAreas = [
+                13 => 'Geral',
+                14 => 'Específica',
+                15 => 'Complementar',
+                24 => 'TFC',
+            ];
+
+            $notasDisciplinas = $notasDisciplinas->map(function ($item) use ($mapAreas) {
+                $item->area = $mapAreas[$item->area_id] ?? 'Desconhecida';
+                return $item;
+            });
+
+            // Separar por área
+            $areaComplementar = $notasDisciplinas->where('area_id', 15);
+            $areaEspecifica   = $notasDisciplinas->where('area_id', 14);
+            $areaGeral        = $notasDisciplinas->where('area_id', 13);
+            $areaTFC          = $notasDisciplinas->where('area_id', 24);
+
+            // Cálculo das médias
+            $mediaGeral        = $areaGeral->count() > 0 ? $areaGeral->avg('nota') : 0;
+            $mediaEspecifica   = $areaEspecifica->count() > 0 ? ($areaEspecifica->avg('nota')) : 0;
+            $mediaComplementar = $areaComplementar->count() > 0 ? $areaComplementar->avg('nota') : 0;
+            $mediaTFC          = $areaTFC->count() > 0 ? $areaTFC->avg('nota') : 0;
+
+            // Média Final Ponderada
+            $mediaFinal = ($mediaGeral * 0.2)
+                        + ($mediaEspecifica * 0.4)
+                        + ($mediaComplementar * 0.1)
+                        + ($mediaTFC * 0.3);
+
+
+            return [
+                'media_geral'        => round($mediaGeral, 2),
+                'media_especifica'   => round($mediaEspecifica, 2),
+                'media_complementar' => round($mediaComplementar, 2),
+                'media_tfc'          => round($mediaTFC, 2),
+                'media_final'        => round($mediaFinal, 2),
+            ];
 
     }
 
