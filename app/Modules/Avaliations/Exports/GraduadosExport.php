@@ -34,7 +34,6 @@ class GraduadosExport implements
     public function __construct($yearname)
     {
         $this->yearname = $yearname;
-        dd($this->yearname);
     }
 
     /* =========================================================
