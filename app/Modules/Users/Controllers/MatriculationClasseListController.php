@@ -60,7 +60,6 @@ class MatriculationClasseListController extends Controller
 
     
     public function PegarDisciplina($id_curso,$anoCurricular)
-    
     {
             //Disciplina --com plano de estudo
             return $dadosD=DB::table('study_plans as std_p')
