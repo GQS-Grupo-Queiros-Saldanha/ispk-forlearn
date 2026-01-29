@@ -143,7 +143,8 @@ class GraduadosExport implements
                 'turma.code as turma',
                 'c.duration_value as duration'
             ])
-            ->where('Percurso.lective_year', $this->yearname)
+            ->where('Percurso.lective_year', '23/24')
+            //->where('Percurso.lective_year', $this->yearname)
             ->where('Percurso.grade', '>', 10)
             ->where('ct.display_name', $disciplineName)
             ->distinct()
