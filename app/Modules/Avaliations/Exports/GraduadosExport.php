@@ -146,10 +146,11 @@ class GraduadosExport implements
             ->where('Percurso.lective_year', $this->yearname)
             ->where('Percurso.grade', '>', 10)
             ->where('ct.display_name', $disciplineName)
-            ->orderBy('nome_completo', 'ASC')
             ->distinct()
             ->get()
             ->unique('id');
+
+            dd($ESTUDANTES);
 
 
             $rows = collect();
