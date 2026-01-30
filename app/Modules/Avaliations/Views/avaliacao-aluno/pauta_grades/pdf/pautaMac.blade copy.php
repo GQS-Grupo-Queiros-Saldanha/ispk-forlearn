@@ -8,9 +8,8 @@
         @endphp
 
 
-        <style>
-                .table_te,.table_pauta {background-color: #F5F3F3; !important ;width:100%;text-align:right;font-family:calibri light; margin-bottom: 6px; }
-                    
+            <style>
+                .table_te,.table_pauta {background-color: #F5F3F3; !important ;width:100%;text-align:right;font-family:calibri light; margin-bottom: 6px; }  
                 .table_pauta_estatistica{background-color: #F5F3F3; !important ;width:100%;text-align:right;font-family:calibri light; margin-bottom: 6px;border:none; border-left:1px solid #fff;border-bottom: 1px solid #fff;}
                 .table_te th, .table_pauta th {border-left:1px solid #fff;border-bottom: 1px solid #fff;padding: 4px; !important; text-align:center;}
                 .table_pauta_estatistica  th{ border-left:1px solid #fff;border-bottom: 1px solid #fff;padding: 4px; !important; text-align:center;}
@@ -37,16 +36,14 @@
                 .table_pauta tr td:nth-child(4){
                     text-align: center!important;
                 }
-
             </style>
     <main>
         
-                @include('Reports::pdf_model.forLEARN_header')
+        @include('Reports::pdf_model.forLEARN_header')
         <table class="table_te">
            
             <thead style="border:none;" id="chega">
                 <tr class="bg1">
-    
                     <th >DISCIPLINA</th>
                     <th >CURSO</th>
                     <th >ANO CURRICULAR</th>

@@ -19,44 +19,44 @@ if($segunda_chamada)
  @parent
  <link rel="stylesheet" href="{{ asset('css/new_table_panel.css') }}"/>
  <style>
- .red {
- background-color: red !important;
- }
- #ConteudoMain {
- display: none;
- }
- .regime {
- width: 5%;
- }
- .dt-buttons {
- float: left;
- margin-bottom: 20px;
- }
- .dataTables_filter label {
- float: right;
- }
- .dataTables_length label {
- margin-left: 10px;
- }
+    .red {
+    background-color: red !important;
+    }
+    #ConteudoMain {
+    display: none;
+    }
+    .regime {
+    width: 5%;
+    }
+    .dt-buttons {
+    float: left;
+    margin-bottom: 20px;
+    }
+    .dataTables_filter label {
+    float: right;
+    }
+    .dataTables_length label {
+    margin-left: 10px;
+    }
 
- .devedor{
- background-color:red !important;
- color:white
- }
- .recurso{
- background-color:orange;
- color:white;
- }
+    .devedor{
+    background-color:red !important;
+    color:white
+    }
+    .recurso{
+    background-color:orange;
+    color:white;
+    }
 
- .dispensado{
- background-color:blue;
- color:white
- }
+    .dispensado{
+    background-color:blue;
+    color:white
+    }
 
- .neen{
- background-color:green;
- color:white
- }
+    .neen{
+    background-color:green;
+    color:white
+    }
  </style>
 @endsection
 @section('selects')

@@ -359,7 +359,7 @@ class PautaMacController extends Controller
                                         : "Avaliations::avaliacao-aluno.pauta_grades.pdf.pautaMac";
         
         $pdf = PDF::loadView($view, $data);
-        
+        dd($data);
         // Configurar opciones del PDF
         $this->configurePdfOptions($pdf);
         
