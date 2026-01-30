@@ -212,7 +212,7 @@ $doc_name = "Pauta de ".$discipline_name;
             }
         @endphp
 
-        {{ dd($studentsUnique) }}
+      
         @foreach($studentsUnique as $student)
             <tbody id="corpoTabela">
                 <tr class="bg2">
