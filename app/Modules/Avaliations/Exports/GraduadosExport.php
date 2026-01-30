@@ -41,7 +41,7 @@ class GraduadosExport implements
      * ========================================================= */
     public function collection()
     {
-            $disciplineName = 'Trabalho de Fim de Curso';
+            $disciplineName = 'Monografia (Estágio)';
             $languageId = 1;
 
             $ESTUDANTES = DB::table('new_old_grades as Percurso')
