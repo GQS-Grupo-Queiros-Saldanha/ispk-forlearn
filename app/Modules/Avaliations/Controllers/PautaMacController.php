@@ -356,19 +356,6 @@ class PautaMacController extends Controller
     {
         // Determinar la vista según el usuario
         $view = auth()->user()->id == 845 ? "Avaliations::avaliacao-aluno.pauta_grades.pdf.pautaMacNew" : "Avaliations::avaliacao-aluno.pauta_grades.pdf.pautaMac";
-        $data['students'] = collect($data['students'])
-            ->groupBy('mat')
-            ->map(function ($group) {
-
-                // pega o aluno com MAIOR nota (convertendo para float)
-                return $group->sortByDesc(function ($item) {
-                    return is_null($item->grade) ? -1 : (float) $item->grade;
-                })->first();
-
-            })
-            ->values();
-
-
         $pdf = PDF::loadView($view, $data);
         // Configurar opciones del PDF
         $this->configurePdfOptions($pdf);
