@@ -219,24 +219,22 @@ if($segunda_chamada)
  </div>
  </form>
  
+    <div class="col-12">
+        <div id="div_btn_save" class=" float-right">
+            <span class="btn btn-success mb-3 ml-3" id="btn-Enviar" data-toggle="modal" data-target="#exampleModal">
+                <i class="fas fa-plus-circle"></i>
+                Guardar notas
+            </span>
+        </div>
+    </div>
+    
  <div class="col-12">
- <div id="div_btn_save" class=" float-right">
- <span class="btn btn-success mb-3 ml-3" id="btn-Enviar" data-toggle="modal"
- data-target="#exampleModal">
- <i class="fas fa-plus-circle"></i>
- Guardar notas
- </span>
- </div>
- </div>
- 
- <div class="col-12">
- <a id="btn_pdf" class=" float-right">
- <span class="btn btn-primary mb-3 ml-3" 
- >
- <i class="fas fa-file-pdf"></i>
- Gerar pdf
- </span>
- </a>
+    <a id="btn_pdf" class=" float-right">
+        <span class="btn btn-primary mb-3 ml-3" >
+            <i class="fas fa-file-pdf"></i>
+            Gerar pdf
+        </span>
+    </a>
  </div>
  
  </div>
@@ -831,30 +829,30 @@ if($segunda_chamada)
  }
 
  function StudantGrade(discipline_id, metrica_id, id_planoEstudo, id_avaliacao, lective_year) {
- cargo = Disciplina_id_Select.val().split(",")[0];
- console.log(cargo);
- var turma = Turma_id_Select.val();
- let url ="/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" +
- id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year+ "?whoIs=" + cargo;
- @if($segunda_chamada)
- url += "&segunda_chamada=true";
- @endif
- console.log(url)
- $.ajax({
- url: url,
- type: "GET",
- data: {
- _token: '{{ csrf_token() }}'
- },
- cache: false,
- dataType: 'json',
- success: function(dataResult) {
- var url = "/avaliations/mac_pdf/" + discipline_id + "/" + metrica_id + "/" +
- id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year +"/";
- @if($segunda_chamada)
- url += "?segunda_chamada=true";
- @endif
- $('#btn_pdf').attr('href',url)
+    cargo = Disciplina_id_Select.val().split(",")[0];
+    console.log(cargo);
+    var turma = Turma_id_Select.val();
+    let url ="/avaliations/student_ajax/" + discipline_id + "/" + metrica_id + "/" +
+    id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year+ "?whoIs=" + cargo;
+    @if($segunda_chamada)
+        url += "&segunda_chamada=true";
+    @endif
+    console.log(url)
+    $.ajax({
+    url: url,
+    type: "GET",
+    data: {
+    _token: '{{ csrf_token() }}'
+    },
+    cache: false,
+    dataType: 'json',
+    success: function(dataResult) {
+        var url = "/avaliations/mac_pdf/" + discipline_id + "/" + metrica_id + "/" +
+        id_planoEstudo + "/" + avaliacao_id + "/" + turma + "/" + lective_year +"/";
+            @if($segunda_chamada)
+            url += "?segunda_chamada=true";
+        @endif
+        $('#btn_pdf').attr('href',url)
 
  
  //Estado da publish
@@ -881,22 +879,22 @@ if($segunda_chamada)
 
  // Estado lançar pauta
  console.log('pauta:'+estado_pauta_lancar)
- if (estado_pauta_lancar == 1) {
- $("#textoAviso").text("");
- $("#textoAviso").text(
- "Atenção! detetamos que a pauta desta disciplina já se encontra lançada, com base nesta situação não lhe é permitido fazer o lançamento de nota. Em caso de dúvida, cantacte a coordenação."
- );
- $("#modalAviso").modal('show');
- ElementoBTN_salvar = $("#div_btn_save").html();
- callSumit = $("#ocultar_btn").html();
- $("#btn-Enviar").remove();
- $("#btn-callSubmit").remove();
- $(".notaCampo").attr("disabled", true);
- } else if (estado_pauta_lancar == 0) {
- if (ElementoBTN_salvar.length) {
- $("#div_btn_save").html(ElementoBTN_salvar);
- $("#ocultar_btn").html(callSumit);
- }
+    if (estado_pauta_lancar == 1) {
+        $("#textoAviso").text("");
+        $("#textoAviso").text(
+        "Atenção! detetamos que a pauta desta disciplina já se encontra lançada, com base nesta situação não lhe é permitido fazer o lançamento de nota. Em caso de dúvida, cantacte a coordenação."
+        );
+        $("#modalAviso").modal('show');
+        ElementoBTN_salvar = $("#div_btn_save").html();
+        callSumit = $("#ocultar_btn").html();
+        $("#btn-Enviar").remove();
+        $("#btn-callSubmit").remove();
+        $(".notaCampo").attr("disabled", true);
+    } else if (estado_pauta_lancar == 0) {
+    if (ElementoBTN_salvar.length) {
+        $("#div_btn_save").html(ElementoBTN_salvar);
+        $("#ocultar_btn").html(callSumit);
+    }
  }
 
 

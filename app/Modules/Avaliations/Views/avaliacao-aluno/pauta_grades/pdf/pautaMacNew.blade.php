@@ -132,6 +132,7 @@
          
    
    @php $index = 1;@endphp
+   {{ dd($students) }}
                 @foreach($students as $student)
            <tbody id="corpoTabela"> 
                <tr class="bg2">
@@ -407,19 +408,11 @@
                     <th colspan="5" style="color: transparent; background-color: white!important"> . </th>
                 </tr>
                 <tr>
-
-
-
                     <th>M</th>
                     <th>%</th>
                     <th>F</th>
                     <th>%</th>
                     <th>T</th>
-
-
-
-
-
                 </tr>
 
             </thead>
