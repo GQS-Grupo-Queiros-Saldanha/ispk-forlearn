@@ -192,31 +192,49 @@ $doc_name = "Pauta de ".$discipline_name;
 
         </thead>
 
+        @php
+            $index = 1;
+            $studentsUnique = [];
 
+            foreach ($students as $student) {
+                $mat = $student->mat;
 
-        @php $index = 1;@endphp
-        {{ dd($students) }}
-        @foreach($students as $student)
+                // converte grade para número (null vira -1)
+                $grade = is_null($student->grade) ? -1 : (float) $student->grade;
+
+                // se ainda não existe OU se a nota atual é maior
+                if (
+                    !isset($studentsUnique[$mat]) ||
+                    $grade > (is_null($studentsUnique[$mat]->grade) ? -1 : (float) $studentsUnique[$mat]->grade)
+                ) {
+                    $studentsUnique[$mat] = $student;
+                }
+            }
+        @endphp
+
+        {{ dd($studentsUnique) }}
+        @foreach($studentsUnique as $student)
             <tbody id="corpoTabela">
                 <tr class="bg2">
                     <td class="text-center bg2">
-                        {{$index}}
-                        @php $index++ @endphp
+                        {{ $index++ }}
                     </td>
+
                     <td class="text-center bg2">
-                        {{$student->mat}}
+                        {{ $student->mat }}
                     </td>
+
                     <td class="text-left bg2">
-                        {{$student->nome}}
+                        {{ $student->nome }}
                     </td>
 
                     <td class="text-center bg2">
-                        {{$student->grade ?? 'F'}}
+                        {{ $student->grade ?? 'F' }}
                     </td>
-
                 </tr>
             </tbody>
         @endforeach
+
 
     </table>
     {{-- termina aqui --}}
