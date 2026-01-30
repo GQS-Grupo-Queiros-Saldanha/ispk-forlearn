@@ -429,7 +429,7 @@ class AvaliacaoEstatisticaController extends Controller
 
 
 
-                $search='Trabalho de Fim de curso';
+                $search='Monografia (Estágio)';
 
                 $disciplina=DB::table('study_plan_editions as spd')
                 ->leftJoin('study_plan_edition_disciplines as disc_spde','disc_spde.study_plan_edition_id','spd.id')
