@@ -911,7 +911,7 @@ class AvaliacaoEstatisticaController extends Controller
     //Gerar Estatistica_Percurso__tipo
     public function generateEstatistic_graduado(Request $request){
         try{
-
+            dd($request->all());
             // return $request;
             $estado=$request->documento_set;
             $Cursos=$request->id_curso;
