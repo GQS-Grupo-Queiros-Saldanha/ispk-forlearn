@@ -144,13 +144,13 @@ use App\Modules\Cms\Controllers\mainController;
                                 if ($media !== null) {
                                     if ($media >= 15.3) {
                                         $classificacao = '';
-                                        $cor_media = 'for-green';
+                                        $cor_media = '';
                                     } elseif ($media < 16 and $media >= 7.0) {
-                                        $classificacao = 'Exame';
-                                        $cor_media = 'for-yellow';
+                                        $classificacao = '';
+                                        $cor_media = '';
                                     } else {
-                                        $classificacao = 'Recurso';
-                                        $cor_media = 'for-red';
+                                        $classificacao = '';
+                                        $cor_media = '';
                                     }
                                 }
 
@@ -191,10 +191,10 @@ use App\Modules\Cms\Controllers\mainController;
                                 if ($media_final !== null) {
                                     if ($media_final >= 15.3) {
                                         $estado_final = '';
-                                        $cor_final = 'for-green';
+                                        $cor_final = '';
                                     } else {
-                                        $estado_final = 'Reprovado(a)';
-                                        $cor_final = 'for-red';
+                                        $estado_final = '';
+                                        $cor_final = '';
                                     }
                                 }
                             @endphp
