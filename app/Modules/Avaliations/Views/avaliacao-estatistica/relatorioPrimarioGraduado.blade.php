@@ -19,7 +19,6 @@
 
 @endsection
 @section('body')
-    /** Generate Report Form **/
     {!! Form::open(['route' => ['report.primary.xls']]) !!}
     <div class="mb-2 col-md-3">
         <label for="lective_year">Selecione o ano lectivo</label>
