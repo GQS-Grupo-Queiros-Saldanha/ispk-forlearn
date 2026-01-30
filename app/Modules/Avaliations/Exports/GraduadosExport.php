@@ -158,6 +158,8 @@ class GraduadosExport implements
                 // Calcula apenas uma vez
                 $media = $controller->Mediafinal($c->id);
 
+                dd($media);
+
                 if($media['media_tfc'] != 0 && $media['media_final'] != 0){
 
                     // Idade
