@@ -282,8 +282,8 @@
                             var cor_media = '', classificacao = '-';
                             if (media !== null) {
                                 if (media >= 15.3) { classificacao=''; cor_media='for-green'; }
-                                else if (media >= 7 && media < 15.3) { classificacao='Exame'; cor_media='for-yellow'; }
-                                else { classificacao='Recurso'; cor_media='for-red'; }
+                                else if (media >= 7 && media < 15.3) { classificacao=''; cor_media='for-yellow'; }
+                                else { classificacao=''; cor_media='for-red'; }
                             }
 
                             // Exame
@@ -301,7 +301,7 @@
                             var estado_final = '-', cor_final = '';
                             if (media_final !== null) {
                                 if (media_final >= 15.3) { estado_final=''; cor_final='for-green'; }
-                                else { estado_final='Reprovado(a)'; cor_final='for-red'; }
+                                else { estado_final=''; cor_final='for-red'; }
                             }
 
                             html += '<tr>';

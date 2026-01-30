@@ -146,10 +146,10 @@ use App\Modules\Cms\Controllers\mainController;
                                         $classificacao = '';
                                         $cor_media = 'for-green';
                                     } elseif ($media < 16 and $media >= 7.0) {
-                                        $classificacao = 'Exame';
+                                        $classificacao = '';
                                         $cor_media = 'for-yellow';
                                     } else {
-                                        $classificacao = 'Recurso';
+                                        $classificacao = '';
                                         $cor_media = 'for-red';
                                     }
                                 }
@@ -193,7 +193,7 @@ use App\Modules\Cms\Controllers\mainController;
                                         $estado_final = '';
                                         $cor_final = 'for-green';
                                     } else {
-                                        $estado_final = 'Reprovado(a)';
+                                        $estado_final = '';
                                         $cor_final = 'for-red';
                                     }
                                 }
