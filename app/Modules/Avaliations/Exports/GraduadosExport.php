@@ -157,7 +157,7 @@ class GraduadosExport implements
             foreach ($ESTUDANTES as $c) {
                 // Calcula apenas uma vez
                 $media = $controller->Mediafinal($c->id);
-
+                $mediaCurso = $controller->mediaFinalCurso($c->id);
                 //dd($media);
 
                 //if($media['media_tfc'] != 0 && $media['media_final'] != 0){
@@ -186,8 +186,8 @@ class GraduadosExport implements
                         $c->matricula,
                         in_array($turno, ['M','T']) ? 'Não' : 'Sim',
                         'Licenciatura',
-                        $c->nota >= 16 ? 'Sim' : 'Não',
-                        $c->nota,
+                        $mediaCurso >= 16 ? 'Sim' : 'Não',
+                        $mediaCurso,
                         str_replace(' ', '', $c->contacto)
                     ]);
                 //}

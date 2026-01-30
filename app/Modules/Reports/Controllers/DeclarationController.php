@@ -4965,6 +4965,22 @@ return $pdf->stream($pdf_name . '.pdf');
     }
 
 
+    public function mediaFinalCurso(int $studentId): ?int
+    {
+        $result = DB::table('new_old_grades')
+            ->where('user_id', $studentId)
+            ->whereNotNull('grade')
+            ->selectRaw('SUM(grade) as soma, COUNT(grade) as total')
+            ->first();
+
+        if (!$result || $result->total == 0) {
+            return null;
+        }
+
+        return round($result->soma / $result->total);
+    }
+
+
 
 
 
