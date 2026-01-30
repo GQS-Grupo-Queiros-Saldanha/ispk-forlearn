@@ -441,8 +441,14 @@ class AvaliacaoEstatisticaController extends Controller
                 ->where('stdp.courses_id',$id_cursos_c)
                 ->where('spd.course_year',$curso->duration_value)
                 ->where('spd.lective_years_id',$anoLectivo)
-                ->select(['dt.discipline_id as id_disciplina','spd.course_year as Anocurricular','dt.display_name as nome_disciplina','spd.lective_years_id as anoLectivo','stdp.code as curso','disci.code as code_disciplina'])
-                ->distinct('dt.display_name')
+                ->select([
+                    'dt.discipline_id as id_disciplina',
+                    'spd.course_year as Anocurricular',
+                    'dt.display_name as nome_disciplina',
+                    'spd.lective_years_id as anoLectivo',
+                    'stdp.code as curso',
+                    'disci.code as code_disciplina'
+                ])->distinct('dt.display_name')
                 ->whereIn('id_disciplina', ParameterEnum::TRABALHO_FINAL_CURSO)
                 ->orderBy('spd.course_year','ASC')
                 ->orderBy('stdp.code','ASC')
@@ -904,9 +910,6 @@ class AvaliacaoEstatisticaController extends Controller
 
     //Gerar Estatistica_Percurso__tipo
     public function generateEstatistic_graduado(Request $request){
-        if (auth()->user()->id == 2370) {
-            dd($request->all());
-        }
         try{
 
             // return $request;
