@@ -171,7 +171,7 @@ class estatisticaMatriculationController extends Controller
             ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)// dados 348, 356, 399
             ->where('matriculations.lective_year', $lectiveYears->id) //11
             ->whereNull('matriculations.deleted_at')
-            ->where('mc.class_id',67) //curso de informatica
+            ->where('mc.class_id',69) //curso de informatica
             ->select([
                 'matriculations.*',
                 'u0.id as id_usuario',
