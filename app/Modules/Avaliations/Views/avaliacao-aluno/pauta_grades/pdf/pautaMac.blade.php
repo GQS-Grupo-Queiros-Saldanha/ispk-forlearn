@@ -195,26 +195,27 @@ $doc_name = "Pauta de ".$discipline_name;
 
 
         @php $index = 1;@endphp
+        {{ dd($students) }}
         @foreach($students as $student)
-        <tbody id="corpoTabela">
-            <tr class="bg2">
-                <td class="text-center bg2">
-                    {{$index}}
-                    @php $index++ @endphp
-                </td>
-                <td class="text-center bg2">
-                    {{$student->mat}}
-                </td>
-                <td class="text-left bg2">
-                    {{$student->nome}}
-                </td>
+            <tbody id="corpoTabela">
+                <tr class="bg2">
+                    <td class="text-center bg2">
+                        {{$index}}
+                        @php $index++ @endphp
+                    </td>
+                    <td class="text-center bg2">
+                        {{$student->mat}}
+                    </td>
+                    <td class="text-left bg2">
+                        {{$student->nome}}
+                    </td>
 
-                <td class="text-center bg2">
-                    {{$student->grade ?? 'F'}}
-                </td>
+                    <td class="text-center bg2">
+                        {{$student->grade ?? 'F'}}
+                    </td>
 
-            </tr>
-        </tbody>
+                </tr>
+            </tbody>
         @endforeach
 
     </table>
