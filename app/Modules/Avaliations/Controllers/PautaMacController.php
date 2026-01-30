@@ -360,21 +360,16 @@ class PautaMacController extends Controller
             ->groupBy('mat')
             ->map(function ($group) {
 
-                // remove notas nulas
-                $group = $group->filter(fn ($item) => !is_null($item->grade));
-
-                // se sobrou alguém, pega a maior nota
-                if ($group->isNotEmpty()) {
-                    return $group->sortByDesc('grade')->first();
-                }
-                return $group->first();
+                // pega o aluno com MAIOR nota (convertendo para float)
+                return $group->sortByDesc(function ($item) {
+                    return is_null($item->grade) ? -1 : (float) $item->grade;
+                })->first();
 
             })
-            ->filter() // remove possíveis nulls
-            ->values(); // reorganiza índices
+            ->values();
+
 
         $pdf = PDF::loadView($view, $data);
-        dd($data);
         // Configurar opciones del PDF
         $this->configurePdfOptions($pdf);
         
