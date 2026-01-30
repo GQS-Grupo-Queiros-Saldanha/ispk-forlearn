@@ -911,12 +911,11 @@ class AvaliacaoEstatisticaController extends Controller
     //Gerar Estatistica_Percurso__tipo
     public function generateEstatistic_graduado(Request $request){
         try{
-            dd($request->all());
             // return $request;
             $estado=$request->documento_set;
             $Cursos=$request->id_curso;
             $Curricular=$request->AnoCurricular_id;
-            $Disciplinas=$request->id_disciplina;
+            $Disciplinas = ParameterEnum::TRABALHO_FINAL_CURSO;
             $Turmas=$request->id_turma;
             $Escala=$request->id_escala_avaliacao;
             $AnoLectivo=$request->id_anoLectivo;
@@ -927,7 +926,7 @@ class AvaliacaoEstatisticaController extends Controller
            $anoLectivoDsiplay_name=$lectiveYears['currentTranslation']->display_name;
 
 
-         if($request->id_disciplina){
+         //if($request->id_disciplina){
 
             $course=DB::table('courses')
                         ->leftJoin('courses_translations as ct', function ($join) {
@@ -959,7 +958,7 @@ class AvaliacaoEstatisticaController extends Controller
 
                     ->leftJoin('parameter_options as sexo_value', 'sexo_value.id', '=', 'sexo.value')
                     ->when($Disciplinas, function ($query, $Disciplinas) {
-                        $query->where('Percurso.discipline_id', $Disciplinas);
+                        $query->whereIn('Percurso.discipline_id', $Disciplinas);
                     })
                     ->leftJoin('disciplines as dc', 'dc.id', '=', 'Percurso.discipline_id')
                     ->leftJoin('disciplines_translations as ct', function ($join) {
@@ -1045,16 +1044,16 @@ class AvaliacaoEstatisticaController extends Controller
                     $total["Total_f"]=$total["Total_f"]+$dadosF[$key];
                 }
 
-        }
+        // }
 
-        else
+        // else
 
-        {
+        // {
 
-             Toastr::warning(__('Não foi possivel gerar a estatística dos graduados, possivelmente houve uma falha ao localizar a disciplina trabalho de fim de curso, verifica se o curso selecionado tem a disciplina "Trabalho de fim de curso" na edição de plano de estudo do ano lectivo selecionado.'), __('toastr.warning'));
-            return back();
+        //      Toastr::warning(__('Não foi possivel gerar a estatística dos graduados, possivelmente houve uma falha ao localizar a disciplina trabalho de fim de curso, verifica se o curso selecionado tem a disciplina "Trabalho de fim de curso" na edição de plano de estudo do ano lectivo selecionado.'), __('toastr.warning'));
+        //     return back();
 
-        }
+        // }
             //dados da instituição
             $institution = Institution::latest()->first();
 
