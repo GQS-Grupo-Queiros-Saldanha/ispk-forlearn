@@ -354,17 +354,17 @@ if($segunda_chamada)
  console.log(whoIs)
 
  const pauta_status= {
- 'PF1': '40',
- 'PF2': '40',
- 'OA': '40',
- 'Recurso': '10',
- 'Neen': '20',
- 'oral': '25',
- 'Exame_especial': '35',
- 'Trabalho': '50',
- 'Defesa': '50',
- 'TESP': '60'
- };
+    'PF1': '40',
+    'PF2': '40',
+    'OA': '40',
+    'Recurso': '10',
+    'Neen': '20',
+    'oral': '25',
+    'Exame_especial': '35',
+    'Trabalho': '50',
+    'Defesa': '50',
+    'TESP': '60'
+    };
 
  var pauta_tipo = "";
  var tipo = 0;
@@ -479,88 +479,88 @@ if($segunda_chamada)
  });
  }
 
- function Turma(id_plano, anolectivo) {
- var re = /\s*,\s*/;
- var Planno_disciplina = id_plano.split(re);
- let url= "/pt/avaliations/turma_teacher/" + id_plano + "/" + anolectivo;
- 
- @if($segunda_chamada)
- url += "?segunda_chamada=true";
- console.log(url);
- @endif
- 
- $.ajax({
- url: url,
- type: "GET",
- data: {
- _token: '{{ csrf_token() }}'
- },
- cache: false,
- dataType: 'json',
- beforeSend: function() {
- if (id_plano == 00) return false;
- },
- }).done(function(data) {
- 
- if (data == 500) {
- Turma_id_Select.empty();
- Turma_id_Select.prop('disabled', true);
- avaliacao_id_Select.empty();
- avaliacao_id_Select.hide();
- $("#textoAviso").text("");
- $("#textoAviso").text(
- "Atenção! esta disciplina não está associada a nenhuma avaliação no ano lectivo selecionado, verifique a edição de plano de estudo da mesma."
- );
- $("#modalAviso").modal('show');
- } else {
- if (data['whoIs'] == "super") {
- //chama o metodo para trazer o tratamento do loop da turma 
- TurmaLoop(data, "coordenador")
- //para trazer outra select na avaliacao de notas
- $("#caixaAvalicao").show();
- //avaliacao_id_Select.prop('disabled', true);
- $("#avaliacao_id_Select").append(
- '<option value="">Selecione a avaliação</option>')
- $.each(data['avaliacao'], function(index, row) {
- $("#avaliacao_id_Select").append('<option value="' + row.avl_id +
- '">' + row.avl_nome + '</option>');
- });
- avaliacao_id_Select.selectpicker('refresh');
- //Termina as avaliações do coordenador
- whoIs = '';
- whoIs = data['whoIs'];
- } else {
- //Validar existência de calendario geral
- if (data['avaliacao'] == null) {
- $("#textoAviso").text("");
- $("#textoAviso").text(
- "Caro docente, verificou-se que não há calendário de prova disponível, razão pela qual não pode fazer o lançamento de notas. Contacte o superior hierárquico para habilitar ou extender a data do calendáro de prova."
- );
- $("#modalAviso").modal('show');
- $("#btn-Enviar").hide();
- } else {
- $("#btn-Enviar").show();
- }
- //Automático teacher.
- whoIs = '';
- var FIla = '';
- whoIs = data['whoIs'];
- $("#caixaAvalicao").hide();
- avaliacao_id_Select.empty();
- //Prencher variaveis para trazer depois os alunos.
- id_avaliacao = data['avaliacao'].avl_id;
- metrica_id_teacher = data['metrica'].length > 0 ? data['metrica'][0].mtrc_id :
- "Sem métrica no intervalo";
- //metrica_id_teacher=data['metrica'][0].mtrc_id;
- metrica_code_dev = data['metrica'][0].code_dev;
- 
- discipline_id = data['disciplina'];
- id_planoEstudo = data['plano_estudo'];
- TurmaLoop(data, "teacher")
- setar_pauta("teacher");
- $("#tabela_new").hide();
- }
- }
+    function Turma(id_plano, anolectivo) {
+        var re = /\s*,\s*/;
+        var Planno_disciplina = id_plano.split(re);
+        let url= "/pt/avaliations/turma_teacher/" + id_plano + "/" + anolectivo;
+        
+        @if($segunda_chamada)
+            url += "?segunda_chamada=true";
+            console.log(url);
+        @endif
+        
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: {
+            _token: '{{ csrf_token() }}'
+            },
+            cache: false,
+            dataType: 'json',
+        beforeSend: function() {
+            if (id_plano == 00) return false;
+        },
+        }).done(function(data) {
+        
+        if (data == 500) {
+            Turma_id_Select.empty();
+            Turma_id_Select.prop('disabled', true);
+            avaliacao_id_Select.empty();
+            avaliacao_id_Select.hide();
+            $("#textoAviso").text("");
+            $("#textoAviso").text(
+            "Atenção! esta disciplina não está associada a nenhuma avaliação no ano lectivo selecionado, verifique a edição de plano de estudo da mesma."
+            );
+            $("#modalAviso").modal('show');
+        } else {
+        if (data['whoIs'] == "super") {
+        //chama o metodo para trazer o tratamento do loop da turma 
+        TurmaLoop(data, "coordenador")
+        //para trazer outra select na avaliacao de notas
+        $("#caixaAvalicao").show();
+        //avaliacao_id_Select.prop('disabled', true);
+        $("#avaliacao_id_Select").append(
+        '<option value="">Selecione a avaliação</option>')
+        $.each(data['avaliacao'], function(index, row) {
+        $("#avaliacao_id_Select").append('<option value="' + row.avl_id +
+        '">' + row.avl_nome + '</option>');
+        });
+        avaliacao_id_Select.selectpicker('refresh');
+        //Termina as avaliações do coordenador
+        whoIs = '';
+        whoIs = data['whoIs'];
+        } else {
+        //Validar existência de calendario geral
+        if (data['avaliacao'] == null) {
+        $("#textoAviso").text("");
+        $("#textoAviso").text(
+        "Caro docente, verificou-se que não há calendário de prova disponível, razão pela qual não pode fazer o lançamento de notas. Contacte o superior hierárquico para habilitar ou extender a data do calendáro de prova."
+        );
+        $("#modalAviso").modal('show');
+        $("#btn-Enviar").hide();
+        } else {
+        $("#btn-Enviar").show();
+        }
+        //Automático teacher.
+        whoIs = '';
+        var FIla = '';
+        whoIs = data['whoIs'];
+        $("#caixaAvalicao").hide();
+        avaliacao_id_Select.empty();
+        //Prencher variaveis para trazer depois os alunos.
+        id_avaliacao = data['avaliacao'].avl_id;
+        metrica_id_teacher = data['metrica'].length > 0 ? data['metrica'][0].mtrc_id :
+        "Sem métrica no intervalo";
+        //metrica_id_teacher=data['metrica'][0].mtrc_id;
+        metrica_code_dev = data['metrica'][0].code_dev;
+        
+        discipline_id = data['disciplina'];
+        id_planoEstudo = data['plano_estudo'];
+        TurmaLoop(data, "teacher")
+        setar_pauta("teacher");
+        $("#tabela_new").hide();
+        }
+    }
 
  
 
@@ -859,22 +859,22 @@ if($segunda_chamada)
  var estado_pauta = dataResult.estado_pauta;
  var estado_pauta_lancar = dataResult.estado_pauta_lancar;
  
- if (estado_pauta == 1) {
- $("#textoAviso").text("");
- $("#textoAviso").text(
- "Atenção! detetamos que a pauta desta disciplina já se encontra publicada, com base nesta situação não lhe é permitido fazer o lançamento de nota. Em caso de dúvida, cantacte a coordenação."
- );
- $("#modalAviso").modal('show');
- ElementoBTN_salvar = $("#div_btn_save").html();
- callSumit = $("#ocultar_btn").html();
- $("#btn-Enviar").remove();
- $("#btn-callSubmit").remove();
- $(".notaCampo").attr("disabled", true);
- } else if (estado_pauta == 0) {
- if (ElementoBTN_salvar.length) {
- $("#div_btn_save").html(ElementoBTN_salvar);
- $("#ocultar_btn").html(callSumit);
- }
+    if (estado_pauta == 1) {
+        $("#textoAviso").text("");
+        $("#textoAviso").text(
+        "Atenção! detetamos que a pauta desta disciplina já se encontra publicada, com base nesta situação não lhe é permitido fazer o lançamento de nota. Em caso de dúvida, cantacte a coordenação."
+        );
+        $("#modalAviso").modal('show');
+        ElementoBTN_salvar = $("#div_btn_save").html();
+        callSumit = $("#ocultar_btn").html();
+        $("#btn-Enviar").remove();
+        $("#btn-callSubmit").remove();
+        $(".notaCampo").attr("disabled", true);
+    } else if (estado_pauta == 0) {
+        if (ElementoBTN_salvar.length) {
+            $("#div_btn_save").html(ElementoBTN_salvar);
+            $("#ocultar_btn").html(callSumit);
+        }
  }
 
  // Estado lançar pauta
@@ -882,7 +882,7 @@ if($segunda_chamada)
     if (estado_pauta_lancar == 1) {
         $("#textoAviso").text("");
         $("#textoAviso").text(
-        "Atenção! detetamos que a pauta desta disciplina já se encontra lançada, com base nesta situação não lhe é permitido fazer o lançamento de nota. Em caso de dúvida, cantacte a coordenação."
+            "Atenção! detetamos que a pauta desta disciplina já se encontra lançada, com base nesta situação não lhe é permitido fazer o lançamento de nota. Em caso de dúvida, cantacte a coordenação."
         );
         $("#modalAviso").modal('show');
         ElementoBTN_salvar = $("#div_btn_save").html();

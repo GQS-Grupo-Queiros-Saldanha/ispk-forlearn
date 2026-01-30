@@ -196,6 +196,7 @@ class estatisticaMatriculationController extends Controller
             ->groupBy('id_usuario')
             ->distinct('matriculations.id')
             ->get();
+            dd($new_model);
 
 
         $mod = DB::table('matriculations')
