@@ -186,9 +186,9 @@ class GraduadosExport implements
                         $c->matricula,
                         in_array($turno, ['M','T']) ? 'Não' : 'Sim',
                         'Licenciatura',
-                        round($media['media_final']) >= 16 ? 'Sim' : 'Não',
-                        round($media['media_final']),
-                        $contacto = str_replace(' ', '', $c->contacto)
+                        $c->nota >= 16 ? 'Sim' : 'Não',
+                        $c->nota,
+                        str_replace(' ', '', $c->contacto)
                     ]);
                 //}
             }
