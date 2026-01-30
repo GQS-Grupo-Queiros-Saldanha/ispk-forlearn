@@ -197,8 +197,10 @@ class estatisticaMatriculationController extends Controller
             ->groupBy('id_usuario')
             ->distinct('matriculations.id')
             ->get();
-            dd($new_model);
-
+            if(auth()->user()->id == 1425){
+                dd($new_model);
+            }
+                
 
         $mod = DB::table('matriculations')
             ->join('users as u0', 'u0.id', '=', 'matriculations.user_id')
