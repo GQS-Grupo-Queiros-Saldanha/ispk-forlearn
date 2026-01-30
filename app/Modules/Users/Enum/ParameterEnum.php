@@ -264,5 +264,5 @@ class ParameterEnum
     public const TIPO_ESCOLA_ENSINO_MEDIO  = 323;
     public const NOTA_ENSINO_MEDIO  = 324;
     public const CARGO_PRINCIPAL  = 325;
-    public const TRABALHO_FINAL_CURSO = 0;
+    public const TRABALHO_FINAL_CURSO = [71,147,223,287,335,421,489];
 }

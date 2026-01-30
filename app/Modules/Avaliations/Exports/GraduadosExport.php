@@ -41,7 +41,6 @@ class GraduadosExport implements
      * ========================================================= */
     public function collection()
     {
-            $disciplineName = 'Monografia (Estágio)';
             $languageId = 1;
 
             $ESTUDANTES = DB::table('new_old_grades as Percurso')
@@ -145,7 +144,7 @@ class GraduadosExport implements
             ])
             ->where('Percurso.lective_year', $this->yearname)
             ->where('Percurso.grade', '>', 10)
-            ->where('ct.display_name', $disciplineName)
+            ->whereIn('ct.discipline_id', ParameterEnum::TRABALHO_FINAL_CURSO)
             ->distinct()
             ->get()
             ->unique('id');
