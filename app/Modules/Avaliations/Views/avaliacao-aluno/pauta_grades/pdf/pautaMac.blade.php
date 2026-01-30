@@ -195,7 +195,7 @@ $doc_name = "Pauta de ".$discipline_name;
 
 
         @php $index = 1;@endphp
-      
+        {{ dd($students) }}
         @foreach($students as $student)
             <tbody id="corpoTabela">
                 <tr class="bg2">
