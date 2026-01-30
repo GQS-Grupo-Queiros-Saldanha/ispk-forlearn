@@ -449,21 +449,7 @@ class AvaliacaoEstatisticaController extends Controller
                     'stdp.code as curso',
                     'disci.code as code_disciplina'
                 ])->distinct('dt.display_name')
-                ->whereIn('dt.display_name', function($query) use ($id_cursos_c, $anoLectivo, $curso){
-                    $query->select(DB::raw('dt.display_name'))
-                    ->from('study_plan_editions as spd')
-                    ->leftJoin('study_plan_edition_disciplines as disc_spde','disc_spde.study_plan_edition_id','spd.id')
-                    ->leftJoin('study_plans as stdp','stdp.id','spd.study_plans_id')
-                    ->leftJoin('disciplines as disci','disc_spde.discipline_id','disci.id')
-                    ->leftJoin('disciplines_translations as dt', function ($join) {
-                        $join->on('dt.discipline_id', '=', 'disci.id');
-                        $join->on('dt.language_id', '=', DB::raw(LanguageHelper::getCurrentLanguage()));
-                        $join->on('dt.active', '=', DB::raw(true));
-                    })
-                    ->where('stdp.courses_id',$id_cursos_c)
-                    ->where('spd.course_year',$curso->duration_value)
-                    ->where('spd.lective_years_id',$anoLectivo);
-                })
+                ->whereIn('dt.display_name', 'like','%Monografia (Estágio)%')
                 ->orderBy('spd.course_year','ASC')
                 ->orderBy('stdp.code','ASC')
                 ->first();
