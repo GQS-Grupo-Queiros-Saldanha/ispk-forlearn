@@ -355,11 +355,26 @@ class PautaMacController extends Controller
     private function generatePdf(array $data, Metrica $metrica, object $disciplina, Collection $turmaInfo, array $accentReplacement)
     {
         // Determinar la vista según el usuario
-        $view = auth()->user()->id == 845 ? "Avaliations::avaliacao-aluno.pauta_grades.pdf.pautaMacNew" 
-                                        : "Avaliations::avaliacao-aluno.pauta_grades.pdf.pautaMac";
-        
+        $view = auth()->user()->id == 845 ? "Avaliations::avaliacao-aluno.pauta_grades.pdf.pautaMacNew" : "Avaliations::avaliacao-aluno.pauta_grades.pdf.pautaMac";
+        $data['students'] = collect($data['students'])
+            ->groupBy('mat')
+            ->map(function ($group) {
+
+                // remove notas nulas
+                $group = $group->filter(fn ($item) => !is_null($item->grade));
+
+                // se sobrou alguém, pega a maior nota
+                if ($group->isNotEmpty()) {
+                    return $group->sortByDesc('grade')->first();
+                }
+                return $group->first();
+
+            })
+            ->filter() // remove possíveis nulls
+            ->values(); // reorganiza índices
+
         $pdf = PDF::loadView($view, $data);
-        dd($data);
+        //dd($data);
         // Configurar opciones del PDF
         $this->configurePdfOptions($pdf);
         
