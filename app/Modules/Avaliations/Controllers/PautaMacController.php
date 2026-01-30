@@ -374,7 +374,7 @@ class PautaMacController extends Controller
             ->values(); // reorganiza índices
 
         $pdf = PDF::loadView($view, $data);
-        //dd($data);
+        dd($data);
         // Configurar opciones del PDF
         $this->configurePdfOptions($pdf);
         

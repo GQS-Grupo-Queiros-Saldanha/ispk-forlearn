@@ -131,9 +131,10 @@
    
          
    
-   @php $index = 1;@endphp
-   {{ dd($students) }}
-                @foreach($students as $student)
+   @php $index = 1; @endphp
+
+        @foreach($students as $student)
+            @if($student != $student) //Logica para evitar repetição de alunos
            <tbody id="corpoTabela"> 
                <tr class="bg2">
                    <td  class="text-center bg2">
@@ -148,12 +149,14 @@
                    </td>
                  
                    <td  class="text-center bg2">
-                       {{$student->grade ?? 'F'}} 
+                    @if ($student->grade > $student->grade) //logica para pegar a maior nota
+                        $grade_max = $student->grade;
+                    {{$grade_max ?? 'F'}} 
                    </td>
                    
                </tr>                    
            </tbody>
-           @endforeach
+        @endforeach
        
        </table>
         {{-- termina aqui --}}
@@ -220,220 +223,220 @@
         </style>
 
         @if (count($estatistica_tabela)>0)
-        <h4 class="titulo" style="width: 350px!important"><b>Análise estatística</b></h4>
-        <table cellspacing="0" class="table_pauta_estatistica table-hover dark" id="tabela-aprovados" style="width: 100%;">
-        <thead>
-                <tr>
-
-                    <th colspan="30">APROVADOS</th>
-
-                </tr>
-                <tr>
-
-                    <th colspan="5">( 10-13 )</th>
-                    <th colspan="5">( 14-16 )</th>
-                    <th colspan="5">( 17-19 )</th>
-                    <th colspan="5">( 20 )</th>
-                    <th colspan="5" >TOTAL <as style="font-size: 11px;"> APROVADOS</as></th>
-
-
-                </tr>
-                <tr>
-
-
-                    <th>M</th>
-                    <td>%</td>
-                    <th>F</th>
-                    <td>%</td>
-                    <th>T</th>
-
-                    <th>M</th>
-                    <td>%</td>
-                    <th>F</th>
-                    <td>%</td>
-                    <th>T</th>
-
-
-                    <th>M</th>
-                    <td>%</td>
-                    <th>F</th>
-                    <td>%</td>
-                    <th>T</th>
-
-
-                    <th>M</th>
-                    <td>%</td>
-                    <th>F</th>
-                    <td>%</td>
-                    <th>T</th>
-
-
-                    <th>M</th>
-                    <td>%</td>
-                    <th>F</th>
-                    <td>%</td>
-                    <th>T</th>
-
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <tr>
-
-                    <td>{{ $estatistica_tabela['escala']['thirst']['M'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['thirst']['Percent_M'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['thirst']['F'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['thirst']['Percent_F'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['thirst']['T'] }}</td>
-
-
-                    <td>{{ $estatistica_tabela['escala']['fourth']['M'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['fourth']['Percent_M'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['fourth']['F'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['fourth']['Percent_F'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['fourth']['T'] }}</td>
-
-
-                    <td>{{ $estatistica_tabela['escala']['fiveth']['M'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['fiveth']['Percent_M'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['fiveth']['F'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['fiveth']['Percent_F'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['fiveth']['T'] }}</td>
-
-
-                    <td>{{ $estatistica_tabela['escala']['sixth']['M'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['sixth']['Percent_M'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['sixth']['F'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['sixth']['Percent_F'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['sixth']['T'] }}</td>
-
-
-
-                    <td>{{ $estatistica_tabela['total']['aprovados_masculino'] }}</td>
-                    <td>{{ $estatistica_tabela['total']['aprovados'] != 0 ? (int) round(($estatistica_tabela['total']['aprovados_masculino'] / $estatistica_tabela['total']['aprovados']) * 100, 0) : 0 }}
-                        %</td>
-                    <td>{{ $estatistica_tabela['total']['aprovados_femenino'] }}</td>
-
-                    <td>{{ $estatistica_tabela['total']['aprovados'] != 0 ? (int) round(($estatistica_tabela['total']['aprovados_femenino'] / $estatistica_tabela['total']['aprovados']) * 100, 0) : 0 }}
-                        %</td>
-                    <td>{{ $estatistica_tabela['total']['aprovados'] }}</td>
-
-
-
-                </tr>
-
-
-            </tbody>
-        </table>
-
-        <table cellspacing="0" id="tabela-reprovados" class="table_pauta_estatistica table-hover dark">
+            <h4 class="titulo" style="width: 350px!important"><b>Análise estatística</b></h4>
+            <table cellspacing="0" class="table_pauta_estatistica table-hover dark" id="tabela-aprovados" style="width: 100%;">
             <thead>
-                <tr>
+                    <tr>
 
-                    <th colspan="15">REPROVADOS</th>
+                        <th colspan="30">APROVADOS</th>
 
-                </tr>
-                <tr>
+                    </tr>
+                    <tr>
 
-                    <th colspan="5">( 0-6 )</th>
-                    <th colspan="5">( 7-9 )</th>
-                    <th colspan="5">TOTAL <as style="font-size: 11px;"> REPROVADOS</as></th>
-
-
-
-                </tr>
-                <tr>
+                        <th colspan="5">( 10-13 )</th>
+                        <th colspan="5">( 14-16 )</th>
+                        <th colspan="5">( 17-19 )</th>
+                        <th colspan="5">( 20 )</th>
+                        <th colspan="5" >TOTAL <as style="font-size: 11px;"> APROVADOS</as></th>
 
 
-
-                    <th>M</th>
-                    <th>%</th>
-                    <th>F</th>
-                    <th>%</th>
-                    <th>T</th>
-
-                    <th>M</th>
-                    <th>%</th>
-                    <th>F</th>
-                    <th>%</th>
-                    <th>T</th>
-
-                    <th>M</th>
-                    <th>%</th>
-                    <th>F</th>
-                    <th>%</th>
-                    <th>T</th>
-
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <tr>
-                    <td>{{ $estatistica_tabela['escala']['first']['M'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['first']['Percent_M'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['first']['F'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['first']['Percent_F'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['first']['T'] }}</td>
+                    </tr>
+                    <tr>
 
 
-                    <td>{{ $estatistica_tabela['escala']['second']['M'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['second']['Percent_M'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['second']['F'] }}</td>
-                    <td>{{ $estatistica_tabela['escala']['second']['Percent_F'] }}%</td>
-                    <td>{{ $estatistica_tabela['escala']['second']['T'] }}</td>
+                        <th>M</th>
+                        <td>%</td>
+                        <th>F</th>
+                        <td>%</td>
+                        <th>T</th>
 
-                    <td>{{ $estatistica_tabela['total']['reprovados_masculino'] }}</td>
-                    <td>{{ $estatistica_tabela['total']['reprovados'] != 0 ? (int) round(($estatistica_tabela['total']['reprovados_masculino'] / $estatistica_tabela['total']['reprovados']) * 100, 0) : 0 }}
-                        %</td>
-                    <td>{{ $estatistica_tabela['total']['reprovados_femenino'] }}</td>
-
-                    <td>{{ $estatistica_tabela['total']['reprovados'] != 0 ? (int) round(($estatistica_tabela['total']['reprovados_femenino'] / $estatistica_tabela['total']['reprovados']) * 100, 0) : 0 }}
-                        %</td>
-                    <td>{{ $estatistica_tabela['total']['reprovados'] }}</td>
-
-                </tr>
+                        <th>M</th>
+                        <td>%</td>
+                        <th>F</th>
+                        <td>%</td>
+                        <th>T</th>
 
 
-            </tbody>
-        </table>
-
-        <table cellspacing="0" id="tabela-total" class="table_pauta_estatistica table-hover dark">
-            <thead>
-                <tr>
-                    <th colspan="5">TOTAL <as style="font-size: 11px;">AVALIADOS</as></th>
-                </tr>
-                <tr>
-                    <th colspan="5" style="color: transparent; background-color: white!important"> . </th>
-                </tr>
-                <tr>
-                    <th>M</th>
-                    <th>%</th>
-                    <th>F</th>
-                    <th>%</th>
-                    <th>T</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr>
-                    <td>{{ $H = $estatistica_tabela['total']['aprovados_masculino'] + $estatistica_tabela['total']['reprovados_masculino'] }}
-                    </td>
-                    <td>{{ $estatistica_tabela['total']['total'] != 0 ? (int) round(($H / $estatistica_tabela['total']['total']) * 100, 0) : 0 }}%
-                    </td>
-                    <td>{{ $F = $estatistica_tabela['total']['aprovados_femenino'] + $estatistica_tabela['total']['reprovados_femenino'] }}
-                    </td>
-                    <td>{{ $estatistica_tabela['total']['total'] != 0 ? (int) round(($F / $estatistica_tabela['total']['total']) * 100, 0) : 0 }}%
-                    </td>
-                    <td>{{ $estatistica_tabela['total']['total'] }}</td>
-                </tr>
+                        <th>M</th>
+                        <td>%</td>
+                        <th>F</th>
+                        <td>%</td>
+                        <th>T</th>
 
 
-            </tbody>
-        </table>
+                        <th>M</th>
+                        <td>%</td>
+                        <th>F</th>
+                        <td>%</td>
+                        <th>T</th>
+
+
+                        <th>M</th>
+                        <td>%</td>
+                        <th>F</th>
+                        <td>%</td>
+                        <th>T</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>{{ $estatistica_tabela['escala']['thirst']['M'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['thirst']['Percent_M'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['thirst']['F'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['thirst']['Percent_F'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['thirst']['T'] }}</td>
+
+
+                        <td>{{ $estatistica_tabela['escala']['fourth']['M'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['fourth']['Percent_M'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['fourth']['F'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['fourth']['Percent_F'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['fourth']['T'] }}</td>
+
+
+                        <td>{{ $estatistica_tabela['escala']['fiveth']['M'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['fiveth']['Percent_M'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['fiveth']['F'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['fiveth']['Percent_F'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['fiveth']['T'] }}</td>
+
+
+                        <td>{{ $estatistica_tabela['escala']['sixth']['M'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['sixth']['Percent_M'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['sixth']['F'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['sixth']['Percent_F'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['sixth']['T'] }}</td>
+
+
+
+                        <td>{{ $estatistica_tabela['total']['aprovados_masculino'] }}</td>
+                        <td>{{ $estatistica_tabela['total']['aprovados'] != 0 ? (int) round(($estatistica_tabela['total']['aprovados_masculino'] / $estatistica_tabela['total']['aprovados']) * 100, 0) : 0 }}
+                            %</td>
+                        <td>{{ $estatistica_tabela['total']['aprovados_femenino'] }}</td>
+
+                        <td>{{ $estatistica_tabela['total']['aprovados'] != 0 ? (int) round(($estatistica_tabela['total']['aprovados_femenino'] / $estatistica_tabela['total']['aprovados']) * 100, 0) : 0 }}
+                            %</td>
+                        <td>{{ $estatistica_tabela['total']['aprovados'] }}</td>
+
+
+
+                    </tr>
+
+
+                </tbody>
+            </table>
+
+            <table cellspacing="0" id="tabela-reprovados" class="table_pauta_estatistica table-hover dark">
+                <thead>
+                    <tr>
+
+                        <th colspan="15">REPROVADOS</th>
+
+                    </tr>
+                    <tr>
+
+                        <th colspan="5">( 0-6 )</th>
+                        <th colspan="5">( 7-9 )</th>
+                        <th colspan="5">TOTAL <as style="font-size: 11px;"> REPROVADOS</as></th>
+
+
+
+                    </tr>
+                    <tr>
+
+
+
+                        <th>M</th>
+                        <th>%</th>
+                        <th>F</th>
+                        <th>%</th>
+                        <th>T</th>
+
+                        <th>M</th>
+                        <th>%</th>
+                        <th>F</th>
+                        <th>%</th>
+                        <th>T</th>
+
+                        <th>M</th>
+                        <th>%</th>
+                        <th>F</th>
+                        <th>%</th>
+                        <th>T</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>{{ $estatistica_tabela['escala']['first']['M'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['first']['Percent_M'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['first']['F'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['first']['Percent_F'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['first']['T'] }}</td>
+
+
+                        <td>{{ $estatistica_tabela['escala']['second']['M'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['second']['Percent_M'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['second']['F'] }}</td>
+                        <td>{{ $estatistica_tabela['escala']['second']['Percent_F'] }}%</td>
+                        <td>{{ $estatistica_tabela['escala']['second']['T'] }}</td>
+
+                        <td>{{ $estatistica_tabela['total']['reprovados_masculino'] }}</td>
+                        <td>{{ $estatistica_tabela['total']['reprovados'] != 0 ? (int) round(($estatistica_tabela['total']['reprovados_masculino'] / $estatistica_tabela['total']['reprovados']) * 100, 0) : 0 }}
+                            %</td>
+                        <td>{{ $estatistica_tabela['total']['reprovados_femenino'] }}</td>
+
+                        <td>{{ $estatistica_tabela['total']['reprovados'] != 0 ? (int) round(($estatistica_tabela['total']['reprovados_femenino'] / $estatistica_tabela['total']['reprovados']) * 100, 0) : 0 }}
+                            %</td>
+                        <td>{{ $estatistica_tabela['total']['reprovados'] }}</td>
+
+                    </tr>
+
+
+                </tbody>
+            </table>
+
+            <table cellspacing="0" id="tabela-total" class="table_pauta_estatistica table-hover dark">
+                <thead>
+                    <tr>
+                        <th colspan="5">TOTAL <as style="font-size: 11px;">AVALIADOS</as></th>
+                    </tr>
+                    <tr>
+                        <th colspan="5" style="color: transparent; background-color: white!important"> . </th>
+                    </tr>
+                    <tr>
+                        <th>M</th>
+                        <th>%</th>
+                        <th>F</th>
+                        <th>%</th>
+                        <th>T</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>{{ $H = $estatistica_tabela['total']['aprovados_masculino'] + $estatistica_tabela['total']['reprovados_masculino'] }}
+                        </td>
+                        <td>{{ $estatistica_tabela['total']['total'] != 0 ? (int) round(($H / $estatistica_tabela['total']['total']) * 100, 0) : 0 }}%
+                        </td>
+                        <td>{{ $F = $estatistica_tabela['total']['aprovados_femenino'] + $estatistica_tabela['total']['reprovados_femenino'] }}
+                        </td>
+                        <td>{{ $estatistica_tabela['total']['total'] != 0 ? (int) round(($F / $estatistica_tabela['total']['total']) * 100, 0) : 0 }}%
+                        </td>
+                        <td>{{ $estatistica_tabela['total']['total'] }}</td>
+                    </tr>
+
+
+                </tbody>
+            </table>
         @endif
 
         <br>
