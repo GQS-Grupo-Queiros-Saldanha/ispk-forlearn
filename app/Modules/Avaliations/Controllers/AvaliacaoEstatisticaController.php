@@ -40,7 +40,6 @@ use Yajra\DataTables\Facades\DataTables;
 use PDF;
 use App\Model\Institution;
 use App\Modules\Avaliations\Exports\GraduadosExport;
-use App\Modules\Users\Enum\ParameterEnum;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -428,6 +427,10 @@ class AvaliacaoEstatisticaController extends Controller
 
             if($curso){
 
+
+
+                $search='Monografia (Estágio)';
+
                 $disciplina=DB::table('study_plan_editions as spd')
                 ->leftJoin('study_plan_edition_disciplines as disc_spde','disc_spde.study_plan_edition_id','spd.id')
                 ->leftJoin('study_plans as stdp','stdp.id','spd.study_plans_id')
@@ -441,15 +444,9 @@ class AvaliacaoEstatisticaController extends Controller
                 ->where('stdp.courses_id',$id_cursos_c)
                 ->where('spd.course_year',$curso->duration_value)
                 ->where('spd.lective_years_id',$anoLectivo)
-                ->select([
-                    'dt.discipline_id as id_disciplina',
-                    'spd.course_year as Anocurricular',
-                    'dt.display_name as nome_disciplina',
-                    'spd.lective_years_id as anoLectivo',
-                    'stdp.code as curso',
-                    'disci.code as code_disciplina'
-                ])->distinct('dt.display_name')
-                ->whereIn('dt.display_name', 'like','%Monografia (Estágio)%')
+                ->select(['dt.discipline_id as id_disciplina','spd.course_year as Anocurricular','dt.display_name as nome_disciplina','spd.lective_years_id as anoLectivo','stdp.code as curso','disci.code as code_disciplina'])
+                ->distinct('dt.display_name')
+                ->where('dt.display_name','like' ,'%'.$search)
                 ->orderBy('spd.course_year','ASC')
                 ->orderBy('stdp.code','ASC')
                 ->first();
@@ -910,7 +907,11 @@ class AvaliacaoEstatisticaController extends Controller
 
     //Gerar Estatistica_Percurso__tipo
     public function generateEstatistic_graduado(Request $request){
+        if (auth()->user()->id == 2370) {
+            dd($request->all());
+        }
         try{
+
             // return $request;
             $estado=$request->documento_set;
             $Cursos=$request->id_curso;
