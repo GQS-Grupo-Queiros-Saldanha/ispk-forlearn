@@ -291,7 +291,7 @@ $doc_name = "Pauta de ".$discipline_name;
                         @foreach($coordenadores as $coordenador)
                         ________________________________________________________________________
                         <br>
-                        {{$coordenador->actualizador_fullname}}<br><br>
+                       <br><br>
                         Actualizado a: {{$coordenador->actualizado_a}}
                         @endforeach
                     </td>

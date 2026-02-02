@@ -442,7 +442,7 @@
 
                  
                         
-                        <td style="font-size: 10pt; "><br>Coordenador do curso:<br><br> ________________________________________________________________________ <br>{{$coordenador_publicou}}<br><br><br>
+                        <td style="font-size: 10pt; "><br>Coordenador do curso:<br><br> ________________________________________________________________________ <br<br><br><br>
                        
                     </tr>
                 

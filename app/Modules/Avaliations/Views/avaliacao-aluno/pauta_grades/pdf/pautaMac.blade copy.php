@@ -350,14 +350,14 @@
                     <td style="font-size: 10pt; ">Docente(s):<br><br>
                     
                       @foreach($utilizadores as $criador)
-                      @php
-                      $prof = $criador->criado_por;
-                      @endphp
-                      ________________________________________________________________________
-                      <br>
-                     {{$criador->criador_fullname}} - ({{$criador->metricas=="Neen"?"Exame":$criador->metricas}})<br><br>
-                     Criado a: {{$criador->criado_a}}
-                      @endforeach
+                        @php
+                        $prof = $criador->criado_por;
+                        @endphp
+                        ________________________________________________________________________
+                        <br>
+                        {{$criador->criador_fullname}} - ({{$criador->metricas=="Neen"?"Exame":$criador->metricas}})<br><br>
+                        Criado a: {{$criador->criado_a}}
+                    @endforeach
                     </td> 
 
                     @php 
@@ -374,10 +374,11 @@
                     
                       @foreach($coordenadores as $coordenador)
                       ________________________________________________________________________
-                      <br>
-                     {{$coordenador->actualizador_fullname}}<br><br>
-                     Actualizado a: {{$coordenador->actualizado_a}}
-                      @endforeach
+                    <br>
+                        {{$coordenador->actualizador_fullname}}
+                    <br><br>
+                        Actualizado a: {{$coordenador->actualizado_a}}
+                        @endforeach
                     </td> 
                  @endif
                    
