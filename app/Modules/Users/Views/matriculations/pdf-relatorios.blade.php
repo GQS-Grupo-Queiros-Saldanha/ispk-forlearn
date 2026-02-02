@@ -708,6 +708,7 @@
                   {{$sub_t1_geral + $sub_t2_geral + $sub_t3_geral + $sub_t4_geral + $sub_t5_geral}}
                   </td>
                 </tr>
+
                 <tr>
                   <td class="bg-white"></td>
                 </tr>
@@ -799,7 +800,15 @@
                   <td class="bg-white"></td>
                 </tr>
                 <tr class="last-line">
+                  for ($x = 1; $x <= 5; $x++)
+                  {
                   <td class="bg-white f1 m-4" colspan="2"><b>M </b></td>
+                  <td class="bg-white f1 m-4" colspan="2"><b>T </b></td>
+                  <td class="bg-white f1 m-4" colspan="2"><b>N </b></td>  
+                  }
+                  
+                </tr>
+                <tr class="last-line">
                   <td class="text-center bg3 f3 font-weight-bold" colspan="4">{{ $total_turno_manha_1_global }}</td>
                   <td class="text-center bg3 f3 font-weight-bold" colspan="4">{{ $total_turno_manha_2_global }}</td>
                   <td class="text-center bg3 f3 font-weight-bold" colspan="4">{{ $total_turno_manha_3_global }}</td>
@@ -847,6 +856,7 @@
                   <td class="text-center bg-admitidos f3 font-weight-bold" colspan="4">{{ $p_turno_5 }}%</td>
                   <td class="text-center bg-admitidos f3 font-weight-bold strange">{{ $p_turno_total }}%</td>
                 </tr>
+
               </table>
             </div>
             <br>
