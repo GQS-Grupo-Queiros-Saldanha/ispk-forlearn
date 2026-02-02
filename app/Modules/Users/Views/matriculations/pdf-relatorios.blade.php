@@ -851,86 +851,9 @@
                 </tr>-->
 
               </table>
-              <table style="width:100%">
-                <tr>
-                  <th colspan="3"></th>
-                  <th colspan="3">1º Ano</th>
-                  <th colspan="3">2º Ano</th>
-                  <th colspan="3">3º Ano</th>
-                  <th colspan="3">4º Ano</th>
-                  <th colspan="3">5º Ano</th>
-                  <th colspan="3">Total</th>
-                </tr>
-                <tr>
-                <td></td>
-                  <td></td>
-                  <td></td>
-                  
-                  <td>M</td>
-                  <td>T</td>
-                  <td>N</td>
-                  
-                  <td>M</td>
-                  <td>T</td>
-                  <td>N</td>
-                  
-                  <td>M</td>
-                  <td>T</td>
-                  <td>N</td>
-                  
-                  <td>M</td>
-                  <td>T</td>
-                  <td>N</td>
-                  
-                  <td>M</td>
-                  <td>T</td>
-                  <td>N</td>
-                  
-                  <td>M</td>
-                  <td>T</td>
-                  <td>N</td>
-                  
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  
-                  <td>44</td>
-                  <td>35</td>
-                  <td>8</td>
-                  
-                  <td>30</td>
-                  <td>15</td>
-                  <td>8</td>
-                  
-                  <td>40</td>
-                  <td></td>
-                  <td></td>
-                  
-                  <td>28</td>
-                  <td></td>
-                  <td></td>
-                  
-                  <td>31</td>
-                  <td></td>
-                  <td></td>
-                  
-                  <td>173</td>
-                  <td>50</td>
-                  <td>16</td>
-                </tr>
-                <tr>
-                  <th colspan="3">Total geral</th>
-                  <th colspan="3">278</th>
-                  <th colspan="3">173</th>
-                  <th colspan="3">98</th>
-                  <th colspan="3">103</th>
-                  <th colspan="3">111</th>
-                  <th colspan="3">763</th>
-                </tr>
-              </table>
+             <!-- Tabela para dados totais -->
               
+
             </div>
             <br>
 
