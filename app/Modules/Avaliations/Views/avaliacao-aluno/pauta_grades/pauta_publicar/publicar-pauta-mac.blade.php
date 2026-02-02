@@ -575,23 +575,19 @@
                              
                        
                                  //   calculo_mac = macCalculate(data['data']['avaliacao_config'],pf1,pf1_percentagem,pf2,pf2_percentagem,oa,oa_percentagem);
-                                    calculo_mac = Math.round(  (pf1 * pf1_percentagem) + (pf2 * pf2_percentagem) + (oa * oa_percentagem) );
-                                    console.debug("MAC: ",calculo_mac, pf1_percentagem, pf2_percentagem, oa_percentagem);
+                                    calculo_mac = Math.ceil(  (pf1 * pf1_percentagem) + (pf2 * pf2_percentagem) + (oa * oa_percentagem) );
+                                    //console.debug("MAC: ",calculo_mac, pf1_percentagem, pf2_percentagem, oa_percentagem);
                                     tabelatr+="<td style='text-align: right'>"+calculo_mac+"</td>"
                                 
-                                
-
                                         if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].mac_nota_dispensa) {
                                 			tabelatr+="<td class='c_final' style='text-align: center'>"+'Aprovado(a)'+"</td>"
                                         }
                                         else {
-                                          
                                                 if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].exame_nota_inicial && Math.ceil(calculo_mac) <= data['data']['avaliacao_config'].exame_nota_final) {
                                                     tabelatr+="<td class='c_final' style='text-align: center'>"+'Exame'+"</td>"
                                                 }else {
                                     			    tabelatr+="<td class='c_final' style='text-align: center'>"+'Recurso'+"</td>"
                                     		    }
-                                          
                                         }
                                     
                                 
