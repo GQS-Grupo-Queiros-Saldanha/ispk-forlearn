@@ -581,12 +581,12 @@
                                 
                                 
 
-                                        if (calculo_mac >= data['data']['avaliacao_config'].mac_nota_dispensa) {
+                                        if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].mac_nota_dispensa) {
                                 			tabelatr+="<td class='c_final' style='text-align: center'>"+'Aprovado(a)'+"</td>"
                                         }
                                         else {
                                           
-                                                if (calculo_mac>= data['data']['avaliacao_config'].exame_nota_inicial && calculo_mac <= data['data']['avaliacao_config'].exame_nota_final) {
+                                                if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].exame_nota_inicial && Math.ceil(calculo_mac) <= data['data']['avaliacao_config'].exame_nota_final) {
                                                     tabelatr+="<td class='c_final' style='text-align: center'>"+'Exame'+"</td>"
                                                 }else {
                                     			    tabelatr+="<td class='c_final' style='text-align: center'>"+'Recurso'+"</td>"
@@ -597,7 +597,7 @@
                                 
                              
                                     // LISTA DE ALUNOS E SUA MÉDIAS PARA SEREM TRANÇADOS
-                                    if (calculo_mac >= data['data']['avaliacao_config'].mac_nota_dispensa){
+                                    if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].mac_nota_dispensa){
                                         lista_alunos_notas.push([item_exam.id_mat, item_exam.user_id, calculo_mac, "@"])
                                         alunos_aprovados += 1;
 
@@ -609,7 +609,7 @@
                                         }
                                     }
                                     else {
-                                        if (calculo_mac >= data['data']['avaliacao_config'].exame_nota_inicial && calculo_mac <= data['data']['avaliacao_config'].exame_nota_final) {
+                                        if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].exame_nota_inicial && Math.ceil(calculo_mac) <= data['data']['avaliacao_config'].exame_nota_final) {
                                             lista_alunos_notas.push([item_exam.id_mat, item_exam.user_id, calculo_mac, item_exam.sexo, "@"])
                                             alunos_exame += 1;
                                         }

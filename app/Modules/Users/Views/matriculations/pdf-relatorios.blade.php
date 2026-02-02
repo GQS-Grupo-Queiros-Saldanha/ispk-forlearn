@@ -1194,7 +1194,7 @@
                 <tr>
                     <td class="bg-white"></td>
                 </tr>
-            </table>
+              </table>
             <!-- Fim da tabela para dados totais -->
             </div>
             <br>
