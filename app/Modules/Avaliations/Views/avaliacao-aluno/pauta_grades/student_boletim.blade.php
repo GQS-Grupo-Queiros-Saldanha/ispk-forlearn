@@ -264,12 +264,12 @@
                             dados.forEach(function (n) {
                                 if (n.disciplina === disciplina.disciplinas && n.nota !== null) {
                                     var valor = parseFloat(n.nota);
-                                    if (n.metrica === 'PP1') pf1 = pf1 === null ? valor : Math.max(pf1, valor);
-                                    if (n.metrica === 'PP2') pf2 = pf2 === null ? valor : Math.max(pf2, valor);
-                                    if (n.metrica === 'OA') oa = oa === null ? valor : Math.max(oa, valor);
-                                    if (n.metrica === 'Exame Escrito') ex_escrito = ex_escrito === null ? valor : Math.max(ex_escrito, valor);
-                                    if (n.metrica === 'Exame Oral') ex_oral = ex_oral === null ? valor : Math.max(ex_oral, valor);
-                                    if (n.metrica === 'Recurso') nota_recurso = nota_recurso === null ? valor : Math.max(nota_recurso, valor);
+                                    if (n.metrica === 'PP1') pf1 = pf1 === null ? valor : Math.ceil(pf1, valor);
+                                    if (n.metrica === 'PP2') pf2 = pf2 === null ? valor : Math.ceil(pf2, valor);
+                                    if (n.metrica === 'OA') oa = oa === null ? valor : Math.ceil(oa, valor);
+                                    if (n.metrica === 'Exame Escrito') ex_escrito = ex_escrito === null ? valor : Math.ceil(ex_escrito, valor);
+                                    if (n.metrica === 'Exame Oral') ex_oral = ex_oral === null ? valor : Math.ceil(ex_oral, valor);
+                                    if (n.metrica === 'Recurso') nota_recurso = nota_recurso === null ? valor : Math.ceil(nota_recurso, valor);
                                 }
                             });
 
@@ -281,26 +281,26 @@
                             // Classificação MAC
                             var cor_media = '', classificacao = '-';
                             if (media !== null) {
-                                if (media >= 15.3) { classificacao=''; cor_media=''; }
-                                else if (media >= 7 && media < 15.3) { classificacao=''; cor_media=''; }
+                                if (Math.ceil(media) >= 16) { classificacao=''; cor_media=''; }
+                                else if (Math.ceil(media) >= 7 && Math.ceil(media) < 16) { classificacao=''; cor_media=''; }
                                 else { classificacao=''; cor_media=''; }
                             }
 
                             // Exame
                             var exame_total = (ex_escrito !== null || ex_oral !== null) ? (ex_escrito||0)+(ex_oral||0) : null;
-                            var media_exame = (media!==null && exame_total!==null) ? +((media*0.7)+(exame_total*0.3)).toFixed(2) : null;
+                            var media_exame = (media!==null && exame_total!==null) ? +((Math.ceil(media)*0.7)+(exame_total*0.3)).toFixed(2) : null;
 
                             // Média final
                             var media_final = null;
                             if (media !== null && nota_recurso!==null || media !== null && media_exame !==null) {
-                                if (media < 7 && nota_recurso !== null) media_final = nota_recurso;
+                                if (Math.ceil(media) < 10 && nota_recurso !== null) media_final = nota_recurso;
                                 else if (media_exame !== null) media_final = media_exame;
-                                else media_final = media;
+                                else media_final = Math.ceil(media);
                             }
 
                             var estado_final = '-', cor_final = '';
                             if (media_final !== null) {
-                                if (media_final >= 15.3) { estado_final=''; cor_final=''; }
+                                if (Math.ceil(media_final) >= 10) { estado_final=''; cor_final=''; }
                                 else { estado_final=''; cor_final=''; }
                             }
 
