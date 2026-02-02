@@ -169,7 +169,7 @@ class estatisticaMatriculationController extends Controller
                     ->whereNull('articles.deleted_at');
             })
             ->whereIn('art_requests.article_id', $emolumento_confirma_prematricula)// dados 348, 356, 399
-            ->where('art_requests.status', '=', 'total')
+            //->where('art_requests.status', '=', 'total')
             ->where('matriculations.lective_year', $lectiveYears->id) //11
             ->whereNull('matriculations.deleted_at')
             //->where('mc.class_id',69) //filtro por turma apenas para debug
