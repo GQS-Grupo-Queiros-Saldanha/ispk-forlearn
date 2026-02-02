@@ -799,16 +799,9 @@
                 <tr>
                   <td class="bg-white"></td>
                 </tr>
+                <!--
                 <tr class="last-line">
-                  for ($x = 1; $x <= 5; $x++)
-                  {
                   <td class="bg-white f1 m-4" colspan="2"><b>M </b></td>
-                  <td class="bg-white f1 m-4" colspan="2"><b>T </b></td>
-                  <td class="bg-white f1 m-4" colspan="2"><b>N </b></td>  
-                  }
-                  
-                </tr>
-                <tr class="last-line">
                   <td class="text-center bg3 f3 font-weight-bold" colspan="4">{{ $total_turno_manha_1_global }}</td>
                   <td class="text-center bg3 f3 font-weight-bold" colspan="4">{{ $total_turno_manha_2_global }}</td>
                   <td class="text-center bg3 f3 font-weight-bold" colspan="4">{{ $total_turno_manha_3_global }}</td>
@@ -855,9 +848,89 @@
                   <td class="text-center bg-admitidos f3 font-weight-bold" colspan="4">{{ $p_turno_4 }}%</td>
                   <td class="text-center bg-admitidos f3 font-weight-bold" colspan="4">{{ $p_turno_5 }}%</td>
                   <td class="text-center bg-admitidos f3 font-weight-bold strange">{{ $p_turno_total }}%</td>
-                </tr>
+                </tr>-->
 
               </table>
+              <table style="width:100%">
+                <tr>
+                  <th colspan="3"></th>
+                  <th colspan="3">1º Ano</th>
+                  <th colspan="3">2º Ano</th>
+                  <th colspan="3">3º Ano</th>
+                  <th colspan="3">4º Ano</th>
+                  <th colspan="3">5º Ano</th>
+                  <th colspan="3">Total</th>
+                </tr>
+                <tr>
+                <td></td>
+                  <td></td>
+                  <td></td>
+                  
+                  <td>M</td>
+                  <td>T</td>
+                  <td>N</td>
+                  
+                  <td>M</td>
+                  <td>T</td>
+                  <td>N</td>
+                  
+                  <td>M</td>
+                  <td>T</td>
+                  <td>N</td>
+                  
+                  <td>M</td>
+                  <td>T</td>
+                  <td>N</td>
+                  
+                  <td>M</td>
+                  <td>T</td>
+                  <td>N</td>
+                  
+                  <td>M</td>
+                  <td>T</td>
+                  <td>N</td>
+                  
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  
+                  <td>44</td>
+                  <td>35</td>
+                  <td>8</td>
+                  
+                  <td>30</td>
+                  <td>15</td>
+                  <td>8</td>
+                  
+                  <td>40</td>
+                  <td></td>
+                  <td></td>
+                  
+                  <td>28</td>
+                  <td></td>
+                  <td></td>
+                  
+                  <td>31</td>
+                  <td></td>
+                  <td></td>
+                  
+                  <td>173</td>
+                  <td>50</td>
+                  <td>16</td>
+                </tr>
+                <tr>
+                  <th colspan="3">Total geral</th>
+                  <th colspan="3">278</th>
+                  <th colspan="3">173</th>
+                  <th colspan="3">98</th>
+                  <th colspan="3">103</th>
+                  <th colspan="3">111</th>
+                  <th colspan="3">763</th>
+                </tr>
+              </table>
+              
             </div>
             <br>
 
