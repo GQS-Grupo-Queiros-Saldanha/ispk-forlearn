@@ -481,7 +481,7 @@
                                                 neen_nome = "Recurso";
                                             } else {
                                                 neen_nome = "Recurso";
-                                                neen = Math.round(item_avaliacao.nota_anluno);
+                                                neen = Math.ceil(item_avaliacao.nota_anluno);
                                             }
                                         }
                                     }

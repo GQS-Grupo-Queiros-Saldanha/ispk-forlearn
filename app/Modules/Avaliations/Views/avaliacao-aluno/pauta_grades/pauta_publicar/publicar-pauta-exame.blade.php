@@ -486,11 +486,11 @@
                                 if (neen == -1) {
                                     exame_pauta = parseInt(0);
                                 } else {
-                                   exame_pauta =parseInt(Math.round(neen));
+                                   exame_pauta =parseInt(Math.ceil(neen));
                                 }
 
                                 //Validação da nota do NEEN                                   
-                                if (Math.round(exame_pauta) >= data['data']['avaliacao_config'].exame_nota) {
+                                if (Math.ceil(exame_pauta) >= data['data']['avaliacao_config'].exame_nota) {
                                   
                                     if (neen == -1) {
                                         tabelatr += "<td style='text-align: right'> F </td>"
@@ -512,7 +512,7 @@
                                 }
 
                                 // LISTA DE ALUNOS E SUA MÉDIAS PARA SEREM TRANÇADOS
-                                if (Math.round(exame_pauta) >=data['data']['avaliacao_config'].exame_nota) {
+                                if (Math.ceil(exame_pauta) >=data['data']['avaliacao_config'].exame_nota) {
                                     lista_alunos_notas.push([item_exam.id_mat, item_exam.user_id, exame_pauta, item_exam.sexo, "@"])
                                     alunos_aprovados += 1;
 
@@ -524,7 +524,7 @@
                                     }
                                 } else {
                                     lista_alunos_notas.push([item_exam.id_mat, item_exam
-                                        .user_id, Math.round(exame_pauta), item_exam
+                                        .user_id, Math.ceil(exame_pauta), item_exam
                                         .sexo, "@"
                                     ])
                                     alunos_recurso += 1;

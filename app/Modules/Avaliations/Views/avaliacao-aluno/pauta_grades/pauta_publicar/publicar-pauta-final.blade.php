@@ -529,7 +529,7 @@
                                                 neen_nome = "Neen";
                                             } else {
                                                 neen_nome = "Neen";
-                                                neen = Math.round(item_avaliacao.nota_anluno);
+                                                neen = Math.ceil(item_avaliacao.nota_anluno);
                                                 
                                             }
                                         }
@@ -543,7 +543,7 @@
                                                 oral_percentagem = 0;
                                             }else{
                                                 oral_percentagem = item_avaliacao.percentagem_metrica / 100;
-                                                oral_nota = Math.round(item_avaliacao.nota_anluno);
+                                                oral_nota = Math.ceil(item_avaliacao.nota_anluno);
                                                 oral_name = oral_nota;
                                             }
                                         }
@@ -581,15 +581,15 @@
                                 }
                                 
                                // calculo_mac = macCalculate(data['data']['avaliacao_config'],pf1,pf1_percentagem,pf2,pf2_percentagem,oa,oa_percentagem);
-                                calculo_mac = parseInt(Math.round(  (pf1 * pf1_percentagem) + (pf2 * pf2_percentagem) + (oa * oa_percentagem) ) );
+                                calculo_mac = parseInt(Math.ceil(  (pf1 * pf1_percentagem) + (pf2 * pf2_percentagem) + (oa * oa_percentagem) ) );
                           
 
                                 //Verifica se a nota do NEEN é superior a -1
                                 if (neen == -1) {
-                                       exame_pauta = parseInt(Math.round((parseFloat(calculo_mac) * mac_percentagem) + (parseFloat(0) * neen_percentagem)));
+                                       exame_pauta = parseInt(Math.ceil((parseFloat(calculo_mac) * mac_percentagem) + (parseFloat(0) * neen_percentagem)));
        
                                    } else {
-                                        exame_pauta = parseInt(Math.round((parseFloat(calculo_mac) * mac_percentagem) + (parseFloat(neen) * neen_percentagem)));
+                                        exame_pauta = parseInt(Math.ceil((parseFloat(calculo_mac) * mac_percentagem) + (parseFloat(neen) * neen_percentagem)));
                                    }
                                 
                                 if(calculo_mac >= data['data']['avaliacao_config'].mac_nota_dispensa){

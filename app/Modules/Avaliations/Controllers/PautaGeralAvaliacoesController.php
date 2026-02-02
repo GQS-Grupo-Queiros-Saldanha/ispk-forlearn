@@ -2257,10 +2257,6 @@ class PautaGeralAvaliacoesController extends Controller
             ->get();
     }
 
-
-
-
-    
     public function getStudentGradesExameEspecial($id_anoLectivo, $id_curso, $Turma_id_Select, $id_disciplina, $pub_print){
 
         // $propinas = $this->getMatriculations_paymentsAlectivo($id_anoLectivo);
@@ -2464,9 +2460,8 @@ class PautaGeralAvaliacoesController extends Controller
     }
 
 
- // PAUTA DE RECURSO
- public function getStudentGradesExameExtraordinario($id_anoLectivo, $id_curso, $Turma_id_Select, $id_disciplina){
-
+    // PAUTA DE RECURSO
+    public function getStudentGradesExameExtraordinario($id_anoLectivo, $id_curso, $Turma_id_Select, $id_disciplina){
      // $propinas = $this->getMatriculations_paymentsAlectivo($id_anoLectivo);
      // return 1;
 
@@ -2658,7 +2653,7 @@ class PautaGeralAvaliacoesController extends Controller
          Log::error($e);
          return \Request::ajax() ? response()->json($e->getMessage(), 500) : abort(500);
      }
- }
+     }
 
 
 
