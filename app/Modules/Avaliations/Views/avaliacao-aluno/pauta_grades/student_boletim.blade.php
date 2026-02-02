@@ -296,6 +296,8 @@
                                 if (Math.ceil(media) < 10 && nota_recurso !== null) media_final = nota_recurso;
                                 else if (media_exame !== null) media_final = media_exame;
                                 else media_final = Math.ceil(media);
+                            }else if(media !== null && Math.ceil(media) >=10){
+                                media_final = Math.ceil(media);
                             }
 
                             var estado_final = '-', cor_final = '';

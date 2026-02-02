@@ -100,22 +100,22 @@ use App\Modules\Cms\Controllers\mainController;
                                         $valor = floatval($nota->nota);
 
                                         if ($nota->metrica === 'PP1')
-                                            $pf1 = $pf1 === null ? $valor : max($pf1, $valor);
+                                            $pf1 = $pf1 === null ? $valor : ceil($pf1, $valor);
 
                                         if ($nota->metrica === 'PP2')
-                                            $pf2 = $pf2 === null ? $valor : max($pf2, $valor);
+                                            $pf2 = $pf2 === null ? $valor : ceil($pf2, $valor);
 
                                         if ($nota->metrica === 'OA')
-                                            $oa = $oa === null ? $valor : max($oa, $valor);
+                                            $oa = $oa === null ? $valor : ceil($oa, $valor);
 
                                         if ($nota->metrica === 'Exame Escrito')
-                                            $ex_escrito = $ex_escrito === null ? $valor : max($ex_escrito, $valor);
+                                            $ex_escrito = $ex_escrito === null ? $valor : ceil($ex_escrito, $valor);
 
                                         if ($nota->metrica === 'Exame Oral')
-                                            $ex_oral = $ex_oral === null ? $valor : max($ex_oral, $valor);
+                                            $ex_oral = $ex_oral === null ? $valor : ceil($ex_oral, $valor);
 
                                         if ($nota->metrica === 'Recurso')
-                                            $nota_recurso = $nota_recurso === null ? $valor : max($nota_recurso, $valor);
+                                            $nota_recurso = $nota_recurso === null ? $valor : ceil($nota_recurso, $valor);
                                     }
                                 }
 
@@ -142,10 +142,10 @@ use App\Modules\Cms\Controllers\mainController;
                                 $classificacao = '-';
 
                                 if ($media !== null) {
-                                    if ($media >= 15.3) {
+                                    if (ceil($media) >= 16) {
                                         $classificacao = '';
                                         $cor_media = '';
-                                    } elseif ($media < 16 and $media >= 7.0) {
+                                    } elseif (ceil($media) < 16 and $media >= 7) {
                                         $classificacao = '';
                                         $cor_media = '';
                                     } else {
@@ -169,17 +169,19 @@ use App\Modules\Cms\Controllers\mainController;
 
                                 /*
                                 Média final
-                                - Recurso só se média < 7
+                                - Recurso só se média < 10
                                 */
                                 $media_final = null;
                                 if ($media !== null && $nota_recurso !== null or $media !== null && $media_exame !== null) {
-                                    if ($media < 7 && $nota_recurso !== null) {
+                                    if (ceil($media) < 10 && $nota_recurso !== null) {
                                         $media_final = $nota_recurso;
                                     } elseif ($media_exame !== null) {
-                                        $media_final = $media_exame;
+                                        $media_final = ceil($media_exame);
                                     } else {
-                                        $media_final = $media;
+                                        $media_final = ceil($media);
                                     }
+                                }elseif($media !== null && ceil($media) >=10){
+                                    $media_final = ceil($media);
                                 }
 
                                 /*
@@ -189,7 +191,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 $cor_final = '';
 
                                 if ($media_final !== null) {
-                                    if ($media_final >= 15.3) {
+                                    if (ceil($media_final) >= 10) {
                                         $estado_final = '';
                                         $cor_final = '';
                                     } else {
@@ -214,7 +216,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 <td class="text-center">{{ $ex_escrito !== null ? ceil($ex_escrito) : '-' }}</td>
                                 <td class="text-center">{{ $ex_oral !== null ? ceil($ex_oral) : '-' }}</td>
 
-                                <td class="text-center">{{ $media_exame !== null ? $media_exame : '-' }}</td>
+                                <td class="text-center">{{ $media_exame !== null ? ceil($media_exame) : '-' }}</td>
                                 <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
                                 <td colspan="2" class="text-center">{{ $nota_recurso !== null ? ceil($nota_recurso) : '-' }}</td>

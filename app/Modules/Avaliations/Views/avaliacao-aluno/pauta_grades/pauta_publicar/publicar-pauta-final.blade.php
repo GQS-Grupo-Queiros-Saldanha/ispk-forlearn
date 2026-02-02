@@ -394,7 +394,7 @@
                         hide_button = true;
                     }
                     else if(data['data']['estado_pauta']==0 && data['data']['estado_tipo'] == 30 && whoIs == 'teacher'){
-                        hide_button = true;
+                        hide_button = false;
                     }
                     else {
                         $("#acaoID").text("Publicar");
@@ -469,9 +469,9 @@
 
                                 // HABILITA O BOTÃO DE SALVAR                                              
                                 if(hide_button)
-                                document.getElementById('warning').style.visibility = 'visible';
-                               else
-                                document.getElementById('togglee').style.visibility = 'visible';
+                                    document.getElementById('warning').style.visibility = 'visible';
+                                else
+                                    document.getElementById('togglee').style.visibility = 'visible';
 
                                 $.each(item, function(index_avaliacao, item_avaliacao) {
                                     // Estrura de repetição que pega as metricas PF1.
