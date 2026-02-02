@@ -576,7 +576,7 @@
                        
                                  //   calculo_mac = macCalculate(data['data']['avaliacao_config'],pf1,pf1_percentagem,pf2,pf2_percentagem,oa,oa_percentagem);
                                     calculo_mac = Math.round(  (pf1 * pf1_percentagem) + (pf2 * pf2_percentagem) + (oa * oa_percentagem) );
-                                    cosnole.debug("MAC: ",calculo_mac, pf1_percentagem, pf2_percentagem, oa_percentagem);
+                                    console.debug("MAC: ",calculo_mac, pf1_percentagem, pf2_percentagem, oa_percentagem);
                                     tabelatr+="<td style='text-align: right'>"+calculo_mac+"</td>"
                                 
                                 
