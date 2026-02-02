@@ -323,7 +323,7 @@
                 var vetorDisciplina = Disciplina_Select.val();
                 var vetor = /\s*,\s*/;
                 var id_disciplinaVetor  = vetorDisciplina.split(vetor);                                   
-                console.log(id_disciplinaVetor,$('#Disciplina_id_Select').val());
+                //console.log(id_disciplinaVetor,$('#Disciplina_id_Select').val());
                 $.ajax({
                     url: "/avaliations/getStudentNotasPautaFinal/"+id_anoLectivo.val()+"/"+id_curso[0]+"/"+Turma_id_Select.val()+"/"+id_disciplinaVetor[0]+"/"+40+"/"+4,
                     type: "GET",
