@@ -860,7 +860,7 @@
                 
                 <tr>
                     <th class="text-center bg1 font-weight-bold f2" rowspan="3">#</th>
-                    <th class="text-center bg1 font-weight-bold f2" rowspan="3">TURNOS</th>
+                    <th class="text-center bg1 font-weight-bold f2" rowspan="3">Dados</th>
                     <th class="text-center bg1 font-weight-bold f2" colspan="20">Ano de frequência</th>
                     <th class="text-center bg1 font-weight-bold f2" rowspan="2">Total<br>Geral</th>
                 </tr>
@@ -937,8 +937,8 @@
                 
                 <!-- Linha para Turno M (Manhã) -->
                 <tr class="f2">
-                    <td class="text-center bg2" rowspan="3" style="width:25px!important">1</td>
-                    <td class="text-left bg2 text-uppercase" rowspan="3">Manhã (M)</td>
+                    <td class="text-center bg2" rowspan="3" style="width:25px!important">#</td>
+                    <td class="text-left bg2 text-uppercase" rowspan="3"></td>
                     
                     @for($ano = 1; $ano <= 5; $ano++)
                         @php
