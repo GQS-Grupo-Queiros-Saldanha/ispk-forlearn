@@ -853,6 +853,182 @@
               </table>
              <!-- Tabela para dados totais -->
             
+            <table class="table_te" style="width:90%;margin-left:60px;margin-top:50px;">
+                <tr class="line">
+                    <td colspan="23" class="text-left text-white bg0 text-uppercase font-weight-bold f1"> DADOS GERAIS TOTAIS DE TODOS OS CURSOS</td>
+                </tr>
+                
+                <tr>
+                    <th class="text-center bg1 font-weight-bold f2" rowspan="3">#</th>
+                    <th class="text-center bg1 font-weight-bold f2" rowspan="3">TURNOS</th>
+                    <th class="text-center bg1 font-weight-bold f2" colspan="20">Ano de frequência</th>
+                    <th class="text-center bg1 font-weight-bold f2" rowspan="2">Total<br>Geral</th>
+                </tr>
+                
+                <tr>
+                    <th class="text-center bg1 font-weight-bold f3 pd" style="" colspan="4">1º</th>
+                    <th class="text-center bg1 font-weight-bold f3 pd" style="" colspan="4">2º</th>
+                    <th class="text-center bg1 font-weight-bold f3 pd" style="" colspan="4">3º</th>
+                    <th class="text-center bg1 font-weight-bold f3 pd" style="" colspan="4">4º</th>
+                    <th class="text-center bg1 font-weight-bold f3 pd" style="" colspan="4">5º</th>
+                </tr>
+                
+                <tr>
+                    <th class="text-center bg1 font-weight-bold f3 w32" style="" colspan="2">Total</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">m</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">f</th>
+                    <th class="text-center bg1 font-weight-bold f3 w32" style="" colspan="2">Total</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">m</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">f</th>
+                    <th class="text-center bg1 font-weight-bold f3 w32" style="" colspan="2">Total</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">m</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">f</th>
+                    <th class="text-center bg1 font-weight-bold f3 w32" style="" colspan="2">Total</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">m</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">f</th>
+                    <th class="text-center bg1 font-weight-bold f3 w32" style="" colspan="2">Total</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">m</th>
+                    <th class="text-center bg1 font-weight-bold f3 w16" style="">f</th>
+                    <th class="text-center bg1 font-weight-bold f3 pd" style="">&nbsp;</th>
+                </tr>
+                
+                @php
+                    // Totais para cada turno por ano
+                    $total_geral_M = 0;
+                    $total_geral_T = 0;
+                    $total_geral_N = 0;
+                    
+                    // Arrays para armazenar totais de gênero por turno e ano
+                    $total_m_por_ano = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+                    $total_f_por_ano = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+                    
+                    // Calcular totais de gênero a partir dos dados existentes
+                    foreach($departamentos as $x => $val) {
+                        foreach($val as $key => $item) {
+                            // Para cada ano, somar masculino e feminino de todos os turnos
+                            for($ano = 1; $ano <= 5; $ano++) {
+                                $r = "r" . $ano;
+                                
+                                // Somar masculino dos três turnos
+                                if(isset($item[$r]['sm']['m'])) {
+                                    $total_m_por_ano[$ano] += $item[$r]['sm']['m'];
+                                }
+                                if(isset($item[$r]['st']['m'])) {
+                                    $total_m_por_ano[$ano] += $item[$r]['st']['m'];
+                                }
+                                if(isset($item[$r]['sn']['m'])) {
+                                    $total_m_por_ano[$ano] += $item[$r]['sn']['m'];
+                                }
+                                
+                                // Somar feminino dos três turnos
+                                if(isset($item[$r]['sm']['f'])) {
+                                    $total_f_por_ano[$ano] += $item[$r]['sm']['f'];
+                                }
+                                if(isset($item[$r]['st']['f'])) {
+                                    $total_f_por_ano[$ano] += $item[$r]['st']['f'];
+                                }
+                                if(isset($item[$r]['sn']['f'])) {
+                                    $total_f_por_ano[$ano] += $item[$r]['sn']['f'];
+                                }
+                            }
+                        }
+                    }
+                @endphp
+                
+                <!-- Linha para Turno M (Manhã) -->
+                <tr class="f2">
+                    <td class="text-center bg2" rowspan="3" style="width:25px!important">1</td>
+                    <td class="text-left bg2 text-uppercase" rowspan="3">Manhã (M)</td>
+                    
+                    @for($ano = 1; $ano <= 5; $ano++)
+                        @php
+                            $total_turno_ano = ${"total_turno_manha_" . $ano . "_global"};
+                            $total_turno_ano = $total_turno_ano != 0 ? $total_turno_ano : '';
+                        @endphp
+                        <td class="text-center bg2 w16 ng">M</td>
+                        <td class="text-center bg6 w16 ng">{{ $total_turno_ano }}</td>
+                        <td class="text-center bg7 w16">-</td>
+                        <td class="text-center bg7 w16">-</td>
+                    @endfor
+                    
+                    <td class="text-center bg3 ng">{{ $total_turno_M_geral }}</td>
+                </tr>
+                
+                <!-- Linha para Turno T (Tarde) -->
+                <tr class="f2">
+                    @for($ano = 1; $ano <= 5; $ano++)
+                        @php
+                            $total_turno_ano = ${"total_turno_tarde_" . $ano . "_global"};
+                            $total_turno_ano = $total_turno_ano != 0 ? $total_turno_ano : '';
+                        @endphp
+                        <td class="text-center bg2 w16 ng">T</td>
+                        <td class="text-center bg6 w16 ng">{{ $total_turno_ano }}</td>
+                        <td class="text-center bg7 w16">-</td>
+                        <td class="text-center bg7 w16">-</td>
+                    @endfor
+                    
+                    <td class="text-center bg3 ng">{{ $total_turno_T_geral }}</td>
+                </tr>
+                
+                <!-- Linha para Turno N (Noite) -->
+                <tr class="f2">
+                    @for($ano = 1; $ano <= 5; $ano++)
+                        @php
+                            $total_turno_ano = ${"total_turno_noite_" . $ano . "_global"};
+                            $total_turno_ano = $total_turno_ano != 0 ? $total_turno_ano : '';
+                        @endphp
+                        <td class="text-center bg2 w16 ng">N</td>
+                        <td class="text-center bg6 w16 ng">{{ $total_turno_ano }}</td>
+                        <td class="text-center bg7 w16">-</td>
+                        <td class="text-center bg7 w16">-</td>
+                    @endfor
+                    
+                    <td class="text-center bg3 ng">{{ $total_turno_N_geral }}</td>
+                </tr>
+                
+                <!-- Linha para Totais de Gênero -->
+                <tr class="last-line font-weight-bold">
+                    <td class="bg-white f4" colspan="2"><b>TOTAL POR GÊNERO</b></td>
+                    
+                    @for($ano = 1; $ano <= 5; $ano++)
+                        @php
+                            $total_ano = $total_m_por_ano[$ano] + $total_f_por_ano[$ano];
+                        @endphp
+                        <td class="text-center bg3 f3" colspan="2">{{ $total_ano }}</td>
+                        <td class="text-center bg7 f3">{{ $total_m_por_ano[$ano] }}</td>
+                        <td class="text-center bg7 f3">{{ $total_f_por_ano[$ano] }}</td>
+                    @endfor
+                    
+                    @php
+                        $total_m_geral = array_sum($total_m_por_ano);
+                        $total_f_geral = array_sum($total_f_por_ano);
+                        $total_geral_genero = $total_m_geral + $total_f_geral;
+                    @endphp
+                    <td class="text-center bg8 f3">{{ $total_geral_genero }}</td>
+                </tr>
+                
+                <!-- Linha para Resumo Final -->
+                <tr class="last-line">
+                    <td class="bg-white f1" colspan="2"><b>RESUMO FINAL</b></td>
+                    
+                    @for($ano = 1; $ano <= 5; $ano++)
+                        @php
+                            $total_turno_manha = ${"total_turno_manha_" . $ano . "_global"};
+                            $total_turno_tarde = ${"total_turno_tarde_" . $ano . "_global"};
+                            $total_turno_noite = ${"total_turno_noite_" . $ano . "_global"};
+                            $total_ano = $total_turno_manha + $total_turno_tarde + $total_turno_noite;
+                            ${"t" . $ano} = $total_ano; // Atualizar as variáveis t1, t2, etc.
+                        @endphp
+                        <td class="text-center bg4 f3 font-weight-bold" colspan="4">{{ $total_ano }}</td>
+                    @endfor
+                    
+                    @php
+                        $total_geral = $t1 + $t2 + $t3 + $t4 + $t5;
+                    @endphp
+                    <td class="text-center bg8 f3 font-weight-bold strange">{{ $total_geral }}</td>
+                </tr>
+            </table>
+            
             <!-- Fim da tabela para dados totais -->
             </div>
             <br>
