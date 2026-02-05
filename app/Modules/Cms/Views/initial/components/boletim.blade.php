@@ -100,22 +100,22 @@ use App\Modules\Cms\Controllers\mainController;
                                         $valor = floatval($nota->nota);
 
                                         if ($nota->metrica === 'PP1')
-                                            $pf1 = $pf1 === null ? $valor : ceil($pf1, $valor);
+                                            $pf1 = $pf1 === null ? $valor : round($pf1, $valor);
 
                                         if ($nota->metrica === 'PP2')
-                                            $pf2 = $pf2 === null ? $valor : ceil($pf2, $valor);
+                                            $pf2 = $pf2 === null ? $valor : round($pf2, $valor);
 
                                         if ($nota->metrica === 'OA')
-                                            $oa = $oa === null ? $valor : ceil($oa, $valor);
+                                            $oa = $oa === null ? $valor : round($oa, $valor);
 
                                         if ($nota->metrica === 'Exame Escrito')
-                                            $ex_escrito = $ex_escrito === null ? $valor : ceil($ex_escrito, $valor);
+                                            $ex_escrito = $ex_escrito === null ? $valor : round($ex_escrito, $valor);
 
                                         if ($nota->metrica === 'Exame Oral')
-                                            $ex_oral = $ex_oral === null ? $valor : ceil($ex_oral, $valor);
+                                            $ex_oral = $ex_oral === null ? $valor : round($ex_oral, $valor);
 
                                         if ($nota->metrica === 'Recurso')
-                                            $nota_recurso = $nota_recurso === null ? $valor : ceil($nota_recurso, $valor);
+                                            $nota_recurso = $nota_recurso === null ? $valor : round($nota_recurso, $valor);
                                     }
                                 }
 
@@ -142,10 +142,10 @@ use App\Modules\Cms\Controllers\mainController;
                                 $classificacao = '-';
 
                                 if ($media !== null) {
-                                    if (ceil($media) >= 16) {
+                                    if (round($media) >= 16) {
                                         $classificacao = '';
                                         $cor_media = '';
-                                    } elseif (ceil($media) < 16 and $media >= 7) {
+                                    } elseif (round($media) < 16 and $media >= 7) {
                                         $classificacao = '';
                                         $cor_media = '';
                                     } else {
@@ -173,15 +173,15 @@ use App\Modules\Cms\Controllers\mainController;
                                 */
                                 $media_final = null;
                                 if ($media !== null && $nota_recurso !== null or $media !== null && $media_exame !== null) {
-                                    if (ceil($media) < 10 && $nota_recurso !== null) {
+                                    if (round($media) < 10 && $nota_recurso !== null) {
                                         $media_final = $nota_recurso;
                                     } elseif ($media_exame !== null) {
-                                        $media_final = ceil($media_exame);
+                                        $media_final = round($media_exame);
                                     } else {
-                                        $media_final = ceil($media);
+                                        $media_final = round($media);
                                     }
-                                }elseif($media !== null && ceil($media) >=10){
-                                    $media_final = ceil($media);
+                                }elseif($media !== null && round($media) >=10){
+                                    $media_final = round($media);
                                 }
 
                                 /*
@@ -191,7 +191,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 $cor_final = '';
 
                                 if ($media_final !== null) {
-                                    if (ceil($media_final) >= 10) {
+                                    if (round($media_final) >= 10) {
                                         $estado_final = '';
                                         $cor_final = '';
                                     } else {
@@ -206,23 +206,23 @@ use App\Modules\Cms\Controllers\mainController;
                                 <td class="text-center">{{ $disciplina->disciplinas }}</td>
                                 <td>{{ $disciplina->nome_disciplina }}</td>
 
-                                <td class="text-center">{{ $pf1 !== null ? ceil($pf1) : '-' }}</td>
-                                <td class="text-center">{{ $pf2 !== null ? ceil($pf2) : '-' }}</td>
-                                <td class="text-center">{{ $oa !== null ? ceil($oa) : '-' }}</td>
+                                <td class="text-center">{{ $pf1 !== null ? round($pf1) : '-' }}</td>
+                                <td class="text-center">{{ $pf2 !== null ? round($pf2) : '-' }}</td>
+                                <td class="text-center">{{ $oa !== null ? round($oa) : '-' }}</td>
 
-                                <td class="text-center">{{ $media !== null ? ceil($media) : '-' }}</td>
+                                <td class="text-center">{{ $media !== null ? round($media) : '-' }}</td>
                                 <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
-                                <td class="text-center">{{ $ex_escrito !== null ? ceil($ex_escrito) : '-' }}</td>
-                                <td class="text-center">{{ $ex_oral !== null ? ceil($ex_oral) : '-' }}</td>
+                                <td class="text-center">{{ $ex_escrito !== null ? round($ex_escrito) : '-' }}</td>
+                                <td class="text-center">{{ $ex_oral !== null ? round($ex_oral) : '-' }}</td>
 
-                                <td class="text-center">{{ $media_exame !== null ? ceil($media_exame) : '-' }}</td>
+                                <td class="text-center">{{ $media_exame !== null ? round($media_exame) : '-' }}</td>
                                 <td class="text-center {{ $cor_media }}">{{ $classificacao }}</td>
 
-                                <td colspan="2" class="text-center">{{ $nota_recurso !== null ? ceil($nota_recurso) : '-' }}</td>
+                                <td colspan="2" class="text-center">{{ $nota_recurso !== null ? round($nota_recurso) : '-' }}</td>
                                 <td colspan="2" class="text-center">-</td>
 
-                                <td colspan="2" class="text-center">{{ $media_final !== null ? ceil($media_final) : '-' }}</td>
+                                <td colspan="2" class="text-center">{{ $media_final !== null ? round($media_final) : '-' }}</td>
                                 <td colspan="2" class="text-center {{ $cor_final }}">{{ $estado_final }}</td>
                             </tr>
                         @endforeach
