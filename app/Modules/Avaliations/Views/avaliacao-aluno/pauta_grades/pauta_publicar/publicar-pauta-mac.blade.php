@@ -575,15 +575,15 @@
                              
                        
                                  //   calculo_mac = macCalculate(data['data']['avaliacao_config'],pf1,pf1_percentagem,pf2,pf2_percentagem,oa,oa_percentagem);
-                                    calculo_mac = Math.ceil(  (pf1 * pf1_percentagem) + (pf2 * pf2_percentagem) + (oa * oa_percentagem) );
+                                    calculo_mac = Math.round(  (pf1 * pf1_percentagem) + (pf2 * pf2_percentagem) + (oa * oa_percentagem) );
                                     //console.debug("MAC: ",calculo_mac, pf1_percentagem, pf2_percentagem, oa_percentagem);
                                     tabelatr+="<td style='text-align: right'>"+calculo_mac+"</td>"
                                 
-                                        if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].mac_nota_dispensa) {
+                                        if (Math.round(calculo_mac) >= data['data']['avaliacao_config'].mac_nota_dispensa) {
                                 			tabelatr+="<td class='c_final' style='text-align: center'>"+'Aprovado(a)'+"</td>"
                                         }
                                         else {
-                                                if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].exame_nota_inicial && Math.ceil(calculo_mac) <= data['data']['avaliacao_config'].exame_nota_final) {
+                                                if (Math.round(calculo_mac) >= data['data']['avaliacao_config'].exame_nota_inicial && Math.round(calculo_mac) <= data['data']['avaliacao_config'].exame_nota_final) {
                                                     tabelatr+="<td class='c_final' style='text-align: center'>"+'Exame'+"</td>"
                                                 }else {
                                     			    tabelatr+="<td class='c_final' style='text-align: center'>"+'Recurso'+"</td>"
@@ -593,7 +593,7 @@
                                 
                              
                                     // LISTA DE ALUNOS E SUA MÉDIAS PARA SEREM TRANÇADOS
-                                    if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].mac_nota_dispensa){
+                                    if (Math.round(calculo_mac) >= data['data']['avaliacao_config'].mac_nota_dispensa){
                                         lista_alunos_notas.push([item_exam.id_mat, item_exam.user_id, calculo_mac, "@"])
                                         alunos_aprovados += 1;
 
@@ -605,7 +605,7 @@
                                         }
                                     }
                                     else {
-                                        if (Math.ceil(calculo_mac) >= data['data']['avaliacao_config'].exame_nota_inicial && Math.ceil(calculo_mac) <= data['data']['avaliacao_config'].exame_nota_final) {
+                                        if (Math.round(calculo_mac) >= data['data']['avaliacao_config'].exame_nota_inicial && Math.round(calculo_mac) <= data['data']['avaliacao_config'].exame_nota_final) {
                                             lista_alunos_notas.push([item_exam.id_mat, item_exam.user_id, calculo_mac, item_exam.sexo, "@"])
                                             alunos_exame += 1;
                                         }

@@ -487,7 +487,7 @@
                                 }
 
                                 //Validação da nota do NEEN                                   
-                                if (Math.ceil(exame_pauta) >= data['data']['avaliacao_config'].exame_nota) {
+                                if (Math.round(exame_pauta) >= data['data']['avaliacao_config'].exame_nota) {
                                   
                                     if (neen == -1) {
                                         tabelatr += "<td style='text-align: right'> F </td>"
@@ -507,8 +507,8 @@
                                 }
 
                                 // LISTA DE ALUNOS E SUA MÉDIAS PARA SEREM TRANÇADOS
-                                if (Math.ceil(exame_pauta) >=data['data']['avaliacao_config'].exame_nota) {
-                                    lista_alunos_notas.push([item_exam.id_mat, item_exam.user_id, Math.ceil(exame_pauta), item_exam.sexo, "@"])
+                                if (Math.round(exame_pauta) >=data['data']['avaliacao_config'].exame_nota) {
+                                    lista_alunos_notas.push([item_exam.id_mat, item_exam.user_id, Math.round(exame_pauta), item_exam.sexo, "@"])
                                     alunos_aprovados += 1;
 
                                     if (item_exam.sexo == "Feminino") {
@@ -519,7 +519,7 @@
                                     }
                                 } else {
                                     lista_alunos_notas.push([item_exam.id_mat, item_exam
-                                        .user_id, Math.ceil(exame_pauta), item_exam
+                                        .user_id, Math.round(exame_pauta), item_exam
                                         .sexo, "@"
                                     ])
                                     alunos_recurso += 1;
