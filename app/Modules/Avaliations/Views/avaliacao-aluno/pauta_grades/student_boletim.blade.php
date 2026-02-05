@@ -264,12 +264,12 @@
                             dados.forEach(function (n) {
                                 if (n.disciplina === disciplina.disciplinas && n.nota !== null) {
                                     var valor = parseFloat(n.nota);
-                                    if (n.metrica === 'PP1') pf1 = pf1 === null ? valor : Math.ceil(pf1, valor);
-                                    if (n.metrica === 'PP2') pf2 = pf2 === null ? valor : Math.ceil(pf2, valor);
-                                    if (n.metrica === 'OA') oa = oa === null ? valor : Math.ceil(oa, valor);
-                                    if (n.metrica === 'Exame Escrito') ex_escrito = ex_escrito === null ? valor : Math.ceil(ex_escrito, valor);
-                                    if (n.metrica === 'Exame Oral') ex_oral = ex_oral === null ? valor : Math.ceil(ex_oral, valor);
-                                    if (n.metrica === 'Recurso') nota_recurso = nota_recurso === null ? valor : Math.ceil(nota_recurso, valor);
+                                    if (n.metrica === 'PP1') pf1 = pf1 === null ? valor : Math.round(pf1, valor);
+                                    if (n.metrica === 'PP2') pf2 = pf2 === null ? valor : Math.round(pf2, valor);
+                                    if (n.metrica === 'OA') oa = oa === null ? valor : Math.round(oa, valor);
+                                    if (n.metrica === 'Exame Escrito') ex_escrito = ex_escrito === null ? valor : Math.round(ex_escrito, valor);
+                                    if (n.metrica === 'Exame Oral') ex_oral = ex_oral === null ? valor : Math.round(ex_oral, valor);
+                                    if (n.metrica === 'Recurso') nota_recurso = nota_recurso === null ? valor : Math.round(nota_recurso, valor);
                                 }
                             });
 
@@ -281,28 +281,28 @@
                             // Classificação MAC
                             var cor_media = '', classificacao = '-';
                             if (media !== null) {
-                                if (Math.ceil(media) >= 16) { classificacao=''; cor_media=''; }
-                                else if (Math.ceil(media) >= 7 && Math.ceil(media) < 16) { classificacao=''; cor_media=''; }
+                                if (Math.round(media) >= 16) { classificacao=''; cor_media=''; }
+                                else if (Math.round(media) >= 7 && Math.round(media) < 16) { classificacao=''; cor_media=''; }
                                 else { classificacao=''; cor_media=''; }
                             }
 
                             // Exame
                             var exame_total = (ex_escrito !== null || ex_oral !== null) ? (ex_escrito||0)+(ex_oral||0) : null;
-                            var media_exame = (media!==null && exame_total!==null) ? +((Math.ceil(media)*0.7)+(exame_total*0.3)).toFixed(2) : null;
+                            var media_exame = (media!==null && exame_total!==null) ? +((Math.round(media)*0.7)+(exame_total*0.3)).toFixed(2) : null;
 
                             // Média final
                             var media_final = null;
                             if (media !== null && nota_recurso!==null || media !== null && media_exame !==null) {
-                                if (Math.ceil(media) < 10 && nota_recurso !== null) media_final = nota_recurso;
+                                if (Math.round(media) < 10 && nota_recurso !== null) media_final = nota_recurso;
                                 else if (media_exame !== null) media_final = media_exame;
-                                else media_final = Math.ceil(media);
-                            }else if(media !== null && Math.ceil(media) >=10){
-                                media_final = Math.ceil(media);
+                                else media_final = Math.round(media);
+                            }else if(media !== null && Math.round(media) >=10){
+                                media_final = Math.round(media);
                             }
 
                             var estado_final = '-', cor_final = '';
                             if (media_final !== null) {
-                                if (Math.ceil(media_final) >= 10) { estado_final=''; cor_final=''; }
+                                if (Math.round(media_final) >= 10) { estado_final=''; cor_final=''; }
                                 else { estado_final=''; cor_final=''; }
                             }
 
@@ -310,18 +310,18 @@
                             html += '<td class="text-center">' + (index+1) + '</td>';
                             html += '<td class="text-center">' + disciplina.disciplinas + '</td>';
                             html += '<td>' + disciplina.nome_disciplina + '</td>';
-                            html += '<td class="text-center">' + (pf1!==null?Math.ceil(pf1):'-') + '</td>';
-                            html += '<td class="text-center">' + (pf2!==null?Math.ceil(pf2):'-') + '</td>';
+                            html += '<td class="text-center">' + (pf1!==null?Math.round(pf1):'-') + '</td>';
+                            html += '<td class="text-center">' + (pf2!==null?Math.round(pf2):'-') + '</td>';
                             html += '<td class="text-center">' + (oa!==null?oa:'-') + '</td>';
-                            html += '<td class="text-center">' + (media!==null?Math.ceil(media):'-') + '</td>';
+                            html += '<td class="text-center">' + (media!==null?Math.round(media):'-') + '</td>';
                             html += '<td class="text-center '+cor_media+'">' + classificacao + '</td>';
-                            html += '<td class="text-center">' + (ex_escrito!==null?Math.ceil(ex_escrito):'-') + '</td>';
+                            html += '<td class="text-center">' + (ex_escrito!==null?Math.round(ex_escrito):'-') + '</td>';
                             html += '<td class="text-center">' + (ex_oral!==null?ex_oral:'-') + '</td>';
-                            html += '<td class="text-center">' + (media_exame!==null?Math.ceil(media_exame):'-') + '</td>';
+                            html += '<td class="text-center">' + (media_exame!==null?Math.round(media_exame):'-') + '</td>';
                             html += '<td class="text-center '+cor_media+'">' + classificacao + '</td>';
-                            html += '<td colspan="2" class="text-center">' + (nota_recurso!==null?Math.ceil(nota_recurso):'-') + '</td>';
+                            html += '<td colspan="2" class="text-center">' + (nota_recurso!==null?Math.round(nota_recurso):'-') + '</td>';
                             html += '<td colspan="2" class="text-center">-</td>';
-                            html += '<td colspan="2" class="text-center">' + (media_final!==null?Math.ceil(media_final):'-') + '</td>';
+                            html += '<td colspan="2" class="text-center">' + (media_final!==null?Math.round(media_final):'-') + '</td>';
                             html += '<td colspan="2" class="text-center '+cor_final+'">' + estado_final + '</td>';
                             html += '</tr>';
                         });
