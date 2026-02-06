@@ -275,7 +275,7 @@
 
                             // Média MAC
                             var media = (pf1 !== null /*&& pf2 !== null && oa !== null*/)
-                                ? +((pf1*0.35) + (pf2*0.35) + (oa*0.3)).toFixed(2)
+                                ? +((pf1*0.35) + (pf2*0.35) + (oa*0.30)).toFixed(2)
                                 : null;
 
                             // Classificação MAC
