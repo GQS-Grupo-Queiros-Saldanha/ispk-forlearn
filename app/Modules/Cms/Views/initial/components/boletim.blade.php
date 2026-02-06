@@ -162,7 +162,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 if ($media !== null && ($ex_escrito !== null || $ex_oral !== null)) {
                                     $exame_total = ($ex_escrito ?? 0) + ($ex_oral ?? 0);
                                     $media_exame = round(
-                                        ($media * 0.7) + ($exame_total * 0.3),
+                                        ($media * 0.4) + ($exame_total * 0.6),
                                         2
                                     );
                                 }
