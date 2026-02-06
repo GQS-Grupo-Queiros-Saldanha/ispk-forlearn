@@ -191,7 +191,21 @@ class ScheduleExamController extends Controller
                              
                             $removeDuplicates = $recurso->unique('discipline_id');
                             $removeDuplicates->values()->all();
-                            $students = $removeDuplicates;
+                            $dados = $removeDuplicates;
+                            $students = [];
+
+                            foreach($dados as $student){
+                                if($student->discipline_id){
+                                   $consulta = DB::table('publicar_pauta')
+                                    ->where('id_disciplina',$student->discipline_id)
+                                    ->where('id_ano_lectivo',$lectiveYearSelected->id)
+                                    ->where('tipo',30)
+                                    ->first();
+                                    if($consulta > 0){
+                                        $students[] = $dados;
+                                    }
+                                }
+                            }
 
                         }
                         else {
