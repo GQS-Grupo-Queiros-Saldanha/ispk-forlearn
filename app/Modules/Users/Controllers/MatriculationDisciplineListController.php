@@ -105,7 +105,6 @@ class MatriculationDisciplineListController extends Controller
 
   public function ajaxUserDataPDF(Request $request){
     
- 
     try {
 
 
@@ -230,6 +229,7 @@ class MatriculationDisciplineListController extends Controller
         ->whereNull('mat.deleted_at')
 
         ->get();
+        dd($model);
         
 
       $model->each(function ($item) use ($curricular_year) {
