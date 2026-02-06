@@ -288,7 +288,7 @@
 
                             // Exame
                             var exame_total = (ex_escrito !== null || ex_oral !== null) ? (ex_escrito||0)+(ex_oral||0) : null;
-                            var media_exame = (media!==null && exame_total!==null) ? +((Math.round(media)*0.4)+(Math.round(exame_total)*0.6)).toFixed(2) : null;
+                            var media_exame = (media!==null && exame_total!==null) ? +((Math.round(media)*0.4)+(exame_total*0.6)).toFixed(2) : null;
 
                             // Média final
                             var media_final = null;
