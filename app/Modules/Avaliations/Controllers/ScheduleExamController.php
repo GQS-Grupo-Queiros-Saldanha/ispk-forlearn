@@ -190,7 +190,6 @@ class ScheduleExamController extends Controller
                          if(count($recurso)>0){
                              
                             $removeDuplicates = $recurso->unique('discipline_id');
-                            dd($removeDuplicates);
                             $removeDuplicates->values()->all();
                             $students = $removeDuplicates;
 
