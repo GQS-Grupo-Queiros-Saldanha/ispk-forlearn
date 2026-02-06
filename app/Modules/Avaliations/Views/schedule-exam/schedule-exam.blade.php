@@ -324,6 +324,7 @@
         dataType: 'json',
 
         success: function(result) {
+            console.debug("Resultado da requisição AJAX:", result); // Log do resultado para depuração
             var bodyData = '';
             
             if (result == 501) {
@@ -337,7 +338,7 @@
                 bodyData = "<label>Não foi encontrada nenhuma nota negativa no ano lectivo selecionado deste aluno.</label>";
             }
             else if (result['ExameExpecial'] == 0) {
-               console.log('oiee');
+               
                 // Processa as turmas e disciplinas
                 $.each(result['Turma'], function(index, item) {
                     // Verifica se item[0].length é maior que 0, caso contrário, não carrega disciplinas
