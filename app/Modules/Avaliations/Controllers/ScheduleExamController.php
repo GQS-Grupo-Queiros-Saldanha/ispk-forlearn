@@ -201,7 +201,7 @@ class ScheduleExamController extends Controller
                                     ->where('id_ano_lectivo',$lectiveYearSelected->id)
                                     ->where('tipo',30)
                                     ->first();
-                                    if($consulta > 0){
+                                    if($consulta){
                                         $students[] = $dados;
                                     }
                                 }
