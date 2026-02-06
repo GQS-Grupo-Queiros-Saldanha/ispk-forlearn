@@ -229,7 +229,12 @@ class MatriculationDisciplineListController extends Controller
         ->whereNull('mat.deleted_at')
 
         ->get();
-        dd($model);
+        $model = $model
+          ->unique(function ($item) {
+              return $item->matricula . '-' . $item->id_anoLectivo;
+          })
+          ->values();
+
         
 
       $model->each(function ($item) use ($curricular_year) {
