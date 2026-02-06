@@ -192,20 +192,18 @@ class ScheduleExamController extends Controller
                             $removeDuplicates = $recurso->unique('discipline_id');
                             $removeDuplicates->values()->all();
                             $dados = $removeDuplicates;
-                            $students = [];
+                            $students = $dados->filter(function($student) use ($lectiveYearSelected) {
+                            if (!$student->discipline_id) return false;
 
-                            foreach($dados as $student){
-                                if($student->discipline_id){
-                                   $consulta = DB::table('publicar_pauta')
-                                    ->where('id_disciplina',$student->discipline_id)
-                                    ->where('id_ano_lectivo',$lectiveYearSelected->id)
-                                    ->where('tipo',30)
+                                $consulta = DB::table('publicar_pauta')
+                                    ->where('id_disciplina', $student->discipline_id)
+                                    ->where('id_ano_lectivo', $lectiveYearSelected->id)
+                                    ->where('tipo', 30)
                                     ->first();
-                                    if($consulta){
-                                        $students[] = $dados;
-                                    }
-                                }
-                            }
+
+                                return !is_null($consulta); // só mantém se pauta 30 existe
+                            })->values(); // reseta os índices
+
 
                         }
                         else {
