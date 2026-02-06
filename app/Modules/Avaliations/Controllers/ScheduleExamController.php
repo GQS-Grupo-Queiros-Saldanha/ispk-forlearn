@@ -142,9 +142,6 @@ class ScheduleExamController extends Controller
            
             //trazer so as disciplinas por pagar o emolumento
             //TODO: avalair se ja tinha pago esse emolumento para nao aparecer na lista
-
-        
-            
             $Dados_disciplina=collect($verify_matriculation)->map(function ($item,$key)
             {
               return $item->id_disciplina;
@@ -156,15 +153,14 @@ class ScheduleExamController extends Controller
               
                 //Esse código é para trazer as já marcadas e não retornar mais.
                  $exameMarcado=DB::table('tb_recurso_student')
-                 ->where('matriculation_id',$verify_matriculation[0]->id_matricula)
-                 ->where('estado_exame',1)
-                 ->whereIn('discipline_id',$id_disc_present_year)
-                 ->get()->map(function ($item,$key)
-                  {
-                     return $item->discipline_id;
-                  });
-                 
-                 
+                    ->where('matriculation_id',$verify_matriculation[0]->id_matricula)
+                    ->where('estado_exame',1)
+                    ->whereIn('discipline_id',$id_disc_present_year)
+                    ->get()->map(function ($item,$key)
+                    {
+                        return $item->discipline_id;
+                    });
+                    
                  //Pegar todas negativas na transição    
                  $recurso=DB::table('new_old_grades as Nota_transation')
                         ->join('disciplines', 'disciplines.id','=','Nota_transation.discipline_id')
@@ -194,6 +190,7 @@ class ScheduleExamController extends Controller
                          if(count($recurso)>0){
                              
                             $removeDuplicates = $recurso->unique('discipline_id');
+                            dd($removeDuplicates);
                             $removeDuplicates->values()->all();
                             $students = $removeDuplicates;
 
@@ -268,19 +265,16 @@ class ScheduleExamController extends Controller
                       $year=$Partir_chave[0];$curso_id=$Partir_chave[1];
 
                       $Classe=DB::table('classes')
-                      ->join('matriculation_classes as mc','mc.class_id', '=', 'classes.id')
-                      ->join('matriculations as mt','mc.matriculation_id', '=', 'mt.id')
-                      ->where('mt.user_id', $studentId)
-                      ->where('courses_id',$curso_id)  
-                      ->where('year',$year)
-                      ->whereNull('classes.deleted_by')
-                      ->whereNull('classes.deleted_at')
-                      ->select(['classes.*'])
-                      ->where('lective_year_id',$lectiveYearSelected->id)
-                      ->get(); 
-                      
-                      
-
+                        ->join('matriculation_classes as mc','mc.class_id', '=', 'classes.id')
+                        ->join('matriculations as mt','mc.matriculation_id', '=', 'mt.id')
+                        ->where('mt.user_id', $studentId)
+                        ->where('courses_id',$curso_id)  
+                        ->where('year',$year)
+                        ->whereNull('classes.deleted_by')
+                        ->whereNull('classes.deleted_at')
+                        ->select(['classes.*'])
+                        ->where('lective_year_id',$lectiveYearSelected->id)
+                        ->get(); 
 
                       $Turma[$key]=[
                          $Classe
