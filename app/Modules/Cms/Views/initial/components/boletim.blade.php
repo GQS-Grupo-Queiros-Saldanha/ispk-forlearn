@@ -126,7 +126,7 @@ use App\Modules\Cms\Controllers\mainController;
                                 $media = null;
                                 //&& $pf2 !== null && $oa !== null
                                 //Olá, adiciona estas provas para o boletim verificar o média dependo da existênci das provas que selecionares. boa sorte
-                                if ($pf1 !== null ) {
+                                if ($pf1 !== null  || $pf2 !== null) {
                                     $media = round(
                                         ($pf1 * 0.35) +
                                         ($pf2 * 0.35) +
