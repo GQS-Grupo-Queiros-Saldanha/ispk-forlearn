@@ -76,7 +76,7 @@
                         text: '<i class="fas fa-file-pdf"></i> Lista de bolseiros',
                         className: 'btn-primary main ml-1 rounded btn-main btn-text',
                         action: function(e, dt, node, config) {
-                            //window.open("{{ route('pdf.scholarship-holder') }}", "_blank");
+                          
                             $('#modalScholarshipEntity').modal('show');
                         }
                     }

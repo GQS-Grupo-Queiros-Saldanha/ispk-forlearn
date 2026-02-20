@@ -599,7 +599,7 @@ class centralNotification extends Controller
         try {
             $response = $client->request('POST', $url, [
                 'headers' => [
-                    'Authorization' => 'Bearer cfBUVLVthm81GUOFcIxLH3vdK3lzHVaSi2RbVaBv50fe7c76',
+                    'Authorization' => 'Bearer ################################################',
                     'Content-Type'  => 'application/json',
                     'Accept'        => 'application/json',
                 ],
