@@ -1276,7 +1276,8 @@ public function studentAjax(Request $request, $id, $metrica_id, $study_plan_id, 
         
         Log::info('Métrica análise:', [
             'metrics_analise_exame_count' => $metrics_analise_exame->count(),
-            'metrics_analise_Recurso_Ou_exame_especial_oral' => $metrics_analise_Recurso_Ou_exame_especial_oral
+            'metrics_analise_Recurso_Ou_exame_especial_oral' => $metrics_analise_Recurso_Ou_exame_especial_oral,
+            'metrica usada'=>$metrica_id
         ]);
         
         //Condição Para ver se a disciplina não tem exame obrigatório e a metrica em questão é NEEN
