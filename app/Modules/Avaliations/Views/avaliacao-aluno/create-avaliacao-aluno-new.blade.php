@@ -737,7 +737,7 @@
          * Carrega métricas para coordenador
          */
         function metricasCoordenador(idAvaliacao) {
-            console.log("Carregando métricas para avaliação:", idAvaliacao);
+            console.debug("Carregando métricas para avaliação:", idAvaliacao);
 
             $.ajax({
                 url: `/pt/avaliations/metrica_ajax_coordenador/${idAvaliacao}`,
@@ -782,7 +782,7 @@
                 url += "&segunda_chamada=true";
             @endif
 
-            console.log("URL estudantes coordenador:", url);
+            console.debug("URL estudantes coordenador:", url);
 
             $.ajax({
                 url: url,
