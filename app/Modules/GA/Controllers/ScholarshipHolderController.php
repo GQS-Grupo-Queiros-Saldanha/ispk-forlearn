@@ -32,7 +32,7 @@ class ScholarshipHolderController extends Controller
     public function index()
     {
         $entities = DB::table('scholarship_entity as en')
-            ->select('en.id as id','en.code as code');
+            ->select('en.id as id','en.code as code')
             ->get();
 
         return view('GA::scholarship-holder.scholarship-holder',compact('entities'));
