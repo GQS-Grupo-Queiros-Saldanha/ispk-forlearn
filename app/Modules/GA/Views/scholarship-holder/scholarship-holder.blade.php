@@ -120,7 +120,7 @@
                 }
 
                 let baseUrl = "{{ url('pdf-scholarship-holder') }}";
-                let url = baseUrl + "/" + entidade;
+                let url = baseUrl + "/" + entityId;
 
                 window.open(url, "_blank");
 
