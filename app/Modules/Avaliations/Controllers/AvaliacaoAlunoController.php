@@ -810,28 +810,28 @@ class AvaliacaoAlunoController extends Controller
         
         //avaliar se a metrica ja foi concluida, se retornar algo é porque já foi concluida
         $metricArePlublished = DB::table('published_metric_grade')
-                                    ->where('study_plan_edition_id', $study_plan_id)
-                                    ->where('discipline_id', $id)
-                                    ->where('avaliation_id', $avaliacao_id)
-                                    ->where('class_id', $class_id)
-                                    ->where('metric_id', $metrica_id)
-                                    ->where('lecive_year', date('Y'))
-                                    ->get();
+            ->where('study_plan_edition_id', $study_plan_id)
+            ->where('discipline_id', $id)
+            ->where('avaliation_id', $avaliacao_id)
+            ->where('class_id', $class_id)
+            ->where('metric_id', $metrica_id)
+            ->where('lecive_year', date('Y'))
+            ->get();
 
         $metricArePlublished = $metricArePlublished->isEmpty() ? false : true;
 
 
         $disciplineHasMandatoryExam = Discipline::join('discipline_has_exam', 'discipline_has_exam.discipline_id', '=', 'disciplines.id')
-                                                ->select('discipline_has_exam.has_mandatory_exam as exam')
-                                                ->where('disciplines.id', $id)
-                                                ->firstOrFail();
+            ->select('discipline_has_exam.has_mandatory_exam as exam')
+            ->where('disciplines.id', $id)
+            ->firstOrFail();
         //ao tratar outras avaliacoes essa variavel causava erros...
         //so preciso dela quando a avaliacao selecionada for MAC == 21
         if($avaliacao_id == 21 || $avaliacao_id == 23){
 
             $current_pea = PlanoEstudoAvaliacao::where('disciplines_id', $id)
-                                                ->where('avaliacaos_id', 21)
-                                                ->firstOrFail();
+                ->where('avaliacaos_id', 21)
+                ->firstOrFail();
         }else{
                 $current_pea = 1;
         }
@@ -906,7 +906,7 @@ class AvaliacaoAlunoController extends Controller
                   ->orderBy('user_name', 'ASC')
                   ->distinct()
                   ->get();
-        }elseif($avaliacao_id == 22){ //exame de recurso
+        }elseif($avaliacao_id == 22 || $avaliacao_id == 57){ //exame de recurso
                 //anchora_1
                 //caso for uma avaliacao de recurso
                 $students = PlanoEstudoAvaliacao::leftJoin('study_plan_editions as stpeid', 'stpeid.id', '=', 'plano_estudo_avaliacaos.study_plan_editions_id')
