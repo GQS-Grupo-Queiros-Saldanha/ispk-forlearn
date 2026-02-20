@@ -31,7 +31,11 @@ class ScholarshipHolderController extends Controller
 
     public function index()
     {
-        return view('GA::scholarship-holder.scholarship-holder');
+        $entities = DB::table('scholarship_entity as en')
+            ->select('en.id as id','en.code as code');
+            ->get();
+
+        return view('GA::scholarship-holder.scholarship-holder',compact('entities'));
     }
 
     public function createScholarship()
@@ -399,7 +403,7 @@ class ScholarshipHolderController extends Controller
 
     
     
-        public function pdf_scholarship_holder()
+    public function pdf_scholarship_holder($entidade)
     {
         try {
             // Recupera os dados de todos os bolsistas
@@ -429,6 +433,7 @@ class ScholarshipHolderController extends Controller
                     'scholarship_holder.desconto_scholarship_holder as desconto_scholarship_holder',
                 ])
                 ->where('scholarship_holder.are_scholarship_holder', 1)
+                ->where('scholarship_holder.scholarship_entity_id', $entidade)
                 ->orderBy('name', 'asc')
                 ->orderBy('scholarship_entity.company', 'asc')
                 ->get();
@@ -482,7 +487,7 @@ class ScholarshipHolderController extends Controller
             return response()->json($e->getMessage(), 500);
         }
     }
-    
+
     public function get_student($student)
     {
         $Bolseiro = DB::table('scholarship_holder')->where('user_id', $student)->where('are_scholarship_holder', 1)->first();

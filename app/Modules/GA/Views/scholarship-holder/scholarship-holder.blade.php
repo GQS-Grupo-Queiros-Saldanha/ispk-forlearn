@@ -28,6 +28,43 @@
 @endsection
 @section('models')
     @include('layouts.backoffice.modal_confirm')
+
+    <!-- Modal Lista de Bolseiros -->
+    <div class="modal fade" id="modalScholarshipEntity" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Selecionar Entidade Bolseira</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Entidade</label>
+                        <select id="entity_id" class="form-control">
+                            <option value="">-- Selecionar --</option>
+                            @foreach($entities as $entity)
+                                <option value="{{ $entity->id }}">
+                                    {{ $entity->code }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnProceed">
+                        Prosseguir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts-new')
     @parent
@@ -39,7 +76,8 @@
                         text: '<i class="fas fa-file-pdf"></i> Lista de bolseiros',
                         className: 'btn-primary main ml-1 rounded btn-main btn-text',
                         action: function(e, dt, node, config) {
-                            window.open("{{ route('pdf.scholarship-holder') }}", "_blank");
+                            //window.open("{{ route('pdf.scholarship-holder') }}", "_blank");
+                            $('#modalScholarshipEntity').modal('show');
                         }
                     }
                 ],
@@ -71,6 +109,22 @@
                 language: {
                     url: '{{ asset('lang/datatables/' . App::getLocale() . '.json') }}',
                 }
+            });
+            $('#btnProceed').on('click', function() {
+
+                let entityId = $('#entity_id').val();
+
+                if (!entityId) {
+                    alert('Selecione uma entidade.');
+                    return;
+                }
+
+                let baseUrl = "{{ url('pdf-scholarship-holder') }}";
+                let url = baseUrl + "/" + entidade;
+
+                window.open(url, "_blank");
+
+                $('#modalScholarshipEntity').modal('hide');
             });
         });
     </script>
