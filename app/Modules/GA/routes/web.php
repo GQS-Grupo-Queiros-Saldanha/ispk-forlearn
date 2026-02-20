@@ -474,7 +474,7 @@ Route::group(
                 Route::get('ajax-users', 'ScholarshipHolderController@ajaxUsers')->name('ajax.users');
                 Route::get('student-scholarship/{id}', 'ScholarshipHolderController@get_student')->name('get_student.scholarship');
                 
-                Route::get('pdf-scholarship-holder/{entidade}', 'ScholarshipHolderController@pdf_scholarship_holder')->name('pdf.scholarship-holder');
+                Route::get('pdf-scholarship-holder/{entityId}', 'ScholarshipHolderController@pdf_scholarship_holder')->name('pdf.scholarship-holder');
                 Route::get('pdf_scholarship_entity', 'ScholarshipHolderController@pdf_scholarship_entity')->name('pdf.scholarship_entity');
             });
 
