@@ -416,7 +416,7 @@
     @parent
    <script>
     $(document).ready(function() {
-        // Inicialização de variáveis com valores padrão
+        // ========== INICIALIZAÇÃO DE ELEMENTOS ==========
         const elements = {
             disciplinaSelect: $("#Disciplina_id_Select"),
             turmaSelect: $("#Turma_id_Select"),
@@ -440,7 +440,7 @@
             btnPdf: $("#btn_pdf")
         };
 
-        // Estado da aplicação
+        // ========== ESTADO DA APLICAÇÃO ==========
         const state = {
             selectedLective: elements.lectiveYear.val() || '',
             whoIs: "",
@@ -466,7 +466,7 @@
         $('#btn_lock_pauta').remove();
         $('#btn_open_pauta').remove();
 
-        console.log("Ano lectivo selecionado:", state.selectedLective);
+        console.debug("Ano lectivo selecionado:", state.selectedLective);
 
         // Adicionar campo hidden para ano lectivo
         const lectiveInput = `<input type="hidden" name="selectedLective" id="selectedLective" class="form-control" value="${state.selectedLective}">`;
@@ -479,12 +479,12 @@
          */
         function getHistoric() {
             if (!state.pautaId) {
-                console.error("Erro: pauta_id não definido!");
+                console.debug("Erro: pauta_id não definido!");
                 return;
             }
 
             const url = `/avaliations/historico-pauta-ajax/${state.pautaId}`;
-            console.log("Carregando histórico:", url);
+            console.debug("Carregando histórico:", url);
 
             if ($.fn.DataTable.isDataTable('#historic-table')) {
                 $('#historic-table').DataTable().clear().destroy();
@@ -509,7 +509,7 @@
          * Define o tipo de pauta baseado na métrica
          */
         function setarPauta(whoIs) {
-            console.log("Setando pauta para:", whoIs);
+            console.debug("Setando pauta para:", whoIs);
 
             const pautaStatus = {
                 'PF1': '40', 'PF2': '40', 'OA': '40', 'Recurso': '10',
@@ -534,7 +534,7 @@
 
             const pautaValue = `${pautaTipo},${tipo}`;
             $('#pauta').val(pautaValue);
-            console.log("Pauta definida:", $('#pauta').val());
+            console.debug("Pauta definida:", $('#pauta').val());
         }
 
         /**
@@ -561,7 +561,7 @@
          * Carrega disciplinas do professor
          */
         function disciplineGetNew(anolectivo) {
-            console.log("Carregando disciplinas para ano:", anolectivo);
+            console.debug("Carregando disciplinas para ano:", anolectivo);
 
             $.ajax({
                 url: `/pt/avaliations/disciplines_teacher/${anolectivo}`,
@@ -570,7 +570,7 @@
                 cache: false,
                 dataType: 'json',
                 beforeSend: function() {
-                    console.log("Carregando as disciplinas...");
+                    console.debug("Carregando as disciplinas...");
                 }
             }).done(function(data) {
                 if (data.disciplina && data.disciplina.length) {
@@ -590,10 +590,10 @@
                     elements.disciplinaSelect.prop('disabled', false).selectpicker('refresh');
                 } else {
                     elements.disciplinaSelect.empty().prop('disabled', true);
-                    console.warn("Nenhuma disciplina encontrada");
+                    console.debug("Nenhuma disciplina encontrada");
                 }
             }).fail(function(error) {
-                console.error("Erro ao carregar disciplinas:", error);
+                console.debug("Erro ao carregar disciplinas:", error);
             });
         }
 
@@ -601,10 +601,10 @@
          * Carrega turmas baseado na disciplina selecionada
          */
         function Turma(idPlano, anolectivo) {
-            console.log("Carregando turmas para plano:", idPlano, "ano:", anolectivo);
+            console.debug("Carregando turmas para plano:", idPlano, "ano:", anolectivo);
             
             if (!idPlano || idPlano === "00") {
-                console.warn("ID do plano inválido");
+                console.debug("ID do plano inválido");
                 return false;
             }
 
@@ -615,7 +615,7 @@
                 url += "?segunda_chamada=true";
             @endif
 
-            console.log("URL da turma:", url);
+            console.debug("URL da turma:", url);
 
             $.ajax({
                 url: url,
@@ -630,7 +630,7 @@
                     handleTurmaSuccess(data);
                 }
             }).fail(function(error) {
-                console.error("Erro ao carregar turmas:", error);
+                console.debug("Erro ao carregar turmas:", error);
                 handleTurmaError();
             });
         }
@@ -657,7 +657,7 @@
                 
                 state.whoIs = data.whoIs;
             } else {
-                console.log(data);
+                console.debug("Dados do teacher recebidos:", data);
                 handleTeacherTurma(data);
             }
         }
@@ -677,11 +677,20 @@
             elements.caixaAvalicao.hide();
             elements.avaliacaoSelect.empty();
 
-            state.idAvaliacao = data.avaliacao.avl_id;
-            state.metricaIdTeacher = data.metrica && data.metrica.length > 0 ? data.metrica[0].mtrc_id : "Sem métrica no intervalo";
+            // IMPORTANTE: Setar os valores corretamente para o teacher
+            state.idAvaliacao = data.avaliacao?.avl_id || 0;
+            state.metricaIdTeacher = data.metrica && data.metrica.length > 0 ? data.metrica[0].mtrc_id : null;
             state.metricaCodeDev = data.metrica && data.metrica.length > 0 ? data.metrica[0].code_dev : null;
             state.disciplineId = data.disciplina;
             state.idPlanoEstudo = data.plano_estudo;
+
+            console.debug("Dados do teacher salvos:", {
+                idAvaliacao: state.idAvaliacao,
+                metricaIdTeacher: state.metricaIdTeacher,
+                metricaCodeDev: state.metricaCodeDev,
+                disciplineId: state.disciplineId,
+                idPlanoEstudo: state.idPlanoEstudo
+            });
 
             turmaLoop(data, "teacher");
             setarPauta("teacher");
@@ -697,7 +706,7 @@
                 state.disciplineId = data.disciplina;
 
                 if (tipo === "teacher") {
-                    console.log("Turmas do professor:", data.turma);
+                    console.debug("Turmas do professor:", data.turma);
                     elements.tituloAvalicao.empty();
                     
                     state.metricaId = data.metrica && data.metrica.length > 0 ? data.metrica[0].mtrc_id : "Sem métrica no intervalo";
@@ -729,7 +738,7 @@
             } else {
                 elements.turmaSelect.empty().prop('disabled', true);
                 elements.avaliacaoSelect.prop('disabled', true);
-                console.warn("Nenhuma turma encontrada");
+                console.debug("Nenhuma turma encontrada");
             }
         }
 
@@ -758,11 +767,11 @@
                     
                     elements.metricaSelect.prop('disabled', false).selectpicker('refresh');
                 } else {
-                    console.warn("Nenhuma métrica encontrada");
+                    console.debug("Nenhuma métrica encontrada");
                     elements.metricaSelect.prop('disabled', true).empty();
                 }
             }).fail(function(error) {
-                console.error("Erro ao carregar métricas:", error);
+                console.debug("Erro ao carregar métricas:", error);
             });
         }
 
@@ -772,11 +781,43 @@
         function studentCourseCoordenador() {
             const turma = elements.turmaSelect.val();
             const lectiveYearSelect = elements.lectiveYear.val();
+            const metricaVal = elements.metricaSelect.val();
+            const avaliacaoVal = elements.avaliacaoSelect.val();
+            
             state.cargo = elements.disciplinaSelect.val().split(",")[0];
             
-            console.log("Carregando estudantes para coordenador, cargo:", state.cargo);
+            console.debug("Carregando estudantes para coordenador, cargo:", state.cargo);
+            console.debug("Valores selecionados:", {
+                turma,
+                metrica: metricaVal,
+                avaliacao: avaliacaoVal,
+                disciplineId: state.disciplineId,
+                idPlanoEstudo: state.idPlanoEstudo
+            });
 
-            let url = `/avaliations/student_ajax/${state.disciplineId}/${elements.metricaSelect.val()}/${state.idPlanoEstudo}/${elements.avaliacaoSelect.val()}/${turma}/${lectiveYearSelect}?whoIs=${state.cargo}`;
+            // Validação dos campos obrigatórios
+            if (!metricaVal || metricaVal === "") {
+                console.debug("Métrica não selecionada");
+                elements.textoAviso.text("Por favor, selecione uma métrica.");
+                elements.modalAviso.modal('show');
+                return;
+            }
+            
+            if (!avaliacaoVal || avaliacaoVal === "") {
+                console.debug("Avaliação não selecionada");
+                elements.textoAviso.text("Por favor, selecione uma avaliação.");
+                elements.modalAviso.modal('show');
+                return;
+            }
+            
+            if (!turma || turma === "") {
+                console.debug("Turma não selecionada");
+                elements.textoAviso.text("Por favor, selecione uma turma.");
+                elements.modalAviso.modal('show');
+                return;
+            }
+
+            let url = `/avaliations/student_ajax/${state.disciplineId}/${metricaVal}/${state.idPlanoEstudo}/${avaliacaoVal}/${turma}/${lectiveYearSelect}?whoIs=${state.cargo}`;
 
             @if ($segunda_chamada)
                 url += "&segunda_chamada=true";
@@ -793,18 +834,62 @@
             }).done(function(data) {
                 renderStudentsTable(data, "coordenador");
             }).fail(function(error) {
-                console.error("Erro ao carregar estudantes coordenador:", error);
+                console.debug("Erro ao carregar estudantes coordenador:", error);
+                elements.textoAviso.text("Erro ao carregar estudantes. Tente novamente.");
+                elements.modalAviso.modal('show');
             });
         }
 
         /**
-         * Carrega notas dos estudantes
+         * Carrega notas dos estudantes (para teacher)
          */
         function StudantGrade(disciplineId, metricaId, idPlanoEstudo, idAvaliacao, lectiveYear) {
             state.cargo = elements.disciplinaSelect.val().split(",")[0];
             const turma = elements.turmaSelect.val();
             
-            console.log("Carregando notas, cargo:", state.cargo);
+            console.debug("Carregando notas, cargo:", state.cargo);
+            console.debug("Valores recebidos:", {
+                disciplineId,
+                metricaId,
+                idPlanoEstudo,
+                idAvaliacao,
+                lectiveYear,
+                turma
+            });
+
+            // Para teacher, usar os valores que foram setados no handleTeacherTurma
+            if (state.whoIs === "teacher") {
+                metricaId = state.metricaIdTeacher;
+                idAvaliacao = state.idAvaliacao;
+                
+                console.debug("Ajustando para teacher:", {
+                    metricaIdTeacher: state.metricaIdTeacher,
+                    idAvaliacao: state.idAvaliacao,
+                    metricaCodeDev: state.metricaCodeDev
+                });
+            }
+
+            // Validação robusta
+            if (!metricaId || metricaId === "0" || metricaId === "Sem métrica no intervalo" || metricaId === null) {
+                console.debug("Métrica inválida:", metricaId);
+                elements.textoAviso.text("Não há métrica disponível para esta avaliação.");
+                elements.modalAviso.modal('show');
+                return;
+            }
+
+            if (!idAvaliacao || idAvaliacao === "0" || idAvaliacao === null) {
+                console.debug("Avaliação inválida:", idAvaliacao);
+                elements.textoAviso.text("Não há avaliação disponível.");
+                elements.modalAviso.modal('show');
+                return;
+            }
+
+            if (!turma || turma === "") {
+                console.debug("Turma não selecionada");
+                elements.textoAviso.text("Por favor, selecione uma turma.");
+                elements.modalAviso.modal('show');
+                return;
+            }
 
             let url = `/avaliations/student_ajax/${disciplineId}/${metricaId}/${idPlanoEstudo}/${idAvaliacao}/${turma}/${lectiveYear}?whoIs=${state.cargo}`;
 
@@ -812,7 +897,7 @@
                 url += "&segunda_chamada=true";
             @endif
 
-            console.log("URL notas:", url);
+            console.debug("URL notas final:", url);
 
             $.ajax({
                 url: url,
@@ -824,7 +909,9 @@
                     renderStudentsTable(dataResult, "teacher");
                 },
                 error: function(error) {
-                    console.error('Erro ao carregar notas:', error);
+                    console.debug('Erro ao carregar notas:', error);
+                    elements.textoAviso.text("Erro ao carregar notas. Tente novamente.");
+                    elements.modalAviso.modal('show');
                 }
             });
         }
@@ -833,7 +920,7 @@
          * Renderiza a tabela de estudantes
          */
         function renderStudentsTable(data, tipo) {
-            console.log(`Renderizando tabela para: ${tipo}`, data);
+            console.debug(`Renderizando tabela para: ${tipo}`, data);
 
             // Atualizar estado da pauta
             updatePautaState(data);
@@ -858,7 +945,7 @@
                     bodyData += createStudentRow(student, studentGrade, i++, regime, tipo);
                 });
             } else {
-                bodyData = '<tr><td class="text-center fs-2">Nenhum estudante foi encontrado nesta turma.</td></tr>';
+                bodyData = '<tr><td class="text-center fs-2" colspan="6">Nenhum estudante foi encontrado nesta turma.</td></tr>';
             }
 
             elements.studentsNew.append(bodyData);
@@ -876,7 +963,7 @@
 
             // Atualizar botão PDF
             if (state.pautaPath) {
-                console.log("Definindo URL do PDF da pauta:", state.pautaPath);
+                console.debug("Definindo URL do PDF da pauta:", state.pautaPath);
                 elements.btnPdf.attr('href', state.pautaPath).find('span').removeClass('btn-danger').addClass('btn-primary');
             }
 
@@ -886,7 +973,7 @@
             // Controlar visibilidade dos botões de pauta
             if (state.estadoPautaLancar == 1) {
                 showOpenPauta();
-                console.log("Definindo URL de abertura da pauta:", openUrl);
+                console.debug("Definindo URL de abertura da pauta:", openUrl);
                 $('#btn_open_pauta').attr('href', openUrl);
                 
                 state.elementoBtnSalvar = $("#div_btn_save").html();
@@ -910,16 +997,12 @@
         }
 
         function findStudentGrade(grades, userId) {
-            // Filtra todas as notas do estudante
             const studentGrades = grades.filter(nota => nota.user_id == userId);
-
-            // Retorna a primeira nota válida (não null), ou um objeto vazio se não houver
             if (studentGrades.length > 0) {
                 return studentGrades.find(nota => nota.aanota !== null) || studentGrades[0];
             }
             return {};
         }
-
 
         function createStudentRow(student, grade, index, regime, tipo) {
             const notaAluno = grade.aanota || '';
@@ -1022,13 +1105,22 @@
         elements.turmaSelect.change(function() {
             elements.description.val('');
             const lectiveYear = elements.lectiveYear.val();
-            const id = elements.disciplinaSelect.val();
             
             if (elements.turmaSelect.val() === "") {
-                console.log('Turma não selecionada');
+                console.debug('Turma não selecionada');
                 elements.avaliacaoSelect.prop('disabled', true);
+                elements.studentsNew.empty();
             } else {
-                StudantGrade(state.disciplineId, state.metricaId, state.idPlanoEstudo, state.idAvaliacao, lectiveYear);
+                // Para teacher, usar os parâmetros específicos
+                if (state.whoIs === "teacher") {
+                    StudantGrade(
+                        state.disciplineId, 
+                        state.metricaIdTeacher,
+                        state.idPlanoEstudo, 
+                        state.idAvaliacao, 
+                        lectiveYear
+                    );
+                }
                 elements.avaliacaoSelect.prop('disabled', false);
                 elements.tabelaNew.show();
             }
@@ -1044,26 +1136,38 @@
             } else {
                 elements.caixaMatrica.hide();
                 elements.metricaSelect.empty();
+                elements.studentsNew.empty();
             }
         });
 
         // Evento de mudança na métrica (coordenador)
         elements.metricaSelect.change(function() {
             elements.description.val('');
-            if (elements.metricaSelect.val() !== "") {
+            const metricaVal = elements.metricaSelect.val();
+            const avaliacaoVal = elements.avaliacaoSelect.val();
+            const turmaVal = elements.turmaSelect.val();
+            
+            if (metricaVal && metricaVal !== "" && 
+                avaliacaoVal && avaliacaoVal !== "" && 
+                turmaVal && turmaVal !== "") {
                 setarPauta("super");
                 studentCourseCoordenador();
             } else {
                 elements.description.val('');
-                elements.studentsNew.hide();
+                elements.studentsNew.empty();
+                
+                if (!avaliacaoVal || avaliacaoVal === "") {
+                    console.debug("Avaliação não selecionada ainda");
+                }
+                if (!turmaVal || turmaVal === "") {
+                    console.debug("Turma não selecionada ainda");
+                }
             }
         });
 
         // Eventos de submit
         elements.btnCallSubmit.click(function() {
-         
-                elements.formNota.submit();
-            
+            elements.formNota.submit();
         });
 
         $("#btn-callLock").click(function() {
@@ -1080,7 +1184,7 @@
      * Controla o estado de desabilitação dos inputs
      */
     function disbleInput(dd) {
-        console.log('Alternando estado do input:', dd);
+        console.debug('Alternando estado do input:', dd);
         
         const checkElement = document.getElementById("check" + dd);
         const inputGrade = document.getElementById(dd);
@@ -1088,7 +1192,7 @@
         const hiddenInput = document.getElementById("input" + dd);
 
         if (!checkElement || !inputGrade || !span || !hiddenInput) {
-            console.error("Elementos não encontrados para:", dd);
+            console.debug("Elementos não encontrados para:", dd);
             return;
         }
 
@@ -1112,17 +1216,17 @@
      */
     function checkInputEmpty(dd) {
         const inputGrade = document.getElementById(dd);
-        console.log("Verificando input:", dd, "Valor:", inputGrade ? inputGrade.value : "Elemento não encontrado");
+        console.debug("Verificando input:", dd, "Valor:", inputGrade ? inputGrade.value : "Elemento não encontrado");
     }
 
     /**
      * Controla a checagem de presença/ausência
      */
     function verChecagem(element) {
-        console.log("Verificando checagem:", element);
+        console.debug("Verificando checagem:", element);
         
         if (!element || !element.id) {
-            console.error("Elemento inválido");
+            console.debug("Elemento inválido");
             return;
         }
 
@@ -1132,7 +1236,7 @@
         const checkbox = document.getElementById(element.id);
 
         if (!linha.length || !span.length || !inputNota.length || !checkbox) {
-            console.error("Elementos da linha não encontrados para ID:", element.id);
+            console.debug("Elementos da linha não encontrados para ID:", element.id);
             return;
         }
 
