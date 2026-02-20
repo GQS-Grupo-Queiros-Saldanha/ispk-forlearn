@@ -110,7 +110,7 @@
                     url: '{{ asset('lang/datatables/' . App::getLocale() . '.json') }}',
                 }
             });
-            $('#btnProceed').on('click', function() {
+           $('#btnProceed').on('click', function() {
 
                 let entityId = $('#entity_id').val();
 
@@ -119,7 +119,8 @@
                     return;
                 }
 
-                let baseUrl = "{{ url('pdf-scholarship-holder') }}";
+                // Usar URL base sem tentar gerar rota
+                let baseUrl = "{{ url('pt/gestao-academica/pdf-scholarship-holder') }}";
                 let url = baseUrl + "/" + entityId;
 
                 window.open(url, "_blank");
